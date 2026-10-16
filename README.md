@@ -1,7 +1,7 @@
 # Ratchet — regression CI for self-improving agents
 
 [![License: Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
-[Demo](#run-it-yourself) · [Video](#run-it-yourself) · [Bench report](bench/results/) · [Feedback memo](FEEDBACK.md)
+[Live demo](https://demo.ratchetci.dev) · [Video](https://youtu.be/Xi_XIKewDB0) · [Docs](https://ratchetci.dev/docs/) · [Bench report](bench/results/) · [Feedback memo](FEEDBACK.md)
 
 **Your agent learns new skills every day. Ratchet makes sure it never unlearns the old ones.**
 

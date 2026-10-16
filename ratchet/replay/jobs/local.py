@@ -18,7 +18,6 @@ import asyncio
 import contextlib
 import json
 import os
-import shutil
 import signal
 import subprocess
 import sys
@@ -34,6 +33,7 @@ from ratchet.errors import NotFoundError, SandboxError
 from ratchet.models import ReplayBatch
 from ratchet.replay.jobs.base import JobState, JobStatus, parse_progress, read_exit_code
 from ratchet.replay.sandbox.docker import CommandRunner, run_command
+from ratchet.util import copy_tree_contents
 
 __all__ = ["LocalJobRunner", "settings_env", "docker_worker_argv"]
 
@@ -202,9 +202,7 @@ class LocalJobRunner:
         if not out.is_dir():
             raise NotFoundError(f"no output for job {job_id}", code="not_found")
         if out.resolve() != output_dir.resolve():
-            await asyncio.to_thread(
-                shutil.copytree, out, output_dir, dirs_exist_ok=True, copy_function=shutil.copyfile
-            )
+            await asyncio.to_thread(copy_tree_contents, out, output_dir)
         if self.mode == "docker":
             await asyncio.to_thread(self._runner, ["docker", "rm", self._container(job_id)], 30.0)
         return output_dir

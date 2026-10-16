@@ -30,7 +30,7 @@ from ratchet.replay.sandbox import Endpoint, Sandbox, faketime_env
 from ratchet.replay.sidecars import ServerThread
 from ratchet.store import Store
 from ratchet.store.archive import unpack
-from ratchet.util import new_id
+from ratchet.util import copy_tree_contents, new_id
 
 __all__ = ["BatchContext", "GoldenOutcome", "replay_golden", "parse_unexpected"]
 
@@ -263,13 +263,8 @@ def replay_golden(ctx: BatchContext, golden: Trace) -> GoldenOutcome:
             error_code=error,
         )
         trace = ctx.deps.finalize_trace(ctx.store, args)
-        # copyfile, not copy2: the output may be an S3 (FUSE) mount that refuses chmod/utime.
-        shutil.copytree(
-            ctx.store.trace_dir(run_id),
-            ctx.output / "replays" / run_id,
-            dirs_exist_ok=True,
-            copy_function=shutil.copyfile,
-        )
+        # No metadata copy: the output may be an object-storage mount that refuses chmod.
+        copy_tree_contents(ctx.store.trace_dir(run_id), ctx.output / "replays" / run_id)
         _log.info("replay.golden.done", run_id=run_id, ok=error is None, code=code)
         return GoldenOutcome(golden.run_id, trace, unexpected, error)
     except SandboxError as exc:

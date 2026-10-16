@@ -87,8 +87,9 @@ def test_repeat_flag_exits_zero_only_when_every_run_matched(
     results = {"good": ("BLOCK", "BLOCK"), "bad": ("BLOCK", "PASS")}
 
     async def fake_repeat(
-        settings: Settings, store: object, scenario: str, *, repeat: int
+        settings: Settings, store: object, scenario: str, *, repeat: int, timeout_s: float
     ) -> RepeatOutcome:
+        assert timeout_s == 300.0  # the --timeout default
         calls.append((scenario, repeat, settings.ratchet_simulate_enabled))
         decisions = results["good" if scenario == "1" else "bad"]
         return RepeatOutcome(scenario, tuple(_outcome(d, 12.0) for d in decisions))

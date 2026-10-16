@@ -4,8 +4,11 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 import secrets
+import shutil
 from collections.abc import Mapping
+from pathlib import Path
 
 __all__ = [
     "new_id",
@@ -14,6 +17,7 @@ __all__ = [
     "hash_json",
     "preview",
     "truncate_middle",
+    "copy_tree_contents",
 ]
 
 
@@ -58,3 +62,21 @@ def truncate_middle(text: str, limit: int) -> tuple[str, bool]:
     head = keep * 2 // 3
     tail = keep - head
     return text[:head] + marker + (text[-tail:] if tail else ""), True
+
+
+def copy_tree_contents(src: Path, dst: Path) -> int:
+    """Copy the files under ``src`` into ``dst`` (created as needed) without copying any
+    metadata: no chmod, no utime, no xattrs. Object-storage mounts (the Jobs output volume)
+    accept writes and renames but refuse ``copystat``, which ``shutil.copytree`` always
+    attempts on directories. Symlinks are skipped. Returns the number of files copied."""
+    count = 0
+    for root, _dirs, files in os.walk(src):
+        rel = Path(root).relative_to(src)
+        (dst / rel).mkdir(parents=True, exist_ok=True)
+        for name in files:
+            source = Path(root) / name
+            if source.is_symlink():
+                continue
+            shutil.copyfile(source, dst / rel / name)
+            count += 1
+    return count

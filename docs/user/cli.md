@@ -246,6 +246,7 @@ ratchet simulate [OPTIONS] SCENARIO
 | `--headless` | flag | off | Print stages and the headline. |
 | `--record-fixture` | flag | off | Save for replayed mode. |
 | `--repeat` | int range | `1` | Run N times (fresh session each); report k/N. |
+| `--timeout` | float range | `300.0` | Seconds to wait for each verdict (Jobs: raise it). |
 
 ### `ratchet purge`
 

@@ -303,6 +303,9 @@ def simulate(
     repeat: int = typer.Option(
         1, "--repeat", min=1, max=50, help="Run N times (fresh session each); report k/N."
     ),
+    timeout: float = typer.Option(
+        300.0, "--timeout", min=10.0, help="Seconds to wait for each verdict (Jobs: raise it)."
+    ),
 ) -> None:
     """Run a seeded scenario; exit 0 iff the decision matches the expected one (every run
     with --repeat). Works whatever RATCHET_SIMULATE_ENABLED says (it gates the HTTP route)."""
@@ -317,13 +320,22 @@ def simulate(
     if repeat > 1:
         if record_fixture:
             raise fail("--record-fixture records one run; drop --repeat")
-        result = run(simulate_repeat(cfg, common.store(cfg), scenario, repeat=repeat))
+        result = run(
+            simulate_repeat(cfg, common.store(cfg), scenario, repeat=repeat, timeout_s=timeout)
+        )
         print_repeat(result)
         if not result.all_matched:
             raise typer.Exit(1)
         return
     outcome = run(
-        simulate_headless(cfg, common.store(cfg), scenario, record=record_fixture, echo=headless)
+        simulate_headless(
+            cfg,
+            common.store(cfg),
+            scenario,
+            record=record_fixture,
+            echo=headless,
+            timeout_s=timeout,
+        )
     )
     print_outcome(outcome, cfg)
     if not outcome.matched:

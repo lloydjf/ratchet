@@ -164,7 +164,7 @@ the strip reads "Still working — *stage* is taking longer than usual."
    statement, the old value → the new value, the Tavily source link, the confidence and the
    ruling, plus **Re-bless** for each changed task.
 
-![Drift card with a Re-bless button](img/drift-card.png)
+![Drift card: the rate change, its Tavily source, the ruling, and the re-bless state](img/drift-card.png)
 
 **Side column**
 

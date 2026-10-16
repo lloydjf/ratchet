@@ -16,6 +16,8 @@ run. We ran them cold, with the response cache off: two BLOCKs and one PASS-with
 
 ## 60-second tour
 
+[Watch the two-minute demo](https://youtu.be/Xi_XIKewDB0) or [open the live demo](https://demo.ratchetci.dev).
+
 | | |
 | --- | --- |
 | ![Landing page: a recorded BLOCK verdict above three Simulate scenarios](docs/img/landing.png) | **Open with a verdict, then press Simulate.** The landing shows a recorded run (real Nemotron, real Tavily) with the cascade sieve: where each of the 14 replays was decided and what each tier cost. Each scenario card seeds a skill edit "the agent learned" and replays the blessed tasks live. |

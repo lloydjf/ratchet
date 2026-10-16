@@ -8,6 +8,9 @@ description: Regression CI for self-improving agents.
 <p class="lead">Your agent learns new skills every day. Ratchet makes sure it never unlearns the
 old ones.</p>
 
+[Watch the two-minute demo](https://youtu.be/Xi_XIKewDB0){ target=_blank rel=noopener } ·
+[Open the live demo](https://demo.ratchetci.dev){ target=_blank rel=noopener }
+
 Ratchet is regression CI for self-improving agents. When a Hermes or OpenClaw agent edits
 one of its own skills, Ratchet replays the tasks you already blessed against the new skill,
 in a sandbox. A Nemotron cascade judges each replay: Nano screens, Super checks, Ultra

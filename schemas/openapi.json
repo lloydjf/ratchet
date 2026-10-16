@@ -3428,7 +3428,7 @@
     },
     "/api/v1/edits/{edit_id}/replay": {
       "post": {
-        "description": "Force a replay: the orchestrator resets the edit to ``selecting``.",
+        "description": "Force a replay: the orchestrator resets the edit to ``selecting``. Operator hosts\nonly: on the public host a replay would re-run the whole pipeline outside Simulate's\none-run-per-visitor gate and spend the shared daily cap.",
         "operationId": "replay_edit_api_v1_edits__edit_id__replay_post",
         "parameters": [
           {

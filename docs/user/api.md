@@ -284,7 +284,7 @@ Response `200`: [`LogsView`](reference/api-models.md#logsview); errors: `4XX`, `
 
 ### POST `/api/v1/edits/{edit_id}/replay` {#post-api-v1-edits-edit-id-replay}
 
-Force a replay: the orchestrator resets the edit to `selecting`.
+Force a replay: the orchestrator resets the edit to `selecting`. Operator hosts only: on the public host a replay would re-run the whole pipeline outside Simulate's one-run-per-visitor gate and spend the shared daily cap.
 
 | Parameter | In | Type | Required | Default |
 | --- | --- | --- | --- | --- |

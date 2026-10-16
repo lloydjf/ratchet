@@ -124,7 +124,9 @@ export interface paths {
         put?: never;
         /**
          * Replay Edit
-         * @description Force a replay: the orchestrator resets the edit to ``selecting``.
+         * @description Force a replay: the orchestrator resets the edit to ``selecting``. Operator hosts
+         *     only: on the public host a replay would re-run the whole pipeline outside Simulate's
+         *     one-run-per-visitor gate and spend the shared daily cap.
          */
         post: operations["replay_edit_api_v1_edits__edit_id__replay_post"];
         delete?: never;

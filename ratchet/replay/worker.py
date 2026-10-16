@@ -42,7 +42,7 @@ from ratchet.replay.deps import WorkerDeps, default_deps, load_deps
 from ratchet.replay.replay_one import BatchContext, GoldenOutcome, replay_golden
 from ratchet.store import Store
 from ratchet.store.archive import unpack
-from ratchet.store.base import write_json_atomic
+from ratchet.store.base import write_json_direct
 
 __all__ = [
     "EXIT_OK",
@@ -77,7 +77,7 @@ class _Heartbeat:
         if k is not None:
             self.k = k
         payload = {"k": self.k, "n": self.n, "heartbeat_at": clock.iso(clock.now())}
-        write_json_atomic(self.path, payload)
+        write_json_direct(self.path, payload)
 
     def _loop(self) -> None:
         while not self._stop.wait(self._interval):
@@ -191,8 +191,8 @@ def _context(
 
 def _finish(output: Path, result: ReplayResult, log: _WorkerLog) -> int:
     code = exit_code_for(result)
-    write_json_atomic(output / "result.json", result)
-    write_json_atomic(output / "exit.json", {"exit_code": code})
+    write_json_direct(output / "result.json", result)
+    write_json_direct(output / "exit.json", {"exit_code": code})
     log.info("replay.batch.done", status=result.status, exit_code=code, n=len(result.replays))
     return code
 
@@ -213,7 +213,7 @@ def _run_batch(
         budget_hit = budget_hit or outcome.error_code == "budget_exceeded"
         outcomes[golden_id] = outcome
         log.info("replay.golden.outcome", k=k, error_code=outcome.error_code)
-        write_json_atomic(ctx.output / "result.json", build_result(ctx.spec, outcomes))
+        write_json_direct(ctx.output / "result.json", build_result(ctx.spec, outcomes))
         beat.beat(k)
 
 
@@ -246,12 +246,12 @@ def main(
         spec = _load_spec(spec_path or inputs_dir / "spec.json")
     except (OSError, ValidationError, ValueError):
         log.warning("replay.batch.bad_spec")
-        write_json_atomic(output_dir / "exit.json", {"exit_code": EXIT_SANDBOX})
+        write_json_direct(output_dir / "exit.json", {"exit_code": EXIT_SANDBOX})
         log.close()
         return EXIT_SANDBOX
     with bind(batch_id=spec.batch_id, edit_id=spec.edit_id):
-        write_json_atomic(output_dir / "spec.json", spec)
-        write_json_atomic(output_dir / "result.json", build_result(spec, {}))
+        write_json_direct(output_dir / "spec.json", spec)
+        write_json_direct(output_dir / "result.json", build_result(spec, {}))
         log.info("replay.batch.start", n=len(spec.golden_run_ids), sandbox=spec.sandbox)
         outcomes: dict[str, GoldenOutcome] = {}
         lost = "worker_lost"

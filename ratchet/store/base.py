@@ -19,15 +19,25 @@ __all__ = ["StoreBase", "write_json_atomic", "read_json"]
 M = TypeVar("M", bound=BaseModel)
 
 
+def _json_text(payload: object) -> str:
+    if isinstance(payload, BaseModel):
+        return payload.model_dump_json(indent=2)
+    return json.dumps(payload, indent=2, sort_keys=True, default=str, ensure_ascii=False)
+
+
 def write_json_atomic(path: Path, payload: object) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     tmp = path.with_name(f".{path.name}.{os.getpid()}.tmp")
-    if isinstance(payload, BaseModel):
-        text = payload.model_dump_json(indent=2)
-    else:
-        text = json.dumps(payload, indent=2, sort_keys=True, default=str, ensure_ascii=False)
-    tmp.write_text(text, encoding="utf-8")
+    tmp.write_text(_json_text(payload), encoding="utf-8")
     tmp.replace(path)
+
+
+def write_json_direct(path: Path, payload: object) -> None:
+    """One plain write, no rename: for object-storage mounts (a Serverless Job's output
+    volume), where a rename leaves the content on the temp name and an empty final object.
+    Readers of these files tolerate a partial read (``parse_progress``, ``read_exit_code``)."""
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(_json_text(payload), encoding="utf-8")
 
 
 def read_json(path: Path) -> object:

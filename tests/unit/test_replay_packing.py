@@ -93,3 +93,18 @@ def test_import_without_result_marks_every_golden_lost(tmp_path, fakes):
     with pytest.raises(NotFoundError):
         import_batch_output(control, out)
     assert isinstance(result, ReplayResult)
+
+
+def test_import_with_an_empty_result_marks_every_golden_lost(tmp_path, fakes):
+    """An object-storage mount can leave ``result.json`` empty: that is a lost worker,
+    never a crash in the collector."""
+    control = Store.open(tmp_path / "control")
+    spec = fakes.make_spec(["run_a", "run_b"])
+    control.save_batch_spec(spec, "nebius")
+    out = tmp_path / "out"
+    out.mkdir()
+    (out / "result.json").write_bytes(b"")
+    (out / "spec.json").write_bytes(b"")
+    result = import_batch_output(control, out, batch_id=spec.batch_id)
+    assert result.status == "failed"
+    assert result.failed_goldens == {"run_a": "worker_lost", "run_b": "worker_lost"}

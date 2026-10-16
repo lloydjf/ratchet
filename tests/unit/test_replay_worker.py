@@ -142,3 +142,29 @@ def test_exit_code_prefers_budget_over_partial(fakes):
     result = worker.build_result(spec, outcomes)
     assert result.failed_goldens == {"a": "budget_exceeded", "b": "worker_lost"}
     assert worker.exit_code_for(result) == worker.EXIT_BUDGET
+
+
+def test_worker_output_survives_a_mount_that_breaks_rename(tmp_path, fakes, settings, monkeypatch):
+    """A Serverless Job's output volume is an object-storage mount: a rename leaves the
+    content on the temp name and an empty final object. Output files are written in place."""
+    import pathlib
+
+    inputs, _store = _batch(tmp_path, fakes, {"run_a": "hello"})
+    out = tmp_path / "mount" / "out"
+    real_replace = pathlib.Path.replace
+
+    def broken_replace(self: pathlib.Path, target):  # type: ignore[no-untyped-def]
+        target = pathlib.Path(target)
+        if out in target.parents or target == out:
+            target.write_bytes(b"")  # what the mount does
+            self.unlink()
+            return target
+        return real_replace(self, target)
+
+    monkeypatch.setattr(pathlib.Path, "replace", broken_replace)
+    code = worker.main(inputs, out, deps=fakes.make_deps(), settings=settings)
+    assert code == 0
+    for name in ("result.json", "exit.json", "progress.json", "spec.json"):
+        assert (out / name).stat().st_size > 0, name
+    assert not list(out.glob(".*.tmp"))
+    assert json.loads((out / "exit.json").read_text())["exit_code"] == 0

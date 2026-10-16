@@ -18,6 +18,8 @@ import shutil
 import tempfile
 from pathlib import Path
 
+from pydantic import ValidationError
+
 from ratchet.errors import NotFoundError
 from ratchet.log import get_logger
 from ratchet.models import LLMCall, ReplayBatch, ReplayResult, ToolCall, Trace
@@ -100,11 +102,15 @@ def pack_batch_inputs(
 
 def _lost_result(store: Store, output_dir: Path, batch_id: str | None) -> ReplayResult:
     spec_path = output_dir / "spec.json"
+    spec: ReplayBatch | None = None
     if spec_path.is_file():
-        spec = ReplayBatch.model_validate_json(spec_path.read_text(encoding="utf-8"))
-    elif batch_id is not None:
+        try:
+            spec = ReplayBatch.model_validate_json(spec_path.read_text(encoding="utf-8"))
+        except ValidationError:
+            spec = None
+    if spec is None and batch_id is not None:
         spec = store.load_batch_spec(batch_id)
-    else:
+    if spec is None:
         raise NotFoundError("worker output has no result.json", code="not_found")
     return ReplayResult(
         batch_id=spec.batch_id,
@@ -149,13 +155,22 @@ def import_batch_output(
 
     ``session_hash`` tags the replays' cost rows for a Simulate session."""
     result_path = output_dir / "result.json"
-    if not result_path.is_file():
+    result: ReplayResult | None = None
+    if result_path.is_file():
+        try:
+            result = ReplayResult.model_validate_json(result_path.read_text(encoding="utf-8"))
+        except ValidationError:
+            _log.warning("replay.import.bad_result", batch_id=batch_id)
+    if result is None:  # missing, empty or truncated: the worker is lost
         result = _lost_result(store, output_dir, batch_id)
-    else:
-        result = ReplayResult.model_validate_json(result_path.read_text(encoding="utf-8"))
     edit_id = None
     if (output_dir / "spec.json").is_file():
-        edit_id = ReplayBatch.model_validate_json((output_dir / "spec.json").read_text()).edit_id
+        try:
+            edit_id = ReplayBatch.model_validate_json(
+                (output_dir / "spec.json").read_text()
+            ).edit_id
+        except ValidationError:
+            edit_id = None
     for trace in result.replays:
         source = output_dir / "replays" / trace.run_id
         if source.is_dir():

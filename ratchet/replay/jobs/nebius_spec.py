@@ -5,7 +5,9 @@ live API: ``args`` is one docker-run argument string (not a list), ``timeout`` i
 string between ``3600s`` and ``604800s``, ``disk.sizeBytes`` is a string of bytes, injected
 file ``content`` is base64 (≤ 64 KiB), and volumes mount either a managed bucket by id
 (``storagebucket-…``, no credentials in the spec) or an external bucket as ``s3://<name>``
-with inline ``s3Config`` credentials.
+with inline ``s3Config`` credentials. The platform ignores ``sourcePath`` on ``s3://``
+volumes (the bucket root is mounted), so the bucket is mounted once, read-write, at
+``/bucket`` and the worker is pointed at the batch prefixes inside it.
 
 ``containerCommand`` is sent only when ``NEBIUS_JOB_CONTAINER_COMMAND`` is set: by default
 the worker image's own entrypoint (``tini -- python /app/worker/entrypoint.py``) runs and
@@ -24,6 +26,7 @@ from ratchet.replay.jobs.base import JobState, job_name
 
 __all__ = [
     "BATCH_LABEL",
+    "BUCKET_MOUNT",
     "CONTAINER_FAILED_EXIT",
     "INJECT_LIMIT",
     "SPEC_PATH",
@@ -42,6 +45,7 @@ __all__ = [
 
 INJECT_LIMIT: Final = 64 * 1024
 SPEC_PATH: Final = "/ratchet/spec.json"
+BUCKET_MOUNT: Final = "/bucket"
 WORKER_SCRIPT: Final = "/app/worker/entrypoint.py"
 TIMEOUT_MIN_S: Final = 3600
 TIMEOUT_MAX_S: Final = 604800
@@ -129,7 +133,7 @@ def _env(settings: Settings, spec: ReplayBatch) -> list[dict[str, str]]:
     return [{"name": k, "value": str(v)} for k, v in sorted(values.items()) if v]
 
 
-def _volumes(settings: Settings, prefix: str) -> list[dict[str, object]]:
+def _volumes(settings: Settings) -> list[dict[str, object]]:
     bucket_id = settings.nebius_s3_bucket_id or (
         settings.nebius_s3_bucket if is_bucket_id(settings.nebius_s3_bucket) else None
     )
@@ -148,10 +152,7 @@ def _volumes(settings: Settings, prefix: str) -> list[dict[str, object]]:
                 },
             },
         }
-    return [
-        {**base, "sourcePath": f"{prefix}in", "containerPath": "/in", "mode": "READ_ONLY"},
-        {**base, "sourcePath": f"{prefix}out", "containerPath": "/out", "mode": "READ_WRITE"},
-    ]
+    return [{**base, "containerPath": BUCKET_MOUNT, "mode": "READ_WRITE"}]
 
 
 def _timeout(timeout_s: int) -> str:
@@ -173,7 +174,8 @@ def build_job_request(
         raise ConfigError(
             "NEBIUS_PROJECT_ID and NEBIUS_S3_BUCKET are required", code="config_error"
         )
-    flags = ["--inputs", "/in", "--output", "/out"]
+    root = f"{BUCKET_MOUNT}/{prefix.strip('/')}"
+    flags = ["--inputs", f"{root}/in", "--output", f"{root}/out"]
     injected: list[dict[str, str]] = []
     if 0 < len(spec_json) <= INJECT_LIMIT:
         injected.append(
@@ -190,7 +192,7 @@ def build_job_request(
         "args": args,
         "environmentVariables": _env(settings, spec),
         "injectedFiles": injected,
-        "volumes": _volumes(settings, prefix),
+        "volumes": _volumes(settings),
         "platform": platform,
         "preset": preset,
         "timeout": _timeout(spec.timeout_s),

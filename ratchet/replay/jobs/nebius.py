@@ -2,10 +2,10 @@
 
 Flow: upload the packed inputs to ``<bucket>/batches/<batch_id>/in/`` → wait for a job slot
 (``SubmitGate``) → ``POST /ai/v1/jobs`` (body from ``nebius_spec.build_job_request``: the
-worker image, the bucket mounted read-only at ``/in`` and read-write at ``/out``,
-``spec.json`` injected as a file) → poll ``GET /ai/v1/jobs/{id}`` (``status.state`` and
-``status.stateDetails.code``) plus the worker's ``progress.json`` / ``exit.json`` in the
-bucket → download ``…/out/`` on fetch.
+worker image, the bucket root mounted read-write at ``/bucket`` with the worker pointed at
+``/bucket/batches/<batch_id>/{in,out}``, ``spec.json`` injected as a file) → poll
+``GET /ai/v1/jobs/{id}`` (``status.state`` and ``status.stateDetails.code``) plus the
+worker's ``progress.json`` / ``exit.json`` in the bucket → download ``…/out/`` on fetch.
 
 Restart safety: the job is named ``ratchet-<batch_id>`` and looked up with
 ``GET /ai/v1/jobs/get-by-name?parentId=&name=`` before create. Every call: 30 s timeout,

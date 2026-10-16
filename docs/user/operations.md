@@ -233,9 +233,11 @@ Related switches:
 ## Serverless Jobs
 
 With `RATCHET_JOB_RUNNER=nebius`, each replay batch is one Nebius Serverless AI Job. The
-inputs go to `<bucket>/batches/<batch_id>/in/`, the job mounts that prefix read-only at
-`/in` and `…/out/` read-write at `/out`, and the orchestrator downloads `out/` when the job
-ends. Jobs are named `ratchet-<batch_id>`, so a restarted orchestrator finds its jobs again
+inputs go to `<bucket>/batches/<batch_id>/in/`. The job mounts the bucket root read-write
+at `/bucket`, and the worker reads `/bucket/batches/<batch_id>/in` and writes
+`/bucket/batches/<batch_id>/out`. The platform ignores `sourcePath` on `s3://` volumes, so
+the job cannot mount the batch prefixes directly. The orchestrator downloads `out/` when the
+job ends. Jobs are named `ratchet-<batch_id>`, so a restarted orchestrator finds its jobs again
 instead of creating duplicates.
 
 - **Bucket.** Set `NEBIUS_S3_BUCKET` to the bucket name (used for uploads and downloads with

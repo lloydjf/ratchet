@@ -57,6 +57,10 @@ JOBSPEC_FIELDS = {
     "registryCredentials", "restartAttempts", "shmSizeBytes", "sshAuthorizedKeys",
     "subnetId", "timeout", "volumes", "workingDir",
 }  # fmt: skip
+ARGS = (
+    "--inputs /bucket/batches/batch_42/in --output /bucket/batches/batch_42/out"
+    " --spec /ratchet/spec.json"
+)
 SPEC_B64 = base64.b64encode(b'{"a":1}').decode()
 
 
@@ -82,23 +86,15 @@ def test_job_request_matches_the_accepted_spec_with_an_external_bucket():
     }
     assert job == {
         "image": "ghcr.io/x/ratchet-worker:sha",
-        "args": "--inputs /in --output /out --spec /ratchet/spec.json",
+        "args": ARGS,
         "injectedFiles": [{"containerPath": "/ratchet/spec.json", "content": SPEC_B64}],
         "volumes": [
             {
                 "source": "s3://ratchet-io",
-                "sourcePath": "batches/batch_42/in",
-                "containerPath": "/in",
-                "mode": "READ_ONLY",
-                "s3Config": s3,
-            },
-            {
-                "source": "s3://ratchet-io",
-                "sourcePath": "batches/batch_42/out",
-                "containerPath": "/out",
+                "containerPath": "/bucket",
                 "mode": "READ_WRITE",
                 "s3Config": s3,
-            },
+            }
         ],
         "platform": "cpu-d3",
         "preset": "2vcpu-8gb",
@@ -123,14 +119,10 @@ def test_job_request_matches_the_accepted_spec_with_an_external_bucket():
 )
 def test_managed_bucket_id_is_mounted_without_credentials(extra):
     body = _body(_settings(**extra))
-    vol_in, vol_out = body["spec"]["volumes"]
-    assert vol_in == {
-        "source": "storagebucket-e00abc",
-        "sourcePath": "batches/batch_42/in",
-        "containerPath": "/in",
-        "mode": "READ_ONLY",
-    }
-    assert vol_out["mode"] == "READ_WRITE" and "s3Config" not in vol_out
+    assert body["spec"]["volumes"] == [
+        {"source": "storagebucket-e00abc", "containerPath": "/bucket", "mode": "READ_WRITE"}
+    ]
+    assert body["spec"]["args"] == ARGS
     assert "s3secret0123456789" not in json.dumps(body["spec"]["volumes"])
 
 
@@ -157,15 +149,13 @@ def test_image_entrypoint_is_kept_unless_a_container_command_is_set():
     assert "containerCommand" not in _body(_settings())["spec"]
     job = _body(_settings(nebius_job_container_command="/app/.venv/bin/python"))["spec"]
     assert job["containerCommand"] == "/app/.venv/bin/python"
-    assert job["args"] == (
-        "/app/worker/entrypoint.py --inputs /in --output /out --spec /ratchet/spec.json"
-    )
+    assert job["args"] == f"/app/worker/entrypoint.py {ARGS}"
 
 
 def test_oversized_spec_is_not_injected():
     body = build_job_request(_settings(), _spec(), prefix="p/", spec_json=b"x" * (64 * 1024 + 1))
     assert body["spec"]["injectedFiles"] == []
-    assert body["spec"]["args"] == "--inputs /in --output /out"
+    assert body["spec"]["args"] == "--inputs /bucket/p/in --output /bucket/p/out"
 
 
 @pytest.mark.parametrize(

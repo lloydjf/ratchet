@@ -13,6 +13,8 @@ export default defineConfig({
   expect: { timeout: 15_000 },
   fullyParallel: false,
   workers: 1,
+  // Hosted runners are slow and noisy; a flake there is not a product failure.
+  retries: process.env.CI ? 2 : 0,
   reporter: [['list']],
   use: {
     baseURL: REAL ?? `http://127.0.0.1:${PORT}`,

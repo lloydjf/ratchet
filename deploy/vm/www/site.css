@@ -117,9 +117,12 @@ img { display: block; }
 .brand-mark { width: 24px; height: 24px; }
 .brand-word { width: auto; height: 16px; }
 .brand > span { font-weight: 600; font-size: 15px; letter-spacing: -0.01em; }
-.topbar nav { display: flex; gap: 24px; }
+.topbar nav { display: flex; align-items: center; gap: 24px; }
 .topbar nav a { color: var(--ink-2); text-decoration: none; font-weight: 500; }
 .topbar nav a:hover { color: var(--ink); }
+.topbar .nav-icon { display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; margin: -8px -8px -8px -4px; border-radius: var(--radius); }
+.topbar .nav-icon svg { display: block; width: 16px; height: 16px; }
+.topbar .nav-icon:focus-visible { outline: 2px solid var(--steel); outline-offset: 0; border-radius: var(--radius); }
 
 main { display: block; }
 main > section {
@@ -154,15 +157,17 @@ main > section {
 .install { margin-top: 40px; padding-top: 24px; border-top: 1px solid var(--line); max-width: 440px; }
 .install-label { color: var(--ink-2); font-size: 12px; line-height: 16px; }
 .cmd {
-  display: flex; align-items: center; gap: 12px;
+  display: flex; align-items: baseline; gap: 12px;
   margin-top: 8px; min-height: 40px; padding: 10px 16px;
   background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius);
-  font: 400 14px/18px var(--mono); overflow-x: auto; white-space: nowrap;
+  font: 400 13px/20px var(--mono);
   cursor: text;
 }
 .cmd:hover { border-color: var(--line-strong); }
 .cmd-prompt { color: var(--ink-2); user-select: none; -webkit-user-select: none; }
-.cmd-text { font-size: inherit; color: var(--ink); user-select: all; -webkit-user-select: all; }
+.cmd-text { min-width: 0; font-size: inherit; color: var(--ink); user-select: all; -webkit-user-select: all; overflow-wrap: anywhere; }
+.cmd-next { margin-top: 16px; background: transparent; border-style: dashed; }
+.cmd-next .cmd-text { color: var(--ink-2); }
 .install-note { margin-top: 8px; color: var(--ink-2); font-size: 12px; line-height: 16px; }
 .install-note a { white-space: nowrap; }
 

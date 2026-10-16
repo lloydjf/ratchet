@@ -1,0 +1,164 @@
+# The 25 demo golden task inputs (docs/design/scenarios-and-simulator.md §2).
+# Recorded and blessed by `ratchet bless --all-demo` through MinimalRunner -> proxy ->
+# (live or sim) -> mock tools in record mode against scenarios/world, frozen at
+# 2026-10-14T16:00:00Z. All data is synthetic.
+#
+# expected_skill: the one skill the MinimalRunner's trigger matcher must inject (null = none).
+# workspace: a directory under scenarios/workspaces/ copied in as the initial workspace.
+frozen_time: "2026-10-14T16:00:00Z"
+world: world
+tasks:
+  # --- github-triage (11 repos; 6 hold an issue untouched for more than 30 days) ----------
+  - task_id: triage-widgets
+    task_label: Triage acme/widgets
+    task_input: Triage the open issues in acme/widgets.
+    expected_skill: github-triage
+    workspace: null
+    canary: false
+  - task_id: triage-billing-api
+    task_label: Triage acme/billing-api
+    task_input: Please triage the open issues in the acme/billing-api backlog.
+    expected_skill: github-triage
+    workspace: null
+    canary: false
+  - task_id: triage-web-dashboard
+    task_label: Triage acme/web-dashboard
+    task_input: Label the new open issues in acme/web-dashboard.
+    expected_skill: github-triage
+    workspace: null
+    canary: false
+  - task_id: triage-mobile-app
+    task_label: Triage acme/mobile-app
+    task_input: Go through the open issues in acme/mobile-app and triage them.
+    expected_skill: github-triage
+    workspace: null
+    canary: false
+  - task_id: triage-docs-site
+    task_label: Triage acme/docs-site
+    task_input: Triage the acme/docs-site GitHub issues.
+    expected_skill: github-triage
+    workspace: null
+    canary: false
+  - task_id: triage-data-pipeline
+    task_label: Triage acme/data-pipeline
+    task_input: Can you triage the open GitHub issues for acme/data-pipeline?
+    expected_skill: github-triage
+    workspace: null
+    canary: false
+  - task_id: triage-auth-service
+    task_label: Triage acme/auth-service
+    task_input: "Sort out the open issues on acme/auth-service: label each one."
+    expected_skill: github-triage
+    workspace: null
+    canary: false
+  - task_id: triage-cli-tools
+    task_label: Triage acme/cli-tools
+    task_input: Triage the open issue backlog of acme/cli-tools.
+    expected_skill: github-triage
+    workspace: null
+    canary: false
+  - task_id: triage-design-system
+    task_label: Triage acme/design-system
+    task_input: Label and triage the open issues in acme/design-system.
+    expected_skill: github-triage
+    workspace: null
+    canary: false
+  - task_id: triage-infra-terraform
+    task_label: Triage acme/infra-terraform
+    task_input: Triage the open issues in acme/infra-terraform before Thursday.
+    expected_skill: github-triage
+    workspace: null
+    canary: false
+  - task_id: triage-search-indexer
+    task_label: Triage acme/search-indexer
+    task_input: Run issue triage on acme/search-indexer and label the open issues.
+    expected_skill: github-triage
+    workspace: null
+    canary: false
+  # --- expense-report (7 tasks; 3 include a layout-B receipt, VAT only in the summary) --
+  - task_id: expenses-berlin-trip
+    task_label: File taxi and hotel receipts
+    task_input: File my receipts taxi-2026-10-01.pdf and hotel-2026-10-02.pdf as expenses.
+    expected_skill: expense-report
+    workspace: null
+    canary: false
+  - task_id: expenses-lunch-train
+    task_label: File lunch and train receipts
+    task_input: "Please file these receipts in the Expenses sheet: lunch-2026-10-03.pdf, train-2026-10-03.pdf."
+    expected_skill: expense-report
+    workspace: null
+    canary: false
+  - task_id: expenses-conference
+    task_label: File the conference ticket receipt
+    task_input: File the receipt conference-2026-10-05.pdf as an expense.
+    expected_skill: expense-report
+    workspace: null
+    canary: false
+  - task_id: expenses-office-supplies
+    task_label: File the office supplies receipt
+    task_input: Add the receipt office-supplies-2026-10-06.pdf to my expenses.
+    expected_skill: expense-report
+    workspace: null
+    canary: false
+  - task_id: expenses-dinner-parking
+    task_label: File dinner and parking receipts
+    task_input: File the receipts dinner-2026-10-07.pdf and parking-2026-10-07.pdf in the Expenses sheet.
+    expected_skill: expense-report
+    workspace: null
+    canary: false
+  - task_id: expenses-coworking-courier
+    task_label: File coworking and courier receipts
+    task_input: File coworking-2026-10-08.pdf and courier-2026-10-09.pdf as expense receipts.
+    expected_skill: expense-report
+    workspace: null
+    canary: false
+  - task_id: expenses-software
+    task_label: File the software subscription receipt
+    task_input: File receipt software-2026-10-10.pdf in the Expenses spreadsheet.
+    expected_skill: expense-report
+    workspace: null
+    canary: false
+  # --- fx-expense-converter (4 tasks; EUR/USD recorded as 1.0800 on 2026-10-14) ----------
+  - task_id: fx-berlin-trip
+    task_label: Convert Berlin trip costs to USD
+    task_input: "Convert my Berlin trip amounts to US dollars at the 2026-10-14 exchange rate and log them: taxi 50.00 EUR, hotel 350.00 EUR"
+    expected_skill: fx-expense-converter
+    workspace: null
+    canary: false
+  - task_id: fx-hamburg-conference
+    task_label: Convert Hamburg conference costs to USD
+    task_input: "Convert the Hamburg conference amounts to US dollars at today's exchange rate and log them: ticket 500.00 EUR, dinner 125.00 EUR, parking 19.00 EUR"
+    expected_skill: fx-expense-converter
+    workspace: null
+    canary: false
+  - task_id: fx-software
+    task_label: Convert the software subscription to USD
+    task_input: "Convert this amount to US dollars with the exchange rate for 2026-10-14 and log it: software subscription 117.81 EUR"
+    expected_skill: fx-expense-converter
+    workspace: null
+    canary: false
+  - task_id: fx-coworking-courier
+    task_label: Convert coworking and courier to USD
+    task_input: "What are these amounts in US dollars at the 2026-10-14 exchange rate? Convert and log them: coworking pass 30.00 EUR, courier 23.80 EUR"
+    expected_skill: fx-expense-converter
+    workspace: null
+    canary: false
+  # --- canaries (no skill; always replayed) ---------------------------------------------
+  - task_id: canary-formal-rewrite
+    task_label: Rewrite a sentence formally
+    task_input: "Rewrite this sentence formally: hey guys, we can't ship the update today 'cause the tests are kinda broken."
+    expected_skill: null
+    workspace: null
+    canary: true
+  - task_id: canary-percent
+    task_label: Compute 17% of 240
+    task_input: What is 17% of 240?
+    expected_skill: null
+    workspace: null
+    canary: true
+  - task_id: canary-summary
+    task_label: Summarize a short note
+    task_input: "Summarize this note: The quarterly offsite moves from Thursday to Friday because the venue double-booked the room. Lunch is still included, and the agenda stays the same."
+    expected_skill: null
+    workspace: null
+    canary: true

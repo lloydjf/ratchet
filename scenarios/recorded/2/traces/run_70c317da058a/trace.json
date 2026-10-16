@@ -1,0 +1,142 @@
+{
+  "run_id": "run_70c317da058a",
+  "kind": "golden",
+  "task_input": "Add the receipt office-supplies-2026-10-06.pdf to my expenses.",
+  "steps": [
+    {
+      "kind": "llm",
+      "step_id": "m001",
+      "tier": "super",
+      "model": "nvidia/nemotron-3-super-120b-a12b",
+      "request_hash": "e341df2835d2a06df50db00712fa13dd830423a2efdc346af163702570b130f3",
+      "messages_ref": "steps/m001.req.json",
+      "response_ref": "steps/m001.res.json",
+      "prompt_tokens": 3947,
+      "completion_tokens": 71,
+      "usd": 0.001248,
+      "latency_ms": 1068,
+      "started_at": "2026-10-16T06:23:54.952453Z",
+      "purpose": "agent",
+      "api": "chat",
+      "usage_estimated": false,
+      "tool_calls_requested": [
+        "receipts.parse"
+      ],
+      "content_preview": "I'll help you file the office supplies receipt to your expenses. Let me parse the receipt first and then append it to the Expenses sheet."
+    },
+    {
+      "kind": "tool",
+      "step_id": "t001",
+      "tool": "receipts.parse",
+      "args_norm": {
+        "file": "office-supplies-2026-10-06.pdf"
+      },
+      "args_hash": "2ba8cd0a14f0bf28d4c5a99a2e1983d56f5bce8e9e32953cc3e8f78357fa13ab",
+      "result_hash": "5b6a1ba32145be2f2ffdafcf5b63b5179f153ffed66bd273e3efc4f134c4160d",
+      "side_effect": "read",
+      "source": "live",
+      "cassette_key": "2ba8cd0a14f0bf28d4c5a99a2e1983d56f5bce8e9e32953cc3e8f78357fa13ab",
+      "result_preview": "{\"address\":\"Kantstr. 77, Berlin\",\"currency\":\"EUR\",\"date\":\"2026-10-06\",\"file\":\"office-supplies-2026-10-06.pdf\",\"layout\":\"B\",\"lines\":[{\"amount\":14.7,\"description\":\"Notebook A5\",\"quantity\":3.0,\"unit_price\":4.9},{\"amount\":12.9,\"description\":\"Gel pens, pack of 5\",\"quantity\":2.0,\"unit_price\":6.45},{\"amount\":19.9,\"description\":\"Desk organizer\",\"quantity\":1.0,\"unit_price\":19.9}],\"merchant\":\"Papeterie Lin…",
+      "blocked": false,
+      "started_at": "2026-10-16T06:23:56.033177Z"
+    },
+    {
+      "kind": "llm",
+      "step_id": "m002",
+      "tier": "super",
+      "model": "nvidia/nemotron-3-super-120b-a12b",
+      "request_hash": "dfc45f17a40ee635e0af8d81e0e77e30d7ed30d64169a64260faec30cc04e708",
+      "messages_ref": "steps/m002.req.json",
+      "response_ref": "steps/m002.res.json",
+      "prompt_tokens": 4308,
+      "completion_tokens": 101,
+      "usd": 0.0013832999999999999,
+      "latency_ms": 1266,
+      "started_at": "2026-10-16T06:23:56.034864Z",
+      "purpose": "agent",
+      "api": "chat",
+      "usage_estimated": false,
+      "tool_calls_requested": [
+        "sheets.append"
+      ],
+      "content_preview": "Now I'll append this receipt to the Expenses sheet:"
+    },
+    {
+      "kind": "tool",
+      "step_id": "t002",
+      "tool": "sheets.append",
+      "args_norm": {
+        "rows": [
+          [
+            "2026-10-06",
+            "Papeterie Lindner",
+            "47.5",
+            "EUR",
+            "7.58",
+            "office-supplies-2026-10-06.pdf"
+          ]
+        ],
+        "sheet": "Expenses"
+      },
+      "args_hash": "06c6852c22b4a3017f6555cde8d72afe56838dc75f8a1f4dc5044026fc7be326",
+      "result_hash": "25a57c53c312d7cd96aed0fc2099240c15857c4b705f25d8dc7eae6365d89fa7",
+      "side_effect": "write_reversible",
+      "source": "live",
+      "cassette_key": "06c6852c22b4a3017f6555cde8d72afe56838dc75f8a1f4dc5044026fc7be326",
+      "result_preview": "{\"appended\":1,\"sheet\":\"Expenses\",\"total_rows\":3}",
+      "blocked": false,
+      "started_at": "2026-10-16T06:23:57.315186Z"
+    },
+    {
+      "kind": "llm",
+      "step_id": "m003",
+      "tier": "super",
+      "model": "nvidia/nemotron-3-super-120b-a12b",
+      "request_hash": "d444f152d36d4eae075d028dfbade13a3e6bbdc610fc2cf43e5c18c2296c938c",
+      "messages_ref": "steps/m003.req.json",
+      "response_ref": "steps/m003.res.json",
+      "prompt_tokens": 4446,
+      "completion_tokens": 65,
+      "usd": 0.0013923,
+      "latency_ms": 989,
+      "started_at": "2026-10-16T06:23:57.318952Z",
+      "purpose": "agent",
+      "api": "chat",
+      "usage_estimated": false,
+      "tool_calls_requested": [],
+      "content_preview": "Merchant: Papeterie Lindner\nDate: 2026-10-06\nTotal: 47.5 EUR\nVAT: 7.58 EUR\n\nGrand total: 47.5 EUR\nFiled 1 receipts to the Expenses sheet."
+    }
+  ],
+  "final_output": "Merchant: Papeterie Lindner\nDate: 2026-10-06\nTotal: 47.5 EUR\nVAT: 7.58 EUR\n\nGrand total: 47.5 EUR\nFiled 1 receipts to the Expenses sheet.",
+  "artifacts_ref": null,
+  "skills_invoked": [
+    "expense-report"
+  ],
+  "world_dependent": false,
+  "world_facts": [],
+  "env": {
+    "workspace_ref": "workspace.tar.zst",
+    "frozen_time": "2026-10-14T16:00:00Z",
+    "harness_version": "minimal/0.1.0",
+    "skills_commit": "dda8ffcb2837fa255c23f29889f82e6f4976ba33",
+    "world_ref": null
+  },
+  "agent_tier": "super",
+  "seed": 493819585,
+  "created_at": "2026-10-16T06:23:58.347991Z",
+  "golden_of": null,
+  "candidate_commit": null,
+  "success_criteria": [
+    "states the merchant as Papeterie Lindner",
+    "states the date as 2026-10-06",
+    "states the total as 47.5 EUR",
+    "states the VAT as 7.58 EUR",
+    "states the grand total as 47.5 EUR",
+    "filed 1 receipts to the Expenses sheet"
+  ],
+  "archived_reason": null,
+  "blessed_at": "2026-10-16T06:23:59.819981Z",
+  "harness_ok": true,
+  "error_code": null,
+  "task_label": "File the office supplies receipt"
+}

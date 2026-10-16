@@ -1,0 +1,16 @@
+{
+  "edit_id": "edit_76334528a026",
+  "commit": "a9d289c704a79f8c341bd3baa2b56179bc10494e",
+  "parent": "dda8ffcb2837fa255c23f29889f82e6f4976ba33",
+  "files": [
+    "fx-expense-converter/SKILL.md"
+  ],
+  "diff_ref": "edits/edit_76334528a026/diff.patch",
+  "affected_skills": [
+    "fx-expense-converter"
+  ],
+  "author": "seeded",
+  "detected_at": "2026-10-16T06:26:13.451652Z",
+  "summary": "fx-expense-converter: SKILL.md changed (+9 −9)",
+  "session_hash": "6ff4c8e22579d667"
+}

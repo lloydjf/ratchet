@@ -1,0 +1,126 @@
+# /etc/caddy/Caddyfile — public entry for the Ratchet demo host (installed by bootstrap.sh).
+#
+# Values come from the caddy unit's environment, set by bootstrap.sh in
+# /etc/systemd/system/caddy.service.d/ratchet.conf:
+#   RATCHET_SITE_ADDRESS   host of RATCHET_PUBLIC_URL, e.g. ratchet.example.com
+#                          (a bare host => automatic HTTPS, HTTP->HTTPS redirect, renewals)
+#   RATCHET_UPSTREAM_ADDR  127.0.0.1:8080, or a standby VM during failover.sh proxy-to
+# ACME account email is optional (Caddy renews on its own); to get expiry notices add
+# `email you@example.com` as the first line of the global options block below.
+#
+# Static fallback: served automatically when the app answers 502/503/504 or
+# is unreachable, and for every request while /etc/caddy/ratchet-fallback.enabled exists
+# (deploy/vm/failover.sh fallback on|off — no reload needed). /healthz is never masked by
+# the fallback, so the external uptime monitor still sees the outage.
+{
+	servers {
+		# The SSE stream holds connections open; do not let idle timeouts cut it.
+		timeouts {
+			read_header 10s
+			idle 5m
+		}
+	}
+	log default {
+		output stdout
+		format json
+	}
+}
+
+(security_headers) {
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "DENY"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		Permissions-Policy "camera=(), microphone=(), geolocation=(), interest-cohort=()"
+		Cross-Origin-Opener-Policy "same-origin"
+		Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:; connect-src 'self'; frame-src https://www.youtube-nocookie.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self'"
+		-Server
+		-Via
+	}
+}
+
+{$RATCHET_SITE_ADDRESS} {
+	import security_headers
+	encode zstd gzip
+
+	# No API route takes more than a small JSON body (actions, demo events, criteria);
+	# the app enforces the same limit (ratchet_api_max_body_bytes, 413 payload_too_large).
+	request_body {
+		max_size 64KB
+	}
+
+	# Access log without query strings (session ids, `since`, tokens never reach a log):
+	# the URI is rewritten to the path only, and request headers/cookies are dropped.
+	log {
+		output file /var/log/caddy/ratchet-access.log {
+			roll_size 50MiB
+			roll_keep 5
+			roll_keep_for 168h
+		}
+		format filter {
+			wrap json
+			fields {
+				request>uri regexp \?.*$ ""
+				request>headers delete
+				request>remote_ip ip_mask 16 32
+				request>client_ip ip_mask 16 32
+				resp_headers delete
+			}
+		}
+	}
+
+	@fallback_on file {
+		root /etc/caddy
+		try_files ratchet-fallback.enabled
+	}
+
+	handle /healthz {
+		reverse_proxy {$RATCHET_UPSTREAM_ADDR:127.0.0.1:8080} {
+			lb_try_duration 2s
+		}
+	}
+
+	handle @fallback_on {
+		root * /var/www/ratchet-fallback
+		rewrite * /index.html
+		header Cache-Control "no-store"
+		file_server
+	}
+
+	# /metrics is for the VM (alerts.sh reads it on 127.0.0.1), not the internet.
+	handle /metrics {
+		respond "Not found" 404
+	}
+
+	# SSE (GET /api/v1/events/stream, /api alias per ADR 0019): unbuffered, no read timeout.
+	@sse path /api/v1/events/stream /api/events/stream
+	handle @sse {
+		reverse_proxy {$RATCHET_UPSTREAM_ADDR:127.0.0.1:8080} {
+			flush_interval -1
+			transport http {
+				read_timeout 0
+			}
+		}
+	}
+
+	handle {
+		reverse_proxy {$RATCHET_UPSTREAM_ADDR:127.0.0.1:8080} {
+			flush_interval -1
+			lb_try_duration 5s
+		}
+	}
+
+	handle_errors 502 503 504 {
+		@health path /healthz
+		handle @health {
+			respond "upstream down" 503
+		}
+		handle {
+			root * /var/www/ratchet-fallback
+			rewrite * /index.html
+			header Cache-Control "no-store"
+			file_server
+		}
+	}
+}

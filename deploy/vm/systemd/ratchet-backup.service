@@ -1,0 +1,10 @@
+[Unit]
+Description=Ratchet nightly backup (data + skills, 14-day retention)
+Documentation=file:///opt/ratchet/docs/RUNBOOK.md
+
+[Service]
+Type=oneshot
+EnvironmentFile=/etc/ratchet/env
+ExecStart=/opt/ratchet/deploy/vm/backup.sh
+Nice=10
+IOSchedulingClass=idle

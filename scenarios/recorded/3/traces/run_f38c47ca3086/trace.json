@@ -1,0 +1,49 @@
+{
+  "run_id": "run_f38c47ca3086",
+  "kind": "replay",
+  "task_input": "What is 17% of 240?",
+  "steps": [
+    {
+      "kind": "llm",
+      "step_id": "m001",
+      "tier": "super",
+      "model": "nvidia/nemotron-3-super-120b-a12b",
+      "request_hash": "d3e8ef954e91c8c54fef0c8971a0f9e6e8b4ea99902677504ca1a6ed2422df30",
+      "messages_ref": "steps/m001.req.json",
+      "response_ref": "steps/m001.res.json",
+      "prompt_tokens": 3539,
+      "completion_tokens": 63,
+      "usd": 0.0011184,
+      "latency_ms": 1005,
+      "started_at": "2026-10-16T06:26:16.462692Z",
+      "purpose": "agent",
+      "api": "chat",
+      "usage_estimated": false,
+      "tool_calls_requested": [],
+      "content_preview": "To find 17% of 240, multiply 240 by 0.17:\n\n\\[\n240 \\times 0.17 = 40.8\n\\]\n\nSo, **17% of 240 is 40.8**."
+    }
+  ],
+  "final_output": "To find 17% of 240, multiply 240 by 0.17:\n\n\\[\n240 \\times 0.17 = 40.8\n\\]\n\nSo, **17% of 240 is 40.8**.",
+  "artifacts_ref": null,
+  "skills_invoked": [],
+  "world_dependent": false,
+  "world_facts": [],
+  "env": {
+    "workspace_ref": "workspace.tar.zst",
+    "frozen_time": "2026-10-14T16:00:00Z",
+    "harness_version": "minimal/0.1.0",
+    "skills_commit": "a9d289c704a79f8c341bd3baa2b56179bc10494e",
+    "world_ref": "overlays/3-live-1.1196"
+  },
+  "agent_tier": "super",
+  "seed": 560916868,
+  "created_at": "2026-10-16T06:26:17.533270Z",
+  "golden_of": "run_3423fd4b299a",
+  "candidate_commit": "a9d289c704a79f8c341bd3baa2b56179bc10494e",
+  "success_criteria": [],
+  "archived_reason": null,
+  "blessed_at": null,
+  "harness_ok": true,
+  "error_code": null,
+  "task_label": "Compute 17% of 240"
+}

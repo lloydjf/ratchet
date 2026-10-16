@@ -1,0 +1,142 @@
+{
+  "run_id": "run_76ecacfc70a6",
+  "kind": "golden",
+  "task_input": "File the receipt conference-2026-10-05.pdf as an expense.",
+  "steps": [
+    {
+      "kind": "llm",
+      "step_id": "m001",
+      "tier": "super",
+      "model": "nvidia/nemotron-3-super-120b-a12b",
+      "request_hash": "4fb5289f20943ee85f402cadab4dc91092bb1d94436d0f842120034cc526d389",
+      "messages_ref": "steps/m001.req.json",
+      "response_ref": "steps/m001.res.json",
+      "prompt_tokens": 3944,
+      "completion_tokens": 62,
+      "usd": 0.001239,
+      "latency_ms": 716,
+      "started_at": "2026-10-16T06:23:49.740094Z",
+      "purpose": "agent",
+      "api": "chat",
+      "usage_estimated": false,
+      "tool_calls_requested": [
+        "receipts.parse"
+      ],
+      "content_preview": "I'll help you file the receipt as an expense by parsing it and adding it to the Expenses sheet."
+    },
+    {
+      "kind": "tool",
+      "step_id": "t001",
+      "tool": "receipts.parse",
+      "args_norm": {
+        "file": "conference-2026-10-05.pdf"
+      },
+      "args_hash": "02e828e5b1e055e45c8b74a260b2c628803d32b1b0f084e23b96e6af53789210",
+      "result_hash": "99ed22aa21dfa26465c993ee0fd7aca6eb5a2d8bcf411cd8ab2483f5077a0281",
+      "side_effect": "read",
+      "source": "live",
+      "cassette_key": "02e828e5b1e055e45c8b74a260b2c628803d32b1b0f084e23b96e6af53789210",
+      "result_preview": "{\"address\":\"Messeweg 5, Hamburg\",\"currency\":\"EUR\",\"date\":\"2026-10-05\",\"file\":\"conference-2026-10-05.pdf\",\"layout\":\"A\",\"lines\":[{\"amount\":420.17,\"description\":\"Conference ticket, 2 days\",\"quantity\":1.0,\"unit_price\":420.17},{\"amount\":79.83,\"description\":\"VAT 19%\",\"quantity\":1.0,\"unit_price\":79.83}],\"merchant\":\"DevSummit Europe\",\"subtotal\":420.17,\"total\":500.0,\"vat\":79.83,\"vat_rate\":0.19}",
+      "blocked": false,
+      "started_at": "2026-10-16T06:23:50.473798Z"
+    },
+    {
+      "kind": "llm",
+      "step_id": "m002",
+      "tier": "super",
+      "model": "nvidia/nemotron-3-super-120b-a12b",
+      "request_hash": "4fe617d747aa6ced6422df8f7a8c10e39c5b63af4dbbaf1273e7dce72da5bec4",
+      "messages_ref": "steps/m002.req.json",
+      "response_ref": "steps/m002.res.json",
+      "prompt_tokens": 4219,
+      "completion_tokens": 101,
+      "usd": 0.0013566000000000001,
+      "latency_ms": 1046,
+      "started_at": "2026-10-16T06:23:50.477272Z",
+      "purpose": "agent",
+      "api": "chat",
+      "usage_estimated": false,
+      "tool_calls_requested": [
+        "sheets.append"
+      ],
+      "content_preview": "Now I'll append this receipt to the Expenses sheet:"
+    },
+    {
+      "kind": "tool",
+      "step_id": "t002",
+      "tool": "sheets.append",
+      "args_norm": {
+        "rows": [
+          [
+            "2026-10-05",
+            "DevSummit Europe",
+            "500.00",
+            "EUR",
+            "79.83",
+            "conference-2026-10-05.pdf"
+          ]
+        ],
+        "sheet": "Expenses"
+      },
+      "args_hash": "1b8612d79fc131061985c6ae7c6c83f355fd99ae46d587eeb57857c831642cd5",
+      "result_hash": "25a57c53c312d7cd96aed0fc2099240c15857c4b705f25d8dc7eae6365d89fa7",
+      "side_effect": "write_reversible",
+      "source": "live",
+      "cassette_key": "1b8612d79fc131061985c6ae7c6c83f355fd99ae46d587eeb57857c831642cd5",
+      "result_preview": "{\"appended\":1,\"sheet\":\"Expenses\",\"total_rows\":3}",
+      "blocked": false,
+      "started_at": "2026-10-16T06:23:51.535077Z"
+    },
+    {
+      "kind": "llm",
+      "step_id": "m003",
+      "tier": "super",
+      "model": "nvidia/nemotron-3-super-120b-a12b",
+      "request_hash": "8c90528fb21def23a594788d67e8a06aaac40c0ab872f9bbab570aefd72786ac",
+      "messages_ref": "steps/m003.req.json",
+      "response_ref": "steps/m003.res.json",
+      "prompt_tokens": 4357,
+      "completion_tokens": 69,
+      "usd": 0.0013691999999999999,
+      "latency_ms": 1115,
+      "started_at": "2026-10-16T06:23:51.538465Z",
+      "purpose": "agent",
+      "api": "chat",
+      "usage_estimated": false,
+      "tool_calls_requested": [],
+      "content_preview": "Merchant: DevSummit Europe\nDate: 2026-10-05\nTotal: 500.00 EUR\nVAT: 79.83 EUR\n\nGrand total: 500.00 EUR\nFiled 1 receipts to the Expenses sheet."
+    }
+  ],
+  "final_output": "Merchant: DevSummit Europe\nDate: 2026-10-05\nTotal: 500.00 EUR\nVAT: 79.83 EUR\n\nGrand total: 500.00 EUR\nFiled 1 receipts to the Expenses sheet.",
+  "artifacts_ref": null,
+  "skills_invoked": [
+    "expense-report"
+  ],
+  "world_dependent": false,
+  "world_facts": [],
+  "env": {
+    "workspace_ref": "workspace.tar.zst",
+    "frozen_time": "2026-10-14T16:00:00Z",
+    "harness_version": "minimal/0.1.0",
+    "skills_commit": "dda8ffcb2837fa255c23f29889f82e6f4976ba33",
+    "world_ref": null
+  },
+  "agent_tier": "super",
+  "seed": 1080602208,
+  "created_at": "2026-10-16T06:23:52.688572Z",
+  "golden_of": null,
+  "candidate_commit": null,
+  "success_criteria": [
+    "states the merchant as DevSummit Europe",
+    "states the date as 2026-10-05",
+    "states the total as 500.00 EUR",
+    "states the VAT as 79.83 EUR",
+    "states the grand total as 500.00 EUR",
+    "files 1 receipt to the Expenses sheet"
+  ],
+  "archived_reason": null,
+  "blessed_at": "2026-10-16T06:23:54.926415Z",
+  "harness_ok": true,
+  "error_code": null,
+  "task_label": "File the conference ticket receipt"
+}

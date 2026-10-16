@@ -1,0 +1,28 @@
+# Synthetic results served in replay mode on a cassette miss.
+#
+# Read-class misses get an "empty world" answer so the agent can continue; these are NOT
+# unexpected side effects. write_reversible misses get a plausible success so the run
+# finishes, but they ARE logged as unexpected. Hard classes (write_irreversible,
+# destructive, external_send, spend) never get a synthetic result: they are answered
+# 409 ratchet_blocked.
+#
+# Values are JSON-compatible. A string value of exactly "{{arg:<name>}}" is replaced by
+# that call argument (after normalization) or null. `default_read` / `default_write`
+# apply to tools without an entry.
+
+default_read: {}
+default_write: {status: ok}
+
+tools:
+  github.list_issues: {repo: "{{arg:repo}}", issues: []}
+  github.label: {repo: "{{arg:repo}}", issue: "{{arg:issue}}", labels: "{{arg:labels}}"}
+  gmail.search: {query: "{{arg:query}}", messages: []}
+  receipts.parse: {file: "{{arg:file}}", lines: []}
+  sheets.read: {sheet: "{{arg:sheet}}", header: [], rows: []}
+  sheets.append: {sheet: "{{arg:sheet}}", appended: 0}
+  finance.rate: {base: "{{arg:base}}", quote: "{{arg:quote}}", rate: null}
+  calendar.freebusy: {start: "{{arg:start}}", end: "{{arg:end}}", busy: {}}
+  git.log: {repo: "{{arg:repo}}", commits: []}
+  web.search: {query: "{{arg:query}}", results: []}
+  web.fetch: {url: "{{arg:url}}", title: "", text: ""}
+  time.now: {now: null}

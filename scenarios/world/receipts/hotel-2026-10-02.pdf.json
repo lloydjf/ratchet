@@ -1,0 +1,25 @@
+{
+  "merchant": "Hotel Spreeblick",
+  "date": "2026-10-02",
+  "currency": "EUR",
+  "layout": "A",
+  "address": "Am Ufer 12, Berlin",
+  "lines": [
+    {
+      "description": "Room, 2 nights",
+      "quantity": 2,
+      "unit_price": 163.55,
+      "amount": 327.1
+    },
+    {
+      "description": "VAT 7%",
+      "quantity": 1,
+      "unit_price": 22.9,
+      "amount": 22.9
+    }
+  ],
+  "subtotal": 327.1,
+  "vat": 22.9,
+  "vat_rate": 0.07,
+  "total": 350.0
+}

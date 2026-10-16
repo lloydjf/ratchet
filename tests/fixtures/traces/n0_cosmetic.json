@@ -1,0 +1,148 @@
+{
+  "category": "N0",
+  "expect": {
+    "hard_fail": false,
+    "n_changed": 0,
+    "n_missing": 0,
+    "n_new": 0
+  },
+  "golden": {
+    "agent_tier": "super",
+    "archived_reason": null,
+    "artifacts_ref": null,
+    "blessed_at": null,
+    "candidate_commit": null,
+    "created_at": "2026-10-14T09:00:00Z",
+    "env": {
+      "frozen_time": "2026-10-14T09:00:00Z",
+      "harness_version": "minimal/0.1.0",
+      "skills_commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "workspace_ref": "traces/run_n0_cosmetic_g/workspace.tar.zst",
+      "world_ref": null
+    },
+    "error_code": null,
+    "final_output": "Added ## Week 42 to CHANGELOG.md with #41 and #42.",
+    "golden_of": null,
+    "harness_ok": true,
+    "kind": "golden",
+    "run_id": "run_n0_cosmetic_g",
+    "seed": 7,
+    "skills_invoked": [
+      "changelog-writer"
+    ],
+    "steps": [
+      {
+        "args_hash": "a3a1565ee4be06d9cebe31e12581420e3534b74e7d2c510a1f3b8bb710f1d5a5",
+        "args_norm": {
+          "since": "7d"
+        },
+        "blocked": false,
+        "cassette_key": null,
+        "kind": "tool",
+        "result_hash": "d0b97569245fdb5c51296ba244c07cc1ca6bae65e51a005f5ae06f02e23a7d5e",
+        "result_preview": "#41 Fix login\n#42 Add export",
+        "side_effect": "read",
+        "source": "cassette",
+        "started_at": "2026-10-14T09:00:00Z",
+        "step_id": "t001",
+        "tool": "git.log"
+      },
+      {
+        "args_hash": "2ecf8a14b46ca3189725e1f556366a70c78d8073ffb7e3f8b06c1bc2a6e6f1ed",
+        "args_norm": {
+          "content": "## Week 42\n- #41\n- #42",
+          "path": "CHANGELOG.md"
+        },
+        "blocked": false,
+        "cassette_key": null,
+        "kind": "tool",
+        "result_hash": null,
+        "result_preview": "",
+        "side_effect": "write_reversible",
+        "source": "local",
+        "started_at": "2026-10-14T09:00:00Z",
+        "step_id": "t002",
+        "tool": "fs.write"
+      }
+    ],
+    "success_criteria": [
+      "CHANGELOG.md has a Week 42 section",
+      "Lists PRs #41 and #42"
+    ],
+    "task_input": "Summarize this week's merged PRs into CHANGELOG.md.",
+    "task_label": "Week 42 changelog",
+    "world_dependent": false,
+    "world_facts": []
+  },
+  "name": "n0_cosmetic",
+  "replay": {
+    "agent_tier": "super",
+    "archived_reason": null,
+    "artifacts_ref": null,
+    "blessed_at": null,
+    "candidate_commit": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "created_at": "2026-10-14T09:00:00Z",
+    "env": {
+      "frozen_time": "2026-10-14T09:00:00Z",
+      "harness_version": "minimal/0.1.0",
+      "skills_commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "workspace_ref": "traces/run_n0_cosmetic_r/workspace.tar.zst",
+      "world_ref": null
+    },
+    "error_code": null,
+    "final_output": "CHANGELOG.md now has a Week 42 section listing #41 and #42.",
+    "golden_of": "run_n0_cosmetic_g",
+    "harness_ok": true,
+    "kind": "replay",
+    "run_id": "run_n0_cosmetic_r",
+    "seed": 7,
+    "skills_invoked": [
+      "changelog-writer"
+    ],
+    "steps": [
+      {
+        "args_hash": "a3a1565ee4be06d9cebe31e12581420e3534b74e7d2c510a1f3b8bb710f1d5a5",
+        "args_norm": {
+          "since": "7d"
+        },
+        "blocked": false,
+        "cassette_key": null,
+        "kind": "tool",
+        "result_hash": "d0b97569245fdb5c51296ba244c07cc1ca6bae65e51a005f5ae06f02e23a7d5e",
+        "result_preview": "#41 Fix login\n#42 Add export",
+        "side_effect": "read",
+        "source": "cassette",
+        "started_at": "2026-10-14T09:00:00Z",
+        "step_id": "t001",
+        "tool": "git.log"
+      },
+      {
+        "args_hash": "2ecf8a14b46ca3189725e1f556366a70c78d8073ffb7e3f8b06c1bc2a6e6f1ed",
+        "args_norm": {
+          "content": "## Week 42\n- #41\n- #42",
+          "path": "CHANGELOG.md"
+        },
+        "blocked": false,
+        "cassette_key": null,
+        "kind": "tool",
+        "result_hash": null,
+        "result_preview": "",
+        "side_effect": "write_reversible",
+        "source": "local",
+        "started_at": "2026-10-14T09:00:00Z",
+        "step_id": "t002",
+        "tool": "fs.write"
+      }
+    ],
+    "success_criteria": [
+      "CHANGELOG.md has a Week 42 section",
+      "Lists PRs #41 and #42"
+    ],
+    "task_input": "Summarize this week's merged PRs into CHANGELOG.md.",
+    "task_label": "Week 42 changelog",
+    "world_dependent": false,
+    "world_facts": []
+  },
+  "skill_diff": "--- a/changelog-writer/SKILL.md\n+++ b/changelog-writer/SKILL.md\n@@ -4,1 +4,1 @@\n-Be concise.\n+Keep it short.\n",
+  "unexpected": []
+}

@@ -1,0 +1,19 @@
+{
+  "query": "USD to EUR exchange rate today",
+  "response_time": 1.2,
+  "results": [
+    {
+      "title": "USD to EUR rate - Example FX",
+      "url": "https://fx.example.com/usd-eur",
+      "content": "1 USD = 0.95 EUR as of 2026-10-15. The euro weakened over the week.",
+      "score": 0.91,
+      "published_date": "2026-10-15"
+    },
+    {
+      "title": "Dollar climbs against euro",
+      "url": "https://news.example.com/fx",
+      "content": "The dollar rose to 0.95 euros on Wednesday.",
+      "score": 0.84
+    }
+  ]
+}

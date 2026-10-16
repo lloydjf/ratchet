@@ -1,0 +1,17 @@
+{
+  "properties": {
+    "criteria": {
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 6,
+      "title": "Criteria",
+      "type": "array"
+    }
+  },
+  "required": [
+    "criteria"
+  ],
+  "title": "CriteriaOut",
+  "type": "object"
+}

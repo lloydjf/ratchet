@@ -1,0 +1,12 @@
+# A cron that reads metrics: every 2 minutes. The external uptime monitor
+# (deploy/vm/uptime.md) is still the primary "demo down" alert; this one sees inside.
+[Unit]
+Description=Ratchet alert checks every 2 minutes
+
+[Timer]
+OnBootSec=3min
+OnUnitActiveSec=2min
+AccuracySec=15s
+
+[Install]
+WantedBy=timers.target

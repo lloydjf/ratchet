@@ -1,0 +1,913 @@
+{
+  "verdict_id": "verdict_8796c4358b15",
+  "edit_id": "edit_8796c4358b15",
+  "pairs": [
+    {
+      "golden_run_id": "run_d17682926c5f",
+      "replay_run_id": "run_4d79265a4513",
+      "level0": {
+        "golden_run_id": "run_d17682926c5f",
+        "replay_run_id": "run_4d79265a4513",
+        "new_calls": [],
+        "missing_calls": [],
+        "changed_args": [],
+        "hard_fail": false,
+        "missing_hard": false
+      },
+      "opinions": [
+        {
+          "tier": "nano",
+          "verdict": "equivalent",
+          "confidence": 0.95,
+          "reasons": [
+            "All required fields are present and match the success criteria: merchant, date, total, VAT, grand total, and filing count.",
+            "The output text is identical except for a minor grammatical change ('receipts' → 'receipt') which does not affect the meaning of the criterion.",
+            "The same tool calls (t001 receipts.parse, t002 sheets.append) are used, indicating no change in processing logic."
+          ],
+          "evidence_steps": [
+            "t001",
+            "t002"
+          ],
+          "usd": 0.00009366,
+          "prompt_hash": "9879b836e004ed79fc44c1cbc411708846b0245070e97352509ba49937e3931a",
+          "truncated": false,
+          "criteria_met": [],
+          "causal_explanation": null,
+          "possible_drift_fact": null,
+          "failure_summary": null,
+          "prompt_tokens": 977,
+          "completion_tokens": 146
+        }
+      ],
+      "drift": [],
+      "outcome": "pass",
+      "usd": 0.00009366,
+      "error_code": null,
+      "task_input": "File receipt software-2026-10-10.pdf in the Expenses spreadsheet.",
+      "task_label": "File the software subscription receipt",
+      "decided_by": "nano",
+      "reason": "Output meets the criteria; differences are cosmetic."
+    },
+    {
+      "golden_run_id": "run_1f04fbd21982",
+      "replay_run_id": "run_f719312b1aa2",
+      "level0": {
+        "golden_run_id": "run_1f04fbd21982",
+        "replay_run_id": "run_f719312b1aa2",
+        "new_calls": [],
+        "missing_calls": [],
+        "changed_args": [
+          [
+            {
+              "kind": "tool",
+              "step_id": "t003",
+              "tool": "sheets.append",
+              "args_norm": {
+                "rows": [
+                  [
+                    "2026-10-08",
+                    "Hub Kreuzberg",
+                    "30.00",
+                    "EUR",
+                    "4.79",
+                    "coworking-2026-10-08.pdf"
+                  ],
+                  [
+                    "2026-10-09",
+                    "Blitz Kurier",
+                    "23.80",
+                    "EUR",
+                    "3.80",
+                    "courier-2026-10-09.pdf"
+                  ]
+                ],
+                "sheet": "Expenses"
+              },
+              "args_hash": "ac634b970ecd82f0d97f02338f3f79000f6c52541826220017773da40ce3ed47",
+              "result_hash": "174c8ac7af810ed879dea88bf68767574ee560ac7af3f2a3dd4577ba9bd6ea34",
+              "side_effect": "write_reversible",
+              "source": "live",
+              "cassette_key": "ac634b970ecd82f0d97f02338f3f79000f6c52541826220017773da40ce3ed47",
+              "result_preview": "{\"appended\":2,\"sheet\":\"Expenses\",\"total_rows\":4}",
+              "blocked": false,
+              "started_at": "2026-10-16T06:24:07.157587Z"
+            },
+            {
+              "kind": "tool",
+              "step_id": "t003",
+              "tool": "sheets.append",
+              "args_norm": {
+                "rows": [
+                  [
+                    "2026-10-08",
+                    "Hub Kreuzberg",
+                    "30.00",
+                    "EUR",
+                    "4.79",
+                    "coworking-2026-10-08.pdf"
+                  ],
+                  [
+                    "2026-10-09",
+                    "Blitz Kurier",
+                    "23.80",
+                    "EUR",
+                    "",
+                    "courier-2026-10-09.pdf"
+                  ]
+                ],
+                "sheet": "Expenses"
+              },
+              "args_hash": "2e3dcadb287ec3016bc05adaa57bfb1ff053a0d7bc2939c4c3c4862d4bafd681",
+              "result_hash": "1e522b9ee54433dfaaabfebb74a425c6943338666c5d53a8e19ffa7a8793d81b",
+              "side_effect": "write_reversible",
+              "source": "cassette",
+              "cassette_key": null,
+              "result_preview": "{\"appended\":0,\"sheet\":\"Expenses\"}",
+              "blocked": false,
+              "started_at": "2026-10-16T06:25:43.610238Z"
+            }
+          ]
+        ],
+        "hard_fail": false,
+        "missing_hard": false
+      },
+      "opinions": [
+        {
+          "tier": "nano",
+          "verdict": "regressed",
+          "confidence": 0.95,
+          "reasons": [
+            "The VAT amount for Blitz Kurier is missing in the replay output.",
+            "The VAT amount for Hub Kreuzberg is present but the VAT value is not explicitly shown in the replay output (only implied by the total).",
+            "The replay output omits the VAT line for Blitz Kurier, failing the requirement to state the VAT for each receipt."
+          ],
+          "evidence_steps": [
+            "t001",
+            "t002",
+            "t003"
+          ],
+          "usd": 0.00010098,
+          "prompt_hash": "9879b836e004ed79fc44c1cbc411708846b0245070e97352509ba49937e3931a",
+          "truncated": false,
+          "criteria_met": [],
+          "causal_explanation": null,
+          "possible_drift_fact": null,
+          "failure_summary": null,
+          "prompt_tokens": 1143,
+          "completion_tokens": 135
+        },
+        {
+          "tier": "super",
+          "verdict": "regressed",
+          "confidence": 0.95,
+          "reasons": [
+            "Missing VAT line for the second receipt in the replay output."
+          ],
+          "evidence_steps": [
+            "m003"
+          ],
+          "usd": 0.0012822,
+          "prompt_hash": "1a527736dff3c0754ba4cef197793eb59eaff83d0aa5e35c30b6715ffb7ad701",
+          "truncated": false,
+          "criteria_met": [
+            {
+              "criterion": "states the merchant, date, total and VAT for each of the 2 receipts",
+              "met": false,
+              "evidence_steps": [
+                "m003"
+              ]
+            },
+            {
+              "criterion": "includes the grand total of 53.80 EUR",
+              "met": true,
+              "evidence_steps": [
+                "m003"
+              ]
+            },
+            {
+              "criterion": "filed 2 receipts to the Expenses sheet",
+              "met": true,
+              "evidence_steps": [
+                "t003"
+              ]
+            },
+            {
+              "criterion": "references the files coworking-2026-10-08.pdf and courier-2026-10-09.pdf",
+              "met": true,
+              "evidence_steps": [
+                "t001",
+                "t002"
+              ]
+            },
+            {
+              "criterion": "uses the exact merchant names Hub Kreuzberg and Blitz Kurier",
+              "met": true,
+              "evidence_steps": [
+                "m003"
+              ]
+            },
+            {
+              "criterion": "records the exact dates 2026-10-08 and 2026-10-09",
+              "met": true,
+              "evidence_steps": [
+                "m003"
+              ]
+            }
+          ],
+          "causal_explanation": null,
+          "possible_drift_fact": null,
+          "failure_summary": "drops the VAT line",
+          "prompt_tokens": 3305,
+          "completion_tokens": 323
+        },
+        {
+          "tier": "ultra",
+          "verdict": "regressed",
+          "confidence": 0.95,
+          "reasons": [
+            "The skill diff changed VAT extraction to use only line items and ignore the summary block, causing the replay to omit VAT for the courier receipt which has VAT only in its summary block.",
+            "The replay output lacks the VAT line for Blitz Kurier (step m003), while the golden output includes VAT: 3.80 EUR, violating the success criterion to state VAT for each receipt.",
+            "The sheets.append call in the replay (t003) passes an empty VAT cell for the second receipt, whereas the golden run passes 3.80, confirming the skill diff caused the behavioral change."
+          ],
+          "evidence_steps": [],
+          "usd": 0.008696,
+          "prompt_hash": "38eadeba5e4d66d5a4432acca99b85d348d96610a393b46432fb0fae4c32c3e2",
+          "truncated": false,
+          "criteria_met": [],
+          "causal_explanation": null,
+          "possible_drift_fact": null,
+          "failure_summary": null,
+          "prompt_tokens": 3035,
+          "completion_tokens": 1887
+        }
+      ],
+      "drift": [],
+      "outcome": "regression",
+      "usd": 0.01007918,
+      "error_code": null,
+      "task_input": "File coworking-2026-10-08.pdf and courier-2026-10-09.pdf as expense receipts.",
+      "task_label": "File coworking and courier receipts",
+      "decided_by": "ultra",
+      "reason": "states the merchant, date, total and VAT for each of the 2 receipts is no longer met."
+    },
+    {
+      "golden_run_id": "run_87777a342819",
+      "replay_run_id": "run_c06ef10c8246",
+      "level0": {
+        "golden_run_id": "run_87777a342819",
+        "replay_run_id": "run_c06ef10c8246",
+        "new_calls": [],
+        "missing_calls": [],
+        "changed_args": [],
+        "hard_fail": false,
+        "missing_hard": false
+      },
+      "opinions": [
+        {
+          "tier": "nano",
+          "verdict": "equivalent",
+          "confidence": 0.95,
+          "reasons": [
+            "Both outputs list the two merchants 'Brasserie Nord' and 'Park & Go Mitte' with the same dates, totals, and VAT amounts.",
+            "The grand total of 144.00 EUR is identical.",
+            "Both state that 2 receipts were filed to the Expenses sheet."
+          ],
+          "evidence_steps": [
+            "t001",
+            "t002",
+            "t003"
+          ],
+          "usd": 0.0000972,
+          "prompt_hash": "9879b836e004ed79fc44c1cbc411708846b0245070e97352509ba49937e3931a",
+          "truncated": false,
+          "criteria_met": [],
+          "causal_explanation": null,
+          "possible_drift_fact": null,
+          "failure_summary": null,
+          "prompt_tokens": 1116,
+          "completion_tokens": 126
+        }
+      ],
+      "drift": [],
+      "outcome": "pass",
+      "usd": 0.0000972,
+      "error_code": null,
+      "task_input": "File the receipts dinner-2026-10-07.pdf and parking-2026-10-07.pdf in the Expenses sheet.",
+      "task_label": "File dinner and parking receipts",
+      "decided_by": "nano",
+      "reason": "Output meets the criteria; differences are cosmetic."
+    },
+    {
+      "golden_run_id": "run_70c317da058a",
+      "replay_run_id": "run_72f38f48bfee",
+      "level0": {
+        "golden_run_id": "run_70c317da058a",
+        "replay_run_id": "run_72f38f48bfee",
+        "new_calls": [],
+        "missing_calls": [],
+        "changed_args": [
+          [
+            {
+              "kind": "tool",
+              "step_id": "t002",
+              "tool": "sheets.append",
+              "args_norm": {
+                "rows": [
+                  [
+                    "2026-10-06",
+                    "Papeterie Lindner",
+                    "47.5",
+                    "EUR",
+                    "7.58",
+                    "office-supplies-2026-10-06.pdf"
+                  ]
+                ],
+                "sheet": "Expenses"
+              },
+              "args_hash": "06c6852c22b4a3017f6555cde8d72afe56838dc75f8a1f4dc5044026fc7be326",
+              "result_hash": "25a57c53c312d7cd96aed0fc2099240c15857c4b705f25d8dc7eae6365d89fa7",
+              "side_effect": "write_reversible",
+              "source": "live",
+              "cassette_key": "06c6852c22b4a3017f6555cde8d72afe56838dc75f8a1f4dc5044026fc7be326",
+              "result_preview": "{\"appended\":1,\"sheet\":\"Expenses\",\"total_rows\":3}",
+              "blocked": false,
+              "started_at": "2026-10-16T06:23:57.315186Z"
+            },
+            {
+              "kind": "tool",
+              "step_id": "t002",
+              "tool": "sheets.append",
+              "args_norm": {
+                "rows": [
+                  [
+                    "2026-10-06",
+                    "Papeterie Lindner",
+                    "47.50",
+                    "EUR",
+                    "7.58",
+                    "office-supplies-2026-10-06.pdf"
+                  ]
+                ],
+                "sheet": "Expenses"
+              },
+              "args_hash": "3d70da3c78569b544d0ce0dfe87ea78628463506fd3aa22568422dba4b2248c4",
+              "result_hash": "1e522b9ee54433dfaaabfebb74a425c6943338666c5d53a8e19ffa7a8793d81b",
+              "side_effect": "write_reversible",
+              "source": "cassette",
+              "cassette_key": null,
+              "result_preview": "{\"appended\":0,\"sheet\":\"Expenses\"}",
+              "blocked": false,
+              "started_at": "2026-10-16T06:25:52.578901Z"
+            }
+          ]
+        ],
+        "hard_fail": false,
+        "missing_hard": false
+      },
+      "opinions": [
+        {
+          "tier": "nano",
+          "verdict": "equivalent",
+          "confidence": 0.95,
+          "reasons": [
+            "Merchant name matches exactly: Papeterie Lindner.",
+            "Date matches exactly: 2026-10-06.",
+            "Total amount matches exactly: 47.5 EUR (displayed as 47.50 EUR, which is the same value)."
+          ],
+          "evidence_steps": [
+            "t001",
+            "t002"
+          ],
+          "usd": 0.00008874,
+          "prompt_hash": "9879b836e004ed79fc44c1cbc411708846b0245070e97352509ba49937e3931a",
+          "truncated": false,
+          "criteria_met": [],
+          "causal_explanation": null,
+          "possible_drift_fact": null,
+          "failure_summary": null,
+          "prompt_tokens": 1011,
+          "completion_tokens": 117
+        }
+      ],
+      "drift": [],
+      "outcome": "pass",
+      "usd": 0.00008874,
+      "error_code": null,
+      "task_input": "Add the receipt office-supplies-2026-10-06.pdf to my expenses.",
+      "task_label": "File the office supplies receipt",
+      "decided_by": "nano",
+      "reason": "Output meets the criteria; differences are cosmetic."
+    },
+    {
+      "golden_run_id": "run_76ecacfc70a6",
+      "replay_run_id": "run_fb22fe2f4a6a",
+      "level0": {
+        "golden_run_id": "run_76ecacfc70a6",
+        "replay_run_id": "run_fb22fe2f4a6a",
+        "new_calls": [],
+        "missing_calls": [],
+        "changed_args": [],
+        "hard_fail": false,
+        "missing_hard": false
+      },
+      "opinions": [
+        {
+          "tier": "nano",
+          "verdict": "equivalent",
+          "confidence": 0.95,
+          "reasons": [
+            "All required fields (merchant, date, total, VAT, grand total) are present and match the golden output.",
+            "The filing action is performed exactly once, satisfying the 'files 1 receipt to the Expenses sheet' criterion.",
+            "The replay output uses identical wording and structure to the golden final output, with only minor phrasing differences that do not affect meaning."
+          ],
+          "evidence_steps": [
+            "t001",
+            "t002"
+          ],
+          "usd": 0.00009018,
+          "prompt_hash": "9879b836e004ed79fc44c1cbc411708846b0245070e97352509ba49937e3931a",
+          "truncated": false,
+          "criteria_met": [],
+          "causal_explanation": null,
+          "possible_drift_fact": null,
+          "failure_summary": null,
+          "prompt_tokens": 979,
+          "completion_tokens": 131
+        }
+      ],
+      "drift": [],
+      "outcome": "pass",
+      "usd": 0.00009018,
+      "error_code": null,
+      "task_input": "File the receipt conference-2026-10-05.pdf as an expense.",
+      "task_label": "File the conference ticket receipt",
+      "decided_by": "nano",
+      "reason": "Output meets the criteria; differences are cosmetic."
+    },
+    {
+      "golden_run_id": "run_1b4db34439a9",
+      "replay_run_id": "run_adb18951a6be",
+      "level0": {
+        "golden_run_id": "run_1b4db34439a9",
+        "replay_run_id": "run_adb18951a6be",
+        "new_calls": [],
+        "missing_calls": [],
+        "changed_args": [
+          [
+            {
+              "kind": "tool",
+              "step_id": "t003",
+              "tool": "sheets.append",
+              "args_norm": {
+                "rows": [
+                  [
+                    "2026-10-03",
+                    "Trattoria Roma",
+                    "36.50",
+                    "EUR",
+                    "5.83",
+                    "lunch-2026-10-03.pdf"
+                  ],
+                  [
+                    "2026-10-03",
+                    "Rail Express Nord",
+                    "85.00",
+                    "EUR",
+                    "5.56",
+                    "train-2026-10-03.pdf"
+                  ]
+                ],
+                "sheet": "Expenses"
+              },
+              "args_hash": "f3cabb3596b913a5797443da4832ae278aeea2539f347861ad58f8b785922965",
+              "result_hash": "174c8ac7af810ed879dea88bf68767574ee560ac7af3f2a3dd4577ba9bd6ea34",
+              "side_effect": "write_reversible",
+              "source": "live",
+              "cassette_key": "f3cabb3596b913a5797443da4832ae278aeea2539f347861ad58f8b785922965",
+              "result_preview": "{\"appended\":2,\"sheet\":\"Expenses\",\"total_rows\":4}",
+              "blocked": false,
+              "started_at": "2026-10-16T06:23:45.691969Z"
+            },
+            {
+              "kind": "tool",
+              "step_id": "t003",
+              "tool": "sheets.append",
+              "args_norm": {
+                "rows": [
+                  [
+                    "2026-10-03",
+                    "Trattoria Roma",
+                    "36.50",
+                    "EUR",
+                    "",
+                    "lunch-2026-10-03.pdf"
+                  ],
+                  [
+                    "2026-10-03",
+                    "Rail Express Nord",
+                    "85.00",
+                    "EUR",
+                    "5.56",
+                    "train-2026-10-03.pdf"
+                  ]
+                ],
+                "sheet": "Expenses"
+              },
+              "args_hash": "3eac5b1a469604375dc0093378863104dde86f505606d2a43e92b555674d4c09",
+              "result_hash": "1e522b9ee54433dfaaabfebb74a425c6943338666c5d53a8e19ffa7a8793d81b",
+              "side_effect": "write_reversible",
+              "source": "cassette",
+              "cassette_key": null,
+              "result_preview": "{\"appended\":0,\"sheet\":\"Expenses\"}",
+              "blocked": false,
+              "started_at": "2026-10-16T06:25:43.610238Z"
+            }
+          ]
+        ],
+        "hard_fail": false,
+        "missing_hard": false
+      },
+      "opinions": [
+        {
+          "tier": "nano",
+          "verdict": "regressed",
+          "confidence": 0.95,
+          "reasons": [
+            "The VAT amount for Trattoria Roma is missing in the replay output.",
+            "The VAT amount for Rail Express Nord is missing in the replay output."
+          ],
+          "evidence_steps": [
+            "t001",
+            "t002",
+            "t003"
+          ],
+          "usd": 0.0000948,
+          "prompt_hash": "9879b836e004ed79fc44c1cbc411708846b0245070e97352509ba49937e3931a",
+          "truncated": false,
+          "criteria_met": [],
+          "causal_explanation": null,
+          "possible_drift_fact": null,
+          "failure_summary": null,
+          "prompt_tokens": 1200,
+          "completion_tokens": 95
+        },
+        {
+          "tier": "super",
+          "verdict": "regressed",
+          "confidence": 0.95,
+          "reasons": [
+            "Missing VAT line for lunch-2026-10-03.pdf due to incorrect parsing under new rules."
+          ],
+          "evidence_steps": [
+            "t003"
+          ],
+          "usd": 0.0013344,
+          "prompt_hash": "1a527736dff3c0754ba4cef197793eb59eaff83d0aa5e35c30b6715ffb7ad701",
+          "truncated": false,
+          "criteria_met": [
+            {
+              "criterion": "states the merchant, date, total and VAT for each of the 2 receipts",
+              "met": false,
+              "evidence_steps": [
+                "t003"
+              ]
+            },
+            {
+              "criterion": "includes the grand total of 121.50 EUR",
+              "met": true,
+              "evidence_steps": []
+            },
+            {
+              "criterion": "mentions that 2 receipts were filed to the Expenses sheet",
+              "met": true,
+              "evidence_steps": []
+            },
+            {
+              "criterion": "lists the merchant 'Trattoria Roma' with date 2026-10-03, total 36.50 EUR and VAT 5.83 EUR",
+              "met": false,
+              "evidence_steps": [
+                "t003"
+              ]
+            },
+            {
+              "criterion": "lists the merchant 'Rail Express Nord' with date 2026-10-03, total 85.00 EUR and VAT 5.56 EUR",
+              "met": true,
+              "evidence_steps": []
+            },
+            {
+              "criterion": "specifies the file names 'lunch-2026-10-03.pdf' and 'train-2026-10-03.pdf' were filed",
+              "met": true,
+              "evidence_steps": []
+            }
+          ],
+          "causal_explanation": null,
+          "possible_drift_fact": null,
+          "failure_summary": "omits the VAT line for the first receipt",
+          "prompt_tokens": 3356,
+          "completion_tokens": 364
+        },
+        {
+          "tier": "ultra",
+          "verdict": "regressed",
+          "confidence": 0.95,
+          "reasons": [
+            "The skill diff changed VAT parsing to only use line items whose description starts with 'VAT', causing the lunch receipt (which has no VAT line item) to have no VAT reported in the replay.",
+            "The replay output omits the VAT line for Trattoria Roma, violating the success criteria which expects VAT 5.83 EUR for that receipt.",
+            "The train receipt correctly shows VAT 5.56 EUR because it has a 'VAT 7%' line item, meeting that criterion."
+          ],
+          "evidence_steps": [],
+          "usd": 0.013601,
+          "prompt_hash": "38eadeba5e4d66d5a4432acca99b85d348d96610a393b46432fb0fae4c32c3e2",
+          "truncated": false,
+          "criteria_met": [],
+          "causal_explanation": "The difference between runs is explained by the skill diff: the new step 3 instructs to skip the summary block and only use line items, taking VAT from a line item whose description starts with 'VAT'. The lunch receipt (layout B) has no such line item, so the replay correctly follows the new skill but fails the success criteria which expects the old behavior (VAT derived from summary block).",
+          "possible_drift_fact": null,
+          "failure_summary": null,
+          "prompt_tokens": 3065,
+          "completion_tokens": 3512
+        }
+      ],
+      "drift": [],
+      "outcome": "regression",
+      "usd": 0.0150302,
+      "error_code": null,
+      "task_input": "Please file these receipts in the Expenses sheet: lunch-2026-10-03.pdf, train-2026-10-03.pdf.",
+      "task_label": "File lunch and train receipts",
+      "decided_by": "ultra",
+      "reason": "states the merchant, date, total and VAT for each of the 2 receipts is no longer met."
+    },
+    {
+      "golden_run_id": "run_3d09f7108d37",
+      "replay_run_id": "run_ba9e5e014118",
+      "level0": {
+        "golden_run_id": "run_3d09f7108d37",
+        "replay_run_id": "run_ba9e5e014118",
+        "new_calls": [],
+        "missing_calls": [],
+        "changed_args": [],
+        "hard_fail": false,
+        "missing_hard": false
+      },
+      "opinions": [
+        {
+          "tier": "nano",
+          "verdict": "equivalent",
+          "confidence": 0.99,
+          "reasons": [
+            "All required fields are present and match the golden output exactly: merchant, date, total, VAT for each receipt; grand total; file names; number of receipts; sheet name; action performed.",
+            "The replay output includes the same information as the golden final output, only in identical wording and order, satisfying the synonym rule for cosmetic differences.",
+            "Evidence steps t001, t002, and t003 are identical between before and after, confirming no missing or altered required actions."
+          ],
+          "evidence_steps": [
+            "t001",
+            "t002",
+            "t003"
+          ],
+          "usd": 0.000105,
+          "prompt_hash": "9879b836e004ed79fc44c1cbc411708846b0245070e97352509ba49937e3931a",
+          "truncated": false,
+          "criteria_met": [],
+          "causal_explanation": null,
+          "possible_drift_fact": null,
+          "failure_summary": null,
+          "prompt_tokens": 1082,
+          "completion_tokens": 167
+        }
+      ],
+      "drift": [],
+      "outcome": "pass",
+      "usd": 0.000105,
+      "error_code": null,
+      "task_input": "File my receipts taxi-2026-10-01.pdf and hotel-2026-10-02.pdf as expenses.",
+      "task_label": "File taxi and hotel receipts",
+      "decided_by": "nano",
+      "reason": "Output meets the criteria; differences are cosmetic."
+    },
+    {
+      "golden_run_id": "run_8edbdac3cda2",
+      "replay_run_id": "run_28fe8e4fdd26",
+      "level0": {
+        "golden_run_id": "run_8edbdac3cda2",
+        "replay_run_id": "run_28fe8e4fdd26",
+        "new_calls": [],
+        "missing_calls": [],
+        "changed_args": [],
+        "hard_fail": false,
+        "missing_hard": false
+      },
+      "opinions": [
+        {
+          "tier": "nano",
+          "verdict": "equivalent",
+          "confidence": 0.95,
+          "reasons": [
+            "Both outputs state that the update cannot be shipped today.",
+            "Both attribute the inability to test failures.",
+            "Both use formal language without informal expressions.",
+            "Dropped cited step ids not found in the traces: t001."
+          ],
+          "evidence_steps": [],
+          "usd": 0.00006738,
+          "prompt_hash": "9879b836e004ed79fc44c1cbc411708846b0245070e97352509ba49937e3931a",
+          "truncated": false,
+          "criteria_met": [],
+          "causal_explanation": null,
+          "possible_drift_fact": null,
+          "failure_summary": null,
+          "prompt_tokens": 807,
+          "completion_tokens": 79
+        }
+      ],
+      "drift": [],
+      "outcome": "pass",
+      "usd": 0.00006738,
+      "error_code": null,
+      "task_input": "Rewrite this sentence formally: hey guys, we can't ship the update today 'cause the tests are kinda broken.",
+      "task_label": "Rewrite a sentence formally",
+      "decided_by": "nano",
+      "reason": "Output meets the criteria; differences are cosmetic."
+    },
+    {
+      "golden_run_id": "run_3423fd4b299a",
+      "replay_run_id": "run_5b60b07fdd0a",
+      "level0": {
+        "golden_run_id": "run_3423fd4b299a",
+        "replay_run_id": "run_5b60b07fdd0a",
+        "new_calls": [],
+        "missing_calls": [],
+        "changed_args": [],
+        "hard_fail": false,
+        "missing_hard": false
+      },
+      "opinions": [
+        {
+          "tier": "nano",
+          "verdict": "equivalent",
+          "confidence": 0.99,
+          "reasons": [
+            "The replay output contains the exact phrase \"17% of 240\" and the expression \"0.17 × 240\" as required.",
+            "The numeric result is 40.8, matching the success criterion.",
+            "The only difference is the removal of the markdown bold markup (**), which is a cosmetic change and does not affect the meaning of the output.",
+            "Dropped cited step ids not found in the traces: t002."
+          ],
+          "evidence_steps": [],
+          "usd": 0.0000798,
+          "prompt_hash": "9879b836e004ed79fc44c1cbc411708846b0245070e97352509ba49937e3931a",
+          "truncated": false,
+          "criteria_met": [],
+          "causal_explanation": null,
+          "possible_drift_fact": null,
+          "failure_summary": null,
+          "prompt_tokens": 814,
+          "completion_tokens": 129
+        }
+      ],
+      "drift": [],
+      "outcome": "pass",
+      "usd": 0.0000798,
+      "error_code": null,
+      "task_input": "What is 17% of 240?",
+      "task_label": "Compute 17% of 240",
+      "decided_by": "nano",
+      "reason": "Output meets the criteria; differences are cosmetic."
+    },
+    {
+      "golden_run_id": "run_f8fa40ff55bf",
+      "replay_run_id": "run_66a7e3211f15",
+      "level0": {
+        "golden_run_id": "run_f8fa40ff55bf",
+        "replay_run_id": "run_66a7e3211f15",
+        "new_calls": [],
+        "missing_calls": [],
+        "changed_args": [],
+        "hard_fail": false,
+        "missing_hard": false
+      },
+      "opinions": [
+        {
+          "tier": "nano",
+          "verdict": "equivalent",
+          "confidence": 0.95,
+          "reasons": [
+            "Both outputs state the offsite moved from Thursday to Friday",
+            "Both mention the reason as a venue double-booking",
+            "Both indicate lunch remains included and the agenda is unchanged",
+            "Dropped cited step ids not found in the traces: t001, t002."
+          ],
+          "evidence_steps": [],
+          "usd": 0.00007386,
+          "prompt_hash": "9879b836e004ed79fc44c1cbc411708846b0245070e97352509ba49937e3931a",
+          "truncated": false,
+          "criteria_met": [],
+          "causal_explanation": null,
+          "possible_drift_fact": null,
+          "failure_summary": null,
+          "prompt_tokens": 859,
+          "completion_tokens": 93
+        }
+      ],
+      "drift": [],
+      "outcome": "pass",
+      "usd": 0.00007386,
+      "error_code": null,
+      "task_input": "Summarize this note: The quarterly offsite moves from Thursday to Friday because the venue double-booked the room. Lunch is still included, and the agenda stays the same.",
+      "task_label": "Summarize a short note",
+      "decided_by": "nano",
+      "reason": "Output meets the criteria; differences are cosmetic."
+    }
+  ],
+  "decision": "BLOCK",
+  "action": "reverted",
+  "narrative": "Blocked: expense-report now omits the merchant, date, total and VAT for each of the 2 receipts on 2 of 10 past tasks. The edit changed SKILL.md (+9 −4 lines) and was tested against 10 prior tasks; 8 passed but 2 regressed on the same extraction step (t001) for coworking, courier, lunch, and train receipts. The regressions show the agent no longer returns the required fields for those cases. The change was reverted automatically. Nothing to do.",
+  "cost": {
+    "nano": 0.0008915999999999999,
+    "super": 0.0026166,
+    "ultra": 0.022986
+  },
+  "duration_s": 32,
+  "created_at": "2026-10-16T06:26:07.777530Z",
+  "reasons": [
+    "agreed_regression"
+  ],
+  "headline": "Blocked: expense-report now omits the merchant, date, total and VAT for each of the 2 receipts on 2 of 10 past tasks.",
+  "tokens": {
+    "nano": 11206,
+    "super": 7348,
+    "ultra": 11956
+  },
+  "counterfactual_usd": 0.04535,
+  "replay_cost": {
+    "nano": 0.0,
+    "super": 0.032572500000000004,
+    "ultra": 0.0
+  },
+  "action_commit": "f8c4787d0536f81a127ca8987d74633edf41e03c",
+  "stages": [
+    {
+      "stage": "detected",
+      "started_at": "2026-10-16T06:25:34.982112Z",
+      "elapsed_ms": 5
+    },
+    {
+      "stage": "selecting",
+      "started_at": "2026-10-16T06:25:34.987653Z",
+      "elapsed_ms": 68
+    },
+    {
+      "stage": "replaying",
+      "started_at": "2026-10-16T06:25:35.056880Z",
+      "elapsed_ms": 19247
+    },
+    {
+      "stage": "level0",
+      "started_at": "2026-10-16T06:25:54.305865Z",
+      "elapsed_ms": 1590
+    },
+    {
+      "stage": "nano",
+      "started_at": "2026-10-16T06:25:55.896823Z",
+      "elapsed_ms": 913
+    },
+    {
+      "stage": "super",
+      "started_at": "2026-10-16T06:25:56.809930Z",
+      "elapsed_ms": 922
+    },
+    {
+      "stage": "ultra",
+      "started_at": "2026-10-16T06:25:57.732068Z",
+      "elapsed_ms": 9096
+    },
+    {
+      "stage": "drift",
+      "started_at": "2026-10-16T06:26:06.829709Z",
+      "elapsed_ms": 14
+    },
+    {
+      "stage": "summary",
+      "started_at": "2026-10-16T06:26:07.784397Z",
+      "elapsed_ms": 4
+    },
+    {
+      "stage": "done",
+      "started_at": "2026-10-16T06:26:07.789395Z",
+      "elapsed_ms": 218
+    }
+  ],
+  "recorded": false,
+  "simulated_models": false,
+  "rolled_back_by": null,
+  "rolled_back_at": null,
+  "approved_at": null,
+  "session_hash": "4d3fa3720b5cf9a2",
+  "affected_skills": [
+    "expense-report"
+  ],
+  "author": "seeded",
+  "runner": "local-process",
+  "batch_ids": [
+    "batch_8796c4358b15_a1_00",
+    "batch_8796c4358b15_a1_01",
+    "batch_8796c4358b15_a1_02"
+  ]
+}

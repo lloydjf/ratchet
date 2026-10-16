@@ -1,0 +1,11 @@
+INVOICE
+Vendor: Orchid Translations
+Invoice number: OR-7702
+Invoice date: 2026-10-12
+Due date: 2026-11-11
+Bill to: Acme GmbH, Attn. Jun, jun@example.com
+
+Description                         Amount
+Services as agreed                  see total
+
+Total due: 720.00 EUR

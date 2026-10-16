@@ -1,0 +1,11 @@
+INVOICE
+Vendor: Lumen Office Lighting
+Invoice number: LU-30017
+Invoice date: 2026-10-10
+Due date: 2026-11-09
+Bill to: Acme GmbH, Attn. Jun, jun@example.com
+
+Description                         Amount
+Services as agreed                  see total
+
+Total due: 1,018.25 EUR

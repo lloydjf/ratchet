@@ -1,0 +1,311 @@
+# Ratchet — Implementation Contracts
+
+This file is the engineering contract for anyone changing Ratchet: the ground rules every
+module follows, the module boundaries, and the names, signatures, wire shapes and stable
+codes that other modules, the dashboard and tests rely on. Behavior is specified by the
+design docs (`docs/design/`), the ADRs (`docs/adr/`) and the user documentation; this file
+pins the Python names and interfaces. A change to anything listed here is an interface
+change: update this file, the tests that cover it, and every caller in the same change.
+
+## 0. Ground rules (all code)
+
+- Python 3.11, `ruff` (E,F,I,B,UP,SIM,N,TID), `ruff format`, `mypy --strict` on `ratchet/` must
+  pass. Run: `uv run ruff check ratchet tests && uv run ruff format --check ratchet tests && uv run mypy ratchet`.
+- Modules ≤ 400 lines, functions ≤ 40 lines where reasonable, `__all__` on every module.
+- I/O at the edges; logic in pure functions. No import-time side effects.
+- Use `ratchet.clock.now()` (never `datetime.now()`), `ratchet.log.get_logger(component)` for
+  structured logs (never log content/args/secrets), `ratchet.config.settings.get_settings()`
+  (never `os.environ`), `ratchet.util` for ids/hashing/canonical JSON, `ratchet.errors` for
+  exceptions (every error has a stable `code` from the registry in section 8).
+- Tiers are the literal strings `nano`/`super`/`ultra`. Model ids ONLY in `ratchet/config/models.py`.
+  Prices ONLY in `ratchet/config/pricing.py`.
+- Data models: `ratchet/models.py`. Do not rename fields; changes are additive. A new field
+  goes there with a `# +` comment saying why, and a schema re-export (`ratchet schemas export`).
+- Storage: `ratchet.store.Store` (sync; wrap in `asyncio.to_thread` in async code).
+- Unknown failure in a judge path → `uncertain`, never `pass`.
+- Tests: pytest, `tests/unit/test_<module>.py`, names state behavior. No network in unit /
+  recorded-integration tests (use respx, or the offline simulator through ASGI transport).
+- Offline simulator (ADR 0018): `RATCHET_UPSTREAM=sim` routes the proxy to `ratchet.sim`, a
+  deterministic stand-in for Token Factory used for CI, local dev before keys exist, and the
+  e2e suite. Its output is always labeled (`Verdict.simulated_models=True`, UI badge
+  "Simulated models"). Never present simulator output as Nemotron output.
+
+## 1. Ports and processes
+
+| Service | Port | App factory |
+| --- | --- | --- |
+| dashboard + API (`/api/v1/*`, `/api/*` alias, SPA at `/`) | 8080 | `ratchet.dashboard_api.app:create_app` |
+| capture proxy (`/v1/*`) | 8081 | `ratchet.proxy.app:create_app` |
+| mock tools (`/tools/*`, `/log`, `/mode`, `/mcp`) | 8082 | `ratchet.mocktools.app:create_app` |
+| orchestrator + watcher loop | — | `ratchet.orchestrator.service:run_forever` |
+
+`ratchet serve` runs all of them in one process for dev / docker-compose `control`.
+
+## 2. Run metadata
+
+Before a harness run starts, the adapter (or worker) writes `traces/<run_id>/run.json`:
+`{"run_id", "agent_tier", "seed", "frozen_time"|null, "harness", "edit_id"|null, "purpose": "agent"}`
+via `ratchet.capture.runs.write_run_meta(store, RunMeta)`. The proxy reads it to (a) enforce
+the tier policy (agent purpose + tier ≠ run's agent_tier → 409 `tier_mismatch`), (b) inject
+`seed` when the request has none. Step ids: `m001…` (proxy, model calls), `t001…` (mock tools
+and workspace-diff reconciliation), unique within a run (`Store.next_step_id`).
+
+Run id attribution: header `X-Ratchet-Run-Id`, or path form `/v1/r/<run_id>/chat/completions`
+else generated and echoed in the response header. There is no session-header map: a harness
+that cannot set headers puts the run id in its base URL, and a request with no id is never
+mapped after the fact.
+
+## 3. Capture — `ratchet/proxy/`, `ratchet/capture/`, `ratchet/pii.py`
+
+- `ratchet.proxy.app.create_app(settings: Settings | None = None, store: Store | None = None,
+  upstream_transport: httpx.AsyncBaseTransport | None = None) -> FastAPI`
+  - When `settings.ratchet_upstream == "sim"` and no transport is given, use
+    `httpx.ASGITransport(app=ratchet.sim.app.create_app())`.
+  - Response headers on every model call: `X-Ratchet-Run-Id`, `X-Ratchet-Step-Id`,
+    `X-Ratchet-Usd`, `X-Ratchet-Model`, `X-Ratchet-Cached` (`0|1`), `X-Ratchet-Usage-Estimated`.
+  - Thinking control: headers `X-Ratchet-Thinking: on|off` and `X-Ratchet-Reasoning-Budget`
+    are mapped to provider parameters in ONE function `ratchet.config.models.thinking_params(
+    tier, enabled, budget) -> dict` (body fields to merge). Strip all `X-Ratchet-*` headers
+    before forwarding upstream, except forward `X-Ratchet-Prompt` / `X-Ratchet-Purpose` when the
+    upstream is the simulator.
+  - Response cache: for purposes other than `agent`, key = sha256(request_hash + model),
+    TTL `ratchet_cache_ttl_days`; a hit is recorded as a step with `cached=1`, usd 0.
+- `ratchet.capture.runs`: `RunMeta` (pydantic), `write_run_meta`, `read_run_meta`,
+  `finalize_trace(store, run_id, *, task_input, final_output, kind, env, agent_tier, seed,
+  skills_invoked, workspace_before: Path | None, workspace_after: Path | None, ...) -> Trace`
+  (merges `Store.collect_steps`, adds workspace-diff `fs.write`/`fs.delete` ToolCalls).
+- `ratchet.pii`: `PiiTokenizer(store_dir/key)`: `tokenize_text(str) -> str`,
+  `tokenize_obj(obj) -> obj`, `detokenize(...)`; encrypted token map at `data/pii.map.enc`
+  (Fernet; key at `settings.pii_key_path`). Regex for emails, phones, API keys (`sk-…`,
+  `tvly-…`, long hex/base64 secrets) → `<EMAIL_1>`, `<PHONE_1>`, `<SECRET>`.
+
+## 4. Judge — `ratchet/judge/`, `ratchet/copy.py`
+
+- `ratchet.judge.structured.call_structured(client: ModelClient, *, prompt: str, tier: Tier,
+  inputs: dict[str, str], schema: type[M], max_tokens: int, thinking: bool | None = None,
+  reasoning_budget: int | None = None, context_budget_tokens: int | None = None)
+  -> StructuredResult[M]` with fields `value: M | None`, `usd`, `prompt_tokens`,
+  `completion_tokens`, `prompt_hash`, `truncated`, `attempts`, `failure_code: str | None`.
+  Validation + 2 retries with the validation error appended; 3rd failure → `value=None`,
+  `failure_code="schema_failure"`. Sends header `X-Ratchet-Prompt: <name>@<hash12>`.
+  Prompts are `ratchet/judge/prompts/<name>.md` + `<name>.schema.json` (exported from the
+  pydantic schema model). Section labels in prompt bodies are part of the contract and must
+  not change (e.g. `Golden final output:`), because the offline simulator parses them.
+- `ratchet.judge.level0.diff(golden: Trace, replay: Trace, unexpected: list[ToolCall])
+  -> Level0Finding` (pure).
+- `ratchet.judge.cascade`: `CascadeConfig(mode: Literal["cascade","nano_only","super_only",
+  "ultra_only"]="cascade", level0: bool=True, drift: bool=True)`;
+  `PairContext(golden, replay, unexpected, skill_diff, level0: Level0Finding)`;
+  `async judge_pair(ctx, client, config) -> PairVerdict` (Level 0 decision, Nano → Super →
+  Ultra per the agreement rules, ADR 0007; no drift here).
+- `ratchet.judge.drift`: `TavilySource` protocol (`search`, `extract`), `LiveTavily`,
+  `FixtureTavily(dir)`; `async check_pair(pair, golden, replay, client, tavily) -> PairVerdict`
+  (Tavily failure → DriftCheck status `unavailable`, pair stays `regression`).
+- `ratchet.judge.decide.decide(pairs: list[PairVerdict], *, n_failed: int, n_total: int,
+  ultra_timed_out: bool) -> DecisionResult(decision, action, reasons)` — table-driven (the
+  agreement table of ADR 0007 as data, not conditionals).
+- `ratchet.judge.narrative`: `async write_narrative(NarrativeInput, client) -> NarrativeResult(
+  text, headline, usd, fallback_used)`; validates ≤180 words, first sentence matches a headline
+  template (starts with Blocked/Held/Passed and names the skill), ends with one of the four
+  closing sentences; on failure uses the deterministic template from `ratchet.copy`.
+  `async write_digest(...)`.
+- `ratchet.judge.bless`: `async enrich(trace: Trace, client, store) -> Trace` (world facts,
+  side-effect classification of unmatched tools, success criteria, `world_dependent`).
+- `ratchet.judge.side_effects`: rules in `side_effects.yaml`; `classify_rule(tool, args)`,
+  `async classify(tool, args_example, client, store)`.
+- `ratchet.judge.costs.verdict_costs(store, edit_id) -> CostSummary(usd_by_tier,
+  tokens_by_tier, judge_usd_by_tier, counterfactual_ultra_usd, saved_ratio)`.
+- `ratchet.copy`: every user-facing string (headline templates, outcome labels,
+  error copy, stage labels, confirmations) as constants/functions.
+
+## 5. Replay — `ratchet/mocktools/`, `ratchet/replay/`, `worker/`
+
+- `ratchet.mocktools.app.create_app(settings, store, *, mode: Literal["record","replay"],
+  cassette_root: Path | None = None, world: World | None = None) -> FastAPI`.
+  `POST /tools/{tool}` body `{"args": {...}}`, header `X-Ratchet-Run-Id`; response
+  `{"ok": true, "result": ...}` or 409 `{"error": {"code": "ratchet_blocked", ...}}`.
+  `POST /tools/{tool}/notify` (local tool executions, recorded with `source="local"`).
+  `GET /log`, `POST /mode`. Optional MCP endpoint at `/mcp` (for Hermes).
+- `ratchet.mocktools.normalize`: `normalize_args(tool, args) -> dict`, `cassette_key(tool,
+  args_norm) -> str`.
+- `ratchet.mocktools.world`: fictional services (github, gmail, receipts, sheets, calendar,
+  finance, web, git) backed by JSON fixtures in a world directory; `World.load(path)`.
+- `ratchet.tools.catalog`: the tool catalog (name, description, JSON schema params,
+  default side-effect class, local vs mocked). OpenAI function names use `__` for `.`
+  (`github__close_issue`).
+- `ratchet.replay.harness`: `HarnessAdapter` protocol, `MinimalRunner`,
+  `HermesAdapter`, `get_adapter(name)`.
+- OpenClaw (read-only): point `RATCHET_SKILLS_REPO` at `<workspace>/skills/` (same
+  `SKILL.md` format; OpenClaw frontmatter extras are kept and ignored) — fixture
+  `tests/fixtures/skills/openclaw-layout/`, test `tests/integration/test_openclaw_layout.py`.
+- `ratchet.replay.sandbox`: `Sandbox` protocol + `ProcessSandbox` (dev only, ADR 0017),
+  `DockerSandbox`, `OpenShellSandbox`.
+- Worker sidecars (ADR 0022): the worker's proxy runs with
+  `create_app(..., sidecar=SidecarPolicy(agent_tier, allowance_usd, admin_token))`, which
+  forces `purpose=agent` and the run's tier, enforces `ReplayBatch.budget_allowance_usd`
+  (remaining daily / per-purpose / bench USD at dispatch, split across the dispatch's
+  batches) against the scratch ledger, and requires `X-Ratchet-Admin-Token` on
+  `/runs/{id}/steps`; the mock tool sidecar requires it on `/log` and `/mode` and serves one
+  run only. The token is per golden and never enters the sandbox env.
+- `ratchet.replay.packing`: `pack_batch_inputs(store, spec, inputs_dir) -> Path`,
+  `import_batch_output(store, output_dir) -> ReplayResult`.
+- `ratchet.replay.worker.main(inputs_dir: Path, output_dir: Path) -> int` (exit codes:
+  0 ok, 3 partial, 4 sandbox, 5 harness, 6 budget). Writes `progress.json`
+  (`{"k","n","heartbeat_at"}`) every replay and at least every 15 s. The orchestrator polls
+  it and emits `batch.heartbeat` when `k/n` changes; there is no per-replay
+  `replay.heartbeat` event.
+- `ratchet.replay.jobs`: `JobRunner` protocol: `name`, `async submit(spec, inputs_dir) -> str`
+  (idempotent by batch_id), `async poll(job_id) -> JobStatus(state, k, n, heartbeat_at,
+  exit_code)`, `async fetch(job_id, output_dir) -> Path`, `async cancel(job_id)`;
+  `LocalJobRunner(mode="process"|"docker")`, `NebiusJobRunner`; `get_runner(settings)`.
+
+## 6. Skills & git — `ratchet/watcher/`, `ratchet/orchestrator/{selection,embed,notify}.py`
+
+- `ratchet.watcher.gitops.SkillsRepo(main_dir: Path)`; candidate worktree at
+  `<main_dir>-candidate`. Methods: `init(seed: Path | None)`, `main_head()`,
+  `candidate_head()`, `commit_candidate(message, *, author) -> str | None`,
+  `capture_main_changes() -> list[str]` (move harness writes in the main checkout onto
+  candidate, restore main), `diff(base, head) -> str`, `changed_files(base, head)`,
+  `affected_skills(base, head) -> list[str]`, `merge_candidate(verdict_id) -> str`
+  (`--ff-only`), `revert(commit) -> str` (revert on candidate, ff main), `apply_files(
+  files: dict[str, str | None], *, message, author) -> str` (seeded edits), `reset_candidate()`,
+  `skill_description(name) -> str`, `list_skills() -> list[str]`, `clone_to(dest) -> SkillsRepo`
+  (per-visitor Simulate copies).
+- `ratchet.watcher.service.Watcher(repo, on_edit: Callable[[SkillEdit, str], None])` with
+  750 ms debounce, ignore rules, author classification.
+- `ratchet.orchestrator.selection.select_traces(store, repo, edit, embedder, *, cap=40)
+  -> list[SelectedTrace]` and `make_batches(selected, size=10)`.
+- `ratchet.orchestrator.embed`: `Embedder` protocol, `LocalHashEmbedder`, `TokenFactoryEmbedder`.
+- `ratchet.orchestrator.notify.notify(verdict, settings)` (webhook, ≤160-char message, 2 retries).
+
+## 7. Dashboard API — `/api/v1`
+
+JSON shapes are the pydantic models in `ratchet/models.py` plus these view models
+(`ratchet/dashboard_api/views.py`):
+
+- `GET /api/v1/meta` → `{public_mode, simulate_enabled, simulate_mode, simulated_models,
+  action_token, repo_url, video_url, bench_report_url, version, harness, runner, sandbox}`
+- `GET /api/v1/scenarios` → `[{scenario_id, skill, title, learned, catches,
+  expected_decision}]`
+- `POST /api/v1/simulate/{scenario_id}` → `{session_hash, scenario_id, edit_id, verdict_id,
+  status: "running"|"queued"|"done", queue_position, eta_s}`; `verdict_id` is pre-allocated so
+  the client can open `/verdicts/:id` while it runs. Session = cookie `ratchet_session`.
+- `GET /api/v1/verdicts?cursor&limit` → `{items: VerdictSummary[], next_cursor}`;
+  `VerdictSummary = {verdict_id, edit_id, decision, action, headline, affected_skills,
+  usd_total, created_at, n_pairs, outcome_counts, recorded, simulated_models}`
+- `GET /api/v1/verdicts/{id}` → `VerdictView = {verdict_id, state, verdict: Verdict | null,
+  edit: SkillEdit, diff: str, progress: Progress | null}`;
+  `Progress = {stage, stage_label, k, n, elapsed_s, usd_by_tier, stalled, stages: [{key,
+  label, status: "pending"|"active"|"done"|"skipped", detail}]}`
+- `GET /api/v1/verdicts/{id}/pairs/{golden}/{replay}` → `{verdict_id, decision, pair,
+  golden: Trace, replay: Trace, recorded}` (`recorded`: the verdict is a recorded run)
+- `POST /api/v1/verdicts/{id}/rollback` | `/approve` → `VerdictView`;
+  `POST /api/v1/pairs/{golden}/{replay}/rebless` → `{new_golden_run_id, archived_run_id}`.
+  Action semantics (ADR 0022): both answer 409 `not_ready` until the edit is terminal.
+  Rollback on `action="reverted"` (BLOCK or rolled back) → 409 `already_reverted`; rollback
+  of a merged edit main cannot take → 409 `stacked_on_held`. Approve on `action="merged"`
+  → 200, unchanged. Approve on `action="reverted"` = approve anyway: the revert is reverted
+  on candidate and merged under the stacking guard → `action="merged"`, `approved_at` set,
+  `rolled_back_*` kept; `verdict.acted` carries `override: true` and the
+  `approve_anyway_toast`. `pair.reblessed` carries `drift_fact_ids`; the archived golden
+  keeps its drift checks in `traces/<old>/archived_drift.json` (see ADR 0008).
+- `GET /api/v1/edits`, `GET /api/v1/edits/{id}` → `{edit, diff, verdict_id, state}`;
+  `POST /api/v1/edits/{id}/replay`; `GET /api/v1/edits/{id}/logs` → `{lines: [str],
+  truncated}` (each batch's `worker.log`, last 500 lines in all, then `attempt_*/crash.json`
+  records; operator host only, 403 `not_public` on the public host)
+- `GET /api/v1/traces?kind=golden&skill&search` → `{items: TraceSummary[], next_cursor}`;
+  `GET /api/v1/traces/{run_id}` → `Trace`; `POST /api/v1/runs/{run_id}/bless`;
+  `POST /api/v1/traces/{run_id}/unbless`; `PUT /api/v1/traces/{run_id}/criteria`
+- `GET /api/v1/costs?from=&to=` → `{today, week, by_purpose, by_day, last_edit, counterfactual,
+  bench_report_url, window}` (each tile: `{usd_by_tier, tokens_by_tier}`). `from`/`to` are
+  optional ISO 8601 (naive = UTC, `[from, to)`, ≤ 366 days, else 400 `bad_request`); when
+  given, `window` = `{usd_by_tier, tokens_by_tier, from, to}` and `by_purpose`/`by_day` cover
+  that window instead of the last 7 / 14 days; otherwise `window` is null. `counterfactual`
+  = `{actual_usd, all_ultra_usd, saved_ratio, actual_usd_by_tier, n_verdicts}` over every
+  verdict created in the window (the last 7 days, or `from`/`to`), host-wide like the tiles:
+  judge spend vs the same judge tokens priced on Ultra. `last_edit` is the caller's newest
+  visible verdict and does not drive the savings line.
+- `GET /api/v1/digest/latest` → `{digest_id, period_start, period_end, narrative,
+  verdict_ids, merged, blocked, usd, simulated_models, metrics: [{metric, value}]}`
+  (`metrics` = the product-metrics table for the period; `[]` on older digests)
+- `GET /api/v1/metrics/product?since=7d` → `{since, rows: [{metric, value}]}` (the rows of
+  `ratchet metrics`; `since` = `<n>d|h|m`, the response's `since` is the window start);
+  `GET /api/v1/metrics/demo?since=7d` → same shape, the demo funnel (`ratchet metrics
+  --demo`), operator host only (403 `not_public`)
+- `GET /api/v1/events?since&kinds&limit&cursor` → `{items: Event[], next_cursor}`;
+  `GET /api/v1/events/stream` (SSE, `id:`/`event:`/`data:`, heartbeat comment 15 s,
+  `Last-Event-ID`); session-filtered by cookie. At most `RATCHET_SSE_MAX_PER_CLIENT` (3)
+  streams per client IP and `RATCHET_SSE_MAX_STREAMS` (100) in total, else 429
+  `rate_limited`; one shared poller per app fans new rows out to every stream.
+- `GET /api/v1/ticker` → `{usd_by_tier, total_usd, live}`
+- `POST /api/v1/demo/events` (anonymous funnel, ADR 0016)
+- Errors: `{"error": {"code", "message", "request_id", "details"?}}`.
+- Actions require `X-Ratchet-Action-Token` when `public_mode`; rate limit 10/min/IP.
+- `POST /api/v1/simulate/{id}`: 429 `simulate_busy` when `RATCHET_SIMULATE_MAX_QUEUE` (20)
+  runs are queued, or the client IP already has a running or queued run.
+- POST/PUT/PATCH bodies over `RATCHET_API_MAX_BODY_BYTES` (64 KiB) → 413
+  `payload_too_large` (Caddy enforces the same `request_body max_size`).
+- Public mode refuses to start with the default `RATCHET_ACTION_TOKEN_SECRET` (or one under
+  16 characters): `config_error` at `ratchet serve`.
+
+## 8. Error and reason code registry
+
+Every stable code in use (`grep` of `code=`, `error_code=`, class `code`, decision rules).
+"Copy" says where the user-facing text lives: **E** = `ERROR_COPY`, **R** = `REASON_TEXT`
+(both in `ratchet/copy_errors.py`, re-exported by `ratchet.copy`, mirrored in
+`dashboard/src/copy.ts`); "—" = internal/operator-only (CLI, logs, sandbox-facing).
+
+### Errors (exceptions, HTTP envelopes, pair `error_code`)
+
+| Code | HTTP | Raised by | Copy |
+| --- | --- | --- | --- |
+| `bad_request` | 400 / 422 | API validation, bad cursor/filter/`from`-`to` | — |
+| `not_found` | 404 | unknown id or route | — |
+| `method_not_allowed` | 405 | API | — |
+| `payload_too_large` | 413 | API body limit (`RATCHET_API_MAX_BODY_BYTES`) | E, R |
+| `not_public` | 403 | public host: bless/record/library, another session's verdict | E, R |
+| `simulate_disabled` | 403 | Simulate off on this host | E, R |
+| `simulate_busy` | 429 | Simulate queue full or client already has a run | E, R |
+| `rate_limited` | 429 | 10 actions/min/IP; SSE stream caps | E, R |
+| `action_token_invalid` | 403 | public host: missing/stale `X-Ratchet-Action-Token` | E, R |
+| `action_locked` | 409 | another action holds the verdict lock | R |
+| `not_ready` | 409 | Rollback/Approve before the edit is terminal (or before its revert ran) | E, R |
+| `not_ready` | 503 | API: a component is not wired (no orchestrator / module) | E, R |
+| `already_reverted` | 409 | Rollback on a verdict whose action is `reverted` | E, R |
+| `stacked_on_held` | 409 / reason | merge or approve-anyway would ship an unresolved earlier edit; rollback of a merged edit main cannot take | E, R |
+| `merge_conflict` | 409 / reason | main moved under the edit | E, R |
+| `session_reset` | 409 | Simulate session repo already reset | — |
+| `not_seeded` | 409 | `ratchet seed-demo` not run | — |
+| `conflict` | 409 | generic `ConflictError` | — |
+| `tier_mismatch` | 409 | proxy: agent call on a tier other than the run's | R |
+| `budget_exceeded` | 429 | proxy spending caps (daily, purpose, bench, sidecar allowance) | E, R |
+| `upstream_unavailable` | 502 | Token Factory / Tavily / Nebius API failed | E, R |
+| `sidecar_token_invalid` | 403 | worker sidecar admin route without the per-golden token | — |
+| `run_id_mismatch` | 403 | worker mock-tool sidecar asked about another run | — |
+| `missing_run_id`, `bad_run_id`, `bad_frozen_time` | 400 | mock tool server request checks | — |
+| `unknown_tool`, `bad_args`, `not_local`, `local_tool` | 400 / 404 | mock tool server and harness tool routing | — |
+| `world_missing`, `world_invalid` | 409 / 500 | mock world fixtures | — |
+| `already_paid`, `pr_not_open` | 409 | mock tool adapters (world state) | — |
+| `reconciled_by_diff` | — | workspace-diff `fs.write`/`fs.delete` ToolCalls | — |
+| `ratchet_blocked` | 409 | unexpected side effect refused by the mock tool server | R |
+| `sandbox_failed` | 500 / pair | sandbox could not start or was refused (ADR 0017) | R |
+| `harness_failed`, `harness_timeout` | 500 / pair | agent crashed or timed out in replay | R |
+| `harness_mismatch` | pair | golden and replay ran on different adapters | R |
+| `worker_lost` | pair | worker died before the golden ran | E, R |
+| `schema_failure` | 422 / pair | judge answer unreadable after retries → `uncertain` | R |
+| `judge_timeout` | pair / reason | Ultra timed out → held | E, R |
+| `drift_unavailable` | pair | Tavily failed → stays `regression` | E, R |
+| `internal_error` | 500 | unexpected exception (envelope) | — |
+| `internal` | — | watcher internal failure (log) | — |
+| `config_error` | 500 / CLI | bad settings; public mode with the default action-token secret | — |
+| `git_error`, `git_timeout`, `git_unavailable`, `main_integrity` | 500 | git operations | — |
+| `skill_invalid` | 422 | SKILL.md failed validation | — |
+| `confirmation_required` | CLI | `ratchet bench` without `--yes` | — |
+
+### Decision reasons (`Verdict.reasons`, `ratchet.judge.decide`)
+
+`level0_hard_fail`, `agreed_regression` (BLOCK); `replay_infra`, `judge_timeout`,
+`judges_disagreed`, `single_judge_regression`, `uncertain`, `replay_failed`,
+`stacked_on_held`, `merge_conflict`, `sandbox_failed` (WARN/held); `no_affected_traces`,
+`all_clear`, `drift` (PASS). User copy: `WARN_REASON_PHRASES` and the headline templates in
+`ratchet.copy`; `REASON_TEXT` for the ones shown as badges.

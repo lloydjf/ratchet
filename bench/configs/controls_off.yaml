@@ -1,0 +1,10 @@
+# ADR 0023 ablation: the full cascade with control replays off. Re-judges the cascade run's
+# replays, so the paired comparison shows how many contested pairs (and false blocks on N0
+# and on the E6 noise floor's kind of nondeterminism) the controls settled.
+name: controls_off
+description: Full cascade without control replays (a contested pair is never replayed again).
+experiments: [E2, E6]
+mode: edits
+cascade: {mode: cascade, level0: true, drift: true, controls: false}
+reuse_replays: cascade
+concurrency: 2

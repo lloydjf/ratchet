@@ -1,0 +1,16 @@
+# Fake PII corpus for the PII tokenizer tests. Every person, address, number and key below is invented.
+Hi team, please loop in jane.doe@example.com and ops-team+alerts@widgets.example.org on issue #482.
+Jane's backup address is Jane.Doe@example.com; billing goes to billing@acme-widgets.example.
+Call the on-call line at (415) 555-0134 or the desk at 415-555-0199 before 2026-10-14 17:00 UTC.
+UK office: +44 20 7946 0958. Berlin: +49 30 901820. Toronto: 416.555.0172.
+Receipt total was $1,234.56 for order 9921 on 2026-10-01; EUR/USD rate 1.08.
+OPENAI_API_KEY=sk-test-4f9aB2cD8eF1gH3iJ5kL7mN9oP0qRsTuV
+tavily key: tvly-dev-AbCdEf1234567890GhIjKlMn
+GitHub token ghp_FAKE0000111122223333444455556666777788 should never be stored.
+AWS access key AKIAFAKEFAKEFAKE1234 and secret = "wJalrXUtnFEMI/K7MDENG/bPxRfiCYFAKEKEY99"
+Authorization: Bearer abcDEF123456ghiJKL789012mnoPQR345678
+password: hunter2-but-longer
+Session cookie 0123456789abcdef0123456789abcdef must be redacted.
+Random blob Zm9vYmFyQmF6UXV4MTIzNDU2Nzg5MEFCQ0RFRkdISUpLTE1OT1BRUlNU end.
+Commit 3f2a9c1b7d4e5f60718293a4b5c6d7e8f9012345 closed issue 17 in acme/widgets.
+Reply to jane.doe@example.com again and call (415) 555-0134 tomorrow.

@@ -1,0 +1,220 @@
+{
+  "run_id": "run_5339e35afc7e",
+  "kind": "golden",
+  "task_input": "Can you triage the open GitHub issues for acme/data-pipeline?",
+  "steps": [
+    {
+      "kind": "llm",
+      "step_id": "m001",
+      "tier": "super",
+      "model": "nvidia/nemotron-3-super-120b-a12b",
+      "request_hash": "e5116c0b3766ce36798b52d1e630b301f7302a551df9d7082c8fbe0d370b89bb",
+      "messages_ref": "steps/m001.req.json",
+      "response_ref": "steps/m001.res.json",
+      "prompt_tokens": 4050,
+      "completion_tokens": 67,
+      "usd": 0.0012753,
+      "latency_ms": 861,
+      "started_at": "2026-10-16T06:22:59.196269Z",
+      "purpose": "agent",
+      "api": "chat",
+      "usage_estimated": false,
+      "tool_calls_requested": [
+        "github.list_issues"
+      ],
+      "content_preview": "I'll help triage the open GitHub issues for acme/data-pipeline. Let me start by listing the open issues."
+    },
+    {
+      "kind": "tool",
+      "step_id": "t001",
+      "tool": "github.list_issues",
+      "args_norm": {
+        "repo": "acme/data-pipeline",
+        "state": "open"
+      },
+      "args_hash": "9acfb18d6315e4e081c8da107b27d98a2b26211b7cbe29038b293709f49681d3",
+      "result_hash": "ef75c355a973e9d1ff64ab02f0326bec6da97d960c78c4961048cf3731ea2890",
+      "side_effect": "read",
+      "source": "live",
+      "cassette_key": "9acfb18d6315e4e081c8da107b27d98a2b26211b7cbe29038b293709f49681d3",
+      "result_preview": "{\"issues\":[{\"assignees\":[],\"author\":\"femi\",\"body\":\"The export step raises `KeyError: Contents` when there are no new objects.\",\"closed_at\":null,\"comments\":1,\"created_at\":\"2026-07-29T09:12:00Z\",\"labels\":[],\"number\":401,\"state\":\"open\",\"state_reason\":null,\"title\":\"Nightly job fails when the S3 bucket is empty\",\"updated_at\":\"2026-07-30T09:12:00Z\"},{\"assignees\":[],\"author\":\"chen\",\"body\":\"Analytics wou…",
+      "blocked": false,
+      "started_at": "2026-10-16T06:23:00.068323Z"
+    },
+    {
+      "kind": "llm",
+      "step_id": "m002",
+      "tier": "super",
+      "model": "nvidia/nemotron-3-super-120b-a12b",
+      "request_hash": "dfe71c62131f2bd688fc27b719be4f081c9f329719f4c3261a5293bb13f5ca28",
+      "messages_ref": "steps/m002.req.json",
+      "response_ref": "steps/m002.res.json",
+      "prompt_tokens": 4689,
+      "completion_tokens": 265,
+      "usd": 0.0016452,
+      "latency_ms": 1725,
+      "started_at": "2026-10-16T06:23:00.071561Z",
+      "purpose": "agent",
+      "api": "chat",
+      "usage_estimated": false,
+      "tool_calls_requested": [
+        "github.label",
+        "github.label",
+        "github.label"
+      ],
+      "content_preview": "Now I'll process each issue according to the triage rules:\n\nIssue #401: \"Nightly job fails when the S3 bucket is empty\" - Body mentions KeyError → **bug**\nIssue #402: \"Support Parquet output\" - Title mentions Support → **enhancement**  \nIssue #404: \"Explain the retry settings\" - Title mentions Explain → **documentation**\nIssue #406: Already has \"bug\" label → skip\n\nLet me apply the labels:"
+    },
+    {
+      "kind": "tool",
+      "step_id": "t002",
+      "tool": "github.label",
+      "args_norm": {
+        "issue": 401,
+        "labels": [
+          "bug"
+        ],
+        "repo": "acme/data-pipeline"
+      },
+      "args_hash": "448ecaf3ac4513d8ce046aba3a6238c6e7907540f732b2088b9888109f02e548",
+      "result_hash": "b57a3b7bd36e1f9a96ca2ab2b3a4aa68d8cc260dcfa41edd0e9e6c078dbedae9",
+      "side_effect": "write_reversible",
+      "source": "live",
+      "cassette_key": "448ecaf3ac4513d8ce046aba3a6238c6e7907540f732b2088b9888109f02e548",
+      "result_preview": "{\"issue\":401,\"labels\":[\"bug\"],\"repo\":\"acme/data-pipeline\"}",
+      "blocked": false,
+      "started_at": "2026-10-16T06:23:01.807155Z"
+    },
+    {
+      "kind": "tool",
+      "step_id": "t003",
+      "tool": "github.label",
+      "args_norm": {
+        "issue": 402,
+        "labels": [
+          "enhancement"
+        ],
+        "repo": "acme/data-pipeline"
+      },
+      "args_hash": "cbea8442e22d80190efb6fdaaff7945bca679c97262180142315148a1005f0c2",
+      "result_hash": "90e69651bf5ad9a8212e6713b99dca0d38c7400823cae7a8bcdcc28c4da73c9a",
+      "side_effect": "write_reversible",
+      "source": "live",
+      "cassette_key": "cbea8442e22d80190efb6fdaaff7945bca679c97262180142315148a1005f0c2",
+      "result_preview": "{\"issue\":402,\"labels\":[\"enhancement\"],\"repo\":\"acme/data-pipeline\"}",
+      "blocked": false,
+      "started_at": "2026-10-16T06:23:01.808919Z"
+    },
+    {
+      "kind": "tool",
+      "step_id": "t004",
+      "tool": "github.label",
+      "args_norm": {
+        "issue": 404,
+        "labels": [
+          "documentation"
+        ],
+        "repo": "acme/data-pipeline"
+      },
+      "args_hash": "74a2be0d1391b3ab055a968bf42fbb1ae394ae374cf14bd957aa5bdb4801374b",
+      "result_hash": "af557598fe524562eabce12f9252bffb5b4599331067bd14fb80a234b2103cab",
+      "side_effect": "write_reversible",
+      "source": "live",
+      "cassette_key": "74a2be0d1391b3ab055a968bf42fbb1ae394ae374cf14bd957aa5bdb4801374b",
+      "result_preview": "{\"issue\":404,\"labels\":[\"documentation\"],\"repo\":\"acme/data-pipeline\"}",
+      "blocked": false,
+      "started_at": "2026-10-16T06:23:01.810455Z"
+    },
+    {
+      "kind": "llm",
+      "step_id": "m003",
+      "tier": "super",
+      "model": "nvidia/nemotron-3-super-120b-a12b",
+      "request_hash": "23190ff686ea7a0eb2c895d155347a5962ae88bcb61c11d2d2b9bf5bb7982106",
+      "messages_ref": "steps/m003.req.json",
+      "response_ref": "steps/m003.res.json",
+      "prompt_tokens": 5053,
+      "completion_tokens": 67,
+      "usd": 0.0015761999999999998,
+      "latency_ms": 911,
+      "started_at": "2026-10-16T06:23:01.812193Z",
+      "purpose": "agent",
+      "api": "chat",
+      "usage_estimated": false,
+      "tool_calls_requested": [
+        "github.label"
+      ],
+      "content_preview": "No questions were identified, so no comments needed. Now providing the summary:"
+    },
+    {
+      "kind": "tool",
+      "step_id": "t005",
+      "tool": "github.label",
+      "args_norm": {
+        "issue": 401,
+        "labels": [
+          "bug"
+        ],
+        "repo": "acme/data-pipeline"
+      },
+      "args_hash": "448ecaf3ac4513d8ce046aba3a6238c6e7907540f732b2088b9888109f02e548",
+      "result_hash": "b57a3b7bd36e1f9a96ca2ab2b3a4aa68d8cc260dcfa41edd0e9e6c078dbedae9",
+      "side_effect": "write_reversible",
+      "source": "live",
+      "cassette_key": "448ecaf3ac4513d8ce046aba3a6238c6e7907540f732b2088b9888109f02e548",
+      "result_preview": "{\"issue\":401,\"labels\":[\"bug\"],\"repo\":\"acme/data-pipeline\"}",
+      "blocked": false,
+      "started_at": "2026-10-16T06:23:02.736768Z"
+    },
+    {
+      "kind": "llm",
+      "step_id": "m004",
+      "tier": "super",
+      "model": "nvidia/nemotron-3-super-120b-a12b",
+      "request_hash": "bc7e05d10494ff999d6e16571d39d7661b6c2cf005ed6c04b59973c8ed1e16e0",
+      "messages_ref": "steps/m004.req.json",
+      "response_ref": "steps/m004.res.json",
+      "prompt_tokens": 5160,
+      "completion_tokens": 49,
+      "usd": 0.0015921,
+      "latency_ms": 1006,
+      "started_at": "2026-10-16T06:23:02.740458Z",
+      "purpose": "agent",
+      "api": "chat",
+      "usage_estimated": false,
+      "tool_calls_requested": [],
+      "content_preview": "Triaged acme/data-pipeline: 4 open issues.\n#401: bug\n#402: enhancement\n#404: documentation\nAlready labeled: #406\nAsked for details: none"
+    }
+  ],
+  "final_output": "Triaged acme/data-pipeline: 4 open issues.\n#401: bug\n#402: enhancement\n#404: documentation\nAlready labeled: #406\nAsked for details: none",
+  "artifacts_ref": null,
+  "skills_invoked": [
+    "github-triage"
+  ],
+  "world_dependent": false,
+  "world_facts": [],
+  "env": {
+    "workspace_ref": "workspace.tar.zst",
+    "frozen_time": "2026-10-14T16:00:00Z",
+    "harness_version": "minimal/0.1.0",
+    "skills_commit": "dda8ffcb2837fa255c23f29889f82e6f4976ba33",
+    "world_ref": null
+  },
+  "agent_tier": "super",
+  "seed": 1191463581,
+  "created_at": "2026-10-16T06:23:03.785665Z",
+  "golden_of": null,
+  "candidate_commit": null,
+  "success_criteria": [
+    "states the number of open issues is 4",
+    "lists issue #401 with label 'bug'",
+    "lists issue #402 with label 'enhancement'",
+    "lists issue #404 with label 'documentation'",
+    "states issue #406 is already labeled",
+    "states no details were asked for any issue"
+  ],
+  "archived_reason": null,
+  "blessed_at": "2026-10-16T06:23:04.935154Z",
+  "harness_ok": true,
+  "error_code": null,
+  "task_label": "Triage acme/data-pipeline"
+}

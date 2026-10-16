@@ -1,0 +1,8 @@
+{
+  "events": [
+    {"event_id": "evt_0001", "title": "Standup", "start": "2026-10-15T09:00:00Z", "end": "2026-10-15T09:30:00Z", "attendees": ["alice@example.com", "bob@example.com"], "calendar": "primary"}
+  ],
+  "busy": {
+    "bob@example.com": [{"start": "2026-10-15T13:00:00Z", "end": "2026-10-15T15:00:00Z"}]
+  }
+}

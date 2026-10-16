@@ -1,0 +1,44 @@
+# Volatile tool-argument fields, dropped before a call is hashed into a cassette key
+# Loaded by ratchet.mocktools.normalize.
+#
+# global_pattern  applies to every dict key at every depth. Keys are matched after a
+#                 camelCase -> snake_case conversion, so `requestId` drops like `request_id`.
+#                 The `(^|_)` anchor keeps `paid`, `valid`, `issue`, `repo` untouched.
+# tools."*"       rules applied to every tool.
+# tools.<name>
+#   drop          extra key names (any depth) to remove for this tool.
+#   keep          key names the global pattern would drop but that carry meaning for this
+#                 tool (an invoice or calendar named by id). `keep` wins over the pattern,
+#                 never over an explicit `drop`.
+#   sets          list-valued keys whose order carries no meaning (labels, recipients):
+#                 they are sorted so ["bug", "p1"] and ["p1", "bug"] hash the same.
+#
+# Keys whose value is null are dropped too (an omitted optional and an explicit null are
+# the same call). String values are NOT whitespace- or case-normalized for the exact key;
+# that tolerance belongs to the tolerant matcher only.
+
+global_pattern: "(^|_)(id|ts|timestamp|nonce|token|etag)$"
+
+tools:
+  "*":
+    drop: [idempotency_key, dedupe_key, client_ref, cache_bust, request_time, sent_at, trace_context]
+  github.list_issues:
+    sets: [labels]
+  github.label:
+    sets: [labels]
+  gmail.send:
+    keep: [thread_id, in_reply_to_id]
+    sets: [to, cc]
+  gmail.search:
+    keep: [thread_id]
+  calendar.freebusy:
+    sets: [attendees]
+  calendar.create:
+    keep: [calendar_id]
+    sets: [attendees]
+  sheets.append:
+    keep: [sheet_id]
+  sheets.read:
+    keep: [sheet_id]
+  payments.pay:
+    keep: [invoice_id]

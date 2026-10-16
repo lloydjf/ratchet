@@ -1,0 +1,16 @@
+{
+  "edit_id": "edit_fa80c0517746",
+  "commit": "bada6931a356ded9f8dc84172bbd06d22e8c27f0",
+  "parent": "dda8ffcb2837fa255c23f29889f82e6f4976ba33",
+  "files": [
+    "github-triage/SKILL.md"
+  ],
+  "diff_ref": "edits/edit_fa80c0517746/diff.patch",
+  "affected_skills": [
+    "github-triage"
+  ],
+  "author": "seeded",
+  "detected_at": "2026-10-16T06:24:44.720204Z",
+  "summary": "github-triage: SKILL.md changed (+2 −1)",
+  "session_hash": "e2ad5d8554c5aa76"
+}

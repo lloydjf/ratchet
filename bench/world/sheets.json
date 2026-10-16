@@ -1,0 +1,52 @@
+{
+  "sheets": {
+    "Expenses": {
+      "header": [
+        "date",
+        "merchant",
+        "total",
+        "currency",
+        "vat",
+        "file"
+      ],
+      "rows": [
+        [
+          "2026-09-22",
+          "City Taxi Berlin",
+          "31.50",
+          "EUR",
+          "5.03",
+          "taxi-2026-09-22.pdf"
+        ],
+        [
+          "2026-09-24",
+          "Hotel Spreeblick",
+          "175.00",
+          "EUR",
+          "11.45",
+          "hotel-2026-09-24.pdf"
+        ]
+      ]
+    },
+    "Expenses USD": {
+      "header": [
+        "date",
+        "description",
+        "amount",
+        "currency",
+        "usd",
+        "rate"
+      ],
+      "rows": [
+        [
+          "2026-09-24",
+          "hotel",
+          "175.00",
+          "EUR",
+          "188.83",
+          "1.0790"
+        ]
+      ]
+    }
+  }
+}

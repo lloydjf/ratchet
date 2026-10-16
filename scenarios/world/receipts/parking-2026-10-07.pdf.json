@@ -1,0 +1,25 @@
+{
+  "merchant": "Park & Go Mitte",
+  "date": "2026-10-07",
+  "currency": "EUR",
+  "layout": "A",
+  "address": "Garage Mitte, Berlin",
+  "lines": [
+    {
+      "description": "Parking, 6 hours",
+      "quantity": 1,
+      "unit_price": 15.97,
+      "amount": 15.97
+    },
+    {
+      "description": "VAT 19%",
+      "quantity": 1,
+      "unit_price": 3.03,
+      "amount": 3.03
+    }
+  ],
+  "subtotal": 15.97,
+  "vat": 3.03,
+  "vat_rate": 0.19,
+  "total": 19.0
+}

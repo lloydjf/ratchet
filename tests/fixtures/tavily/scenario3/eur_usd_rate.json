@@ -1,0 +1,28 @@
+{
+  "_note": "Synthetic Tavily search response for Ratchet demo scenario 3 (the world moved). Not real market data; every URL is example.com.",
+  "query": "EUR to USD exchange rate today",
+  "response_time": 1.31,
+  "results": [
+    {
+      "title": "EUR/USD reference rate - Example FX Markets",
+      "url": "https://fx.example.com/eur-usd",
+      "content": "Euro to US dollar reference rate as of 2026-10-15: 1 EUR = 1.1630 USD. The euro gained sharply after the central bank's rate decision, up from 1.0800 earlier in the week; EUR/USD closed at 1.1630.",
+      "score": 0.93,
+      "published_date": "2026-10-15"
+    },
+    {
+      "title": "Euro jumps against the dollar",
+      "url": "https://markets.example.com/news/2026-10-15-euro-jumps",
+      "content": "EUR/USD traded at 1.1630, its strongest level of the year, as traders priced in a slower rate path.",
+      "score": 0.87,
+      "published_date": "2026-10-15"
+    },
+    {
+      "title": "Currency converter: EUR to USD",
+      "url": "https://convert.example.com/eur/usd",
+      "content": "Mid-market rate: 1 EUR equals 1.1630 USD. Last updated 2026-10-15 08:00 UTC.",
+      "score": 0.81,
+      "published_date": "2026-10-15"
+    }
+  ]
+}

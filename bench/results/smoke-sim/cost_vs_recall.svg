@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 400" width="640" height="400" role="img" aria-labelledby="fig-title fig-desc">
+<title id="fig-title">Cost per verdict vs detection recall</title>
+<desc id="fig-desc">SIMULATED MODELS — pipeline smoke test; not benchmark results nano_only: $0.0004 per verdict, recall 1.00; super_only: $0.0034 per verdict, recall 1.00; ultra_only: $0.0116 per verdict, recall 1.00; cascade: $0.0052 per verdict, recall 1.00</desc>
+<style>
+  .surface { fill: #fcfcfb; }
+  .ink { fill: #0b0b0b; font: 13px system-ui, -apple-system, sans-serif; }
+  .muted { fill: #52514e; font: 12px system-ui, -apple-system, sans-serif; }
+  .grid { stroke: #e4e3df; stroke-width: 1; }
+  .axis { stroke: #8a8984; stroke-width: 1; }
+  .dot { fill: #2a78d6; stroke: #fcfcfb; stroke-width: 2; }
+  @media (prefers-color-scheme: dark) {
+    .surface { fill: #1a1a19; }
+    .ink { fill: #f0efec; }
+    .muted { fill: #c3c2b7; }
+    .grid { stroke: #33322f; }
+    .axis { stroke: #77766f; }
+    .dot { fill: #3987e5; stroke: #1a1a19; }
+  }
+</style>
+<rect class="surface" x="0" y="0" width="640" height="400" rx="6"/>
+<text class="ink" x="72" y="22" font-weight="600">Cost per verdict vs detection recall</text>
+<text class="muted" x="72" y="38">SIMULATED MODELS — pipeline smoke test; not benchmark results</text>
+<line class="grid" x1="72" x2="608" y1="344.0" y2="344.0"/>
+<text class="muted" x="64" y="348.0" text-anchor="end">0.0</text>
+<text class="muted" x="72.0" y="362" text-anchor="middle">$0.0000</text>
+<line class="grid" x1="72" x2="608" y1="289.6" y2="289.6"/>
+<text class="muted" x="64" y="293.6" text-anchor="end">0.2</text>
+<text class="muted" x="179.2" y="362" text-anchor="middle">$0.0040</text>
+<line class="grid" x1="72" x2="608" y1="235.2" y2="235.2"/>
+<text class="muted" x="64" y="239.2" text-anchor="end">0.4</text>
+<text class="muted" x="286.4" y="362" text-anchor="middle">$0.0080</text>
+<line class="grid" x1="72" x2="608" y1="180.8" y2="180.8"/>
+<text class="muted" x="64" y="184.8" text-anchor="end">0.6</text>
+<text class="muted" x="393.6" y="362" text-anchor="middle">$0.0120</text>
+<line class="grid" x1="72" x2="608" y1="126.4" y2="126.4"/>
+<text class="muted" x="64" y="130.4" text-anchor="end">0.8</text>
+<text class="muted" x="500.8" y="362" text-anchor="middle">$0.0160</text>
+<line class="grid" x1="72" x2="608" y1="72.0" y2="72.0"/>
+<text class="muted" x="64" y="76.0" text-anchor="end">1.0</text>
+<text class="muted" x="608.0" y="362" text-anchor="middle">$0.0200</text>
+<line class="axis" x1="72" x2="608" y1="344" y2="344"/>
+<line class="axis" x1="72" x2="72" y1="72" y2="344"/>
+<text class="ink" x="340.0" y="388" text-anchor="middle">Mean judge cost per verdict (USD, Token Factory list prices)</text>
+<text class="ink" transform="translate(18 208.0) rotate(-90)" text-anchor="middle">Detection recall (R1–R6)</text>
+<g><title>nano_only: $0.0004 per verdict, recall 1.00</title><circle class="dot" cx="82.3" cy="72.0" r="6"/><text class="ink" x="82.3" y="60.0" text-anchor="middle">nano_only</text></g>
+<g><title>super_only: $0.0034 per verdict, recall 1.00</title><circle class="dot" cx="162.8" cy="72.0" r="6"/><text class="ink" x="162.8" y="60.0" text-anchor="middle">super_only</text></g>
+<g><title>cascade: $0.0052 per verdict, recall 1.00</title><circle class="dot" cx="211.5" cy="72.0" r="6"/><text class="ink" x="211.5" y="94.0" text-anchor="middle">cascade</text></g>
+<g><title>ultra_only: $0.0116 per verdict, recall 1.00</title><circle class="dot" cx="381.9" cy="72.0" r="6"/><text class="ink" x="381.9" y="60.0" text-anchor="middle">ultra_only</text></g>
+</svg>

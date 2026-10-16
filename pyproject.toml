@@ -1,0 +1,99 @@
+[project]
+name = "ratchet"
+version = "0.1.0"
+description = "Regression CI for self-improving agents: replay blessed tasks against every skill edit, judge with a Nemotron cascade, block what breaks."
+readme = "README.md"
+license = "Apache-2.0"
+license-files = ["LICENSE"]
+requires-python = ">=3.11,<3.12"
+authors = [{ name = "Ratchet contributors" }]
+dependencies = [
+    "fastapi>=0.143.2",
+    "uvicorn[standard]>=0.54.0",
+    "httpx>=0.28.1",
+    "pydantic>=2.14.1",
+    "pydantic-settings>=2.16.0",
+    "gitpython>=3.2.1",
+    "watchdog>=6.0.0",
+    "typer>=0.27.3",
+    "deepdiff>=9.1.0",
+    "tavily-python>=0.8.5",
+    "pyyaml>=6.0.3",
+    "zstandard>=0.25.0",
+    "cryptography>=50.0.2",
+    "sse-starlette>=3.5.0",
+    "prometheus-client>=0.26.0",
+    "mcp>=2.0.0",
+]
+
+[project.scripts]
+ratchet = "ratchet.cli.main:main"
+
+[dependency-groups]
+dev = [
+    "pytest>=9.1.1",
+    "pytest-asyncio>=1.4.0",
+    "pytest-cov>=7.1.0",
+    "respx>=0.23.1",
+    "ruff>=0.17.1",
+    "mypy>=2.4.0",
+    "types-PyYAML>=6.0.12",
+]
+docs = [
+    "mkdocs-material>=9.7.7",
+]
+
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["ratchet"]
+
+[tool.hatch.build.targets.wheel.force-include]
+"ratchet/judge/prompts" = "ratchet/judge/prompts"
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+extend-exclude = ["dashboard", "data", "internal"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "SIM", "N", "TID"]
+# N818: the budget exception is named `BudgetExceeded` on purpose.
+ignore = ["N818"]
+
+[tool.ruff.lint.flake8-tidy-imports.banned-api]
+"datetime.datetime.now".msg = "Use ratchet.clock.now(); it is patchable and frozen inside replays."
+"datetime.datetime.utcnow".msg = "Use ratchet.clock.now()."
+
+[tool.ruff.lint.per-file-ignores]
+"ratchet/clock.py" = ["TID251"]
+"tests/**" = ["N802", "N806"]
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+packages = ["ratchet"]
+plugins = ["pydantic.mypy"]
+
+[[tool.mypy.overrides]]
+module = ["tavily.*", "deepdiff.*", "zstandard.*", "watchdog.*", "git.*", "sse_starlette.*", "prometheus_client.*"]
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+markers = [
+    "live: calls real Token Factory / Tavily; manual workflow only, capped at $2",
+    "e2e: end-to-end through the full local stack",
+    "docker: needs a running Docker daemon",
+    "hermes: runs the Hermes Agent checkout at var/hermes/src (offline, sim upstream)",
+]
+addopts = "-m 'not live and not docker and not e2e and not hermes' --strict-markers"
+filterwarnings = ["error::pytest.PytestUnraisableExceptionWarning"]
+
+[tool.coverage.run]
+source = ["ratchet"]
+branch = true

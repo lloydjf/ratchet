@@ -1,0 +1,5 @@
+Attendees: Jun, Priya, Northwind account team
+Northwind can deliver paper weekly.
+Decision: switch to weekly deliveries
+Action: Priya updates the purchase order
+Action: Jun informs finance

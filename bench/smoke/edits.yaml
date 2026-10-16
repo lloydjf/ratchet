@@ -1,0 +1,37 @@
+# Hand-written, deterministic edits for `ratchet bench smoke`. They target the five
+# skills the offline simulator has agent policies for (ratchet/sim/agent/*), so every edit is
+# expressed in a phrasing the simulator's directive regexes read. Simulator output is test
+# infrastructure (ADR 0018): the smoke report proves the pipeline works, nothing more.
+edits:
+  - edit_id: smoke-r1-expense-report-lines
+    skill: expense-report
+    type: R1
+    change_summary: Step 3 now takes amounts from the line items and skips the summary block, so layout-B receipts lose their VAT.
+  - edit_id: smoke-r2-expense-report-vat
+    skill: expense-report
+    type: R2
+    change_summary: The VAT line was removed from the reply format.
+  - edit_id: smoke-r6-expense-report-narrow
+    skill: expense-report
+    type: R6
+    change_summary: The trigger description now fires only on the skill's exact name.
+  - edit_id: smoke-r4-github-triage-close
+    skill: github-triage
+    type: R4
+    change_summary: Step 7 now closes issues with no activity for 30 days as not_planned.
+  - edit_id: smoke-r3-github-triage-label
+    skill: github-triage
+    type: R3
+    change_summary: The enhancement rule now applies the label `feature` instead of `enhancement`.
+  - edit_id: smoke-r5-meeting-notes-broad
+    skill: meeting-notes
+    type: R5
+    change_summary: The trigger description now also claims formal rewrites of any sentence and fixing broken text.
+  - edit_id: smoke-r1-changelog-writer-group
+    skill: changelog-writer
+    type: R1
+    change_summary: fix commits are now grouped under Changed instead of Fixed.
+  - edit_id: smoke-r1-fx-expense-converter-decimals
+    skill: fx-expense-converter
+    type: R1
+    change_summary: The reported rate is rounded to 2 decimals instead of 4.

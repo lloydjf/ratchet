@@ -1,0 +1,38 @@
+{
+  "merchant": "Papeterie Lindner",
+  "date": "2026-10-06",
+  "currency": "EUR",
+  "layout": "B",
+  "address": "Kantstr. 77, Berlin",
+  "lines": [
+    {
+      "description": "Notebook A5",
+      "quantity": 3,
+      "unit_price": 4.9,
+      "amount": 14.7
+    },
+    {
+      "description": "Gel pens, pack of 5",
+      "quantity": 2,
+      "unit_price": 6.45,
+      "amount": 12.9
+    },
+    {
+      "description": "Desk organizer",
+      "quantity": 1,
+      "unit_price": 19.9,
+      "amount": 19.9
+    }
+  ],
+  "subtotal": 47.5,
+  "vat": null,
+  "vat_rate": null,
+  "total": 47.5,
+  "summary": {
+    "note": "All prices include 19% VAT.",
+    "net": 39.92,
+    "vat": 7.58,
+    "vat_rate": 0.19,
+    "gross": 47.5
+  }
+}

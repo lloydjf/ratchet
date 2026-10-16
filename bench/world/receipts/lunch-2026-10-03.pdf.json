@@ -1,0 +1,32 @@
+{
+  "merchant": "Trattoria Roma",
+  "date": "2026-10-03",
+  "currency": "EUR",
+  "layout": "B",
+  "address": "Torstr. 40, Berlin",
+  "lines": [
+    {
+      "description": "Pasta al pomodoro",
+      "quantity": 2,
+      "unit_price": 14.5,
+      "amount": 29.0
+    },
+    {
+      "description": "Mineral water 0.75 l",
+      "quantity": 2,
+      "unit_price": 3.75,
+      "amount": 7.5
+    }
+  ],
+  "subtotal": 36.5,
+  "vat": null,
+  "vat_rate": null,
+  "total": 36.5,
+  "summary": {
+    "note": "All prices include 19% VAT.",
+    "net": 30.67,
+    "vat": 5.83,
+    "vat_rate": 0.19,
+    "gross": 36.5
+  }
+}

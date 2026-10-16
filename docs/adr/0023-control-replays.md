@@ -1,0 +1,111 @@
+# 0023 — Control replays settle contested pairs
+Status: accepted
+Date: 2026-10-16   Owner: Core
+
+## Context
+Bench E6 replays *unchanged* skills on Nemotron Super. Token Factory ignores `seed`, so a
+replay sometimes differs from its golden for no reason the edit could cause ("Rows in: 4"
+instead of 5, a file not written). The cascade then judged 1–3 of ~15 pairs `regression`
+and the agreement rules BLOCKed: a false block on every one of 8 noise edits. A single
+replay cannot tell nondeterminism from a regression.
+
+## Decision
+- **A new state `controlling`** runs between `judging` and `drifting` (progress stage key
+  `controls`, label "Replaying controls (k/n)", between `ultra` and `drift`).
+- **Which pairs.** Every judged pair that is *contested*: outcome `regression` or
+  `uncertain`, `decided_by` not `level0` (a hard fail is evidence enough), and no
+  `error_code` (a judge timeout or infra failure keeps its own WARN reason).
+- **The control.** Its golden is replayed once more with the edit's **parent** tree (the
+  unchanged skill on `main`, `checkout_tar(edit.parent)`), same tier, harness and world
+  overlay as the edit's replay, in batches with `ctrl_<hex>_a<n>_<ii>` ids so they never
+  mix with the edit's replays. The control is judged against the golden by Level 0 and the
+  Nano screen only (`judge_pair` with `CascadeConfig(mode="nano_only")`), never Super or
+  Ultra.
+- **The rule.** The control *diverges* when its Level 0 diff touches the same
+  (tool, side-effect class) as the pair's, or when it judges `regression` (Nano
+  `regressed`, or a Level 0 hard fail of its own). Then the pair becomes `uncertain`,
+  `decided_by="control"`, `error_code=None`, with the reason "The unchanged skill also
+  produced a different result on this task, so the difference is nondeterminism, not the
+  edit." (`copy.explain_nondeterminism`). The control *agrees* when it judges `pass`; the
+  outcome stands and `control_outcome="agrees"` records the extra evidence. Anything else
+  (the control failed, Nano unsure) leaves the pair as judged. A control never makes a pair
+  pass: the worst a noise edit gets is WARN (held), not BLOCK.
+- **Record.** `PairVerdict.control_run_id` and `control_outcome` (`agrees` | `diverges`),
+  the control's judging cost added to the pair's `usd`, event
+  `pair.control {golden, replay, control, control_outcome}` (+ `pair.decided` when the
+  outcome changes). Files: `attempt_<n>/controls/<golden>.json` (the control's own pair
+  verdict) and `attempt_<n>/pairs/<golden>.control.json` (the adjusted pair; drift's file
+  wins over it, it wins over the judged one). A control batch with a job id is never
+  resubmitted and a saved control is never re-judged, so a restart pays for nothing twice.
+- **Switch.** `RATCHET_FEATURE_CONTROL_REPLAYS` (default on). Bench configs carry
+  `cascade.controls` (default on); `bench/configs/controls_off.yaml` is the ablation. The
+  judge-only re-judge configs (`level0_off`, `drift_off`, the single-tier E4 ones) copy the
+  cascade run's `controls/` results and set `EditOptions.reuse_controls`, so they never
+  replay a control of their own; a pair they contest that the cascade run did not has no
+  control and keeps its outcome.
+
+## Consequences
+Cost: one agent replay plus one Nano call per contested pair, nothing when nothing is
+contested. Latency: one more replay round trip on edits with contested pairs. A real
+regression whose control agrees still BLOCKs; a pair that differs on the unchanged
+skill too is held for a human instead of blocking. World-dependent pairs also get a control
+before the drift check; the control sees the same changed world, so drift still decides
+them (its file wins). A skill that is nondeterministic *and* regressed on a task is held
+(WARN) rather than blocked on that task; another pair or a repeat run still blocks it.
+
+## Reversal trigger
+Bench E6 with and without controls (`noise` vs `controls_off` on the same replays) shows no
+change in false blocks, or E1 recall drops because real regressions are diluted to WARN.
+
+## Amendment (2026-10-16): a diverging control is positive evidence
+
+With the first rule (a diverging control made the pair `uncertain`), the live E6 run held
+8 of 8 unchanged-skill edits: with about 15 replays per edit and roughly one in ten tasks
+varying between two runs of the same skill, almost every edit has one noisy pair, so WARN
+would fire on nearly every cosmetic edit and never mean anything. A diverging control is
+not missing evidence; it is evidence that the task varies without the edit. The pair now
+counts as `pass` with `decided_by="control"` and the nondeterminism reason, and the
+dashboard marks it "same result (noisy task)". The risk, accepted and reported: a real
+regression on a task that is also noisy is not measurable from one replay; the other
+pairs carry the signal, and the bench reports the share of control-diverged pairs as the
+noise floor.
+
+
+## Amendment 2 (2026-10-16): a hard fail the parent skill instructs is contested
+
+The live E6 run replayed the *unchanged* github-triage skill; one replay posted the
+question comment (`github.comment`, `write_irreversible`) that its golden run had skipped.
+Level 0 counted a new hard-class call, the pair was decided by Level 0, never got a
+control, and the noise edit was BLOCKed. A hard call the skill itself tells the agent to
+make is evidence of agent variance, not of the edit, until the unchanged skill shows
+otherwise.
+
+- **Which hard fails are contested.** A Level 0-decided `regression` with `hard_fail`, no
+  `error_code`, whose **every** new hard-class tool is *instructed by the parent skill*:
+  the tool's dotted name (`github.comment`) or wire name (`github__comment`) appears,
+  case-insensitively, in the parent commit's `<skill>/SKILL.md`
+  (`repo.read_file(edit.parent, f"{skill}/SKILL.md")`) of any affected skill; only when
+  neither appears, the tool's last segment in backticks (`` `comment` ``) also counts.
+  Prose ("Do not close ... issues") never does. A hard tool the parent skill never names
+  (scenario 1: the edit introduced `github.close_issue`) keeps the hard fail with no
+  control: the fast path is unchanged.
+- **The rule for them.** The control diverges only when its own Level 0 diff against the
+  golden has a new hard-class call for every (tool, side-effect class) the pair's has.
+  Then the pair becomes `pass`, `decided_by="control"`, the nondeterminism reason, and the
+  Level 0 finding stays attached as evidence (the dashboard shows its markers). Otherwise
+  (the control skipped the call, or made a different one) the hard fail stands,
+  `control_outcome="agrees"`; a control that could not run leaves it as judged.
+- **Decision.** `level0_hard_fail` counts only Level 0 hard-fail pairs whose outcome is
+  still `regression`.
+
+Cost: one control replay per contested hard fail, and a Nano call only when that control
+makes no hard call of its own. Risk, accepted: an edit that makes an already-instructed hard
+call more often on a task the unchanged skill also varies on is not blocked by that pair.
+
+## Note (2026-10-16): pairs the drift check could not reach are not contested
+
+A pair left `uncertain` with `drift_unavailable` (Tavily outage, or a missing fixture) keeps
+its reason. With Tavily down the edit is never passed, and a
+diverging control would explain world drift as "nondeterminism". Tried and reverted the
+same day.
+

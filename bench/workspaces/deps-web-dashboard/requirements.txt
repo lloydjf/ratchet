@@ -1,0 +1,3 @@
+# frontend build helpers
+pixelpress==6.0.4
+clickpath==8.2.0

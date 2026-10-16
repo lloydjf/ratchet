@@ -1,0 +1,20 @@
+# Scenario 2: the agent rewrote the receipt-parsing step for a new layout.
+# Hand-written edit: edit/expense-report/SKILL.md.
+# Expected selection: 7 direct (expense-report) + 3 canaries = 10 replays
+# (fx-expense-converter goldens may join as trigger neighbours; they stay identical).
+# Expected result: the 3 tasks with a layout-B receipt (VAT printed only in the summary
+# block) lose their `VAT:` line; Nano regressed, Super regressed, Ultra regressed;
+# BLOCK, reverted; the narrative names the VAT line.
+scenario_id: 2
+skill: expense-report
+title: Parse receipts from the line items
+learned: >-
+  To handle a new receipt layout, parsing now takes every amount from the line items and
+  skips the summary block.
+catches: >-
+  Receipts that print VAT only in their summary block lose the VAT line (2 or 3 of the 10
+  replays); Nano flags it, Super and Ultra agree.
+expected_decision: BLOCK
+edit_summary: >-
+  expense-report step 3 now reads amounts and VAT from the line items only and skips the
+  receipt's summary block.

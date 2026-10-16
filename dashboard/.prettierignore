@@ -1,0 +1,13 @@
+# Formatting is scoped to dashboard sources only. Never format anything outside dashboard/.
+/*
+!/src/
+!/e2e/
+!/*.config.ts
+!/*.config.js
+!/index.html
+node_modules/
+dist/
+dist-fixtures/
+playwright-report/
+test-results/
+screenshots/

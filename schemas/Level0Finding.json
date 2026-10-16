@@ -1,0 +1,177 @@
+{
+  "$defs": {
+    "ToolCall": {
+      "additionalProperties": false,
+      "properties": {
+        "args_hash": {
+          "title": "Args Hash",
+          "type": "string"
+        },
+        "args_norm": {
+          "additionalProperties": true,
+          "title": "Args Norm",
+          "type": "object"
+        },
+        "blocked": {
+          "default": false,
+          "title": "Blocked",
+          "type": "boolean"
+        },
+        "cassette_key": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Cassette Key"
+        },
+        "kind": {
+          "const": "tool",
+          "default": "tool",
+          "title": "Kind",
+          "type": "string"
+        },
+        "result_hash": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Result Hash"
+        },
+        "result_preview": {
+          "default": "",
+          "title": "Result Preview",
+          "type": "string"
+        },
+        "side_effect": {
+          "enum": [
+            "none",
+            "read",
+            "write_reversible",
+            "write_irreversible",
+            "destructive",
+            "external_send",
+            "spend"
+          ],
+          "title": "Side Effect",
+          "type": "string"
+        },
+        "source": {
+          "enum": [
+            "cassette",
+            "live",
+            "local"
+          ],
+          "title": "Source",
+          "type": "string"
+        },
+        "started_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Started At"
+        },
+        "step_id": {
+          "title": "Step Id",
+          "type": "string"
+        },
+        "tool": {
+          "title": "Tool",
+          "type": "string"
+        }
+      },
+      "required": [
+        "step_id",
+        "tool",
+        "args_norm",
+        "args_hash",
+        "result_hash",
+        "side_effect",
+        "source",
+        "cassette_key"
+      ],
+      "title": "ToolCall",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "changed_args": {
+      "items": {
+        "maxItems": 2,
+        "minItems": 2,
+        "prefixItems": [
+          {
+            "$ref": "#/$defs/ToolCall"
+          },
+          {
+            "$ref": "#/$defs/ToolCall"
+          }
+        ],
+        "type": "array"
+      },
+      "title": "Changed Args",
+      "type": "array"
+    },
+    "golden_run_id": {
+      "title": "Golden Run Id",
+      "type": "string"
+    },
+    "hard_fail": {
+      "title": "Hard Fail",
+      "type": "boolean"
+    },
+    "missing_calls": {
+      "items": {
+        "$ref": "#/$defs/ToolCall"
+      },
+      "title": "Missing Calls",
+      "type": "array"
+    },
+    "missing_hard": {
+      "default": false,
+      "title": "Missing Hard",
+      "type": "boolean"
+    },
+    "new_calls": {
+      "items": {
+        "$ref": "#/$defs/ToolCall"
+      },
+      "title": "New Calls",
+      "type": "array"
+    },
+    "output_similarity": {
+      "default": 1.0,
+      "title": "Output Similarity",
+      "type": "number"
+    },
+    "replay_run_id": {
+      "title": "Replay Run Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "golden_run_id",
+    "replay_run_id",
+    "new_calls",
+    "missing_calls",
+    "changed_args",
+    "hard_fail"
+  ],
+  "title": "Level0Finding",
+  "type": "object"
+}

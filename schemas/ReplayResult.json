@@ -1,0 +1,566 @@
+{
+  "$defs": {
+    "EnvSnapshot": {
+      "additionalProperties": false,
+      "properties": {
+        "frozen_time": {
+          "format": "date-time",
+          "title": "Frozen Time",
+          "type": "string"
+        },
+        "harness_version": {
+          "title": "Harness Version",
+          "type": "string"
+        },
+        "skills_commit": {
+          "title": "Skills Commit",
+          "type": "string"
+        },
+        "workspace_ref": {
+          "title": "Workspace Ref",
+          "type": "string"
+        },
+        "world_ref": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "World Ref"
+        }
+      },
+      "required": [
+        "workspace_ref",
+        "frozen_time",
+        "harness_version",
+        "skills_commit"
+      ],
+      "title": "EnvSnapshot",
+      "type": "object"
+    },
+    "LLMCall": {
+      "additionalProperties": false,
+      "properties": {
+        "api": {
+          "default": "chat",
+          "enum": [
+            "chat",
+            "responses"
+          ],
+          "title": "Api",
+          "type": "string"
+        },
+        "cached_prompt_tokens": {
+          "default": 0,
+          "title": "Cached Prompt Tokens",
+          "type": "integer"
+        },
+        "completion_tokens": {
+          "title": "Completion Tokens",
+          "type": "integer"
+        },
+        "content_preview": {
+          "default": "",
+          "title": "Content Preview",
+          "type": "string"
+        },
+        "kind": {
+          "const": "llm",
+          "default": "llm",
+          "title": "Kind",
+          "type": "string"
+        },
+        "latency_ms": {
+          "title": "Latency Ms",
+          "type": "integer"
+        },
+        "messages_ref": {
+          "title": "Messages Ref",
+          "type": "string"
+        },
+        "model": {
+          "title": "Model",
+          "type": "string"
+        },
+        "prompt_tokens": {
+          "title": "Prompt Tokens",
+          "type": "integer"
+        },
+        "purpose": {
+          "default": "agent",
+          "enum": [
+            "agent",
+            "screen",
+            "check",
+            "adjudicate",
+            "extract",
+            "narrative",
+            "bench",
+            "embed"
+          ],
+          "title": "Purpose",
+          "type": "string"
+        },
+        "request_hash": {
+          "title": "Request Hash",
+          "type": "string"
+        },
+        "response_ref": {
+          "title": "Response Ref",
+          "type": "string"
+        },
+        "started_at": {
+          "format": "date-time",
+          "title": "Started At",
+          "type": "string"
+        },
+        "step_id": {
+          "title": "Step Id",
+          "type": "string"
+        },
+        "tier": {
+          "enum": [
+            "nano",
+            "super",
+            "ultra"
+          ],
+          "title": "Tier",
+          "type": "string"
+        },
+        "tool_calls_requested": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Tool Calls Requested",
+          "type": "array"
+        },
+        "usage_estimated": {
+          "default": false,
+          "title": "Usage Estimated",
+          "type": "boolean"
+        },
+        "usd": {
+          "title": "Usd",
+          "type": "number"
+        }
+      },
+      "required": [
+        "step_id",
+        "tier",
+        "model",
+        "request_hash",
+        "messages_ref",
+        "response_ref",
+        "prompt_tokens",
+        "completion_tokens",
+        "usd",
+        "latency_ms",
+        "started_at"
+      ],
+      "title": "LLMCall",
+      "type": "object"
+    },
+    "ToolCall": {
+      "additionalProperties": false,
+      "properties": {
+        "args_hash": {
+          "title": "Args Hash",
+          "type": "string"
+        },
+        "args_norm": {
+          "additionalProperties": true,
+          "title": "Args Norm",
+          "type": "object"
+        },
+        "blocked": {
+          "default": false,
+          "title": "Blocked",
+          "type": "boolean"
+        },
+        "cassette_key": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Cassette Key"
+        },
+        "kind": {
+          "const": "tool",
+          "default": "tool",
+          "title": "Kind",
+          "type": "string"
+        },
+        "result_hash": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Result Hash"
+        },
+        "result_preview": {
+          "default": "",
+          "title": "Result Preview",
+          "type": "string"
+        },
+        "side_effect": {
+          "enum": [
+            "none",
+            "read",
+            "write_reversible",
+            "write_irreversible",
+            "destructive",
+            "external_send",
+            "spend"
+          ],
+          "title": "Side Effect",
+          "type": "string"
+        },
+        "source": {
+          "enum": [
+            "cassette",
+            "live",
+            "local"
+          ],
+          "title": "Source",
+          "type": "string"
+        },
+        "started_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Started At"
+        },
+        "step_id": {
+          "title": "Step Id",
+          "type": "string"
+        },
+        "tool": {
+          "title": "Tool",
+          "type": "string"
+        }
+      },
+      "required": [
+        "step_id",
+        "tool",
+        "args_norm",
+        "args_hash",
+        "result_hash",
+        "side_effect",
+        "source",
+        "cassette_key"
+      ],
+      "title": "ToolCall",
+      "type": "object"
+    },
+    "Trace": {
+      "additionalProperties": false,
+      "properties": {
+        "agent_tier": {
+          "enum": [
+            "nano",
+            "super",
+            "ultra"
+          ],
+          "title": "Agent Tier",
+          "type": "string"
+        },
+        "archived_reason": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Archived Reason"
+        },
+        "artifacts_ref": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Artifacts Ref"
+        },
+        "blessed_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Blessed At"
+        },
+        "candidate_commit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Candidate Commit"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "env": {
+          "$ref": "#/$defs/EnvSnapshot"
+        },
+        "error_code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Error Code"
+        },
+        "final_output": {
+          "title": "Final Output",
+          "type": "string"
+        },
+        "golden_of": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Golden Of"
+        },
+        "harness_ok": {
+          "default": true,
+          "title": "Harness Ok",
+          "type": "boolean"
+        },
+        "kind": {
+          "enum": [
+            "live",
+            "golden",
+            "replay"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "run_id": {
+          "title": "Run Id",
+          "type": "string"
+        },
+        "seed": {
+          "title": "Seed",
+          "type": "integer"
+        },
+        "skills_invoked": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Skills Invoked",
+          "type": "array"
+        },
+        "steps": {
+          "items": {
+            "discriminator": {
+              "mapping": {
+                "llm": "#/$defs/LLMCall",
+                "tool": "#/$defs/ToolCall"
+              },
+              "propertyName": "kind"
+            },
+            "oneOf": [
+              {
+                "$ref": "#/$defs/LLMCall"
+              },
+              {
+                "$ref": "#/$defs/ToolCall"
+              }
+            ]
+          },
+          "title": "Steps",
+          "type": "array"
+        },
+        "success_criteria": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Success Criteria",
+          "type": "array"
+        },
+        "task_input": {
+          "title": "Task Input",
+          "type": "string"
+        },
+        "task_label": {
+          "default": "",
+          "title": "Task Label",
+          "type": "string"
+        },
+        "world_dependent": {
+          "title": "World Dependent",
+          "type": "boolean"
+        },
+        "world_facts": {
+          "items": {
+            "$ref": "#/$defs/WorldFact"
+          },
+          "title": "World Facts",
+          "type": "array"
+        }
+      },
+      "required": [
+        "run_id",
+        "kind",
+        "task_input",
+        "steps",
+        "final_output",
+        "artifacts_ref",
+        "skills_invoked",
+        "world_dependent",
+        "world_facts",
+        "env",
+        "agent_tier",
+        "seed",
+        "created_at",
+        "golden_of",
+        "candidate_commit"
+      ],
+      "title": "Trace",
+      "type": "object"
+    },
+    "WorldFact": {
+      "additionalProperties": false,
+      "properties": {
+        "fact_id": {
+          "title": "Fact Id",
+          "type": "string"
+        },
+        "query_hint": {
+          "title": "Query Hint",
+          "type": "string"
+        },
+        "source_step": {
+          "title": "Source Step",
+          "type": "string"
+        },
+        "statement": {
+          "title": "Statement",
+          "type": "string"
+        },
+        "value": {
+          "default": "",
+          "title": "Value",
+          "type": "string"
+        },
+        "volatile": {
+          "title": "Volatile",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "fact_id",
+        "statement",
+        "source_step",
+        "volatile",
+        "query_hint"
+      ],
+      "title": "WorldFact",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "batch_id": {
+      "title": "Batch Id",
+      "type": "string"
+    },
+    "failed_goldens": {
+      "additionalProperties": {
+        "type": "string"
+      },
+      "title": "Failed Goldens",
+      "type": "object"
+    },
+    "replays": {
+      "items": {
+        "$ref": "#/$defs/Trace"
+      },
+      "title": "Replays",
+      "type": "array"
+    },
+    "status": {
+      "enum": [
+        "ok",
+        "partial",
+        "failed"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "unexpected_by_run": {
+      "additionalProperties": {
+        "items": {
+          "$ref": "#/$defs/ToolCall"
+        },
+        "type": "array"
+      },
+      "title": "Unexpected By Run",
+      "type": "object"
+    },
+    "unexpected_side_effects": {
+      "items": {
+        "$ref": "#/$defs/ToolCall"
+      },
+      "title": "Unexpected Side Effects",
+      "type": "array"
+    },
+    "worker_log_ref": {
+      "title": "Worker Log Ref",
+      "type": "string"
+    }
+  },
+  "required": [
+    "batch_id",
+    "replays",
+    "unexpected_side_effects",
+    "worker_log_ref",
+    "status"
+  ],
+  "title": "ReplayResult",
+  "type": "object"
+}

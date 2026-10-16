@@ -1,0 +1,10 @@
+{
+  "pages": {
+    "https://fx.example.com/eur-usd": {
+      "title": "EUR/USD reference rate (synthetic)",
+      "text": "Reference rate on 2026-10-14: 1 EUR = 1.0800 USD.",
+      "published": "2026-10-14"
+    }
+  },
+  "search": {}
+}

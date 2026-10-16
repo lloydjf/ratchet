@@ -1,0 +1,25 @@
+{
+  "properties": {
+    "attributable": {
+      "title": "Attributable",
+      "type": "boolean"
+    },
+    "confidence": {
+      "maximum": 1.0,
+      "minimum": 0.0,
+      "title": "Confidence",
+      "type": "number"
+    },
+    "reason": {
+      "default": "",
+      "title": "Reason",
+      "type": "string"
+    }
+  },
+  "required": [
+    "attributable",
+    "confidence"
+  ],
+  "title": "AttributeDriftOut",
+  "type": "object"
+}

@@ -1,0 +1,31 @@
+{
+  "merchant": "Bäckerei Sonne",
+  "date": "2026-10-12",
+  "currency": "EUR",
+  "layout": "B",
+  "lines": [
+    {
+      "description": "Breakfast platter for 6",
+      "quantity": 1,
+      "unit_price": 48.0,
+      "amount": 48.0
+    },
+    {
+      "description": "Coffee pot",
+      "quantity": 2,
+      "unit_price": 9.5,
+      "amount": 19.0
+    }
+  ],
+  "subtotal": 67.0,
+  "vat": null,
+  "vat_rate": null,
+  "total": 67.0,
+  "summary": {
+    "note": "All prices include 7% VAT.",
+    "net": 62.62,
+    "vat": 4.38,
+    "vat_rate": 0.07,
+    "gross": 67.0
+  }
+}

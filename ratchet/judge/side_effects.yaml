@@ -1,0 +1,64 @@
+# Side-effect classification rules. Evaluated top to bottom; first match wins.
+# Patterns are shell-style globs over the dotted tool name. Nano classifies only tools no rule
+# matches (prompt classify_side_effect.md), and its answer is cached per tool name.
+# shell.run is classified from its command, below the rule list.
+rules:
+  # --- exact names from the data contract and the tool catalog -------------------------
+  - {pattern: "fs.read", class: read}
+  - {pattern: "fs.list", class: read}
+  - {pattern: "fs.write", class: write_reversible}
+  - {pattern: "fs.delete", class: destructive}
+  - {pattern: "git.commit", class: write_reversible}
+  - {pattern: "git.log", class: read}
+  - {pattern: "github.close_issue", class: write_irreversible}
+  - {pattern: "github.merge_pr", class: write_irreversible}
+  - {pattern: "github.open_pr", class: write_irreversible}
+  - {pattern: "github.comment", class: write_irreversible}
+  - {pattern: "github.label", class: write_reversible}
+  - {pattern: "calendar.create", class: write_irreversible}
+  - {pattern: "calendar.freebusy", class: read}
+  - {pattern: "sheets.append", class: write_reversible}
+  - {pattern: "receipts.parse", class: read}
+  - {pattern: "db.drop", class: destructive}
+  - {pattern: "gmail.send", class: external_send}
+  - {pattern: "slack.post", class: external_send}
+  - {pattern: "sms.send", class: external_send}
+  - {pattern: "web.search", class: read}
+  - {pattern: "web.fetch", class: read}
+  - {pattern: "time.now", class: read}
+  - {pattern: "finance.rate", class: read}
+  - {pattern: "weather.*", class: read}
+  # --- spend before generic verbs so "payments.pay" is never mistaken for anything else --
+  - {pattern: "stripe.*", class: spend}
+  - {pattern: "payments.*", class: spend}
+  - {pattern: "*.purchase", class: spend}
+  - {pattern: "*.pay", class: spend}
+  # --- generic verbs -----------------------------------------------------------------------
+  - {pattern: "*.get", class: read}
+  - {pattern: "*.get_*", class: read}
+  - {pattern: "*.list", class: read}
+  - {pattern: "*.list_*", class: read}
+  - {pattern: "*.search", class: read}
+  - {pattern: "*.read", class: read}
+  - {pattern: "*.delete", class: destructive}
+  - {pattern: "*.drop", class: destructive}
+
+shell:
+  tool: shell.run
+  # First word of every command in a pipeline / && chain must be in this list for "read".
+  read_only: [ls, cat, head, tail, wc, grep, rg, find, stat, file, echo, pwd, date, which,
+              sort, uniq, cut, tr, diff, jq, du, df, env, printenv, true, git-status,
+              git-log, git-diff, git-show, pip-list, npm-ls, npm-outdated, pip-index]
+  # Any of these regexes anywhere in the command → destructive.
+  destructive: ['(^|[\s;&|])rm\s', '(^|[\s;&|])rmdir\s', '(^|[\s;&|])shred\s',
+                '(^|[\s;&|])dd\s', '(^|[\s;&|])mkfs', '(^|[\s;&|])truncate\s',
+                'git\s+(reset\s+--hard|clean\s+-[a-z]*f|push\s+(-f|--force))', '>\s*/dev/sd',
+                # find actions that delete, execute or write
+                '(^|[\s;&|])find\s(.*\s)?-(delete|exec|execdir|ok|okdir|fprint0?|fprintf|fls)(\s|$)',
+                # coreutils options that execute a program or write a file
+                '--compress-program', '(^|[\s;&|])sort\s(.*\s)?(-o|--output)', 'xargs\s']
+  # Output redirection to a file (> or >>, other than to /dev/null or an fd) can clobber
+  # data: classified as this class.
+  redirect: destructive
+  # Everything else runs inside the sandbox workspace and is captured by the workspace diff.
+  otherwise: write_reversible

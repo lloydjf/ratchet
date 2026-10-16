@@ -1,0 +1,43 @@
+{
+  "additionalProperties": false,
+  "description": "What a harness adapter returns for one task.",
+  "properties": {
+    "exit_ok": {
+      "title": "Exit Ok",
+      "type": "boolean"
+    },
+    "final_output": {
+      "title": "Final Output",
+      "type": "string"
+    },
+    "harness_version": {
+      "title": "Harness Version",
+      "type": "string"
+    },
+    "skills_invoked": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Skills Invoked",
+      "type": "array"
+    },
+    "stderr_ref": {
+      "title": "Stderr Ref",
+      "type": "string"
+    },
+    "stdout_ref": {
+      "title": "Stdout Ref",
+      "type": "string"
+    }
+  },
+  "required": [
+    "final_output",
+    "exit_ok",
+    "stdout_ref",
+    "stderr_ref",
+    "skills_invoked",
+    "harness_version"
+  ],
+  "title": "HarnessResult",
+  "type": "object"
+}

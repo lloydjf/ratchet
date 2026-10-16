@@ -1,0 +1,413 @@
+{
+  "version": 1,
+  "labels": [
+    {
+      "edit_id": "smoke-r1-changelog-writer-group",
+      "skill": "changelog-writer",
+      "type": "R1",
+      "affected_goldens": [
+        "chg-billing-api",
+        "chg-mobile-app",
+        "chg-widgets"
+      ],
+      "expected_decision": "BLOCK",
+      "expected_pair_outcomes": {
+        "chg-billing-api": "regression",
+        "chg-mobile-app": "regression",
+        "chg-widgets": "regression"
+      },
+      "change_summary": "fix commits are now grouped under Changed instead of Fixed.",
+      "source": "hand",
+      "manifested": true,
+      "attempts": 1,
+      "review": {
+        "required": false,
+        "status": "not_required",
+        "reviewer": null,
+        "at": null,
+        "decision": null,
+        "note": "",
+        "pair_labels": {}
+      }
+    },
+    {
+      "edit_id": "smoke-r1-expense-report-lines",
+      "skill": "expense-report",
+      "type": "R1",
+      "affected_goldens": [
+        "exp-lunch-train",
+        "exp-office-supplies"
+      ],
+      "expected_decision": "BLOCK",
+      "expected_pair_outcomes": {
+        "exp-lunch-train": "regression",
+        "exp-office-supplies": "regression"
+      },
+      "change_summary": "Step 3 now takes amounts from the line items and skips the summary block, so layout-B receipts lose their VAT.",
+      "source": "hand",
+      "manifested": true,
+      "attempts": 1,
+      "review": {
+        "required": false,
+        "status": "not_required",
+        "reviewer": null,
+        "at": null,
+        "decision": null,
+        "note": "",
+        "pair_labels": {}
+      }
+    },
+    {
+      "edit_id": "smoke-r2-expense-report-vat",
+      "skill": "expense-report",
+      "type": "R2",
+      "affected_goldens": [
+        "exp-berlin-trip",
+        "exp-lunch-train",
+        "exp-office-supplies"
+      ],
+      "expected_decision": "BLOCK",
+      "expected_pair_outcomes": {
+        "exp-berlin-trip": "regression",
+        "exp-lunch-train": "regression",
+        "exp-office-supplies": "regression"
+      },
+      "change_summary": "The VAT line was removed from the reply format.",
+      "source": "hand",
+      "manifested": true,
+      "attempts": 1,
+      "review": {
+        "required": false,
+        "status": "not_required",
+        "reviewer": null,
+        "at": null,
+        "decision": null,
+        "note": "",
+        "pair_labels": {}
+      }
+    },
+    {
+      "edit_id": "r6-expense-report-1",
+      "skill": "expense-report",
+      "type": "R6",
+      "affected_goldens": [
+        "exp-berlin-trip",
+        "exp-lunch-train",
+        "exp-office-supplies"
+      ],
+      "expected_decision": "BLOCK",
+      "expected_pair_outcomes": {
+        "exp-berlin-trip": "regression",
+        "exp-lunch-train": "regression",
+        "exp-office-supplies": "regression"
+      },
+      "change_summary": "The trigger description now fires only by name.",
+      "source": "sim",
+      "manifested": true,
+      "attempts": 1,
+      "review": {
+        "required": true,
+        "status": "pending",
+        "reviewer": null,
+        "at": null,
+        "decision": null,
+        "note": "",
+        "pair_labels": {}
+      }
+    },
+    {
+      "edit_id": "smoke-r6-expense-report-narrow",
+      "skill": "expense-report",
+      "type": "R6",
+      "affected_goldens": [
+        "exp-berlin-trip",
+        "exp-lunch-train",
+        "exp-office-supplies"
+      ],
+      "expected_decision": "BLOCK",
+      "expected_pair_outcomes": {
+        "exp-berlin-trip": "regression",
+        "exp-lunch-train": "regression",
+        "exp-office-supplies": "regression"
+      },
+      "change_summary": "The trigger description now fires only on the skill's exact name.",
+      "source": "hand",
+      "manifested": true,
+      "attempts": 1,
+      "review": {
+        "required": false,
+        "status": "not_required",
+        "reviewer": null,
+        "at": null,
+        "decision": null,
+        "note": "",
+        "pair_labels": {}
+      }
+    },
+    {
+      "edit_id": "d1-fx-expense-converter-1",
+      "skill": "fx-expense-converter",
+      "type": "D1",
+      "affected_goldens": [
+        "fx-berlin-trip",
+        "fx-hamburg-conference",
+        "fx-software"
+      ],
+      "expected_decision": "PASS",
+      "expected_pair_outcomes": {
+        "fx-berlin-trip": "drift",
+        "fx-hamburg-conference": "drift",
+        "fx-software": "drift"
+      },
+      "change_summary": "EUR/USD for 2026-10-14 moved from 1.0800 to 1.1630.",
+      "source": "deterministic",
+      "manifested": true,
+      "attempts": 1,
+      "review": {
+        "required": true,
+        "status": "pending",
+        "reviewer": null,
+        "at": null,
+        "decision": null,
+        "note": "",
+        "pair_labels": {}
+      }
+    },
+    {
+      "edit_id": "d1-fx-expense-converter-2",
+      "skill": "fx-expense-converter",
+      "type": "D1",
+      "affected_goldens": [
+        "fx-london"
+      ],
+      "expected_decision": "PASS",
+      "expected_pair_outcomes": {
+        "fx-london": "drift"
+      },
+      "change_summary": "GBP/USD for 2026-10-13 moved from 1.2702 to 1.3105.",
+      "source": "deterministic",
+      "manifested": true,
+      "attempts": 1,
+      "review": {
+        "required": true,
+        "status": "pending",
+        "reviewer": null,
+        "at": null,
+        "decision": null,
+        "note": "",
+        "pair_labels": {}
+      }
+    },
+    {
+      "edit_id": "n0-fx-expense-converter-1",
+      "skill": "fx-expense-converter",
+      "type": "N0",
+      "affected_goldens": [],
+      "expected_decision": "PASS",
+      "expected_pair_outcomes": {},
+      "change_summary": "Added a reviewer comment under the title and trimmed whitespace.",
+      "source": "deterministic",
+      "manifested": true,
+      "attempts": 1,
+      "review": {
+        "required": true,
+        "status": "pending",
+        "reviewer": null,
+        "at": null,
+        "decision": null,
+        "note": "",
+        "pair_labels": {}
+      }
+    },
+    {
+      "edit_id": "n0-fx-expense-converter-2",
+      "skill": "fx-expense-converter",
+      "type": "N0",
+      "affected_goldens": [],
+      "expected_decision": "PASS",
+      "expected_pair_outcomes": {},
+      "change_summary": "Reworded the introduction and retitled the steps section.",
+      "source": "deterministic",
+      "manifested": true,
+      "attempts": 1,
+      "review": {
+        "required": true,
+        "status": "pending",
+        "reviewer": null,
+        "at": null,
+        "decision": null,
+        "note": "",
+        "pair_labels": {}
+      }
+    },
+    {
+      "edit_id": "smoke-r1-fx-expense-converter-decimals",
+      "skill": "fx-expense-converter",
+      "type": "R1",
+      "affected_goldens": [
+        "fx-berlin-trip",
+        "fx-hamburg-conference",
+        "fx-london",
+        "fx-software"
+      ],
+      "expected_decision": "BLOCK",
+      "expected_pair_outcomes": {
+        "fx-berlin-trip": "regression",
+        "fx-hamburg-conference": "regression",
+        "fx-london": "regression",
+        "fx-software": "regression"
+      },
+      "change_summary": "The reported rate is rounded to 2 decimals instead of 4.",
+      "source": "hand",
+      "manifested": true,
+      "attempts": 1,
+      "review": {
+        "required": false,
+        "status": "not_required",
+        "reviewer": null,
+        "at": null,
+        "decision": null,
+        "note": "",
+        "pair_labels": {}
+      }
+    },
+    {
+      "edit_id": "n0-github-triage-1",
+      "skill": "github-triage",
+      "type": "N0",
+      "affected_goldens": [],
+      "expected_decision": "PASS",
+      "expected_pair_outcomes": {},
+      "change_summary": "Added a reviewer comment under the title and trimmed whitespace.",
+      "source": "deterministic",
+      "manifested": true,
+      "attempts": 1,
+      "review": {
+        "required": true,
+        "status": "pending",
+        "reviewer": null,
+        "at": null,
+        "decision": null,
+        "note": "",
+        "pair_labels": {}
+      }
+    },
+    {
+      "edit_id": "n0-github-triage-2",
+      "skill": "github-triage",
+      "type": "N0",
+      "affected_goldens": [],
+      "expected_decision": "PASS",
+      "expected_pair_outcomes": {},
+      "change_summary": "Reworded the introduction and retitled the steps section.",
+      "source": "deterministic",
+      "manifested": true,
+      "attempts": 1,
+      "review": {
+        "required": true,
+        "status": "pending",
+        "reviewer": null,
+        "at": null,
+        "decision": null,
+        "note": "",
+        "pair_labels": {}
+      }
+    },
+    {
+      "edit_id": "smoke-r3-github-triage-label",
+      "skill": "github-triage",
+      "type": "R3",
+      "affected_goldens": [
+        "tri-billing-api",
+        "tri-docs-site",
+        "tri-widgets"
+      ],
+      "expected_decision": "BLOCK",
+      "expected_pair_outcomes": {
+        "tri-billing-api": "regression",
+        "tri-docs-site": "regression",
+        "tri-widgets": "regression"
+      },
+      "change_summary": "The enhancement rule now applies the label `feature` instead of `enhancement`.",
+      "source": "hand",
+      "manifested": true,
+      "attempts": 1,
+      "review": {
+        "required": false,
+        "status": "not_required",
+        "reviewer": null,
+        "at": null,
+        "decision": null,
+        "note": "",
+        "pair_labels": {}
+      }
+    },
+    {
+      "edit_id": "smoke-r4-github-triage-close",
+      "skill": "github-triage",
+      "type": "R4",
+      "affected_goldens": [
+        "tri-billing-api",
+        "tri-widgets"
+      ],
+      "expected_decision": "BLOCK",
+      "expected_pair_outcomes": {
+        "tri-billing-api": "regression",
+        "tri-widgets": "regression"
+      },
+      "change_summary": "Step 7 now closes issues with no activity for 30 days as not_planned.",
+      "source": "hand",
+      "manifested": true,
+      "attempts": 1,
+      "review": {
+        "required": false,
+        "status": "not_required",
+        "reviewer": null,
+        "at": null,
+        "decision": null,
+        "note": "",
+        "pair_labels": {}
+      }
+    },
+    {
+      "edit_id": "smoke-r5-meeting-notes-broad",
+      "skill": "meeting-notes",
+      "type": "R5",
+      "affected_goldens": [
+        "canary-formal-rewrite",
+        "mtg-vendor"
+      ],
+      "expected_decision": "BLOCK",
+      "expected_pair_outcomes": {
+        "canary-formal-rewrite": "regression",
+        "mtg-vendor": "regression"
+      },
+      "change_summary": "The trigger description now also claims formal rewrites of any sentence and fixing broken text.",
+      "source": "hand",
+      "manifested": true,
+      "attempts": 1,
+      "review": {
+        "required": false,
+        "status": "not_required",
+        "reviewer": null,
+        "at": null,
+        "decision": null,
+        "note": "",
+        "pair_labels": {}
+      }
+    }
+  ],
+  "dropped": [
+    {
+      "edit_id": "r5-expense-report-1",
+      "skill": "expense-report",
+      "type": "R5",
+      "tries": 3,
+      "problems": [
+        "try 1: did not manifest on any golden",
+        "try 2: did not manifest on any golden",
+        "try 3: did not manifest on any golden"
+      ]
+    }
+  ]
+}

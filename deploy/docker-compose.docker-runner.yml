@@ -1,0 +1,40 @@
+# Override: replays as sibling containers (RATCHET_LOCAL_RUNNER_MODE=docker,
+# RATCHET_SANDBOX=docker) launched through the host Docker daemon.
+#
+#   export RATCHET_HOST_SRV="$PWD/var/srv"          # absolute host path; created if missing
+#   export DOCKER_GID="$(stat -c %g /var/run/docker.sock 2>/dev/null || echo 0)"
+#   deploy/sandbox-network.sh                        # the internal ratchet-sandbox bridge
+#   docker compose -f deploy/docker-compose.yml --profile worker build worker-local
+#   docker compose -f deploy/docker-compose.yml -f deploy/docker-compose.docker-runner.yml up control
+#
+# Why the same path inside and out: the runner passes `--mount src=<path>` for the batch
+# inputs/outputs and the sandbox's work/skills/io dirs to the *host* daemon, so every path
+# the control process creates (data dir, TMPDIR scratch) must exist at the identical path
+# on the host. Trust: the Docker socket makes `control` root-equivalent on the host. Use
+# this for local integration only; the public VM runs the systemd unit (deploy/vm/).
+
+services:
+  control:
+    image: ${RATCHET_CONTROL_IMAGE:-ratchet-control:docker}
+    build:
+      target: control-docker
+    environment:
+      RATCHET_LOCAL_RUNNER_MODE: docker
+      RATCHET_SANDBOX: docker
+      RATCHET_WORKER_IMAGE: ${RATCHET_WORKER_IMAGE:-ratchet-worker:dev}
+      RATCHET_DATA_DIR: ${RATCHET_HOST_SRV:?set RATCHET_HOST_SRV to an absolute host path}/data
+      RATCHET_SKILLS_REPO: ${RATCHET_HOST_SRV}/skills
+      RATCHET_PII_KEY_FILE: ${RATCHET_HOST_SRV}/pii.key
+      HOME: ${RATCHET_HOST_SRV}
+      TMPDIR: ${RATCHET_HOST_SRV}/tmp
+    volumes:
+      - type: bind
+        source: ${RATCHET_HOST_SRV}
+        target: ${RATCHET_HOST_SRV}
+        bind:
+          create_host_path: true
+      - type: bind
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
+    group_add:
+      - "${DOCKER_GID:-0}"

@@ -1,0 +1,31 @@
+# Scenario 3: no behavioural skill change; the world moved. Hand-written cosmetic
+# rewording: edit/fx-expense-converter/SKILL.md. World overlay: world/ (EUR/USD on
+# 2026-10-14 moves from 1.0800 to 1.1630). Tavily fixtures: tavily/.
+# Expected selection: 4 direct (fx-expense-converter) + 3 canaries = 7 replays.
+# Expected result: 4 pairs diverge on amounts only; screen/check/adjudicate uncertain;
+# drift check: fact changed (0.9) and attributable, so each pair is `drift`;
+# PASS with drift, Re-bless offered.
+# Headline: "Passed: 7 tasks checked; 4 changed because the world did, not the skill."
+scenario_id: 3
+skill: fx-expense-converter
+title: The exchange rate moved
+learned: >-
+  A wording-only tidy-up of fx-expense-converter; meanwhile EUR/USD moved from 1.0800 to
+  today's rate (1.1630 when Tavily is offline).
+catches: >-
+  All 4 conversions now differ, but Tavily shows the rate changed and the new outputs
+  follow from the new rate, so Ratchet does not cry wolf.
+expected_decision: PASS
+edit_summary: >-
+  fx-expense-converter instructions reworded without changing any step, format or tool
+  call.
+# On live Tavily the overlay tracks today's real EUR/USD rate (Tavily's answer, once per UTC
+# day), so the drift evidence and the replays agree; on fixtures, or if Tavily fails, the
+# 1.1630 above and tavily/ are used together (ratchet/orchestrator/live_world.py).
+live_world:
+  tool: finance.rate
+  file: fx.json
+  base: EUR
+  quote: USD
+  date: "2026-10-14"
+  query: EUR to USD exchange rate today

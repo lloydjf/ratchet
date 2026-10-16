@@ -1,0 +1,167 @@
+{
+  "run_id": "run_3d09f7108d37",
+  "kind": "golden",
+  "task_input": "File my receipts taxi-2026-10-01.pdf and hotel-2026-10-02.pdf as expenses.",
+  "steps": [
+    {
+      "kind": "llm",
+      "step_id": "m001",
+      "tier": "super",
+      "model": "nvidia/nemotron-3-super-120b-a12b",
+      "request_hash": "70bd950b672582e5a7d2d97f94603086165de67852ab49c5c199366f5128be92",
+      "messages_ref": "steps/m001.req.json",
+      "response_ref": "steps/m001.res.json",
+      "prompt_tokens": 3958,
+      "completion_tokens": 101,
+      "usd": 0.0012783,
+      "latency_ms": 1008,
+      "started_at": "2026-10-16T06:23:38.117959Z",
+      "purpose": "agent",
+      "api": "chat",
+      "usage_estimated": false,
+      "tool_calls_requested": [
+        "receipts.parse",
+        "receipts.parse"
+      ],
+      "content_preview": "I'll help you file those receipts as expenses by parsing them and adding them to the Expenses sheet."
+    },
+    {
+      "kind": "tool",
+      "step_id": "t001",
+      "tool": "receipts.parse",
+      "args_norm": {
+        "file": "taxi-2026-10-01.pdf"
+      },
+      "args_hash": "c9ecc6d91f0786d933a9f32e24a5a33091355e42bcfb7c772e47cd58b2e803c4",
+      "result_hash": "7fa5fe957d676776226d05d290a430617d4d98c1af2c04663cfdde722484b93f",
+      "side_effect": "read",
+      "source": "live",
+      "cassette_key": "c9ecc6d91f0786d933a9f32e24a5a33091355e42bcfb7c772e47cd58b2e803c4",
+      "result_preview": "{\"address\":\"Invalidenstr. 1, Berlin\",\"currency\":\"EUR\",\"date\":\"2026-10-01\",\"file\":\"taxi-2026-10-01.pdf\",\"layout\":\"A\",\"lines\":[{\"amount\":42.02,\"description\":\"Airport transfer BER to Mitte\",\"quantity\":1.0,\"unit_price\":42.02},{\"amount\":7.98,\"description\":\"VAT 19%\",\"quantity\":1.0,\"unit_price\":7.98}],\"merchant\":\"City Taxi Berlin\",\"subtotal\":42.02,\"total\":50.0,\"vat\":7.98,\"vat_rate\":0.19}",
+      "blocked": false,
+      "started_at": "2026-10-16T06:23:39.139833Z"
+    },
+    {
+      "kind": "tool",
+      "step_id": "t002",
+      "tool": "receipts.parse",
+      "args_norm": {
+        "file": "hotel-2026-10-02.pdf"
+      },
+      "args_hash": "a6e53def878e83751db0531e23c26aa3613c145978d2b81afdc099518995d6c3",
+      "result_hash": "0ebb2498a6f8ba19156b1cefe42e17522014e834a8c6e3b50cdc1ad240b39430",
+      "side_effect": "read",
+      "source": "live",
+      "cassette_key": "a6e53def878e83751db0531e23c26aa3613c145978d2b81afdc099518995d6c3",
+      "result_preview": "{\"address\":\"Am Ufer 12, Berlin\",\"currency\":\"EUR\",\"date\":\"2026-10-02\",\"file\":\"hotel-2026-10-02.pdf\",\"layout\":\"A\",\"lines\":[{\"amount\":327.1,\"description\":\"Room, 2 nights\",\"quantity\":2.0,\"unit_price\":163.55},{\"amount\":22.9,\"description\":\"VAT 7%\",\"quantity\":1.0,\"unit_price\":22.9}],\"merchant\":\"Hotel Spreeblick\",\"subtotal\":327.1,\"total\":350.0,\"vat\":22.9,\"vat_rate\":0.07}",
+      "blocked": false,
+      "started_at": "2026-10-16T06:23:39.143544Z"
+    },
+    {
+      "kind": "llm",
+      "step_id": "m002",
+      "tier": "super",
+      "model": "nvidia/nemotron-3-super-120b-a12b",
+      "request_hash": "59dcd2969391e5b6863e04baea20164a3054b24f1204c88163438d1da0d22d59",
+      "messages_ref": "steps/m002.req.json",
+      "response_ref": "steps/m002.res.json",
+      "prompt_tokens": 4459,
+      "completion_tokens": 153,
+      "usd": 0.0014754000000000002,
+      "latency_ms": 1260,
+      "started_at": "2026-10-16T06:23:39.146256Z",
+      "purpose": "agent",
+      "api": "chat",
+      "usage_estimated": false,
+      "tool_calls_requested": [
+        "sheets.append"
+      ],
+      "content_preview": "Now I'll append both receipts to the Expenses sheet:"
+    },
+    {
+      "kind": "tool",
+      "step_id": "t003",
+      "tool": "sheets.append",
+      "args_norm": {
+        "rows": [
+          [
+            "2026-10-01",
+            "City Taxi Berlin",
+            "50.00",
+            "EUR",
+            "7.98",
+            "taxi-2026-10-01.pdf"
+          ],
+          [
+            "2026-10-02",
+            "Hotel Spreeblick",
+            "350.00",
+            "EUR",
+            "22.90",
+            "hotel-2026-10-02.pdf"
+          ]
+        ],
+        "sheet": "Expenses"
+      },
+      "args_hash": "e5106aee2399983ec3e0de8eebdd83d4f535c2774f800a761e7acaeb9f25ac05",
+      "result_hash": "174c8ac7af810ed879dea88bf68767574ee560ac7af3f2a3dd4577ba9bd6ea34",
+      "side_effect": "write_reversible",
+      "source": "live",
+      "cassette_key": "e5106aee2399983ec3e0de8eebdd83d4f535c2774f800a761e7acaeb9f25ac05",
+      "result_preview": "{\"appended\":2,\"sheet\":\"Expenses\",\"total_rows\":4}",
+      "blocked": false,
+      "started_at": "2026-10-16T06:23:40.417215Z"
+    },
+    {
+      "kind": "llm",
+      "step_id": "m003",
+      "tier": "super",
+      "model": "nvidia/nemotron-3-super-120b-a12b",
+      "request_hash": "eb0bf2501d738ec9277a6a43ea37a5e01844256220b38caa023676aa550fa1a0",
+      "messages_ref": "steps/m003.req.json",
+      "response_ref": "steps/m003.res.json",
+      "prompt_tokens": 4649,
+      "completion_tokens": 111,
+      "usd": 0.0014946000000000002,
+      "latency_ms": 1191,
+      "started_at": "2026-10-16T06:23:40.420330Z",
+      "purpose": "agent",
+      "api": "chat",
+      "usage_estimated": false,
+      "tool_calls_requested": [],
+      "content_preview": "Merchant: City Taxi Berlin\nDate: 2026-10-01\nTotal: 50.00 EUR\nVAT: 7.98 EUR\n\nMerchant: Hotel Spreeblick\nDate: 2026-10-02\nTotal: 350.00 EUR\nVAT: 22.90 EUR\n\nGrand total: 400.00 EUR\nFiled 2 receipts to the Expenses sheet."
+    }
+  ],
+  "final_output": "Merchant: City Taxi Berlin\nDate: 2026-10-01\nTotal: 50.00 EUR\nVAT: 7.98 EUR\n\nMerchant: Hotel Spreeblick\nDate: 2026-10-02\nTotal: 350.00 EUR\nVAT: 22.90 EUR\n\nGrand total: 400.00 EUR\nFiled 2 receipts to the Expenses sheet.",
+  "artifacts_ref": null,
+  "skills_invoked": [
+    "expense-report"
+  ],
+  "world_dependent": false,
+  "world_facts": [],
+  "env": {
+    "workspace_ref": "workspace.tar.zst",
+    "frozen_time": "2026-10-14T16:00:00Z",
+    "harness_version": "minimal/0.1.0",
+    "skills_commit": "dda8ffcb2837fa255c23f29889f82e6f4976ba33",
+    "world_ref": null
+  },
+  "agent_tier": "super",
+  "seed": 1029471572,
+  "created_at": "2026-10-16T06:23:41.646282Z",
+  "golden_of": null,
+  "candidate_commit": null,
+  "success_criteria": [
+    "states the merchant, date, total and VAT for each of the 2 receipts",
+    "states the grand total amount",
+    "states the file names of the receipts",
+    "states the number of receipts filed",
+    "states the sheet name where receipts were filed",
+    "states the action performed on the sheet"
+  ],
+  "archived_reason": null,
+  "blessed_at": "2026-10-16T06:23:43.229630Z",
+  "harness_ok": true,
+  "error_code": null,
+  "task_label": "File taxi and hotel receipts"
+}

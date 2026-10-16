@@ -1,0 +1,118 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "attributable": {
+      "anyOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Attributable"
+    },
+    "changed": {
+      "title": "Changed",
+      "type": "boolean"
+    },
+    "confidence": {
+      "title": "Confidence",
+      "type": "number"
+    },
+    "fact_id": {
+      "title": "Fact Id",
+      "type": "string"
+    },
+    "new_value": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "New Value"
+    },
+    "old_value": {
+      "title": "Old Value",
+      "type": "string"
+    },
+    "query": {
+      "title": "Query",
+      "type": "string"
+    },
+    "replay_value": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Replay Value"
+    },
+    "ruling": {
+      "default": "",
+      "title": "Ruling",
+      "type": "string"
+    },
+    "source_title": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Source Title"
+    },
+    "source_url": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Source Url"
+    },
+    "statement": {
+      "default": "",
+      "title": "Statement",
+      "type": "string"
+    },
+    "status": {
+      "default": "checked",
+      "enum": [
+        "checked",
+        "unavailable"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "tavily_results_ref": {
+      "title": "Tavily Results Ref",
+      "type": "string"
+    }
+  },
+  "required": [
+    "fact_id",
+    "query",
+    "tavily_results_ref",
+    "changed",
+    "old_value",
+    "new_value",
+    "confidence"
+  ],
+  "title": "DriftCheck",
+  "type": "object"
+}

@@ -1,0 +1,8 @@
+{
+  "address": "agent@example.com",
+  "messages": [
+    {"message_id": "msg_0001", "from": "alice@example.com", "to": ["agent@example.com"], "subject": "Q3 offsite receipts", "body": "Hi, receipts attached. Call me at +1 415 555 0134 if anything is missing.", "date": "2026-10-10T08:15:00Z", "labels": ["INBOX"]},
+    {"message_id": "msg_0002", "from": "bob@example.com", "to": ["agent@example.com"], "cc": ["alice@example.com"], "subject": "Planning sync next week", "body": "Can we find 30 minutes on Thursday?", "date": "2026-10-12T16:40:00Z", "labels": ["INBOX", "IMPORTANT"]}
+  ],
+  "outbox": []
+}

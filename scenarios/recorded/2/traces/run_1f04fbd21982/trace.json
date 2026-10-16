@@ -1,0 +1,167 @@
+{
+  "run_id": "run_1f04fbd21982",
+  "kind": "golden",
+  "task_input": "File coworking-2026-10-08.pdf and courier-2026-10-09.pdf as expense receipts.",
+  "steps": [
+    {
+      "kind": "llm",
+      "step_id": "m001",
+      "tier": "super",
+      "model": "nvidia/nemotron-3-super-120b-a12b",
+      "request_hash": "ee5ee7fb84a77eae7cc4668a079f035b85a40a924c7ee6e443632ba5df617bc9",
+      "messages_ref": "steps/m001.req.json",
+      "response_ref": "steps/m001.res.json",
+      "prompt_tokens": 3959,
+      "completion_tokens": 96,
+      "usd": 0.0012741000000000002,
+      "latency_ms": 1028,
+      "started_at": "2026-10-16T06:24:05.096779Z",
+      "purpose": "agent",
+      "api": "chat",
+      "usage_estimated": false,
+      "tool_calls_requested": [
+        "receipts.parse",
+        "receipts.parse"
+      ],
+      "content_preview": "I'll parse both receipts and file them to the Expenses sheet."
+    },
+    {
+      "kind": "tool",
+      "step_id": "t001",
+      "tool": "receipts.parse",
+      "args_norm": {
+        "file": "coworking-2026-10-08.pdf"
+      },
+      "args_hash": "460009f73f6b5b14e1ba137496d9a2a9d7436413d1e5218c30783c506f1561c0",
+      "result_hash": "6ecb45c499b245c7d7c0f2dba996598f9798201ac31158cdbbd8f72f283ee722",
+      "side_effect": "read",
+      "source": "live",
+      "cassette_key": "460009f73f6b5b14e1ba137496d9a2a9d7436413d1e5218c30783c506f1561c0",
+      "result_preview": "{\"address\":\"Oranienstr. 20, Berlin\",\"currency\":\"EUR\",\"date\":\"2026-10-08\",\"file\":\"coworking-2026-10-08.pdf\",\"layout\":\"A\",\"lines\":[{\"amount\":25.21,\"description\":\"Coworking day pass\",\"quantity\":1.0,\"unit_price\":25.21},{\"amount\":4.79,\"description\":\"VAT 19%\",\"quantity\":1.0,\"unit_price\":4.79}],\"merchant\":\"Hub Kreuzberg\",\"subtotal\":25.21,\"total\":30.0,\"vat\":4.79,\"vat_rate\":0.19}",
+      "blocked": false,
+      "started_at": "2026-10-16T06:24:06.141642Z"
+    },
+    {
+      "kind": "tool",
+      "step_id": "t002",
+      "tool": "receipts.parse",
+      "args_norm": {
+        "file": "courier-2026-10-09.pdf"
+      },
+      "args_hash": "0a97525c9e54899e5798d88f55d174272c80478d5b625e0984a4410860bf3899",
+      "result_hash": "d5671ea2e0ff6e6455d422ce479ad89a3d8c43933b778a7a1ceeefe82b6fec3b",
+      "side_effect": "read",
+      "source": "live",
+      "cassette_key": "0a97525c9e54899e5798d88f55d174272c80478d5b625e0984a4410860bf3899",
+      "result_preview": "{\"address\":\"Lindenstr. 2, Berlin\",\"currency\":\"EUR\",\"date\":\"2026-10-09\",\"file\":\"courier-2026-10-09.pdf\",\"layout\":\"B\",\"lines\":[{\"amount\":23.8,\"description\":\"Same-day delivery, documents\",\"quantity\":1.0,\"unit_price\":23.8}],\"merchant\":\"Blitz Kurier\",\"subtotal\":23.8,\"summary\":{\"gross\":23.8,\"net\":20.0,\"note\":\"All prices include 19% VAT.\",\"vat\":3.8,\"vat_rate\":0.19},\"total\":23.8,\"vat\":null,\"vat_rate\":nul…",
+      "blocked": false,
+      "started_at": "2026-10-16T06:24:06.146096Z"
+    },
+    {
+      "kind": "llm",
+      "step_id": "m002",
+      "tier": "super",
+      "model": "nvidia/nemotron-3-super-120b-a12b",
+      "request_hash": "f9f52841b367b3f3faf45930b0d0974a8a0b58c2a27462fca81cd1f8f017afff",
+      "messages_ref": "steps/m002.req.json",
+      "response_ref": "steps/m002.res.json",
+      "prompt_tokens": 4461,
+      "completion_tokens": 152,
+      "usd": 0.0014750999999999998,
+      "latency_ms": 1001,
+      "started_at": "2026-10-16T06:24:06.149619Z",
+      "purpose": "agent",
+      "api": "chat",
+      "usage_estimated": false,
+      "tool_calls_requested": [
+        "sheets.append"
+      ],
+      "content_preview": "Now I'll append both receipts to the Expenses sheet."
+    },
+    {
+      "kind": "tool",
+      "step_id": "t003",
+      "tool": "sheets.append",
+      "args_norm": {
+        "rows": [
+          [
+            "2026-10-08",
+            "Hub Kreuzberg",
+            "30.00",
+            "EUR",
+            "4.79",
+            "coworking-2026-10-08.pdf"
+          ],
+          [
+            "2026-10-09",
+            "Blitz Kurier",
+            "23.80",
+            "EUR",
+            "3.80",
+            "courier-2026-10-09.pdf"
+          ]
+        ],
+        "sheet": "Expenses"
+      },
+      "args_hash": "ac634b970ecd82f0d97f02338f3f79000f6c52541826220017773da40ce3ed47",
+      "result_hash": "174c8ac7af810ed879dea88bf68767574ee560ac7af3f2a3dd4577ba9bd6ea34",
+      "side_effect": "write_reversible",
+      "source": "live",
+      "cassette_key": "ac634b970ecd82f0d97f02338f3f79000f6c52541826220017773da40ce3ed47",
+      "result_preview": "{\"appended\":2,\"sheet\":\"Expenses\",\"total_rows\":4}",
+      "blocked": false,
+      "started_at": "2026-10-16T06:24:07.157587Z"
+    },
+    {
+      "kind": "llm",
+      "step_id": "m003",
+      "tier": "super",
+      "model": "nvidia/nemotron-3-super-120b-a12b",
+      "request_hash": "0a8ac8fe77b4e2015cf610f378ccc12b9581c0000d18a81d75df28127959bf5d",
+      "messages_ref": "steps/m003.req.json",
+      "response_ref": "steps/m003.res.json",
+      "prompt_tokens": 4650,
+      "completion_tokens": 106,
+      "usd": 0.0014904,
+      "latency_ms": 1187,
+      "started_at": "2026-10-16T06:24:07.159502Z",
+      "purpose": "agent",
+      "api": "chat",
+      "usage_estimated": false,
+      "tool_calls_requested": [],
+      "content_preview": "Merchant: Hub Kreuzberg\nDate: 2026-10-08\nTotal: 30.00 EUR\nVAT: 4.79 EUR\n\nMerchant: Blitz Kurier\nDate: 2026-10-09\nTotal: 23.80 EUR\nVAT: 3.80 EUR\n\nGrand total: 53.80 EUR\nFiled 2 receipts to the Expenses sheet."
+    }
+  ],
+  "final_output": "Merchant: Hub Kreuzberg\nDate: 2026-10-08\nTotal: 30.00 EUR\nVAT: 4.79 EUR\n\nMerchant: Blitz Kurier\nDate: 2026-10-09\nTotal: 23.80 EUR\nVAT: 3.80 EUR\n\nGrand total: 53.80 EUR\nFiled 2 receipts to the Expenses sheet.",
+  "artifacts_ref": null,
+  "skills_invoked": [
+    "expense-report"
+  ],
+  "world_dependent": false,
+  "world_facts": [],
+  "env": {
+    "workspace_ref": "workspace.tar.zst",
+    "frozen_time": "2026-10-14T16:00:00Z",
+    "harness_version": "minimal/0.1.0",
+    "skills_commit": "dda8ffcb2837fa255c23f29889f82e6f4976ba33",
+    "world_ref": null
+  },
+  "agent_tier": "super",
+  "seed": 145397773,
+  "created_at": "2026-10-16T06:24:08.363896Z",
+  "golden_of": null,
+  "candidate_commit": null,
+  "success_criteria": [
+    "states the merchant, date, total and VAT for each of the 2 receipts",
+    "includes the grand total of 53.80 EUR",
+    "filed 2 receipts to the Expenses sheet",
+    "references the files coworking-2026-10-08.pdf and courier-2026-10-09.pdf",
+    "uses the exact merchant names Hub Kreuzberg and Blitz Kurier",
+    "records the exact dates 2026-10-08 and 2026-10-09"
+  ],
+  "archived_reason": null,
+  "blessed_at": "2026-10-16T06:24:10.193750Z",
+  "harness_ok": true,
+  "error_code": null,
+  "task_label": "File coworking and courier receipts"
+}

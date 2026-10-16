@@ -1,0 +1,130 @@
+{
+  "category": "R5",
+  "expect": {
+    "hard_fail": false,
+    "n_changed": 0,
+    "n_missing": 0,
+    "n_new": 1
+  },
+  "golden": {
+    "agent_tier": "super",
+    "archived_reason": null,
+    "artifacts_ref": null,
+    "blessed_at": null,
+    "candidate_commit": null,
+    "created_at": "2026-10-14T09:00:00Z",
+    "env": {
+      "frozen_time": "2026-10-14T09:00:00Z",
+      "harness_version": "minimal/0.1.0",
+      "skills_commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "workspace_ref": "traces/run_r5_overfire_g/workspace.tar.zst",
+      "world_ref": null
+    },
+    "error_code": null,
+    "final_output": "Friday: 10:00 Design review.",
+    "golden_of": null,
+    "harness_ok": true,
+    "kind": "golden",
+    "run_id": "run_r5_overfire_g",
+    "seed": 7,
+    "skills_invoked": [],
+    "steps": [
+      {
+        "args_hash": "eb74042e4d15dbad25ea0a6d0390eb66d5864733ad6c57c433b876f78fc4b149",
+        "args_norm": {
+          "day": "2026-10-16"
+        },
+        "blocked": false,
+        "cassette_key": null,
+        "kind": "tool",
+        "result_hash": "9e954515c87e5a3e91f17276d0ad0a3856af0f5b070f60f1e488b47b1bde2607",
+        "result_preview": "10:00 Design",
+        "side_effect": "read",
+        "source": "cassette",
+        "started_at": "2026-10-14T09:00:00Z",
+        "step_id": "t001",
+        "tool": "calendar.freebusy"
+      }
+    ],
+    "success_criteria": [
+      "Lists Friday's events"
+    ],
+    "task_input": "What is on my calendar on Friday?",
+    "task_label": "Friday calendar",
+    "world_dependent": false,
+    "world_facts": []
+  },
+  "name": "r5_overfire",
+  "replay": {
+    "agent_tier": "super",
+    "archived_reason": null,
+    "artifacts_ref": null,
+    "blessed_at": null,
+    "candidate_commit": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "created_at": "2026-10-14T09:00:00Z",
+    "env": {
+      "frozen_time": "2026-10-14T09:00:00Z",
+      "harness_version": "minimal/0.1.0",
+      "skills_commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "workspace_ref": "traces/run_r5_overfire_r/workspace.tar.zst",
+      "world_ref": null
+    },
+    "error_code": null,
+    "final_output": "Friday: 10:00 Design review. Also labeled acme/widgets#3 as bug.",
+    "golden_of": "run_r5_overfire_g",
+    "harness_ok": true,
+    "kind": "replay",
+    "run_id": "run_r5_overfire_r",
+    "seed": 7,
+    "skills_invoked": [
+      "github-triage"
+    ],
+    "steps": [
+      {
+        "args_hash": "eb74042e4d15dbad25ea0a6d0390eb66d5864733ad6c57c433b876f78fc4b149",
+        "args_norm": {
+          "day": "2026-10-16"
+        },
+        "blocked": false,
+        "cassette_key": null,
+        "kind": "tool",
+        "result_hash": "9e954515c87e5a3e91f17276d0ad0a3856af0f5b070f60f1e488b47b1bde2607",
+        "result_preview": "10:00 Design",
+        "side_effect": "read",
+        "source": "cassette",
+        "started_at": "2026-10-14T09:00:00Z",
+        "step_id": "t001",
+        "tool": "calendar.freebusy"
+      },
+      {
+        "args_hash": "2122ee240da60102179b3dd71224ce856c884c936a6b9b16fb18ec89caf51083",
+        "args_norm": {
+          "issue": 3,
+          "labels": [
+            "bug"
+          ],
+          "repo": "acme/widgets"
+        },
+        "blocked": false,
+        "cassette_key": null,
+        "kind": "tool",
+        "result_hash": null,
+        "result_preview": "",
+        "side_effect": "write_reversible",
+        "source": "cassette",
+        "started_at": "2026-10-14T09:00:00Z",
+        "step_id": "t002",
+        "tool": "github.label"
+      }
+    ],
+    "success_criteria": [
+      "Lists Friday's events"
+    ],
+    "task_input": "What is on my calendar on Friday?",
+    "task_label": "Friday calendar",
+    "world_dependent": false,
+    "world_facts": []
+  },
+  "skill_diff": "--- a/github-triage/SKILL.md\n+++ b/github-triage/SKILL.md\n@@ -4,1 +4,1 @@\n-Use for issue triage.\n+Use for any planning task.\n",
+  "unexpected": []
+}

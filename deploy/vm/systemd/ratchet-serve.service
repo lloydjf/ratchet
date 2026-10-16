@@ -1,0 +1,67 @@
+# Ratchet control plane: one `ratchet serve` process hosts the dashboard + API (8080), the
+# capture proxy (8081), the mock tool server (8082, record mode), the orchestrator and the
+# watcher (docs/design/orchestrator-api-cli.md §1).
+#
+# Why one unit and not ratchet-proxy / -mocktools / -orchestrator / -dashboard: the CLI
+# exposes `ratchet serve` only (§9); the orchestrator drives the judge and the proxy
+# in-process; one process is the single SQLite writer (WAL), and the documented restart order
+# (proxy -> mock tools -> orchestrator -> dashboard) is enforced inside serve's startup.
+# The Alias= names below keep the runbook's commands working:
+#   systemctl restart ratchet-proxy ratchet-orchestrator   # == restart ratchet-serve
+[Unit]
+Description=Ratchet control plane (dashboard, proxy, mock tools, orchestrator, watcher)
+Documentation=file:///opt/ratchet/docs/RUNBOOK.md
+After=network-online.target docker.service
+Wants=network-online.target
+StartLimitIntervalSec=300
+StartLimitBurst=10
+
+[Service]
+Type=exec
+User=ratchet
+Group=ratchet
+WorkingDirectory=/opt/ratchet
+EnvironmentFile=/etc/ratchet/env
+Environment=HOME=/srv/ratchet
+Environment=TMPDIR=/srv/ratchet/tmp
+Environment=PYTHONUNBUFFERED=1
+Environment=PYTHONDONTWRITEBYTECODE=1
+# Forward-only, idempotent: a restart after a deploy can never run on an old schema.
+ExecStartPre=/opt/ratchet/.venv/bin/ratchet db migrate
+ExecStart=/opt/ratchet/.venv/bin/ratchet serve
+Restart=always
+RestartSec=3
+TimeoutStartSec=120
+TimeoutStopSec=30
+KillMode=mixed
+SyslogIdentifier=ratchet
+LimitNOFILE=65536
+UMask=0027
+
+# --- Hardening -----------------------------------------------------------------------------
+NoNewPrivileges=true
+ProtectSystem=strict
+# The only writable path. TMPDIR lives here (not PrivateTmp) so replay scratch dirs are
+# visible to the Docker daemon that mounts them into sandboxes.
+ReadWritePaths=/srv/ratchet
+PrivateTmp=true
+ProtectHome=true
+PrivateDevices=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectKernelLogs=true
+ProtectControlGroups=true
+ProtectClock=true
+ProtectHostname=true
+RestrictSUIDSGID=true
+RestrictRealtime=true
+RestrictNamespaces=true
+LockPersonality=true
+SystemCallArchitectures=native
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6 AF_NETLINK
+CapabilityBoundingSet=
+AmbientCapabilities=
+
+[Install]
+WantedBy=multi-user.target
+Alias=ratchet-proxy.service ratchet-mocktools.service ratchet-orchestrator.service ratchet-dashboard.service

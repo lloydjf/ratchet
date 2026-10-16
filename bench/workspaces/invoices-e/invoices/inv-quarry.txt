@@ -1,0 +1,11 @@
+INVOICE
+Vendor: Quarry Legal LLP
+Invoice number: Q-4410
+Invoice date: 2026-10-06
+Payment terms: Net 14
+Bill to: Acme GmbH, Attn. Jun, jun@example.com
+
+Description                         Amount
+Services as agreed                  see total
+
+Total due: 3,150.00 GBP

@@ -1,0 +1,4818 @@
+{
+  "components": {
+    "schemas": {
+      "CapView": {
+        "additionalProperties": false,
+        "properties": {
+          "purpose": {
+            "title": "Purpose",
+            "type": "string"
+          },
+          "usd_per_day": {
+            "title": "Usd Per Day",
+            "type": "number"
+          }
+        },
+        "required": [
+          "purpose",
+          "usd_per_day"
+        ],
+        "title": "CapView",
+        "type": "object"
+      },
+      "CostTile": {
+        "additionalProperties": false,
+        "properties": {
+          "cache_share": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cache Share"
+          },
+          "cached_prompt_tokens_by_tier": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "propertyNames": {
+              "enum": [
+                "nano",
+                "super",
+                "ultra"
+              ]
+            },
+            "title": "Cached Prompt Tokens By Tier",
+            "type": "object"
+          },
+          "prompt_tokens_by_tier": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "propertyNames": {
+              "enum": [
+                "nano",
+                "super",
+                "ultra"
+              ]
+            },
+            "title": "Prompt Tokens By Tier",
+            "type": "object"
+          },
+          "tokens_by_tier": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "propertyNames": {
+              "enum": [
+                "nano",
+                "super",
+                "ultra"
+              ]
+            },
+            "title": "Tokens By Tier",
+            "type": "object"
+          },
+          "usd_by_tier": {
+            "additionalProperties": {
+              "type": "number"
+            },
+            "propertyNames": {
+              "enum": [
+                "nano",
+                "super",
+                "ultra"
+              ]
+            },
+            "title": "Usd By Tier",
+            "type": "object"
+          }
+        },
+        "required": [
+          "usd_by_tier",
+          "tokens_by_tier"
+        ],
+        "title": "CostTile",
+        "type": "object"
+      },
+      "CostWindow": {
+        "additionalProperties": false,
+        "description": "``GET /costs?from=&to=``: totals for ``[from, to)``.",
+        "properties": {
+          "cache_share": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cache Share"
+          },
+          "cached_prompt_tokens_by_tier": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "propertyNames": {
+              "enum": [
+                "nano",
+                "super",
+                "ultra"
+              ]
+            },
+            "title": "Cached Prompt Tokens By Tier",
+            "type": "object"
+          },
+          "from": {
+            "format": "date-time",
+            "title": "From",
+            "type": "string"
+          },
+          "prompt_tokens_by_tier": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "propertyNames": {
+              "enum": [
+                "nano",
+                "super",
+                "ultra"
+              ]
+            },
+            "title": "Prompt Tokens By Tier",
+            "type": "object"
+          },
+          "to": {
+            "format": "date-time",
+            "title": "To",
+            "type": "string"
+          },
+          "tokens_by_tier": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "propertyNames": {
+              "enum": [
+                "nano",
+                "super",
+                "ultra"
+              ]
+            },
+            "title": "Tokens By Tier",
+            "type": "object"
+          },
+          "usd_by_tier": {
+            "additionalProperties": {
+              "type": "number"
+            },
+            "propertyNames": {
+              "enum": [
+                "nano",
+                "super",
+                "ultra"
+              ]
+            },
+            "title": "Usd By Tier",
+            "type": "object"
+          }
+        },
+        "required": [
+          "usd_by_tier",
+          "tokens_by_tier",
+          "from",
+          "to"
+        ],
+        "title": "CostWindow",
+        "type": "object"
+      },
+      "CostsView": {
+        "additionalProperties": false,
+        "properties": {
+          "bench_report_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bench Report Url"
+          },
+          "by_day": {
+            "items": {
+              "$ref": "#/components/schemas/DayCost"
+            },
+            "title": "By Day",
+            "type": "array"
+          },
+          "by_purpose": {
+            "items": {
+              "$ref": "#/components/schemas/PurposeCost"
+            },
+            "title": "By Purpose",
+            "type": "array"
+          },
+          "counterfactual": {
+            "$ref": "#/components/schemas/Counterfactual"
+          },
+          "last_edit": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/LastEditCost"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "today": {
+            "$ref": "#/components/schemas/CostTile"
+          },
+          "week": {
+            "$ref": "#/components/schemas/CostTile"
+          },
+          "window": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/CostWindow"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "today",
+          "week",
+          "by_purpose",
+          "by_day",
+          "last_edit",
+          "counterfactual",
+          "bench_report_url"
+        ],
+        "title": "CostsView",
+        "type": "object"
+      },
+      "Counterfactual": {
+        "additionalProperties": false,
+        "description": "The savings line: judge spend over every verdict in the window (the last 7 days, or\n``from``/``to``) — the tiles' population — vs the same judge tokens priced on Ultra.",
+        "properties": {
+          "actual_usd": {
+            "title": "Actual Usd",
+            "type": "number"
+          },
+          "actual_usd_by_tier": {
+            "additionalProperties": {
+              "type": "number"
+            },
+            "propertyNames": {
+              "enum": [
+                "nano",
+                "super",
+                "ultra"
+              ]
+            },
+            "title": "Actual Usd By Tier",
+            "type": "object"
+          },
+          "all_ultra_usd": {
+            "title": "All Ultra Usd",
+            "type": "number"
+          },
+          "n_verdicts": {
+            "default": 0,
+            "title": "N Verdicts",
+            "type": "integer"
+          },
+          "saved_ratio": {
+            "title": "Saved Ratio",
+            "type": "number"
+          }
+        },
+        "required": [
+          "actual_usd",
+          "all_ultra_usd",
+          "saved_ratio"
+        ],
+        "title": "Counterfactual",
+        "type": "object"
+      },
+      "CriteriaIn": {
+        "additionalProperties": false,
+        "properties": {
+          "criteria": {
+            "items": {
+              "maxLength": 300,
+              "type": "string"
+            },
+            "maxItems": 20,
+            "title": "Criteria",
+            "type": "array"
+          }
+        },
+        "required": [
+          "criteria"
+        ],
+        "title": "CriteriaIn",
+        "type": "object"
+      },
+      "CriterionCheck": {
+        "additionalProperties": false,
+        "properties": {
+          "criterion": {
+            "title": "Criterion",
+            "type": "string"
+          },
+          "evidence_steps": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Evidence Steps",
+            "type": "array"
+          },
+          "met": {
+            "title": "Met",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "criterion",
+          "met"
+        ],
+        "title": "CriterionCheck",
+        "type": "object"
+      },
+      "DayCost": {
+        "additionalProperties": false,
+        "properties": {
+          "day": {
+            "title": "Day",
+            "type": "string"
+          },
+          "usd_by_tier": {
+            "additionalProperties": {
+              "type": "number"
+            },
+            "propertyNames": {
+              "enum": [
+                "nano",
+                "super",
+                "ultra"
+              ]
+            },
+            "title": "Usd By Tier",
+            "type": "object"
+          }
+        },
+        "required": [
+          "day",
+          "usd_by_tier"
+        ],
+        "title": "DayCost",
+        "type": "object"
+      },
+      "DemoEventIn": {
+        "additionalProperties": false,
+        "description": "Demo funnel event. ``kind`` is also accepted as ``name`` (the dashboard's field).\n\nAnything not listed here is rejected, so an IP, user agent or free text cannot be smuggled\nin. ``ts`` is accepted and ignored: rows carry the server's time.",
+        "properties": {
+          "device": {
+            "anyOf": [
+              {
+                "enum": [
+                  "mobile",
+                  "tablet",
+                  "desktop"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Device"
+          },
+          "kind": {
+            "enum": [
+              "demo.landing_view",
+              "demo.simulate_click",
+              "demo.verdict_view",
+              "demo.evidence_open",
+              "demo.action_click",
+              "demo.repo_click",
+              "demo.video_click"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "props": {
+            "additionalProperties": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "maxProperties": 8,
+            "title": "Props",
+            "type": "object"
+          },
+          "referrer": {
+            "anyOf": [
+              {
+                "enum": [
+                  "devpost",
+                  "youtube",
+                  "github",
+                  "other",
+                  "none"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Referrer"
+          },
+          "session_hash": {
+            "pattern": "^[A-Za-z0-9_-]{8,64}$",
+            "title": "Session Hash",
+            "type": "string"
+          },
+          "ts": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ts"
+          }
+        },
+        "required": [
+          "kind",
+          "session_hash"
+        ],
+        "title": "DemoEventIn",
+        "type": "object"
+      },
+      "DigestView": {
+        "additionalProperties": false,
+        "properties": {
+          "blocked": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Blocked",
+            "type": "array"
+          },
+          "digest_id": {
+            "title": "Digest Id",
+            "type": "string"
+          },
+          "merged": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Merged",
+            "type": "array"
+          },
+          "metrics": {
+            "items": {
+              "$ref": "#/components/schemas/MetricRow"
+            },
+            "title": "Metrics",
+            "type": "array"
+          },
+          "narrative": {
+            "title": "Narrative",
+            "type": "string"
+          },
+          "period_end": {
+            "format": "date-time",
+            "title": "Period End",
+            "type": "string"
+          },
+          "period_start": {
+            "format": "date-time",
+            "title": "Period Start",
+            "type": "string"
+          },
+          "simulated_models": {
+            "default": false,
+            "title": "Simulated Models",
+            "type": "boolean"
+          },
+          "usd": {
+            "default": 0.0,
+            "title": "Usd",
+            "type": "number"
+          },
+          "verdict_ids": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Verdict Ids",
+            "type": "array"
+          }
+        },
+        "required": [
+          "digest_id",
+          "period_start",
+          "period_end",
+          "narrative",
+          "verdict_ids",
+          "merged",
+          "blocked"
+        ],
+        "title": "DigestView",
+        "type": "object"
+      },
+      "DriftCheck": {
+        "additionalProperties": false,
+        "properties": {
+          "attributable": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Attributable"
+          },
+          "changed": {
+            "title": "Changed",
+            "type": "boolean"
+          },
+          "confidence": {
+            "title": "Confidence",
+            "type": "number"
+          },
+          "fact_id": {
+            "title": "Fact Id",
+            "type": "string"
+          },
+          "new_value": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "New Value"
+          },
+          "old_value": {
+            "title": "Old Value",
+            "type": "string"
+          },
+          "query": {
+            "title": "Query",
+            "type": "string"
+          },
+          "replay_value": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Replay Value"
+          },
+          "ruling": {
+            "default": "",
+            "title": "Ruling",
+            "type": "string"
+          },
+          "source_title": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Title"
+          },
+          "source_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Url"
+          },
+          "statement": {
+            "default": "",
+            "title": "Statement",
+            "type": "string"
+          },
+          "status": {
+            "default": "checked",
+            "enum": [
+              "checked",
+              "unavailable"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "tavily_results_ref": {
+            "title": "Tavily Results Ref",
+            "type": "string"
+          }
+        },
+        "required": [
+          "fact_id",
+          "query",
+          "tavily_results_ref",
+          "changed",
+          "old_value",
+          "new_value",
+          "confidence"
+        ],
+        "title": "DriftCheck",
+        "type": "object"
+      },
+      "EditView": {
+        "additionalProperties": false,
+        "properties": {
+          "diff": {
+            "title": "Diff",
+            "type": "string"
+          },
+          "edit": {
+            "$ref": "#/components/schemas/SkillEdit"
+          },
+          "state": {
+            "title": "State",
+            "type": "string"
+          },
+          "verdict_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Verdict Id"
+          }
+        },
+        "required": [
+          "edit",
+          "diff",
+          "verdict_id",
+          "state"
+        ],
+        "title": "EditView",
+        "type": "object"
+      },
+      "EnvSnapshot": {
+        "additionalProperties": false,
+        "properties": {
+          "frozen_time": {
+            "format": "date-time",
+            "title": "Frozen Time",
+            "type": "string"
+          },
+          "harness_version": {
+            "title": "Harness Version",
+            "type": "string"
+          },
+          "skills_commit": {
+            "title": "Skills Commit",
+            "type": "string"
+          },
+          "workspace_ref": {
+            "title": "Workspace Ref",
+            "type": "string"
+          },
+          "world_ref": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "World Ref"
+          }
+        },
+        "required": [
+          "workspace_ref",
+          "frozen_time",
+          "harness_version",
+          "skills_commit"
+        ],
+        "title": "EnvSnapshot",
+        "type": "object"
+      },
+      "ErrorBody": {
+        "additionalProperties": false,
+        "properties": {
+          "code": {
+            "title": "Code",
+            "type": "string"
+          },
+          "details": {
+            "anyOf": [
+              {},
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Details"
+          },
+          "message": {
+            "title": "Message",
+            "type": "string"
+          },
+          "request_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Request Id"
+          }
+        },
+        "required": [
+          "code",
+          "message",
+          "request_id"
+        ],
+        "title": "ErrorBody",
+        "type": "object"
+      },
+      "ErrorEnvelope": {
+        "additionalProperties": false,
+        "properties": {
+          "error": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        },
+        "required": [
+          "error"
+        ],
+        "title": "ErrorEnvelope",
+        "type": "object"
+      },
+      "Event": {
+        "additionalProperties": false,
+        "description": "One row of the events table, the product's spine.",
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "kind": {
+            "title": "Kind",
+            "type": "string"
+          },
+          "payload": {
+            "additionalProperties": true,
+            "title": "Payload",
+            "type": "object"
+          },
+          "ref": {
+            "title": "Ref",
+            "type": "string"
+          },
+          "session_hash": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Session Hash"
+          },
+          "ts": {
+            "format": "date-time",
+            "title": "Ts",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "ts",
+          "kind",
+          "ref",
+          "payload"
+        ],
+        "title": "Event",
+        "type": "object"
+      },
+      "HealthView": {
+        "additionalProperties": false,
+        "properties": {
+          "components": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "title": "Components",
+            "type": "object"
+          },
+          "ok": {
+            "title": "Ok",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "ok",
+          "components"
+        ],
+        "title": "HealthView",
+        "type": "object"
+      },
+      "JudgeOpinion": {
+        "additionalProperties": false,
+        "properties": {
+          "causal_explanation": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Causal Explanation"
+          },
+          "caused_by_diff": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Caused By Diff"
+          },
+          "completion_tokens": {
+            "default": 0,
+            "title": "Completion Tokens",
+            "type": "integer"
+          },
+          "confidence": {
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Confidence",
+            "type": "number"
+          },
+          "criteria_met": {
+            "items": {
+              "$ref": "#/components/schemas/CriterionCheck"
+            },
+            "title": "Criteria Met",
+            "type": "array"
+          },
+          "evidence_steps": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Evidence Steps",
+            "type": "array"
+          },
+          "failure_summary": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Failure Summary"
+          },
+          "possible_drift_fact": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Possible Drift Fact"
+          },
+          "prompt_hash": {
+            "default": "",
+            "title": "Prompt Hash",
+            "type": "string"
+          },
+          "prompt_tokens": {
+            "default": 0,
+            "title": "Prompt Tokens",
+            "type": "integer"
+          },
+          "reasons": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Reasons",
+            "type": "array"
+          },
+          "tier": {
+            "enum": [
+              "nano",
+              "super",
+              "ultra"
+            ],
+            "title": "Tier",
+            "type": "string"
+          },
+          "truncated": {
+            "default": false,
+            "title": "Truncated",
+            "type": "boolean"
+          },
+          "usd": {
+            "title": "Usd",
+            "type": "number"
+          },
+          "verdict": {
+            "enum": [
+              "equivalent",
+              "regressed",
+              "improved",
+              "uncertain"
+            ],
+            "title": "Verdict",
+            "type": "string"
+          }
+        },
+        "required": [
+          "tier",
+          "verdict",
+          "confidence",
+          "reasons",
+          "evidence_steps",
+          "usd"
+        ],
+        "title": "JudgeOpinion",
+        "type": "object"
+      },
+      "LLMCall": {
+        "additionalProperties": false,
+        "properties": {
+          "api": {
+            "default": "chat",
+            "enum": [
+              "chat",
+              "responses"
+            ],
+            "title": "Api",
+            "type": "string"
+          },
+          "cached_prompt_tokens": {
+            "default": 0,
+            "title": "Cached Prompt Tokens",
+            "type": "integer"
+          },
+          "completion_tokens": {
+            "title": "Completion Tokens",
+            "type": "integer"
+          },
+          "content_preview": {
+            "default": "",
+            "title": "Content Preview",
+            "type": "string"
+          },
+          "kind": {
+            "const": "llm",
+            "default": "llm",
+            "title": "Kind",
+            "type": "string"
+          },
+          "latency_ms": {
+            "title": "Latency Ms",
+            "type": "integer"
+          },
+          "messages_ref": {
+            "title": "Messages Ref",
+            "type": "string"
+          },
+          "model": {
+            "title": "Model",
+            "type": "string"
+          },
+          "prompt_tokens": {
+            "title": "Prompt Tokens",
+            "type": "integer"
+          },
+          "purpose": {
+            "default": "agent",
+            "enum": [
+              "agent",
+              "screen",
+              "check",
+              "adjudicate",
+              "extract",
+              "narrative",
+              "bench",
+              "embed"
+            ],
+            "title": "Purpose",
+            "type": "string"
+          },
+          "request_hash": {
+            "title": "Request Hash",
+            "type": "string"
+          },
+          "response_ref": {
+            "title": "Response Ref",
+            "type": "string"
+          },
+          "started_at": {
+            "format": "date-time",
+            "title": "Started At",
+            "type": "string"
+          },
+          "step_id": {
+            "title": "Step Id",
+            "type": "string"
+          },
+          "tier": {
+            "enum": [
+              "nano",
+              "super",
+              "ultra"
+            ],
+            "title": "Tier",
+            "type": "string"
+          },
+          "tool_calls_requested": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Tool Calls Requested",
+            "type": "array"
+          },
+          "usage_estimated": {
+            "default": false,
+            "title": "Usage Estimated",
+            "type": "boolean"
+          },
+          "usd": {
+            "title": "Usd",
+            "type": "number"
+          }
+        },
+        "required": [
+          "step_id",
+          "tier",
+          "model",
+          "request_hash",
+          "messages_ref",
+          "response_ref",
+          "prompt_tokens",
+          "completion_tokens",
+          "usd",
+          "latency_ms",
+          "started_at"
+        ],
+        "title": "LLMCall",
+        "type": "object"
+      },
+      "LastEditCost": {
+        "additionalProperties": false,
+        "properties": {
+          "cache_share": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cache Share"
+          },
+          "cached_prompt_tokens_by_tier": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "propertyNames": {
+              "enum": [
+                "nano",
+                "super",
+                "ultra"
+              ]
+            },
+            "title": "Cached Prompt Tokens By Tier",
+            "type": "object"
+          },
+          "counterfactual_usd": {
+            "title": "Counterfactual Usd",
+            "type": "number"
+          },
+          "edit_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Edit Id"
+          },
+          "prompt_tokens_by_tier": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "propertyNames": {
+              "enum": [
+                "nano",
+                "super",
+                "ultra"
+              ]
+            },
+            "title": "Prompt Tokens By Tier",
+            "type": "object"
+          },
+          "tokens_by_tier": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "propertyNames": {
+              "enum": [
+                "nano",
+                "super",
+                "ultra"
+              ]
+            },
+            "title": "Tokens By Tier",
+            "type": "object"
+          },
+          "usd_by_tier": {
+            "additionalProperties": {
+              "type": "number"
+            },
+            "propertyNames": {
+              "enum": [
+                "nano",
+                "super",
+                "ultra"
+              ]
+            },
+            "title": "Usd By Tier",
+            "type": "object"
+          },
+          "verdict_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Verdict Id"
+          }
+        },
+        "required": [
+          "usd_by_tier",
+          "tokens_by_tier",
+          "edit_id",
+          "verdict_id",
+          "counterfactual_usd"
+        ],
+        "title": "LastEditCost",
+        "type": "object"
+      },
+      "Level0Finding": {
+        "additionalProperties": false,
+        "properties": {
+          "changed_args": {
+            "items": {
+              "maxItems": 2,
+              "minItems": 2,
+              "prefixItems": [
+                {
+                  "$ref": "#/components/schemas/ToolCall"
+                },
+                {
+                  "$ref": "#/components/schemas/ToolCall"
+                }
+              ],
+              "type": "array"
+            },
+            "title": "Changed Args",
+            "type": "array"
+          },
+          "golden_run_id": {
+            "title": "Golden Run Id",
+            "type": "string"
+          },
+          "hard_fail": {
+            "title": "Hard Fail",
+            "type": "boolean"
+          },
+          "missing_calls": {
+            "items": {
+              "$ref": "#/components/schemas/ToolCall"
+            },
+            "title": "Missing Calls",
+            "type": "array"
+          },
+          "missing_hard": {
+            "default": false,
+            "title": "Missing Hard",
+            "type": "boolean"
+          },
+          "new_calls": {
+            "items": {
+              "$ref": "#/components/schemas/ToolCall"
+            },
+            "title": "New Calls",
+            "type": "array"
+          },
+          "output_similarity": {
+            "default": 1.0,
+            "title": "Output Similarity",
+            "type": "number"
+          },
+          "replay_run_id": {
+            "title": "Replay Run Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "golden_run_id",
+          "replay_run_id",
+          "new_calls",
+          "missing_calls",
+          "changed_args",
+          "hard_fail"
+        ],
+        "title": "Level0Finding",
+        "type": "object"
+      },
+      "LogsView": {
+        "additionalProperties": false,
+        "description": "``GET /edits/{id}/logs``: the edit's batch ``worker.log`` tails plus crash info.",
+        "properties": {
+          "lines": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Lines",
+            "type": "array"
+          },
+          "truncated": {
+            "default": false,
+            "title": "Truncated",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "lines"
+        ],
+        "title": "LogsView",
+        "type": "object"
+      },
+      "Meta": {
+        "additionalProperties": false,
+        "properties": {
+          "action_token": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Action Token"
+          },
+          "bench_report_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bench Report Url"
+          },
+          "harness": {
+            "title": "Harness",
+            "type": "string"
+          },
+          "public_mode": {
+            "title": "Public Mode",
+            "type": "boolean"
+          },
+          "repo_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Repo Url"
+          },
+          "runner": {
+            "title": "Runner",
+            "type": "string"
+          },
+          "sandbox": {
+            "title": "Sandbox",
+            "type": "string"
+          },
+          "simulate_enabled": {
+            "title": "Simulate Enabled",
+            "type": "boolean"
+          },
+          "simulate_mode": {
+            "enum": [
+              "live",
+              "replayed"
+            ],
+            "title": "Simulate Mode",
+            "type": "string"
+          },
+          "simulated_models": {
+            "title": "Simulated Models",
+            "type": "boolean"
+          },
+          "version": {
+            "title": "Version",
+            "type": "string"
+          },
+          "video_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Video Url"
+          }
+        },
+        "required": [
+          "public_mode",
+          "simulate_enabled",
+          "simulate_mode",
+          "simulated_models",
+          "action_token",
+          "repo_url",
+          "video_url",
+          "bench_report_url",
+          "version",
+          "harness",
+          "runner",
+          "sandbox"
+        ],
+        "title": "Meta",
+        "type": "object"
+      },
+      "MetricRow": {
+        "additionalProperties": false,
+        "description": "One product-metrics row, as ``ratchet metrics`` prints it.",
+        "properties": {
+          "metric": {
+            "title": "Metric",
+            "type": "string"
+          },
+          "value": {
+            "title": "Value",
+            "type": "string"
+          }
+        },
+        "required": [
+          "metric",
+          "value"
+        ],
+        "title": "MetricRow",
+        "type": "object"
+      },
+      "MetricsView": {
+        "additionalProperties": false,
+        "description": "``GET /metrics/product`` and ``GET /metrics/demo``.",
+        "properties": {
+          "rows": {
+            "items": {
+              "$ref": "#/components/schemas/MetricRow"
+            },
+            "title": "Rows",
+            "type": "array"
+          },
+          "since": {
+            "format": "date-time",
+            "title": "Since",
+            "type": "string"
+          }
+        },
+        "required": [
+          "since",
+          "rows"
+        ],
+        "title": "MetricsView",
+        "type": "object"
+      },
+      "Page_EditView_": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/EditView"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "next_cursor": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Cursor"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "title": "Page[EditView]",
+        "type": "object"
+      },
+      "Page_Event_": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/Event"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "next_cursor": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Cursor"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "title": "Page[Event]",
+        "type": "object"
+      },
+      "Page_TraceSummary_": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/TraceSummary"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "next_cursor": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Cursor"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "title": "Page[TraceSummary]",
+        "type": "object"
+      },
+      "Page_VerdictSummary_": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/VerdictSummary"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "next_cursor": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Cursor"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "title": "Page[VerdictSummary]",
+        "type": "object"
+      },
+      "PairVerdict": {
+        "additionalProperties": false,
+        "properties": {
+          "control_outcome": {
+            "anyOf": [
+              {
+                "enum": [
+                  "agrees",
+                  "diverges"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Control Outcome"
+          },
+          "control_run_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Control Run Id"
+          },
+          "decided_by": {
+            "default": "nano",
+            "enum": [
+              "level0",
+              "nano",
+              "super",
+              "ultra",
+              "drift",
+              "infra",
+              "control"
+            ],
+            "title": "Decided By",
+            "type": "string"
+          },
+          "drift": {
+            "items": {
+              "$ref": "#/components/schemas/DriftCheck"
+            },
+            "title": "Drift",
+            "type": "array"
+          },
+          "error_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Error Code"
+          },
+          "golden_run_id": {
+            "title": "Golden Run Id",
+            "type": "string"
+          },
+          "level0": {
+            "$ref": "#/components/schemas/Level0Finding"
+          },
+          "opinions": {
+            "items": {
+              "$ref": "#/components/schemas/JudgeOpinion"
+            },
+            "title": "Opinions",
+            "type": "array"
+          },
+          "outcome": {
+            "enum": [
+              "pass",
+              "regression",
+              "drift",
+              "improved",
+              "uncertain",
+              "failed"
+            ],
+            "title": "Outcome",
+            "type": "string"
+          },
+          "reason": {
+            "default": "",
+            "title": "Reason",
+            "type": "string"
+          },
+          "replay_run_id": {
+            "title": "Replay Run Id",
+            "type": "string"
+          },
+          "task_input": {
+            "default": "",
+            "title": "Task Input",
+            "type": "string"
+          },
+          "task_label": {
+            "default": "",
+            "title": "Task Label",
+            "type": "string"
+          },
+          "usd": {
+            "title": "Usd",
+            "type": "number"
+          }
+        },
+        "required": [
+          "golden_run_id",
+          "replay_run_id",
+          "level0",
+          "opinions",
+          "drift",
+          "outcome",
+          "usd"
+        ],
+        "title": "PairVerdict",
+        "type": "object"
+      },
+      "PairView": {
+        "additionalProperties": false,
+        "properties": {
+          "decision": {
+            "anyOf": [
+              {
+                "enum": [
+                  "PASS",
+                  "WARN",
+                  "BLOCK"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Decision"
+          },
+          "golden": {
+            "$ref": "#/components/schemas/Trace"
+          },
+          "pair": {
+            "$ref": "#/components/schemas/PairVerdict"
+          },
+          "recorded": {
+            "default": false,
+            "title": "Recorded",
+            "type": "boolean"
+          },
+          "replay": {
+            "$ref": "#/components/schemas/Trace"
+          },
+          "verdict_id": {
+            "title": "Verdict Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "verdict_id",
+          "decision",
+          "pair",
+          "golden",
+          "replay"
+        ],
+        "title": "PairView",
+        "type": "object"
+      },
+      "Progress": {
+        "additionalProperties": false,
+        "properties": {
+          "elapsed_s": {
+            "title": "Elapsed S",
+            "type": "number"
+          },
+          "k": {
+            "title": "K",
+            "type": "integer"
+          },
+          "n": {
+            "title": "N",
+            "type": "integer"
+          },
+          "stage": {
+            "title": "Stage",
+            "type": "string"
+          },
+          "stage_label": {
+            "title": "Stage Label",
+            "type": "string"
+          },
+          "stages": {
+            "items": {
+              "$ref": "#/components/schemas/StageView"
+            },
+            "title": "Stages",
+            "type": "array"
+          },
+          "stalled": {
+            "title": "Stalled",
+            "type": "boolean"
+          },
+          "usd_by_tier": {
+            "additionalProperties": {
+              "type": "number"
+            },
+            "propertyNames": {
+              "enum": [
+                "nano",
+                "super",
+                "ultra"
+              ]
+            },
+            "title": "Usd By Tier",
+            "type": "object"
+          }
+        },
+        "required": [
+          "stage",
+          "stage_label",
+          "k",
+          "n",
+          "elapsed_s",
+          "usd_by_tier",
+          "stalled",
+          "stages"
+        ],
+        "title": "Progress",
+        "type": "object"
+      },
+      "PurposeCost": {
+        "additionalProperties": false,
+        "properties": {
+          "calls": {
+            "title": "Calls",
+            "type": "integer"
+          },
+          "purpose": {
+            "title": "Purpose",
+            "type": "string"
+          },
+          "tier": {
+            "enum": [
+              "nano",
+              "super",
+              "ultra"
+            ],
+            "title": "Tier",
+            "type": "string"
+          },
+          "tokens": {
+            "title": "Tokens",
+            "type": "integer"
+          },
+          "usd": {
+            "title": "Usd",
+            "type": "number"
+          }
+        },
+        "required": [
+          "purpose",
+          "tier",
+          "calls",
+          "usd",
+          "tokens"
+        ],
+        "title": "PurposeCost",
+        "type": "object"
+      },
+      "ReblessView": {
+        "additionalProperties": false,
+        "properties": {
+          "archived_run_id": {
+            "title": "Archived Run Id",
+            "type": "string"
+          },
+          "new_golden_run_id": {
+            "title": "New Golden Run Id",
+            "type": "string"
+          },
+          "toast": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Toast"
+          }
+        },
+        "required": [
+          "new_golden_run_id",
+          "archived_run_id"
+        ],
+        "title": "ReblessView",
+        "type": "object"
+      },
+      "RunView": {
+        "additionalProperties": false,
+        "properties": {
+          "agent_tier": {
+            "title": "Agent Tier",
+            "type": "string"
+          },
+          "blessed": {
+            "title": "Blessed",
+            "type": "boolean"
+          },
+          "last_activity_at": {
+            "format": "date-time",
+            "title": "Last Activity At",
+            "type": "string"
+          },
+          "n_steps": {
+            "title": "N Steps",
+            "type": "integer"
+          },
+          "run_id": {
+            "title": "Run Id",
+            "type": "string"
+          },
+          "source": {
+            "enum": [
+              "captured",
+              "live",
+              "golden"
+            ],
+            "title": "Source",
+            "type": "string"
+          },
+          "task_label": {
+            "title": "Task Label",
+            "type": "string"
+          },
+          "task_preview": {
+            "title": "Task Preview",
+            "type": "string"
+          }
+        },
+        "required": [
+          "run_id",
+          "source",
+          "task_preview",
+          "task_label",
+          "agent_tier",
+          "n_steps",
+          "last_activity_at",
+          "blessed"
+        ],
+        "title": "RunView",
+        "type": "object"
+      },
+      "RunsView": {
+        "additionalProperties": false,
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/RunView"
+            },
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "title": "RunsView",
+        "type": "object"
+      },
+      "ScenarioView": {
+        "additionalProperties": false,
+        "properties": {
+          "catches": {
+            "title": "Catches",
+            "type": "string"
+          },
+          "expected_decision": {
+            "enum": [
+              "PASS",
+              "WARN",
+              "BLOCK"
+            ],
+            "title": "Expected Decision",
+            "type": "string"
+          },
+          "learned": {
+            "title": "Learned",
+            "type": "string"
+          },
+          "scenario_id": {
+            "title": "Scenario Id",
+            "type": "string"
+          },
+          "skill": {
+            "title": "Skill",
+            "type": "string"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "scenario_id",
+          "skill",
+          "title",
+          "learned",
+          "catches",
+          "expected_decision"
+        ],
+        "title": "ScenarioView",
+        "type": "object"
+      },
+      "SettingsView": {
+        "additionalProperties": false,
+        "properties": {
+          "caps": {
+            "items": {
+              "$ref": "#/components/schemas/CapView"
+            },
+            "title": "Caps",
+            "type": "array"
+          },
+          "harness": {
+            "title": "Harness",
+            "type": "string"
+          },
+          "models": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "propertyNames": {
+              "enum": [
+                "nano",
+                "super",
+                "ultra"
+              ]
+            },
+            "title": "Models",
+            "type": "object"
+          },
+          "runner": {
+            "title": "Runner",
+            "type": "string"
+          },
+          "sandbox": {
+            "title": "Sandbox",
+            "type": "string"
+          },
+          "webhook_configured": {
+            "title": "Webhook Configured",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "caps",
+          "runner",
+          "harness",
+          "sandbox",
+          "webhook_configured",
+          "models"
+        ],
+        "title": "SettingsView",
+        "type": "object"
+      },
+      "SimulateView": {
+        "additionalProperties": false,
+        "properties": {
+          "edit_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Edit Id"
+          },
+          "eta_s": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Eta S"
+          },
+          "queue_position": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Queue Position"
+          },
+          "scenario_id": {
+            "title": "Scenario Id",
+            "type": "string"
+          },
+          "session_hash": {
+            "title": "Session Hash",
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "running",
+              "queued",
+              "done"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "verdict_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Verdict Id"
+          }
+        },
+        "required": [
+          "session_hash",
+          "scenario_id",
+          "edit_id",
+          "verdict_id",
+          "status"
+        ],
+        "title": "SimulateView",
+        "type": "object"
+      },
+      "SkillEdit": {
+        "additionalProperties": false,
+        "properties": {
+          "affected_skills": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Affected Skills",
+            "type": "array"
+          },
+          "author": {
+            "enum": [
+              "agent",
+              "user",
+              "seeded"
+            ],
+            "title": "Author",
+            "type": "string"
+          },
+          "commit": {
+            "title": "Commit",
+            "type": "string"
+          },
+          "detected_at": {
+            "format": "date-time",
+            "title": "Detected At",
+            "type": "string"
+          },
+          "diff_ref": {
+            "title": "Diff Ref",
+            "type": "string"
+          },
+          "edit_id": {
+            "title": "Edit Id",
+            "type": "string"
+          },
+          "files": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Files",
+            "type": "array"
+          },
+          "parent": {
+            "title": "Parent",
+            "type": "string"
+          },
+          "session_hash": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Session Hash"
+          },
+          "summary": {
+            "default": "",
+            "title": "Summary",
+            "type": "string"
+          }
+        },
+        "required": [
+          "edit_id",
+          "commit",
+          "parent",
+          "files",
+          "diff_ref",
+          "affected_skills",
+          "author",
+          "detected_at"
+        ],
+        "title": "SkillEdit",
+        "type": "object"
+      },
+      "StageTiming": {
+        "additionalProperties": false,
+        "properties": {
+          "elapsed_ms": {
+            "title": "Elapsed Ms",
+            "type": "integer"
+          },
+          "stage": {
+            "title": "Stage",
+            "type": "string"
+          },
+          "started_at": {
+            "format": "date-time",
+            "title": "Started At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "stage",
+          "started_at",
+          "elapsed_ms"
+        ],
+        "title": "StageTiming",
+        "type": "object"
+      },
+      "StageView": {
+        "additionalProperties": false,
+        "properties": {
+          "detail": {
+            "default": "",
+            "title": "Detail",
+            "type": "string"
+          },
+          "key": {
+            "title": "Key",
+            "type": "string"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "pending",
+              "active",
+              "done",
+              "skipped"
+            ],
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "key",
+          "label",
+          "status"
+        ],
+        "title": "StageView",
+        "type": "object"
+      },
+      "TickerView": {
+        "additionalProperties": false,
+        "properties": {
+          "live": {
+            "title": "Live",
+            "type": "boolean"
+          },
+          "total_usd": {
+            "title": "Total Usd",
+            "type": "number"
+          },
+          "usd_by_tier": {
+            "additionalProperties": {
+              "type": "number"
+            },
+            "propertyNames": {
+              "enum": [
+                "nano",
+                "super",
+                "ultra"
+              ]
+            },
+            "title": "Usd By Tier",
+            "type": "object"
+          }
+        },
+        "required": [
+          "usd_by_tier",
+          "total_usd",
+          "live"
+        ],
+        "title": "TickerView",
+        "type": "object"
+      },
+      "ToolCall": {
+        "additionalProperties": false,
+        "properties": {
+          "args_hash": {
+            "title": "Args Hash",
+            "type": "string"
+          },
+          "args_norm": {
+            "additionalProperties": true,
+            "title": "Args Norm",
+            "type": "object"
+          },
+          "blocked": {
+            "default": false,
+            "title": "Blocked",
+            "type": "boolean"
+          },
+          "cassette_key": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cassette Key"
+          },
+          "kind": {
+            "const": "tool",
+            "default": "tool",
+            "title": "Kind",
+            "type": "string"
+          },
+          "result_hash": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Result Hash"
+          },
+          "result_preview": {
+            "default": "",
+            "title": "Result Preview",
+            "type": "string"
+          },
+          "side_effect": {
+            "enum": [
+              "none",
+              "read",
+              "write_reversible",
+              "write_irreversible",
+              "destructive",
+              "external_send",
+              "spend"
+            ],
+            "title": "Side Effect",
+            "type": "string"
+          },
+          "source": {
+            "enum": [
+              "cassette",
+              "live",
+              "local"
+            ],
+            "title": "Source",
+            "type": "string"
+          },
+          "started_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Started At"
+          },
+          "step_id": {
+            "title": "Step Id",
+            "type": "string"
+          },
+          "tool": {
+            "title": "Tool",
+            "type": "string"
+          }
+        },
+        "required": [
+          "step_id",
+          "tool",
+          "args_norm",
+          "args_hash",
+          "result_hash",
+          "side_effect",
+          "source",
+          "cassette_key"
+        ],
+        "title": "ToolCall",
+        "type": "object"
+      },
+      "Trace": {
+        "additionalProperties": false,
+        "properties": {
+          "agent_tier": {
+            "enum": [
+              "nano",
+              "super",
+              "ultra"
+            ],
+            "title": "Agent Tier",
+            "type": "string"
+          },
+          "archived_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Archived Reason"
+          },
+          "artifacts_ref": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Artifacts Ref"
+          },
+          "blessed_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Blessed At"
+          },
+          "candidate_commit": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Candidate Commit"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "env": {
+            "$ref": "#/components/schemas/EnvSnapshot"
+          },
+          "error_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Error Code"
+          },
+          "final_output": {
+            "title": "Final Output",
+            "type": "string"
+          },
+          "golden_of": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Golden Of"
+          },
+          "harness_ok": {
+            "default": true,
+            "title": "Harness Ok",
+            "type": "boolean"
+          },
+          "kind": {
+            "enum": [
+              "live",
+              "golden",
+              "replay"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "run_id": {
+            "title": "Run Id",
+            "type": "string"
+          },
+          "seed": {
+            "title": "Seed",
+            "type": "integer"
+          },
+          "skills_invoked": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Skills Invoked",
+            "type": "array"
+          },
+          "steps": {
+            "items": {
+              "discriminator": {
+                "mapping": {
+                  "llm": "#/components/schemas/LLMCall",
+                  "tool": "#/components/schemas/ToolCall"
+                },
+                "propertyName": "kind"
+              },
+              "oneOf": [
+                {
+                  "$ref": "#/components/schemas/LLMCall"
+                },
+                {
+                  "$ref": "#/components/schemas/ToolCall"
+                }
+              ]
+            },
+            "title": "Steps",
+            "type": "array"
+          },
+          "success_criteria": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Success Criteria",
+            "type": "array"
+          },
+          "task_input": {
+            "title": "Task Input",
+            "type": "string"
+          },
+          "task_label": {
+            "default": "",
+            "title": "Task Label",
+            "type": "string"
+          },
+          "world_dependent": {
+            "title": "World Dependent",
+            "type": "boolean"
+          },
+          "world_facts": {
+            "items": {
+              "$ref": "#/components/schemas/WorldFact"
+            },
+            "title": "World Facts",
+            "type": "array"
+          }
+        },
+        "required": [
+          "run_id",
+          "kind",
+          "task_input",
+          "steps",
+          "final_output",
+          "artifacts_ref",
+          "skills_invoked",
+          "world_dependent",
+          "world_facts",
+          "env",
+          "agent_tier",
+          "seed",
+          "created_at",
+          "golden_of",
+          "candidate_commit"
+        ],
+        "title": "Trace",
+        "type": "object"
+      },
+      "TraceSummary": {
+        "additionalProperties": false,
+        "properties": {
+          "blessed_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Blessed At"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "live",
+              "golden",
+              "replay"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "last_replayed_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Replayed At"
+          },
+          "n_facts": {
+            "title": "N Facts",
+            "type": "integer"
+          },
+          "run_id": {
+            "title": "Run Id",
+            "type": "string"
+          },
+          "skills_invoked": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Skills Invoked",
+            "type": "array"
+          },
+          "task_input": {
+            "title": "Task Input",
+            "type": "string"
+          },
+          "task_label": {
+            "title": "Task Label",
+            "type": "string"
+          },
+          "world_dependent": {
+            "title": "World Dependent",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "run_id",
+          "kind",
+          "task_input",
+          "task_label",
+          "skills_invoked",
+          "world_dependent",
+          "n_facts",
+          "last_replayed_at",
+          "blessed_at",
+          "created_at"
+        ],
+        "title": "TraceSummary",
+        "type": "object"
+      },
+      "Verdict": {
+        "additionalProperties": false,
+        "properties": {
+          "action": {
+            "enum": [
+              "merged",
+              "held",
+              "reverted"
+            ],
+            "title": "Action",
+            "type": "string"
+          },
+          "action_commit": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Action Commit"
+          },
+          "affected_skills": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Affected Skills",
+            "type": "array"
+          },
+          "approved_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Approved At"
+          },
+          "author": {
+            "default": "",
+            "title": "Author",
+            "type": "string"
+          },
+          "batch_ids": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Batch Ids",
+            "type": "array"
+          },
+          "cost": {
+            "additionalProperties": {
+              "type": "number"
+            },
+            "propertyNames": {
+              "enum": [
+                "nano",
+                "super",
+                "ultra"
+              ]
+            },
+            "title": "Cost",
+            "type": "object"
+          },
+          "counterfactual_usd": {
+            "default": 0.0,
+            "title": "Counterfactual Usd",
+            "type": "number"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "decision": {
+            "enum": [
+              "PASS",
+              "WARN",
+              "BLOCK"
+            ],
+            "title": "Decision",
+            "type": "string"
+          },
+          "duration_s": {
+            "title": "Duration S",
+            "type": "integer"
+          },
+          "edit_id": {
+            "title": "Edit Id",
+            "type": "string"
+          },
+          "headline": {
+            "default": "",
+            "title": "Headline",
+            "type": "string"
+          },
+          "narrative": {
+            "title": "Narrative",
+            "type": "string"
+          },
+          "pairs": {
+            "items": {
+              "$ref": "#/components/schemas/PairVerdict"
+            },
+            "title": "Pairs",
+            "type": "array"
+          },
+          "reasons": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Reasons",
+            "type": "array"
+          },
+          "recorded": {
+            "default": false,
+            "title": "Recorded",
+            "type": "boolean"
+          },
+          "replay_cost": {
+            "additionalProperties": {
+              "type": "number"
+            },
+            "propertyNames": {
+              "enum": [
+                "nano",
+                "super",
+                "ultra"
+              ]
+            },
+            "title": "Replay Cost",
+            "type": "object"
+          },
+          "rolled_back_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rolled Back At"
+          },
+          "rolled_back_by": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rolled Back By"
+          },
+          "runner": {
+            "default": "",
+            "title": "Runner",
+            "type": "string"
+          },
+          "session_hash": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Session Hash"
+          },
+          "simulated_models": {
+            "default": false,
+            "title": "Simulated Models",
+            "type": "boolean"
+          },
+          "stages": {
+            "items": {
+              "$ref": "#/components/schemas/StageTiming"
+            },
+            "title": "Stages",
+            "type": "array"
+          },
+          "tokens": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "propertyNames": {
+              "enum": [
+                "nano",
+                "super",
+                "ultra"
+              ]
+            },
+            "title": "Tokens",
+            "type": "object"
+          },
+          "verdict_id": {
+            "title": "Verdict Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "verdict_id",
+          "edit_id",
+          "pairs",
+          "decision",
+          "action",
+          "narrative",
+          "cost",
+          "duration_s",
+          "created_at"
+        ],
+        "title": "Verdict",
+        "type": "object"
+      },
+      "VerdictSummary": {
+        "additionalProperties": false,
+        "properties": {
+          "action": {
+            "enum": [
+              "merged",
+              "held",
+              "reverted"
+            ],
+            "title": "Action",
+            "type": "string"
+          },
+          "affected_skills": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Affected Skills",
+            "type": "array"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "decision": {
+            "enum": [
+              "PASS",
+              "WARN",
+              "BLOCK"
+            ],
+            "title": "Decision",
+            "type": "string"
+          },
+          "edit_id": {
+            "title": "Edit Id",
+            "type": "string"
+          },
+          "headline": {
+            "title": "Headline",
+            "type": "string"
+          },
+          "n_pairs": {
+            "title": "N Pairs",
+            "type": "integer"
+          },
+          "outcome_counts": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "propertyNames": {
+              "enum": [
+                "pass",
+                "regression",
+                "drift",
+                "improved",
+                "uncertain",
+                "failed"
+              ]
+            },
+            "title": "Outcome Counts",
+            "type": "object"
+          },
+          "recorded": {
+            "title": "Recorded",
+            "type": "boolean"
+          },
+          "simulated_models": {
+            "title": "Simulated Models",
+            "type": "boolean"
+          },
+          "usd_total": {
+            "title": "Usd Total",
+            "type": "number"
+          },
+          "verdict_id": {
+            "title": "Verdict Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "verdict_id",
+          "edit_id",
+          "decision",
+          "action",
+          "headline",
+          "affected_skills",
+          "usd_total",
+          "created_at",
+          "n_pairs",
+          "outcome_counts",
+          "recorded",
+          "simulated_models"
+        ],
+        "title": "VerdictSummary",
+        "type": "object"
+      },
+      "VerdictView": {
+        "additionalProperties": false,
+        "properties": {
+          "diff": {
+            "title": "Diff",
+            "type": "string"
+          },
+          "edit": {
+            "$ref": "#/components/schemas/SkillEdit"
+          },
+          "progress": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Progress"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "state": {
+            "title": "State",
+            "type": "string"
+          },
+          "toast": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Toast"
+          },
+          "verdict": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Verdict"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "verdict_id": {
+            "title": "Verdict Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "verdict_id",
+          "state",
+          "verdict",
+          "edit",
+          "diff",
+          "progress"
+        ],
+        "title": "VerdictView",
+        "type": "object"
+      },
+      "WorldFact": {
+        "additionalProperties": false,
+        "properties": {
+          "fact_id": {
+            "title": "Fact Id",
+            "type": "string"
+          },
+          "query_hint": {
+            "title": "Query Hint",
+            "type": "string"
+          },
+          "source_step": {
+            "title": "Source Step",
+            "type": "string"
+          },
+          "statement": {
+            "title": "Statement",
+            "type": "string"
+          },
+          "value": {
+            "default": "",
+            "title": "Value",
+            "type": "string"
+          },
+          "volatile": {
+            "title": "Volatile",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "fact_id",
+          "statement",
+          "source_step",
+          "volatile",
+          "query_hint"
+        ],
+        "title": "WorldFact",
+        "type": "object"
+      }
+    }
+  },
+  "info": {
+    "description": "Regression CI for self-improving agents. Shapes: docs/CONTRACTS.md §7.",
+    "title": "Ratchet dashboard API",
+    "version": "0.1.0"
+  },
+  "openapi": "3.1.0",
+  "paths": {
+    "/api/v1/costs": {
+      "get": {
+        "description": "Spend tiles; with ``from``/``to`` (ISO 8601) also the totals, purposes and days of\nthat window (``window``, ``by_purpose``, ``by_day``).",
+        "operationId": "get_costs_api_v1_costs_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "from",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "date-time",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "From"
+            }
+          },
+          {
+            "in": "query",
+            "name": "to",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "date-time",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "To"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CostsView"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Error envelope"
+          },
+          "5XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Error envelope"
+          }
+        },
+        "summary": "Get Costs",
+        "tags": [
+          "costs"
+        ]
+      }
+    },
+    "/api/v1/demo/events": {
+      "post": {
+        "operationId": "post_demo_event_api_v1_demo_events_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DemoEventIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Error envelope"
+          },
+          "5XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Error envelope"
+          }
+        },
+        "summary": "Post Demo Event",
+        "tags": [
+          "demo"
+        ]
+      }
+    },
+    "/api/v1/digest/latest": {
+      "get": {
+        "operationId": "latest_digest_api_v1_digest_latest_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DigestView"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Error envelope"
+          },
+          "5XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Error envelope"
+          }
+        },
+        "summary": "Latest Digest",
+        "tags": [
+          "digest"
+        ]
+      }
+    },
+    "/api/v1/edits": {
+      "get": {
+        "operationId": "list_edits_api_v1_edits_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "cursor",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cursor"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 50,
+              "maximum": 200,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Page_EditView_"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Error envelope"
+          },
+          "5XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Error envelope"
+          }
+        },
+        "summary": "List Edits",
+        "tags": [
+          "edits"
+        ]
+      }
+    },
+    "/api/v1/edits/{edit_id}": {
+      "get": {
+        "operationId": "get_edit_api_v1_edits__edit_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "edit_id",
+            "required": true,
+            "schema": {
+              "title": "Edit Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EditView"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Error envelope"
+          },
+          "5XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Error envelope"
+          }
+        },
+        "summary": "Get Edit",
+        "tags": [
+          "edits"
+        ]
+      }
+    },
+    "/api/v1/edits/{edit_id}/logs": {
+      "get": {
+        "description": "The debug drawer's real logs. Operator host only (403 ``not_public``).",
+        "operationId": "get_edit_logs_api_v1_edits__edit_id__logs_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "edit_id",
+            "required": true,
+            "schema": {
+              "title": "Edit Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LogsView"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Error envelope"
+          },
+          "5XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Error envelope"
+          }
+        },
+        "summary": "Get Edit Logs",
+        "tags": [
+          "edits"
+        ]
+      }
+    },
+    "/api/v1/edits/{edit_id}/replay": {
+      "post": {
+        "description": "Force a replay: the orchestrator resets the edit to ``selecting``.",
+        "operationId": "replay_edit_api_v1_edits__edit_id__replay_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "edit_id",
+            "required": true,
+            "schema": {
+              "title": "Edit Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EditView"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Error envelope"
+          },
+          "5XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Error envelope"
+          }
+        },
+        "summary": "Replay Edit",
+        "tags": [
+          "edits"
+        ]
+      }
+    },
+    "/api/v1/events": {
+      "get": {
+        "description": "Newest first; with ``since``, oldest first after that id (the polling fallback).",
+        "operationId": "list_events_api_v1_events_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "since",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Since"
+            }
+          },
+          {
+            "in": "query",
+            "name": "kinds",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 1000,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Kinds"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 50,
+              "maximum": 200,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "cursor",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cursor"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Page_Event_"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Error envelope"
+          },
+          "5XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Error envelope"
+          }
+        },
+        "summary": "List Events",
+        "tags": [
+          "events"
+        ]
+      }
+    },
+    "/api/v1/events/stream": {
+      "get": {
+        "description": "``id:``/``event:``/``data:`` frames; heartbeat comment every 15 s; resumes after\n``Last-Event-ID`` (or ``since``), else streams only new events. At most\n``ratchet_sse_max_per_client`` streams per client and ``ratchet_sse_max_streams`` in\ntotal; over that, 429 ``rate_limited``.",
+        "operationId": "stream_events_api_v1_events_stream_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "since",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Since"
+            }
+          },
+          {
+            "in": "query",
+            "name": "kinds",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 1000,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Kinds"
+            }
+          },
+          {
+            "in": "header",
+            "name": "last-event-id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 32,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Last-Event-Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "text/event-stream": {}
+            },
+            "description": "SSE stream"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Error envelope"
+          },
+          "5XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Error envelope"
+          }
+        },
+        "summary": "Stream Events",
+        "tags": [
+          "events"
+        ]
+      }
+    },
+    "/api/v1/meta": {
+      "get": {
+        "description": "Host configuration for the SPA. Issues the ``ratchet_session`` cookie on first call.",
+        "operationId": "get_meta_api_v1_meta_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Meta"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Error envelope"
+          },
+          "5XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Error envelope"
+          }
+        },
+        "summary": "Get Meta",
+        "tags": [
+          "meta"
+        ]
+      }
+    },
+    "/api/v1/metrics/demo": {
+      "get": {
+        "description": "The anonymous demo funnel. Operator host only (403 ``not_public``).",
+        "operationId": "demo_api_v1_metrics_demo_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "since",
+            "required": false,
+            "schema": {
+              "default": "7d",
+              "title": "Since",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MetricsView"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Error envelope"
+          },
+          "5XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Error envelope"
+          }
+        },
+        "summary": "Demo",
+        "tags": [
+          "metrics"
+        ]
+      }
+    },
+    "/api/v1/metrics/product": {
+      "get": {
+        "operationId": "product_api_v1_metrics_product_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "since",
+            "required": false,
+            "schema": {
+              "default": "7d",
+              "title": "Since",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MetricsView"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Error envelope"
+          },
+          "5XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Error envelope"
+          }
+        },
+        "summary": "Product",
+        "tags": [
+          "metrics"
+        ]
+      }
+    },
+    "/api/v1/pairs/{golden}/{replay}/rebless": {
+      "post": {
+        "description": "The replay becomes the golden; the old golden is archived (reason ``drift``). On the\npublic host this writes a session-scoped golden copy and never touches the library.",
+        "operationId": "rebless_api_v1_pairs__golden___replay__rebless_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "golden",
+            "required": true,
+            "schema": {
+              "title": "Golden",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "replay",
+            "required": true,
+            "schema": {
+              "title": "Replay",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReblessView"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Error envelope"
+          },
+          "5XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Error envelope"
+          }
+        },
+        "summary": "Rebless",
+        "tags": [
+          "verdicts"
+        ]
+      }
+    },
+    "/api/v1/runs": {
+      "get": {
+        "description": "Recent runs, newest first; ``unblessed=1`` (default) leaves out the goldens.",
+        "operationId": "list_runs_api_v1_runs_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "unblessed",
+            "required": false,
+            "schema": {
+              "default": true,
+              "title": "Unblessed",
+              "type": "boolean"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 50,
+              "maximum": 200,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RunsView"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Error envelope"
+          },
+          "5XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Error envelope"
+          }
+        },
+        "summary": "List Runs",
+        "tags": [
+          "traces"
+        ]
+      }
+    },
+    "/api/v1/runs/{run_id}/bless": {
+      "post": {
+        "description": "Mark a live run golden (PII pass, Nano enrichment). Refused on the public host.",
+        "operationId": "bless_api_v1_runs__run_id__bless_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "run_id",
+            "required": true,
+            "schema": {
+              "title": "Run Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Trace"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Error envelope"
+          },
+          "5XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Error envelope"
+          }
+        },
+        "summary": "Bless",
+        "tags": [
+          "traces"
+        ]
+      }
+    },
+    "/api/v1/scenarios": {
+      "get": {
+        "description": "The seeded scenarios; empty when Simulate is disabled or not wired.",
+        "operationId": "list_scenarios_api_v1_scenarios_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/ScenarioView"
+                  },
+                  "title": "Response List Scenarios Api V1 Scenarios Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Error envelope"
+          },
+          "5XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Error envelope"
+          }
+        },
+        "summary": "List Scenarios",
+        "tags": [
+          "simulate"
+        ]
+      }
+    },
+    "/api/v1/settings": {
+      "get": {
+        "description": "Read-only caps, runner and models. Hidden on the public host (403 ``not_public``).",
+        "operationId": "get_settings_view_api_v1_settings_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SettingsView"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Error envelope"
+          },
+          "5XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Error envelope"
+          }
+        },
+        "summary": "Get Settings View",
+        "tags": [
+          "meta"
+        ]
+      }
+    },
+    "/api/v1/simulate/{scenario_id}": {
+      "post": {
+        "description": "Apply the scenario's seeded edit in this session's copy of the skills repo. The\nresponse carries the pre-allocated ``verdict_id`` so the client can open it at once.",
+        "operationId": "start_simulate_api_v1_simulate__scenario_id__post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "scenario_id",
+            "required": true,
+            "schema": {
+              "title": "Scenario Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SimulateView"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Error envelope"
+          },
+          "5XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Error envelope"
+          }
+        },
+        "summary": "Start Simulate",
+        "tags": [
+          "simulate"
+        ]
+      }
+    },
+    "/api/v1/ticker": {
+      "get": {
+        "description": "Today's spend by tier; ``live`` is true while an edit this caller can see is running.",
+        "operationId": "get_ticker_api_v1_ticker_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TickerView"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Error envelope"
+          },
+          "5XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Error envelope"
+          }
+        },
+        "summary": "Get Ticker",
+        "tags": [
+          "costs"
+        ]
+      }
+    },
+    "/api/v1/traces": {
+      "get": {
+        "operationId": "list_traces_api_v1_traces_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "kind",
+            "required": false,
+            "schema": {
+              "default": "golden",
+              "enum": [
+                "golden",
+                "live",
+                "replay"
+              ],
+              "title": "Kind",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "skill",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 64,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Skill"
+            }
+          },
+          {
+            "in": "query",
+            "name": "search",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 200,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Search"
+            }
+          },
+          {
+            "in": "query",
+            "name": "cursor",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cursor"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 50,
+              "maximum": 200,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Page_TraceSummary_"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Error envelope"
+          },
+          "5XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Error envelope"
+          }
+        },
+        "summary": "List Traces",
+        "tags": [
+          "traces"
+        ]
+      }
+    },
+    "/api/v1/traces/{run_id}": {
+      "get": {
+        "operationId": "get_trace_api_v1_traces__run_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "run_id",
+            "required": true,
+            "schema": {
+              "title": "Run Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Trace"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Error envelope"
+          },
+          "5XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Error envelope"
+          }
+        },
+        "summary": "Get Trace",
+        "tags": [
+          "traces"
+        ]
+      }
+    },
+    "/api/v1/traces/{run_id}/criteria": {
+      "put": {
+        "description": "Replace the golden's success criteria.",
+        "operationId": "put_criteria_api_v1_traces__run_id__criteria_put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "run_id",
+            "required": true,
+            "schema": {
+              "title": "Run Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CriteriaIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Trace"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Error envelope"
+          },
+          "5XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Error envelope"
+          }
+        },
+        "summary": "Put Criteria",
+        "tags": [
+          "traces"
+        ]
+      }
+    },
+    "/api/v1/traces/{run_id}/unbless": {
+      "post": {
+        "operationId": "unbless_api_v1_traces__run_id__unbless_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "run_id",
+            "required": true,
+            "schema": {
+              "title": "Run Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Trace"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Error envelope"
+          },
+          "5XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Error envelope"
+          }
+        },
+        "summary": "Unbless",
+        "tags": [
+          "traces"
+        ]
+      }
+    },
+    "/api/v1/verdicts": {
+      "get": {
+        "operationId": "list_verdicts_api_v1_verdicts_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "cursor",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cursor"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 50,
+              "maximum": 200,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Page_VerdictSummary_"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Error envelope"
+          },
+          "5XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Error envelope"
+          }
+        },
+        "summary": "List Verdicts",
+        "tags": [
+          "verdicts"
+        ]
+      }
+    },
+    "/api/v1/verdicts/{verdict_id}": {
+      "get": {
+        "description": "While the edit runs: ``verdict=null`` and ``progress`` from the orchestrator.",
+        "operationId": "get_verdict_api_v1_verdicts__verdict_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "verdict_id",
+            "required": true,
+            "schema": {
+              "title": "Verdict Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VerdictView"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Error envelope"
+          },
+          "5XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Error envelope"
+          }
+        },
+        "summary": "Get Verdict",
+        "tags": [
+          "verdicts"
+        ]
+      }
+    },
+    "/api/v1/verdicts/{verdict_id}/approve": {
+      "post": {
+        "description": "Merge candidate into ``main``.",
+        "operationId": "approve_api_v1_verdicts__verdict_id__approve_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "verdict_id",
+            "required": true,
+            "schema": {
+              "title": "Verdict Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VerdictView"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Error envelope"
+          },
+          "5XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Error envelope"
+          }
+        },
+        "summary": "Approve",
+        "tags": [
+          "verdicts"
+        ]
+      }
+    },
+    "/api/v1/verdicts/{verdict_id}/pairs/{golden}/{replay}": {
+      "get": {
+        "operationId": "get_pair_api_v1_verdicts__verdict_id__pairs__golden___replay__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "verdict_id",
+            "required": true,
+            "schema": {
+              "title": "Verdict Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "golden",
+            "required": true,
+            "schema": {
+              "title": "Golden",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "replay",
+            "required": true,
+            "schema": {
+              "title": "Replay",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PairView"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Error envelope"
+          },
+          "5XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Error envelope"
+          }
+        },
+        "summary": "Get Pair",
+        "tags": [
+          "verdicts"
+        ]
+      }
+    },
+    "/api/v1/verdicts/{verdict_id}/rollback": {
+      "post": {
+        "description": "Revert the edit's commit on candidate; ``main`` is unchanged (409 ``action_locked``\nwhen another action on this verdict is in progress).",
+        "operationId": "rollback_api_v1_verdicts__verdict_id__rollback_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "verdict_id",
+            "required": true,
+            "schema": {
+              "title": "Verdict Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VerdictView"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Error envelope"
+          },
+          "5XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Error envelope"
+          }
+        },
+        "summary": "Rollback",
+        "tags": [
+          "verdicts"
+        ]
+      }
+    },
+    "/healthz": {
+      "get": {
+        "description": "``ok`` follows the database; extra probes (e.g. the proxy, wired by ``ratchet serve``)\nare reported but only fail the check if they are down.",
+        "operationId": "healthz_healthz_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthView"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthView"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Healthz",
+        "tags": [
+          "ops"
+        ]
+      }
+    },
+    "/metrics": {
+      "get": {
+        "operationId": "metrics_metrics_get",
+        "responses": {
+          "200": {
+            "content": {
+              "text/plain; version=1.0.0; charset=utf-8": {}
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Metrics",
+        "tags": [
+          "ops"
+        ]
+      }
+    }
+  }
+}

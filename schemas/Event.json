@@ -1,0 +1,49 @@
+{
+  "additionalProperties": false,
+  "description": "One row of the events table, the product's spine.",
+  "properties": {
+    "id": {
+      "title": "Id",
+      "type": "integer"
+    },
+    "kind": {
+      "title": "Kind",
+      "type": "string"
+    },
+    "payload": {
+      "additionalProperties": true,
+      "title": "Payload",
+      "type": "object"
+    },
+    "ref": {
+      "title": "Ref",
+      "type": "string"
+    },
+    "session_hash": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Session Hash"
+    },
+    "ts": {
+      "format": "date-time",
+      "title": "Ts",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "ts",
+    "kind",
+    "ref",
+    "payload"
+  ],
+  "title": "Event",
+  "type": "object"
+}

@@ -1,0 +1,49 @@
+{
+  "run_id": "run_91299a42f7c2",
+  "kind": "replay",
+  "task_input": "What is 17% of 240?",
+  "steps": [
+    {
+      "kind": "llm",
+      "step_id": "m001",
+      "tier": "super",
+      "model": "nvidia/nemotron-3-super-120b-a12b",
+      "request_hash": "d3e8ef954e91c8c54fef0c8971a0f9e6e8b4ea99902677504ca1a6ed2422df30",
+      "messages_ref": "steps/m001.req.json",
+      "response_ref": "steps/m001.res.json",
+      "prompt_tokens": 3539,
+      "completion_tokens": 27,
+      "usd": 0.001086,
+      "latency_ms": 1208,
+      "started_at": "2026-10-16T06:24:45.984888Z",
+      "purpose": "agent",
+      "api": "chat",
+      "usage_estimated": false,
+      "tool_calls_requested": [],
+      "content_preview": "17% of 240 = 0.17 × 240 = **40.8**."
+    }
+  ],
+  "final_output": "17% of 240 = 0.17 × 240 = **40.8**.",
+  "artifacts_ref": null,
+  "skills_invoked": [],
+  "world_dependent": false,
+  "world_facts": [],
+  "env": {
+    "workspace_ref": "workspace.tar.zst",
+    "frozen_time": "2026-10-14T16:00:00Z",
+    "harness_version": "minimal/0.1.0",
+    "skills_commit": "bada6931a356ded9f8dc84172bbd06d22e8c27f0",
+    "world_ref": null
+  },
+  "agent_tier": "super",
+  "seed": 560916868,
+  "created_at": "2026-10-16T06:24:47.268181Z",
+  "golden_of": "run_3423fd4b299a",
+  "candidate_commit": "bada6931a356ded9f8dc84172bbd06d22e8c27f0",
+  "success_criteria": [],
+  "archived_reason": null,
+  "blessed_at": null,
+  "harness_ok": true,
+  "error_code": null,
+  "task_label": "Compute 17% of 240"
+}

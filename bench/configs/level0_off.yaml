@@ -1,0 +1,9 @@
+# E5: Level 0 off (no deterministic hard-fail shortcut, no Level 0 evidence for the judges).
+# Re-judges the cascade run's replays.
+name: level0_off
+description: Full cascade without the Level 0 side-effect diff.
+experiments: [E5]
+mode: edits
+cascade: {mode: cascade, level0: false, drift: true}
+reuse_replays: cascade
+concurrency: 2

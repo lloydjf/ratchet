@@ -1,0 +1,166 @@
+{
+  "events": [
+    {
+      "event_id": "evt_0001",
+      "title": "Standup",
+      "start": "2026-10-15T09:00:00Z",
+      "end": "2026-10-15T09:30:00Z",
+      "attendees": [
+        "jun@example.com",
+        "alice@example.com",
+        "bob@example.com",
+        "dana@example.com"
+      ],
+      "calendar": "primary"
+    },
+    {
+      "event_id": "evt_0002",
+      "title": "Design review",
+      "start": "2026-10-15T10:00:00Z",
+      "end": "2026-10-15T11:30:00Z",
+      "attendees": [
+        "alice@example.com",
+        "priya@example.com"
+      ],
+      "calendar": "primary"
+    },
+    {
+      "event_id": "evt_0003",
+      "title": "Customer call",
+      "start": "2026-10-15T13:00:00Z",
+      "end": "2026-10-15T14:00:00Z",
+      "attendees": [
+        "jun@example.com",
+        "bob@example.com"
+      ],
+      "calendar": "primary"
+    },
+    {
+      "event_id": "evt_0004",
+      "title": "Standup",
+      "start": "2026-10-16T09:00:00Z",
+      "end": "2026-10-16T09:30:00Z",
+      "attendees": [
+        "jun@example.com",
+        "alice@example.com",
+        "bob@example.com",
+        "dana@example.com"
+      ],
+      "calendar": "primary"
+    },
+    {
+      "event_id": "evt_0005",
+      "title": "Planning",
+      "start": "2026-10-16T09:30:00Z",
+      "end": "2026-10-16T12:00:00Z",
+      "attendees": [
+        "jun@example.com",
+        "alice@example.com",
+        "bob@example.com",
+        "carol@example.com",
+        "dana@example.com",
+        "lee@example.com",
+        "priya@example.com"
+      ],
+      "calendar": "primary"
+    },
+    {
+      "event_id": "evt_0006",
+      "title": "Lunch and learn",
+      "start": "2026-10-16T12:00:00Z",
+      "end": "2026-10-16T13:00:00Z",
+      "attendees": [
+        "carol@example.com",
+        "lee@example.com"
+      ],
+      "calendar": "primary"
+    },
+    {
+      "event_id": "evt_0007",
+      "title": "Offsite",
+      "start": "2026-10-19T09:00:00Z",
+      "end": "2026-10-19T17:00:00Z",
+      "attendees": [
+        "jun@example.com",
+        "alice@example.com",
+        "bob@example.com",
+        "carol@example.com",
+        "dana@example.com",
+        "lee@example.com",
+        "priya@example.com"
+      ],
+      "calendar": "primary"
+    },
+    {
+      "event_id": "evt_0008",
+      "title": "Standup",
+      "start": "2026-10-20T09:00:00Z",
+      "end": "2026-10-20T09:30:00Z",
+      "attendees": [
+        "jun@example.com",
+        "alice@example.com",
+        "bob@example.com",
+        "dana@example.com"
+      ],
+      "calendar": "primary"
+    },
+    {
+      "event_id": "evt_0009",
+      "title": "Budget review",
+      "start": "2026-10-20T14:00:00Z",
+      "end": "2026-10-20T15:30:00Z",
+      "attendees": [
+        "jun@example.com",
+        "carol@example.com"
+      ],
+      "calendar": "primary"
+    },
+    {
+      "event_id": "evt_0010",
+      "title": "1:1",
+      "start": "2026-10-21T10:00:00Z",
+      "end": "2026-10-21T10:30:00Z",
+      "attendees": [
+        "jun@example.com",
+        "lee@example.com"
+      ],
+      "calendar": "primary"
+    }
+  ],
+  "busy": {
+    "bob@example.com": [
+      {
+        "start": "2026-10-15T14:00:00Z",
+        "end": "2026-10-15T16:00:00Z"
+      }
+    ],
+    "carol@example.com": [
+      {
+        "start": "2026-10-15T09:00:00Z",
+        "end": "2026-10-15T12:00:00Z"
+      },
+      {
+        "start": "2026-10-20T09:00:00Z",
+        "end": "2026-10-20T11:00:00Z"
+      }
+    ],
+    "dana@example.com": [
+      {
+        "start": "2026-10-16T13:00:00Z",
+        "end": "2026-10-16T17:00:00Z"
+      }
+    ],
+    "lee@example.com": [
+      {
+        "start": "2026-10-21T13:00:00Z",
+        "end": "2026-10-21T17:00:00Z"
+      }
+    ],
+    "priya@example.com": [
+      {
+        "start": "2026-10-15T13:30:00Z",
+        "end": "2026-10-15T15:00:00Z"
+      }
+    ]
+  }
+}

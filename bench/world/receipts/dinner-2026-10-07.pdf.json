@@ -1,0 +1,25 @@
+{
+  "merchant": "Brasserie Nord",
+  "date": "2026-10-07",
+  "currency": "EUR",
+  "layout": "A",
+  "address": "Hafenstr. 9, Hamburg",
+  "lines": [
+    {
+      "description": "Team dinner, 3 guests",
+      "quantity": 1,
+      "unit_price": 105.04,
+      "amount": 105.04
+    },
+    {
+      "description": "VAT 19%",
+      "quantity": 1,
+      "unit_price": 19.96,
+      "amount": 19.96
+    }
+  ],
+  "subtotal": 105.04,
+  "vat": 19.96,
+  "vat_rate": 0.19,
+  "total": 125.0
+}

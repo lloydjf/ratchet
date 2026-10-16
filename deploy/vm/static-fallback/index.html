@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Ratchet: demo paused</title>
+  <!--
+    Static fallback (incident playbook). Served by Caddy when the app is down
+    (automatic on 502/503/504) or when deploy/vm/failover.sh fallback is on. No scripts, no
+    external assets. deploy/vm/lib.sh render_fallback fills the two double-underscore
+    placeholders below: the video embed (an iframe for RATCHET_VIDEO_URL, or a placeholder
+    block) and the repository link (RATCHET_REPO_URL).
+    Colors are the dashboard's tokens (dashboard/src/styles/tokens.css).
+  -->
+  <style>
+    :root {
+      --bg: #0e1116; --surface: #161b22; --surface-2: #1f2630; --border: #2d3540;
+      --text: #e6edf3; --text-muted: #9da7b3; --warn: #d29922; --accent: #79c0ff;
+      --block: #f85149; --pass: #3fb950; --radius: 10px; --radius-sm: 6px;
+      --font-sans: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+      --font-mono: ui-monospace, 'SFMono-Regular', Menlo, monospace;
+      color-scheme: dark;
+    }
+    @media (prefers-color-scheme: light) {
+      :root {
+        --bg: #ffffff; --surface: #f6f8fa; --surface-2: #eaeef2; --border: #d0d7de;
+        --text: #1f2328; --text-muted: #59636e; --warn: #9a6700; --accent: #0969da;
+        --block: #cf222e; --pass: #1a7f37; color-scheme: light;
+      }
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; background: var(--bg); color: var(--text); }
+    body { font: 16px/1.55 var(--font-sans); min-height: 100vh; }
+    main { max-width: 880px; margin: 0 auto; padding: 48px 16px 64px; }
+    .brand { display: flex; align-items: center; gap: 10px; font-weight: 650; letter-spacing: .2px; }
+    .mark { width: 28px; height: 28px; border-radius: var(--radius-sm); background: var(--surface-2);
+            border: 1px solid var(--border); display: grid; place-items: center; }
+    .mark svg { width: 16px; height: 16px; }
+    .chip { display: inline-flex; align-items: center; gap: 6px; margin-top: 28px; padding: 3px 10px;
+            border-radius: 999px; font: 600 12px/1.6 var(--font-mono); text-transform: uppercase;
+            letter-spacing: .6px; color: var(--warn);
+            background: color-mix(in srgb, var(--warn) 15%, var(--surface));
+            border: 1px solid color-mix(in srgb, var(--warn) 40%, var(--border)); }
+    h1 { font-size: clamp(26px, 4vw, 36px); line-height: 1.2; margin: 14px 0 10px; }
+    p.lede { color: var(--text-muted); margin: 0 0 28px; max-width: 64ch; }
+    .video { position: relative; aspect-ratio: 16 / 9; width: 100%; border-radius: var(--radius);
+             overflow: hidden; background: var(--surface); border: 1px solid var(--border); }
+    .video iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+    .placeholder { position: absolute; inset: 0; display: grid; place-items: center; text-align: center;
+                   padding: 16px; color: var(--text-muted); }
+    .placeholder strong { display: block; color: var(--text); font-size: 18px; margin-bottom: 4px; }
+    .loop { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px;
+            margin: 28px 0; padding: 0; list-style: none; }
+    .loop li { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+               padding: 14px 16px; }
+    .loop b { display: block; font: 600 12px/1.4 var(--font-mono); color: var(--accent);
+              text-transform: uppercase; letter-spacing: .6px; margin-bottom: 4px; }
+    .note { background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--warn);
+            border-radius: var(--radius-sm); padding: 12px 16px; color: var(--text-muted); }
+    a { color: var(--accent); text-underline-offset: 3px; }
+    a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 2px; }
+    footer { margin-top: 36px; color: var(--text-muted); font-size: 14px; }
+    code { font-family: var(--font-mono); font-size: .92em; }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="brand">
+      <span class="mark" aria-hidden="true">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6">
+          <path d="M3 12 L8 4 L13 12" /><path d="M5.5 8.5 H10.5" />
+        </svg>
+      </span>
+      Ratchet
+    </div>
+
+    <span class="chip">Demo paused</span>
+    <h1>The live demo is briefly offline.</h1>
+    <p class="lede">
+      Ratchet is regression CI for self-improving agents: every skill edit is replayed against
+      the agent's blessed past runs, judged by a Nemotron cascade, and blocked if it breaks
+      something that used to work. While we bring the live host back, the walkthrough below
+      shows the full loop.
+    </p>
+
+    <div class="video">
+      __RATCHET_VIDEO_EMBED__
+    </div>
+
+    <ul class="loop" aria-label="What the demo shows">
+      <li><b>Replay</b>Each edit re-runs blessed tasks in a sandbox, with side effects served from cassettes.</li>
+      <li><b>Judge</b>Level 0 diff, then Nano, Super and Ultra only where needed, with cost per tier.</li>
+      <li><b>Drift</b>Tavily checks whether the world changed before a divergence counts as a regression.</li>
+      <li><b>Act</b>Merge, hold or revert on git, with the evidence on the verdict page.</li>
+    </ul>
+
+    <p class="note">
+      Please try again in a few minutes; every Simulate run starts from a clean copy of the
+      demo agent. The source, the benchmark report and instructions to run Ratchet locally
+      are in the <a href="__RATCHET_REPO_URL__">repository</a>.
+    </p>
+
+    <footer>This page is static and loads no scripts.</footer>
+  </main>
+</body>
+</html>

@@ -1,0 +1,10 @@
+# E6: the noise floor. Every skill's goldens are replayed 3x against the *unchanged* skill
+# and judged by the full cascade; the share of pairs judged `pass` is the floor reported next
+# to every recall number. Run this first: it may change thresholds.
+name: noise
+description: Unchanged skills replayed 3x (pair-level pass rate = noise floor).
+experiments: [E6]
+mode: noise
+noise_repeats: 3
+cascade: {mode: cascade, level0: true, drift: true}
+concurrency: 2

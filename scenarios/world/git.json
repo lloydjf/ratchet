@@ -1,0 +1,68 @@
+{
+  "repos": {
+    "widgets": [
+      {
+        "sha": "e5f6a7b",
+        "date": "2026-10-12T10:00:00Z",
+        "author": "dana",
+        "message": "fix: empty widget names no longer crash the list view"
+      },
+      {
+        "sha": "d4e5f6a",
+        "date": "2026-10-10T15:30:00Z",
+        "author": "priya",
+        "message": "feat(export): add PNG export at 2x resolution"
+      },
+      {
+        "sha": "c3d4e5f",
+        "date": "2026-10-08T09:20:00Z",
+        "author": "sam",
+        "message": "docs: fix typo in the installation guide"
+      },
+      {
+        "sha": "b2c3d4e",
+        "date": "2026-10-06T11:45:00Z",
+        "author": "marco",
+        "message": "Bump chart-core to 5.2.0"
+      },
+      {
+        "sha": "a1b2c3d",
+        "date": "2026-09-30T12:00:00Z",
+        "author": "dana",
+        "message": "chore(release): 2.3.1",
+        "tags": [
+          "v2.3.1"
+        ]
+      },
+      {
+        "sha": "9f8e7d6",
+        "date": "2026-09-28T08:00:00Z",
+        "author": "dana",
+        "message": "fix: legend overlaps the x-axis on small screens"
+      }
+    ],
+    "billing-api": [
+      {
+        "sha": "4c5d6e7",
+        "date": "2026-10-11T13:00:00Z",
+        "author": "ines",
+        "message": "feat: idempotency keys for refunds"
+      },
+      {
+        "sha": "3b4c5d6",
+        "date": "2026-10-09T09:00:00Z",
+        "author": "kofi",
+        "message": "fix: return 404 instead of 500 for archived customers"
+      },
+      {
+        "sha": "2a3b4c5",
+        "date": "2026-10-01T10:00:00Z",
+        "author": "jo",
+        "message": "chore(release): 4.8.0",
+        "tags": [
+          "v4.8.0"
+        ]
+      }
+    ]
+  }
+}

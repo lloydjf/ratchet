@@ -1,0 +1,161 @@
+{
+  "$defs": {
+    "CriterionCheck": {
+      "additionalProperties": false,
+      "properties": {
+        "criterion": {
+          "title": "Criterion",
+          "type": "string"
+        },
+        "evidence_steps": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Evidence Steps",
+          "type": "array"
+        },
+        "met": {
+          "title": "Met",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "criterion",
+        "met"
+      ],
+      "title": "CriterionCheck",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "causal_explanation": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Causal Explanation"
+    },
+    "caused_by_diff": {
+      "anyOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Caused By Diff"
+    },
+    "completion_tokens": {
+      "default": 0,
+      "title": "Completion Tokens",
+      "type": "integer"
+    },
+    "confidence": {
+      "maximum": 1.0,
+      "minimum": 0.0,
+      "title": "Confidence",
+      "type": "number"
+    },
+    "criteria_met": {
+      "items": {
+        "$ref": "#/$defs/CriterionCheck"
+      },
+      "title": "Criteria Met",
+      "type": "array"
+    },
+    "evidence_steps": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Evidence Steps",
+      "type": "array"
+    },
+    "failure_summary": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Failure Summary"
+    },
+    "possible_drift_fact": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Possible Drift Fact"
+    },
+    "prompt_hash": {
+      "default": "",
+      "title": "Prompt Hash",
+      "type": "string"
+    },
+    "prompt_tokens": {
+      "default": 0,
+      "title": "Prompt Tokens",
+      "type": "integer"
+    },
+    "reasons": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Reasons",
+      "type": "array"
+    },
+    "tier": {
+      "enum": [
+        "nano",
+        "super",
+        "ultra"
+      ],
+      "title": "Tier",
+      "type": "string"
+    },
+    "truncated": {
+      "default": false,
+      "title": "Truncated",
+      "type": "boolean"
+    },
+    "usd": {
+      "title": "Usd",
+      "type": "number"
+    },
+    "verdict": {
+      "enum": [
+        "equivalent",
+        "regressed",
+        "improved",
+        "uncertain"
+      ],
+      "title": "Verdict",
+      "type": "string"
+    }
+  },
+  "required": [
+    "tier",
+    "verdict",
+    "confidence",
+    "reasons",
+    "evidence_steps",
+    "usd"
+  ],
+  "title": "JudgeOpinion",
+  "type": "object"
+}

@@ -1,0 +1,1052 @@
+[
+  {
+    "kind": "edit.detected",
+    "offset_ms": 0,
+    "payload": {
+      "affected_skills": [
+        "github-triage"
+      ],
+      "author": "seeded",
+      "commit": "bada6931a356ded9f8dc84172bbd06d22e8c27f0",
+      "edit_id": "edit_fa80c0517746",
+      "summary": "github-triage: SKILL.md changed (+2 −1)",
+      "verdict_id": "verdict_fa80c0517746"
+    },
+    "ref": "edit_fa80c0517746"
+  },
+  {
+    "kind": "simulate.started",
+    "offset_ms": 1,
+    "payload": {
+      "edit_id": "edit_fa80c0517746",
+      "scenario": "1",
+      "session_hash": "e2ad5d8554c5aa76",
+      "status": "running",
+      "verdict_id": "verdict_fa80c0517746"
+    },
+    "ref": "verdict_fa80c0517746"
+  },
+  {
+    "kind": "orchestrator.state",
+    "offset_ms": 6,
+    "payload": {
+      "edit_id": "edit_fa80c0517746",
+      "elapsed_ms": 6,
+      "from": "detected",
+      "to": "selecting",
+      "verdict_id": "verdict_fa80c0517746"
+    },
+    "ref": "edit_fa80c0517746"
+  },
+  {
+    "kind": "edit.selected",
+    "offset_ms": 70,
+    "payload": {
+      "edit_id": "edit_fa80c0517746",
+      "n_canary": 3,
+      "n_direct": 11,
+      "n_neighborhood": 0,
+      "n_traces": 14,
+      "verdict_id": "verdict_fa80c0517746"
+    },
+    "ref": "edit_fa80c0517746"
+  },
+  {
+    "kind": "orchestrator.state",
+    "offset_ms": 73,
+    "payload": {
+      "edit_id": "edit_fa80c0517746",
+      "elapsed_ms": 66,
+      "from": "selecting",
+      "to": "dispatching",
+      "verdict_id": "verdict_fa80c0517746"
+    },
+    "ref": "edit_fa80c0517746"
+  },
+  {
+    "kind": "batch.submitted",
+    "offset_ms": 158,
+    "payload": {
+      "batch_id": "batch_fa80c0517746_a1_00",
+      "edit_id": "edit_fa80c0517746",
+      "k": 0,
+      "n": 4,
+      "runner": "local-process",
+      "status": "submitted",
+      "verdict_id": "verdict_fa80c0517746"
+    },
+    "ref": "edit_fa80c0517746"
+  },
+  {
+    "kind": "batch.submitted",
+    "offset_ms": 164,
+    "payload": {
+      "batch_id": "batch_fa80c0517746_a1_01",
+      "edit_id": "edit_fa80c0517746",
+      "k": 0,
+      "n": 4,
+      "runner": "local-process",
+      "status": "submitted",
+      "verdict_id": "verdict_fa80c0517746"
+    },
+    "ref": "edit_fa80c0517746"
+  },
+  {
+    "kind": "batch.submitted",
+    "offset_ms": 174,
+    "payload": {
+      "batch_id": "batch_fa80c0517746_a1_02",
+      "edit_id": "edit_fa80c0517746",
+      "k": 0,
+      "n": 4,
+      "runner": "local-process",
+      "status": "submitted",
+      "verdict_id": "verdict_fa80c0517746"
+    },
+    "ref": "edit_fa80c0517746"
+  },
+  {
+    "kind": "batch.submitted",
+    "offset_ms": 186,
+    "payload": {
+      "batch_id": "batch_fa80c0517746_a1_03",
+      "edit_id": "edit_fa80c0517746",
+      "k": 0,
+      "n": 2,
+      "runner": "local-process",
+      "status": "submitted",
+      "verdict_id": "verdict_fa80c0517746"
+    },
+    "ref": "edit_fa80c0517746"
+  },
+  {
+    "kind": "orchestrator.state",
+    "offset_ms": 196,
+    "payload": {
+      "edit_id": "edit_fa80c0517746",
+      "elapsed_ms": 118,
+      "from": "dispatching",
+      "to": "collecting",
+      "verdict_id": "verdict_fa80c0517746"
+    },
+    "ref": "edit_fa80c0517746"
+  },
+  {
+    "kind": "batch.heartbeat",
+    "offset_ms": 3048,
+    "payload": {
+      "batch_id": "batch_fa80c0517746_a1_03",
+      "edit_id": "edit_fa80c0517746",
+      "k": 1,
+      "n": 2,
+      "runner": "local-process",
+      "status": "running",
+      "verdict_id": "verdict_fa80c0517746"
+    },
+    "ref": "edit_fa80c0517746"
+  },
+  {
+    "kind": "batch.heartbeat",
+    "offset_ms": 5107,
+    "payload": {
+      "batch_id": "batch_fa80c0517746_a1_03",
+      "edit_id": "edit_fa80c0517746",
+      "k": 2,
+      "n": 2,
+      "runner": "local-process",
+      "status": "running",
+      "verdict_id": "verdict_fa80c0517746"
+    },
+    "ref": "edit_fa80c0517746"
+  },
+  {
+    "kind": "batch.finished",
+    "offset_ms": 5133,
+    "payload": {
+      "batch_id": "batch_fa80c0517746_a1_03",
+      "edit_id": "edit_fa80c0517746",
+      "k": 2,
+      "n": 2,
+      "runner": "local-process",
+      "status": "ok",
+      "verdict_id": "verdict_fa80c0517746"
+    },
+    "ref": "edit_fa80c0517746"
+  },
+  {
+    "kind": "batch.heartbeat",
+    "offset_ms": 9001,
+    "payload": {
+      "batch_id": "batch_fa80c0517746_a1_01",
+      "edit_id": "edit_fa80c0517746",
+      "k": 1,
+      "n": 4,
+      "runner": "local-process",
+      "status": "running",
+      "verdict_id": "verdict_fa80c0517746"
+    },
+    "ref": "edit_fa80c0517746"
+  },
+  {
+    "kind": "batch.heartbeat",
+    "offset_ms": 9005,
+    "payload": {
+      "batch_id": "batch_fa80c0517746_a1_02",
+      "edit_id": "edit_fa80c0517746",
+      "k": 1,
+      "n": 4,
+      "runner": "local-process",
+      "status": "running",
+      "verdict_id": "verdict_fa80c0517746"
+    },
+    "ref": "edit_fa80c0517746"
+  },
+  {
+    "kind": "batch.heartbeat",
+    "offset_ms": 9261,
+    "payload": {
+      "batch_id": "batch_fa80c0517746_a1_00",
+      "edit_id": "edit_fa80c0517746",
+      "k": 1,
+      "n": 4,
+      "runner": "local-process",
+      "status": "running",
+      "verdict_id": "verdict_fa80c0517746"
+    },
+    "ref": "edit_fa80c0517746"
+  },
+  {
+    "kind": "batch.heartbeat",
+    "offset_ms": 18283,
+    "payload": {
+      "batch_id": "batch_fa80c0517746_a1_02",
+      "edit_id": "edit_fa80c0517746",
+      "k": 2,
+      "n": 4,
+      "runner": "local-process",
+      "status": "running",
+      "verdict_id": "verdict_fa80c0517746"
+    },
+    "ref": "edit_fa80c0517746"
+  },
+  {
+    "kind": "batch.heartbeat",
+    "offset_ms": 19821,
+    "payload": {
+      "batch_id": "batch_fa80c0517746_a1_00",
+      "edit_id": "edit_fa80c0517746",
+      "k": 2,
+      "n": 4,
+      "runner": "local-process",
+      "status": "running",
+      "verdict_id": "verdict_fa80c0517746"
+    },
+    "ref": "edit_fa80c0517746"
+  },
+  {
+    "kind": "batch.heartbeat",
+    "offset_ms": 20590,
+    "payload": {
+      "batch_id": "batch_fa80c0517746_a1_01",
+      "edit_id": "edit_fa80c0517746",
+      "k": 2,
+      "n": 4,
+      "runner": "local-process",
+      "status": "running",
+      "verdict_id": "verdict_fa80c0517746"
+    },
+    "ref": "edit_fa80c0517746"
+  },
+  {
+    "kind": "batch.heartbeat",
+    "offset_ms": 25752,
+    "payload": {
+      "batch_id": "batch_fa80c0517746_a1_00",
+      "edit_id": "edit_fa80c0517746",
+      "k": 3,
+      "n": 4,
+      "runner": "local-process",
+      "status": "running",
+      "verdict_id": "verdict_fa80c0517746"
+    },
+    "ref": "edit_fa80c0517746"
+  },
+  {
+    "kind": "batch.heartbeat",
+    "offset_ms": 26519,
+    "payload": {
+      "batch_id": "batch_fa80c0517746_a1_02",
+      "edit_id": "edit_fa80c0517746",
+      "k": 3,
+      "n": 4,
+      "runner": "local-process",
+      "status": "running",
+      "verdict_id": "verdict_fa80c0517746"
+    },
+    "ref": "edit_fa80c0517746"
+  },
+  {
+    "kind": "batch.heartbeat",
+    "offset_ms": 28572,
+    "payload": {
+      "batch_id": "batch_fa80c0517746_a1_02",
+      "edit_id": "edit_fa80c0517746",
+      "k": 4,
+      "n": 4,
+      "runner": "local-process",
+      "status": "running",
+      "verdict_id": "verdict_fa80c0517746"
+    },
+    "ref": "edit_fa80c0517746"
+  },
+  {
+    "kind": "batch.finished",
+    "offset_ms": 28639,
+    "payload": {
+      "batch_id": "batch_fa80c0517746_a1_02",
+      "edit_id": "edit_fa80c0517746",
+      "k": 4,
+      "n": 4,
+      "runner": "local-process",
+      "status": "ok",
+      "verdict_id": "verdict_fa80c0517746"
+    },
+    "ref": "edit_fa80c0517746"
+  },
+  {
+    "kind": "batch.heartbeat",
+    "offset_ms": 29148,
+    "payload": {
+      "batch_id": "batch_fa80c0517746_a1_01",
+      "edit_id": "edit_fa80c0517746",
+      "k": 3,
+      "n": 4,
+      "runner": "local-process",
+      "status": "running",
+      "verdict_id": "verdict_fa80c0517746"
+    },
+    "ref": "edit_fa80c0517746"
+  },
+  {
+    "kind": "batch.heartbeat",
+    "offset_ms": 32765,
+    "payload": {
+      "batch_id": "batch_fa80c0517746_a1_00",
+      "edit_id": "edit_fa80c0517746",
+      "k": 4,
+      "n": 4,
+      "runner": "local-process",
+      "status": "running",
+      "verdict_id": "verdict_fa80c0517746"
+    },
+    "ref": "edit_fa80c0517746"
+  },
+  {
+    "kind": "batch.finished",
+    "offset_ms": 32828,
+    "payload": {
+      "batch_id": "batch_fa80c0517746_a1_00",
+      "edit_id": "edit_fa80c0517746",
+      "k": 4,
+      "n": 4,
+      "runner": "local-process",
+      "status": "ok",
+      "verdict_id": "verdict_fa80c0517746"
+    },
+    "ref": "edit_fa80c0517746"
+  },
+  {
+    "kind": "batch.heartbeat",
+    "offset_ms": 37453,
+    "payload": {
+      "batch_id": "batch_fa80c0517746_a1_01",
+      "edit_id": "edit_fa80c0517746",
+      "k": 4,
+      "n": 4,
+      "runner": "local-process",
+      "status": "running",
+      "verdict_id": "verdict_fa80c0517746"
+    },
+    "ref": "edit_fa80c0517746"
+  },
+  {
+    "kind": "batch.finished",
+    "offset_ms": 37528,
+    "payload": {
+      "batch_id": "batch_fa80c0517746_a1_01",
+      "edit_id": "edit_fa80c0517746",
+      "k": 4,
+      "n": 4,
+      "runner": "local-process",
+      "status": "ok",
+      "verdict_id": "verdict_fa80c0517746"
+    },
+    "ref": "edit_fa80c0517746"
+  },
+  {
+    "kind": "orchestrator.state",
+    "offset_ms": 37531,
+    "payload": {
+      "edit_id": "edit_fa80c0517746",
+      "elapsed_ms": 37338,
+      "from": "collecting",
+      "to": "judging",
+      "verdict_id": "verdict_fa80c0517746"
+    },
+    "ref": "edit_fa80c0517746"
+  },
+  {
+    "kind": "pair.level0",
+    "offset_ms": 37546,
+    "payload": {
+      "edit_id": "edit_fa80c0517746",
+      "golden": "run_983be2288065",
+      "hard_fail": true,
+      "n_missing": 0,
+      "n_new": 1,
+      "replay": "run_358b4aae8226",
+      "verdict_id": "verdict_fa80c0517746"
+    },
+    "ref": "edit_fa80c0517746"
+  },
+  {
+    "kind": "pair.level0",
+    "offset_ms": 37546,
+    "payload": {
+      "edit_id": "edit_fa80c0517746",
+      "golden": "run_191e53bab3ae",
+      "hard_fail": true,
+      "n_missing": 1,
+      "n_new": 2,
+      "replay": "run_841080065de7",
+      "verdict_id": "verdict_fa80c0517746"
+    },
+    "ref": "edit_fa80c0517746"
+  },
+  {
+    "kind": "pair.level0",
+    "offset_ms": 37546,
+    "payload": {
+      "edit_id": "edit_fa80c0517746",
+      "golden": "run_35a243ab293d",
+      "hard_fail": false,
+      "n_missing": 0,
+      "n_new": 0,
+      "replay": "run_ccbb5a9aeba3",
+      "verdict_id": "verdict_fa80c0517746"
+    },
+    "ref": "edit_fa80c0517746"
+  },
+  {
+    "kind": "pair.level0",
+    "offset_ms": 37547,
+    "payload": {
+      "edit_id": "edit_fa80c0517746",
+      "golden": "run_e82722d55f2c",
+      "hard_fail": false,
+      "n_missing": 0,
+      "n_new": 0,
+      "replay": "run_fac2c184ccc1",
+      "verdict_id": "verdict_fa80c0517746"
+    },
+    "ref": "edit_fa80c0517746"
+  },
+  {
+    "kind": "pair.level0",
+    "offset_ms": 37547,
+    "payload": {
+      "edit_id": "edit_fa80c0517746",
+      "golden": "run_b947e4e55191",
+      "hard_fail": true,
+      "n_missing": 0,
+      "n_new": 1,
+      "replay": "run_12527a4608ab",
+      "verdict_id": "verdict_fa80c0517746"
+    },
+    "ref": "edit_fa80c0517746"
+  },
+  {
+    "kind": "pair.level0",
+    "offset_ms": 37546,
+    "payload": {
+      "edit_id": "edit_fa80c0517746",
+      "golden": "run_917233bb82a6",
+      "hard_fail": false,
+      "n_missing": 0,
+      "n_new": 0,
+      "replay": "run_402cc301a726",
+      "verdict_id": "verdict_fa80c0517746"
+    },
+    "ref": "edit_fa80c0517746"
+  },
+  {
+    "kind": "pair.level0",
+    "offset_ms": 37548,
+    "payload": {
+      "edit_id": "edit_fa80c0517746",
+      "golden": "run_496d10a853ed",
+      "hard_fail": true,
+      "n_missing": 0,
+      "n_new": 2,
+      "replay": "run_fc5139f9667b",
+      "verdict_id": "verdict_fa80c0517746"
+    },
+    "ref": "edit_fa80c0517746"
+  },
+  {
+    "kind": "pair.level0",
+    "offset_ms": 37547,
+    "payload": {
+      "edit_id": "edit_fa80c0517746",
+      "golden": "run_5339e35afc7e",
+      "hard_fail": true,
+      "n_missing": 1,
+      "n_new": 3,
+      "replay": "run_1559d82459b8",
+      "verdict_id": "verdict_fa80c0517746"
+    },
+    "ref": "edit_fa80c0517746"
+  },
+  {
+    "kind": "pair.level0",
+    "offset_ms": 37548,
+    "payload": {
+      "edit_id": "edit_fa80c0517746",
+      "golden": "run_7b53b16ca473",
+      "hard_fail": true,
+      "n_missing": 0,
+      "n_new": 2,
+      "replay": "run_a46a577912be",
+      "verdict_id": "verdict_fa80c0517746"
+    },
+    "ref": "edit_fa80c0517746"
+  },
+  {
+    "kind": "pair.level0",
+    "offset_ms": 37566,
+    "payload": {
+      "edit_id": "edit_fa80c0517746",
+      "golden": "run_8edbdac3cda2",
+      "hard_fail": false,
+      "n_missing": 0,
+      "n_new": 0,
+      "replay": "run_5e8ed24ffac1",
+      "verdict_id": "verdict_fa80c0517746"
+    },
+    "ref": "edit_fa80c0517746"
+  },
+  {
+    "kind": "pair.decided",
+    "offset_ms": 37569,
+    "payload": {
+      "edit_id": "edit_fa80c0517746",
+      "golden": "run_191e53bab3ae",
+      "outcome": "regression",
+      "replay": "run_841080065de7",
+      "verdict_id": "verdict_fa80c0517746"
+    },
+    "ref": "edit_fa80c0517746"
+  },
+  {
+    "kind": "pair.level0",
+    "offset_ms": 37569,
+    "payload": {
+      "edit_id": "edit_fa80c0517746",
+      "golden": "run_f8fa40ff55bf",
+      "hard_fail": false,
+      "n_missing": 0,
+      "n_new": 0,
+      "replay": "run_14cc8344ec1b",
+      "verdict_id": "verdict_fa80c0517746"
+    },
+    "ref": "edit_fa80c0517746"
+  },
+  {
+    "kind": "pair.decided",
+    "offset_ms": 37571,
+    "payload": {
+      "edit_id": "edit_fa80c0517746",
+      "golden": "run_983be2288065",
+      "outcome": "regression",
+      "replay": "run_358b4aae8226",
+      "verdict_id": "verdict_fa80c0517746"
+    },
+    "ref": "edit_fa80c0517746"
+  },
+  {
+    "kind": "pair.decided",
+    "offset_ms": 37571,
+    "payload": {
+      "edit_id": "edit_fa80c0517746",
+      "golden": "run_496d10a853ed",
+      "outcome": "regression",
+      "replay": "run_fc5139f9667b",
+      "verdict_id": "verdict_fa80c0517746"
+    },
+    "ref": "edit_fa80c0517746"
+  },
+  {
+    "kind": "pair.decided",
+    "offset_ms": 37570,
+    "payload": {
+      "edit_id": "edit_fa80c0517746",
+      "golden": "run_b947e4e55191",
+      "outcome": "regression",
+      "replay": "run_12527a4608ab",
+      "verdict_id": "verdict_fa80c0517746"
+    },
+    "ref": "edit_fa80c0517746"
+  },
+  {
+    "kind": "pair.level0",
+    "offset_ms": 37571,
+    "payload": {
+      "edit_id": "edit_fa80c0517746",
+      "golden": "run_5cddb5fdead9",
+      "hard_fail": false,
+      "n_missing": 0,
+      "n_new": 0,
+      "replay": "run_8d5ac6a54a27",
+      "verdict_id": "verdict_fa80c0517746"
+    },
+    "ref": "edit_fa80c0517746"
+  },
+  {
+    "kind": "pair.decided",
+    "offset_ms": 37571,
+    "payload": {
+      "edit_id": "edit_fa80c0517746",
+      "golden": "run_7b53b16ca473",
+      "outcome": "regression",
+      "replay": "run_a46a577912be",
+      "verdict_id": "verdict_fa80c0517746"
+    },
+    "ref": "edit_fa80c0517746"
+  },
+  {
+    "kind": "pair.level0",
+    "offset_ms": 37571,
+    "payload": {
+      "edit_id": "edit_fa80c0517746",
+      "golden": "run_a432055d0645",
+      "hard_fail": true,
+      "n_missing": 0,
+      "n_new": 2,
+      "replay": "run_5c0181f955e0",
+      "verdict_id": "verdict_fa80c0517746"
+    },
+    "ref": "edit_fa80c0517746"
+  },
+  {
+    "kind": "pair.decided",
+    "offset_ms": 37571,
+    "payload": {
+      "edit_id": "edit_fa80c0517746",
+      "golden": "run_5339e35afc7e",
+      "outcome": "regression",
+      "replay": "run_1559d82459b8",
+      "verdict_id": "verdict_fa80c0517746"
+    },
+    "ref": "edit_fa80c0517746"
+  },
+  {
+    "kind": "pair.decided",
+    "offset_ms": 37578,
+    "payload": {
+      "edit_id": "edit_fa80c0517746",
+      "golden": "run_a432055d0645",
+      "outcome": "regression",
+      "replay": "run_5c0181f955e0",
+      "verdict_id": "verdict_fa80c0517746"
+    },
+    "ref": "edit_fa80c0517746"
+  },
+  {
+    "kind": "pair.level0",
+    "offset_ms": 37570,
+    "payload": {
+      "edit_id": "edit_fa80c0517746",
+      "golden": "run_3423fd4b299a",
+      "hard_fail": false,
+      "n_missing": 0,
+      "n_new": 0,
+      "replay": "run_91299a42f7c2",
+      "verdict_id": "verdict_fa80c0517746"
+    },
+    "ref": "edit_fa80c0517746"
+  },
+  {
+    "kind": "pair.opinion",
+    "offset_ms": 38995,
+    "payload": {
+      "confidence": 0.95,
+      "edit_id": "edit_fa80c0517746",
+      "golden": "run_f8fa40ff55bf",
+      "replay": "run_14cc8344ec1b",
+      "tier": "nano",
+      "usd": 7.242e-05,
+      "verdict": "equivalent",
+      "verdict_id": "verdict_fa80c0517746"
+    },
+    "ref": "edit_fa80c0517746"
+  },
+  {
+    "kind": "pair.decided",
+    "offset_ms": 38998,
+    "payload": {
+      "edit_id": "edit_fa80c0517746",
+      "golden": "run_f8fa40ff55bf",
+      "outcome": "pass",
+      "replay": "run_14cc8344ec1b",
+      "verdict_id": "verdict_fa80c0517746"
+    },
+    "ref": "edit_fa80c0517746"
+  },
+  {
+    "kind": "pair.opinion",
+    "offset_ms": 39161,
+    "payload": {
+      "confidence": 0.99,
+      "edit_id": "edit_fa80c0517746",
+      "golden": "run_8edbdac3cda2",
+      "replay": "run_5e8ed24ffac1",
+      "tier": "nano",
+      "usd": 7.482e-05,
+      "verdict": "equivalent",
+      "verdict_id": "verdict_fa80c0517746"
+    },
+    "ref": "edit_fa80c0517746"
+  },
+  {
+    "kind": "pair.decided",
+    "offset_ms": 39164,
+    "payload": {
+      "edit_id": "edit_fa80c0517746",
+      "golden": "run_8edbdac3cda2",
+      "outcome": "pass",
+      "replay": "run_5e8ed24ffac1",
+      "verdict_id": "verdict_fa80c0517746"
+    },
+    "ref": "edit_fa80c0517746"
+  },
+  {
+    "kind": "pair.opinion",
+    "offset_ms": 39445,
+    "payload": {
+      "confidence": 0.95,
+      "edit_id": "edit_fa80c0517746",
+      "golden": "run_917233bb82a6",
+      "replay": "run_402cc301a726",
+      "tier": "nano",
+      "usd": 9.552e-05,
+      "verdict": "regressed",
+      "verdict_id": "verdict_fa80c0517746"
+    },
+    "ref": "edit_fa80c0517746"
+  },
+  {
+    "kind": "pair.opinion",
+    "offset_ms": 39451,
+    "payload": {
+      "confidence": 0.99,
+      "edit_id": "edit_fa80c0517746",
+      "golden": "run_3423fd4b299a",
+      "replay": "run_91299a42f7c2",
+      "tier": "nano",
+      "usd": 8.58e-05,
+      "verdict": "equivalent",
+      "verdict_id": "verdict_fa80c0517746"
+    },
+    "ref": "edit_fa80c0517746"
+  },
+  {
+    "kind": "pair.opinion",
+    "offset_ms": 39451,
+    "payload": {
+      "confidence": 0.95,
+      "edit_id": "edit_fa80c0517746",
+      "golden": "run_35a243ab293d",
+      "replay": "run_ccbb5a9aeba3",
+      "tier": "nano",
+      "usd": 0.00010842,
+      "verdict": "regressed",
+      "verdict_id": "verdict_fa80c0517746"
+    },
+    "ref": "edit_fa80c0517746"
+  },
+  {
+    "kind": "pair.opinion",
+    "offset_ms": 39452,
+    "payload": {
+      "confidence": 0.95,
+      "edit_id": "edit_fa80c0517746",
+      "golden": "run_e82722d55f2c",
+      "replay": "run_fac2c184ccc1",
+      "tier": "nano",
+      "usd": 9.432e-05,
+      "verdict": "equivalent",
+      "verdict_id": "verdict_fa80c0517746"
+    },
+    "ref": "edit_fa80c0517746"
+  },
+  {
+    "kind": "pair.decided",
+    "offset_ms": 39458,
+    "payload": {
+      "edit_id": "edit_fa80c0517746",
+      "golden": "run_3423fd4b299a",
+      "outcome": "pass",
+      "replay": "run_91299a42f7c2",
+      "verdict_id": "verdict_fa80c0517746"
+    },
+    "ref": "edit_fa80c0517746"
+  },
+  {
+    "kind": "pair.decided",
+    "offset_ms": 39458,
+    "payload": {
+      "edit_id": "edit_fa80c0517746",
+      "golden": "run_e82722d55f2c",
+      "outcome": "pass",
+      "replay": "run_fac2c184ccc1",
+      "verdict_id": "verdict_fa80c0517746"
+    },
+    "ref": "edit_fa80c0517746"
+  },
+  {
+    "kind": "pair.opinion",
+    "offset_ms": 39615,
+    "payload": {
+      "confidence": 0.95,
+      "edit_id": "edit_fa80c0517746",
+      "golden": "run_5cddb5fdead9",
+      "replay": "run_8d5ac6a54a27",
+      "tier": "nano",
+      "usd": 0.00010746,
+      "verdict": "regressed",
+      "verdict_id": "verdict_fa80c0517746"
+    },
+    "ref": "edit_fa80c0517746"
+  },
+  {
+    "kind": "pair.opinion",
+    "offset_ms": 41537,
+    "payload": {
+      "confidence": 0.95,
+      "edit_id": "edit_fa80c0517746",
+      "golden": "run_917233bb82a6",
+      "replay": "run_402cc301a726",
+      "tier": "super",
+      "usd": 0.0012663,
+      "verdict": "equivalent",
+      "verdict_id": "verdict_fa80c0517746"
+    },
+    "ref": "edit_fa80c0517746"
+  },
+  {
+    "kind": "pair.decided",
+    "offset_ms": 41540,
+    "payload": {
+      "edit_id": "edit_fa80c0517746",
+      "golden": "run_917233bb82a6",
+      "outcome": "pass",
+      "replay": "run_402cc301a726",
+      "verdict_id": "verdict_fa80c0517746"
+    },
+    "ref": "edit_fa80c0517746"
+  },
+  {
+    "kind": "pair.opinion",
+    "offset_ms": 41662,
+    "payload": {
+      "confidence": 0.95,
+      "edit_id": "edit_fa80c0517746",
+      "golden": "run_5cddb5fdead9",
+      "replay": "run_8d5ac6a54a27",
+      "tier": "super",
+      "usd": 0.00123,
+      "verdict": "regressed",
+      "verdict_id": "verdict_fa80c0517746"
+    },
+    "ref": "edit_fa80c0517746"
+  },
+  {
+    "kind": "pair.opinion",
+    "offset_ms": 41674,
+    "payload": {
+      "confidence": 0.95,
+      "edit_id": "edit_fa80c0517746",
+      "golden": "run_35a243ab293d",
+      "replay": "run_ccbb5a9aeba3",
+      "tier": "super",
+      "usd": 0.0012651,
+      "verdict": "equivalent",
+      "verdict_id": "verdict_fa80c0517746"
+    },
+    "ref": "edit_fa80c0517746"
+  },
+  {
+    "kind": "pair.decided",
+    "offset_ms": 41676,
+    "payload": {
+      "edit_id": "edit_fa80c0517746",
+      "golden": "run_35a243ab293d",
+      "outcome": "pass",
+      "replay": "run_ccbb5a9aeba3",
+      "verdict_id": "verdict_fa80c0517746"
+    },
+    "ref": "edit_fa80c0517746"
+  },
+  {
+    "kind": "pair.opinion",
+    "offset_ms": 47389,
+    "payload": {
+      "confidence": 0.95,
+      "edit_id": "edit_fa80c0517746",
+      "golden": "run_5cddb5fdead9",
+      "replay": "run_8d5ac6a54a27",
+      "tier": "ultra",
+      "usd": 0.008884,
+      "verdict": "regressed",
+      "verdict_id": "verdict_fa80c0517746"
+    },
+    "ref": "edit_fa80c0517746"
+  },
+  {
+    "kind": "pair.decided",
+    "offset_ms": 47391,
+    "payload": {
+      "edit_id": "edit_fa80c0517746",
+      "golden": "run_5cddb5fdead9",
+      "outcome": "regression",
+      "replay": "run_8d5ac6a54a27",
+      "verdict_id": "verdict_fa80c0517746"
+    },
+    "ref": "edit_fa80c0517746"
+  },
+  {
+    "kind": "orchestrator.state",
+    "offset_ms": 47397,
+    "payload": {
+      "edit_id": "edit_fa80c0517746",
+      "elapsed_ms": 9863,
+      "from": "judging",
+      "to": "drifting",
+      "verdict_id": "verdict_fa80c0517746"
+    },
+    "ref": "edit_fa80c0517746"
+  },
+  {
+    "kind": "orchestrator.state",
+    "offset_ms": 47412,
+    "payload": {
+      "edit_id": "edit_fa80c0517746",
+      "elapsed_ms": 14,
+      "from": "drifting",
+      "to": "deciding",
+      "verdict_id": "verdict_fa80c0517746"
+    },
+    "ref": "edit_fa80c0517746"
+  },
+  {
+    "kind": "verdict.decided",
+    "offset_ms": 48494,
+    "payload": {
+      "action": "reverted",
+      "affected_skills": [
+        "github-triage"
+      ],
+      "decision": "BLOCK",
+      "duration_s": 48,
+      "edit_id": "edit_fa80c0517746",
+      "headline": "Blocked: the new github-triage would close issues in 7 of 14 replays.",
+      "n_by_outcome": {
+        "pass": 6,
+        "regression": 8
+      },
+      "reasons": [
+        "level0_hard_fail",
+        "agreed_regression"
+      ],
+      "usd_by_tier": {
+        "nano": 0.0006387599999999999,
+        "super": 0.0037614,
+        "ultra": 0.009725
+      },
+      "verdict_id": "verdict_fa80c0517746"
+    },
+    "ref": "verdict_fa80c0517746"
+  },
+  {
+    "kind": "orchestrator.state",
+    "offset_ms": 48500,
+    "payload": {
+      "edit_id": "edit_fa80c0517746",
+      "elapsed_ms": 5,
+      "from": "deciding",
+      "to": "acting",
+      "verdict_id": "verdict_fa80c0517746"
+    },
+    "ref": "edit_fa80c0517746"
+  },
+  {
+    "kind": "verdict.acted",
+    "offset_ms": 48717,
+    "payload": {
+      "action": "reverted",
+      "commit": "2d63d1056a8ae9a236f13e36bb241f3460a5d0b6",
+      "decision": "BLOCK",
+      "edit_id": "edit_fa80c0517746",
+      "verdict_id": "verdict_fa80c0517746"
+    },
+    "ref": "verdict_fa80c0517746"
+  },
+  {
+    "kind": "orchestrator.state",
+    "offset_ms": 48720,
+    "payload": {
+      "edit_id": "edit_fa80c0517746",
+      "elapsed_ms": 220,
+      "from": "acting",
+      "to": "notifying",
+      "verdict_id": "verdict_fa80c0517746"
+    },
+    "ref": "edit_fa80c0517746"
+  },
+  {
+    "kind": "verdict.notified",
+    "offset_ms": 48721,
+    "payload": {
+      "delivered": false,
+      "edit_id": "edit_fa80c0517746",
+      "text": "Ratchet BLOCK: Blocked: the new github-triage would close issues in 7 of 14 replays. — http://127.0.0.1:8080/verdicts/verdict_fa80c0517746",
+      "verdict_id": "verdict_fa80c0517746"
+    },
+    "ref": "verdict_fa80c0517746"
+  },
+  {
+    "kind": "simulate.finished",
+    "offset_ms": 48724,
+    "payload": {
+      "decision": "BLOCK",
+      "edit_id": "edit_fa80c0517746",
+      "scenario": "1",
+      "session_hash": "e2ad5d8554c5aa76",
+      "status": "done",
+      "verdict_id": "verdict_fa80c0517746"
+    },
+    "ref": "verdict_fa80c0517746"
+  },
+  {
+    "kind": "orchestrator.state",
+    "offset_ms": 48727,
+    "payload": {
+      "edit_id": "edit_fa80c0517746",
+      "elapsed_ms": 6,
+      "from": "notifying",
+      "to": "done",
+      "verdict_id": "verdict_fa80c0517746"
+    },
+    "ref": "edit_fa80c0517746"
+  }
+]

@@ -1,0 +1,4 @@
+{
+  "d1_fx_drift": "{\"changed\": true, \"new_value\": \"0.95\", \"confidence\": 0.9}",
+  "d1_no_drift": "{\"changed\": false, \"new_value\": null, \"confidence\": 0.85}"
+}

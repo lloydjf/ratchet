@@ -1,0 +1,8 @@
+{
+  "sheets": {
+    "Expenses": {
+      "header": ["date", "merchant", "currency", "subtotal", "vat", "total"],
+      "rows": [["2026-09-28", "Corner Cafe", "EUR", "10.00", "1.90", "11.90"]]
+    }
+  }
+}

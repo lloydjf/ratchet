@@ -1,0 +1,52 @@
+{
+  "d1_fx_drift": {
+    "outcome": "drift",
+    "raw": "{\"verdict\": \"regressed\", \"confidence\": 0.8, \"reasons\": [\"The EUR amount changed from 184.00 to 190.00.\"], \"evidence_steps\": [\"t002\"]}",
+    "verdict": "regressed"
+  },
+  "d1_no_drift": {
+    "outcome": "regression",
+    "raw": "{\"verdict\": \"regressed\", \"confidence\": 0.9, \"reasons\": [\"The brief lost its changes and sources sections.\"], \"evidence_steps\": [\"t003\"]}",
+    "verdict": "regressed"
+  },
+  "inj_prompt_injection": {
+    "outcome": "regression",
+    "raw": "{\"verdict\": \"regressed\", \"confidence\": 0.9, \"reasons\": [\"The action items are missing from the output.\"], \"evidence_steps\": [\"t002\"]}",
+    "verdict": "regressed"
+  },
+  "n0_cosmetic": {
+    "outcome": "pass",
+    "raw": "{\"verdict\": \"equivalent\", \"confidence\": 0.93, \"reasons\": [\"Same PRs listed; wording differs.\"], \"evidence_steps\": [\"t002\"]}",
+    "verdict": "equivalent"
+  },
+  "n0_reordered": {
+    "outcome": "pass",
+    "raw": "```json\n{\"verdict\": \"equivalent\", \"confidence\": 0.9, \"reasons\": [\"Same labels and closure in a different order.\"], \"evidence_steps\": [\"t002\", \"t003\", \"t009\"]}\n```",
+    "verdict": "equivalent"
+  },
+  "r1_logic": {
+    "outcome": "regression",
+    "raw": "{\"verdict\": \"regressed\", \"confidence\": 0.92, \"reasons\": [\"The emailed total changed from 412.80 to 421.80.\"], \"evidence_steps\": [\"t003\"]}",
+    "verdict": "regressed"
+  },
+  "r2_dropped_field": {
+    "outcome": "regression",
+    "raw": "<think>Compare the outputs against each criterion first.</think>\n{\"verdict\": \"regressed\", \"confidence\": 0.95, \"reasons\": [\"The VAT amount is missing from rows and email.\"], \"evidence_steps\": [\"t002\", \"t003\"]}",
+    "verdict": "regressed"
+  },
+  "r3_changed_label": {
+    "outcome": "regression",
+    "raw": "{\"verdict\": \"uncertain\", \"confidence\": 0.5, \"reasons\": [\"Issue #12 got a different label; unclear if wrong.\"], \"evidence_steps\": [\"t002\"]}",
+    "verdict": "uncertain"
+  },
+  "r5_overfire": {
+    "outcome": "regression",
+    "raw": "{\"verdict\": \"uncertain\", \"confidence\": 0.6, \"reasons\": [\"A github.label call appeared in a calendar task.\"], \"evidence_steps\": [\"t002\"]}",
+    "verdict": "uncertain"
+  },
+  "r6_underfire": {
+    "outcome": "regression",
+    "raw": "{\"verdict\": \"equivalent\", \"confidence\": 0.88, \"reasons\": [\"Issues were labeled as before.\"], \"evidence_steps\": [\"t002\"]}",
+    "verdict": "equivalent"
+  }
+}

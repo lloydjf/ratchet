@@ -1,0 +1,8 @@
+[Unit]
+Description=Rotate RATCHET_ACTION_TOKEN_SECRET and restart Ratchet
+Documentation=file:///opt/ratchet/docs/RUNBOOK.md
+After=ratchet-serve.service
+
+[Service]
+Type=oneshot
+ExecStart=/opt/ratchet/deploy/vm/rotate-action-secret.sh

@@ -1,0 +1,836 @@
+# SkillRegress-Bench task inputs (dataset construction, step 1: see bench/DATASHEET.md).
+# 10 hand-written tasks per skill (varied phrasing, 2 edge cases each, `edge: true`) plus the
+# 3 skill-free canaries. Recorded and blessed by `ratchet bench build --goldens` through
+# MinimalRunner -> proxy -> mock tools in record mode against bench/world, frozen at
+# 2026-10-14T16:00:00Z. Everything is synthetic (example.com, the fictional org acme).
+#
+# expected_skill: the skill the MinimalRunner's trigger matcher must inject first (null = none).
+# workspace:      a directory under bench/workspaces/ copied in as the initial workspace.
+# smoke:          part of the offline-simulator smoke subset (skills with simulator policies).
+frozen_time: '2026-10-14T16:00:00Z'
+world: world
+tasks:
+- task_id: exp-berlin-trip
+  task_label: File taxi and hotel receipts
+  task_input: File my receipts taxi-2026-10-01.pdf and hotel-2026-10-02.pdf as expenses.
+  expected_skill: expense-report
+  workspace: null
+  edge: false
+  smoke: true
+  canary: false
+- task_id: exp-lunch-train
+  task_label: File lunch and train receipts
+  task_input: 'Please file these receipts in the Expenses sheet: lunch-2026-10-03.pdf, train-2026-10-03.pdf.'
+  expected_skill: expense-report
+  workspace: null
+  edge: false
+  smoke: true
+  canary: false
+- task_id: exp-conference
+  task_label: File the conference receipt
+  task_input: File the receipt conference-2026-10-05.pdf as an expense.
+  expected_skill: expense-report
+  workspace: null
+  edge: false
+  smoke: false
+  canary: false
+- task_id: exp-office-supplies
+  task_label: File the office supplies receipt
+  task_input: Add the receipt office-supplies-2026-10-06.pdf to my expenses.
+  expected_skill: expense-report
+  workspace: null
+  edge: false
+  smoke: true
+  canary: false
+- task_id: exp-dinner-parking
+  task_label: File dinner and parking receipts
+  task_input: File the receipts dinner-2026-10-07.pdf and parking-2026-10-07.pdf in the Expenses sheet.
+  expected_skill: expense-report
+  workspace: null
+  edge: false
+  smoke: false
+  canary: false
+- task_id: exp-coworking-courier
+  task_label: File coworking and courier receipts
+  task_input: File coworking-2026-10-08.pdf and courier-2026-10-09.pdf as expense receipts.
+  expected_skill: expense-report
+  workspace: null
+  edge: false
+  smoke: false
+  canary: false
+- task_id: exp-software
+  task_label: File the software receipt
+  task_input: File receipt software-2026-10-10.pdf in the Expenses spreadsheet.
+  expected_skill: expense-report
+  workspace: null
+  edge: false
+  smoke: false
+  canary: false
+- task_id: exp-ink-fuel-email
+  task_label: File ink and fuel receipts and email finance
+  task_input: File printer-ink-2026-10-11.pdf and fuel-2026-10-12.pdf as expenses, then email the expense report to finance@example.com.
+  expected_skill: expense-report
+  workspace: null
+  edge: false
+  smoke: false
+  canary: false
+- task_id: exp-missing-receipt
+  task_label: File a bakery receipt and a missing one
+  task_input: File my receipts bakery-2026-10-12.pdf and team-lunch-2026-10-04.pdf as expenses.
+  expected_skill: expense-report
+  workspace: null
+  edge: true
+  smoke: false
+  canary: false
+- task_id: exp-no-files
+  task_label: File receipts without naming them
+  task_input: Can you file my expense receipts from last week?
+  expected_skill: expense-report
+  workspace: null
+  edge: true
+  smoke: false
+  canary: false
+- task_id: tri-widgets
+  task_label: Triage acme/widgets
+  task_input: Triage the open issues in acme/widgets.
+  expected_skill: github-triage
+  workspace: null
+  edge: false
+  smoke: true
+  canary: false
+- task_id: tri-billing-api
+  task_label: Triage acme/billing-api
+  task_input: Please triage the open issues in the acme/billing-api backlog.
+  expected_skill: github-triage
+  workspace: null
+  edge: false
+  smoke: true
+  canary: false
+- task_id: tri-mobile-app
+  task_label: Triage acme/mobile-app
+  task_input: Go through the open issues in acme/mobile-app and triage them.
+  expected_skill: github-triage
+  workspace: null
+  edge: false
+  smoke: false
+  canary: false
+- task_id: tri-docs-site
+  task_label: Triage acme/docs-site
+  task_input: Triage the acme/docs-site GitHub issues.
+  expected_skill: github-triage
+  workspace: null
+  edge: false
+  smoke: true
+  canary: false
+- task_id: tri-data-pipeline
+  task_label: Triage acme/data-pipeline
+  task_input: Can you triage the open GitHub issues for acme/data-pipeline?
+  expected_skill: github-triage
+  workspace: null
+  edge: false
+  smoke: false
+  canary: false
+- task_id: tri-auth-service
+  task_label: Triage acme/auth-service
+  task_input: 'Sort out the open issues on acme/auth-service: label each one.'
+  expected_skill: github-triage
+  workspace: null
+  edge: false
+  smoke: false
+  canary: false
+- task_id: tri-infra-terraform
+  task_label: Triage acme/infra-terraform
+  task_input: Triage the open issues in acme/infra-terraform before Thursday.
+  expected_skill: github-triage
+  workspace: null
+  edge: false
+  smoke: false
+  canary: false
+- task_id: tri-search-indexer
+  task_label: Triage acme/search-indexer
+  task_input: Run issue triage on acme/search-indexer and label the open issues.
+  expected_skill: github-triage
+  workspace: null
+  edge: false
+  smoke: false
+  canary: false
+- task_id: tri-status-page
+  task_label: Triage acme/status-page (all labeled)
+  task_input: Triage the open GitHub issues of acme/status-page.
+  expected_skill: github-triage
+  workspace: null
+  edge: true
+  smoke: false
+  canary: false
+- task_id: tri-no-repo
+  task_label: Triage without a repository
+  task_input: Please triage my open GitHub issues.
+  expected_skill: github-triage
+  workspace: null
+  edge: true
+  smoke: false
+  canary: false
+- task_id: cal-alice-bob
+  task_label: Sync with Alice and Bob
+  task_input: Schedule a 30-minute sync with Alice and Bob on 2026-10-15.
+  expected_skill: calendar-scheduler
+  workspace: null
+  edge: false
+  smoke: false
+  canary: false
+- task_id: cal-design-review
+  task_label: Design follow-up with Priya
+  task_input: Book a one-hour meeting called Design follow-up with Priya on 2026-10-15.
+  expected_skill: calendar-scheduler
+  workspace: null
+  edge: false
+  smoke: false
+  canary: false
+- task_id: cal-dana-lee
+  task_label: Meeting with Dana and Lee
+  task_input: Set up a 30 minute meeting with Dana and Lee on 2026-10-16.
+  expected_skill: calendar-scheduler
+  workspace: null
+  edge: false
+  smoke: false
+  canary: false
+- task_id: cal-carol
+  task_label: Budget prep with Carol
+  task_input: Schedule a 45-minute meeting called Budget prep with Carol on 2026-10-20.
+  expected_skill: calendar-scheduler
+  workspace: null
+  edge: false
+  smoke: false
+  canary: false
+- task_id: cal-team
+  task_label: Team sync with four people
+  task_input: Find a time and schedule a 30-minute team sync meeting with Alice, Bob, Carol and Dana on 2026-10-15.
+  expected_skill: calendar-scheduler
+  workspace: null
+  edge: false
+  smoke: false
+  canary: false
+- task_id: cal-lee-oneonone
+  task_label: 1:1 with Lee
+  task_input: Book a 30-minute 1:1 with Lee on 2026-10-21.
+  expected_skill: calendar-scheduler
+  workspace: null
+  edge: false
+  smoke: false
+  canary: false
+- task_id: cal-priya-bob
+  task_label: Release review
+  task_input: Schedule a one-hour meeting called Release review with Priya and Bob on 2026-10-20.
+  expected_skill: calendar-scheduler
+  workspace: null
+  edge: false
+  smoke: false
+  canary: false
+- task_id: cal-carol-dana
+  task_label: Hiring debrief
+  task_input: Set up a 30-minute meeting, Hiring debrief, with Carol and Dana on 2026-10-16.
+  expected_skill: calendar-scheduler
+  workspace: null
+  edge: false
+  smoke: false
+  canary: false
+- task_id: cal-offsite-day
+  task_label: Meeting on the offsite day
+  task_input: Schedule a 30-minute sync with Alice on 2026-10-19.
+  expected_skill: calendar-scheduler
+  workspace: null
+  edge: true
+  smoke: false
+  canary: false
+- task_id: cal-no-date
+  task_label: Meeting without a date
+  task_input: Schedule a 30-minute meeting with Bob.
+  expected_skill: calendar-scheduler
+  workspace: null
+  edge: true
+  smoke: false
+  canary: false
+- task_id: chg-widgets
+  task_label: Changelog for widgets v2.4.0
+  task_input: Update the changelog for acme/widgets release v2.4.0 since v2.3.1.
+  expected_skill: changelog-writer
+  workspace: changelog-widgets
+  edge: false
+  smoke: true
+  canary: false
+- task_id: chg-billing-api
+  task_label: Changelog for billing-api v4.9.0
+  task_input: Write release notes in the changelog for acme/billing-api version v4.9.0 since v4.8.0.
+  expected_skill: changelog-writer
+  workspace: null
+  edge: false
+  smoke: true
+  canary: false
+- task_id: chg-mobile-app
+  task_label: Changelog for mobile-app v3.2.0
+  task_input: Update CHANGELOG.md for acme/mobile-app release v3.2.0 since v3.1.0.
+  expected_skill: changelog-writer
+  workspace: changelog-mobile-app
+  edge: false
+  smoke: true
+  canary: false
+- task_id: chg-docs-site
+  task_label: Changelog for docs-site v1.8.0
+  task_input: Please update the changelog of acme/docs-site for release v1.8.0 since v1.7.2.
+  expected_skill: changelog-writer
+  workspace: changelog-docs-site
+  edge: false
+  smoke: false
+  canary: false
+- task_id: chg-data-pipeline
+  task_label: Changelog for data-pipeline v0.9.0
+  task_input: Update the changelog for acme/data-pipeline release v0.9.0 since v0.8.0.
+  expected_skill: changelog-writer
+  workspace: null
+  edge: false
+  smoke: false
+  canary: false
+- task_id: chg-cli-tools
+  task_label: Changelog for cli-tools v5.1.0
+  task_input: Write the changelog entry for acme/cli-tools version v5.1.0 since v5.0.3.
+  expected_skill: changelog-writer
+  workspace: null
+  edge: false
+  smoke: false
+  canary: false
+- task_id: chg-design-system
+  task_label: Changelog for design-system v2.0.0
+  task_input: Update the changelog for acme/design-system release v2.0.0 since v1.12.0.
+  expected_skill: changelog-writer
+  workspace: changelog-design-system
+  edge: false
+  smoke: false
+  canary: false
+- task_id: chg-search-indexer
+  task_label: Changelog for search-indexer v1.3.0
+  task_input: Update the changelog for the acme/search-indexer release v1.3.0 since v1.2.0.
+  expected_skill: changelog-writer
+  workspace: null
+  edge: false
+  smoke: false
+  canary: false
+- task_id: chg-auth-unreleased
+  task_label: Unreleased changelog for auth-service
+  task_input: Update the changelog of acme/auth-service with everything since v3.4.1.
+  expected_skill: changelog-writer
+  workspace: changelog-auth-service
+  edge: true
+  smoke: false
+  canary: false
+- task_id: chg-infra-empty
+  task_label: Changelog with no new commits
+  task_input: Update the changelog for acme/infra-terraform release v0.6.1 since v0.6.0.
+  expected_skill: changelog-writer
+  workspace: null
+  edge: true
+  smoke: false
+  canary: false
+- task_id: csv-customers
+  task_label: Clean customers.csv
+  task_input: Clean up the CSV file customers.csv.
+  expected_skill: csv-cleaner
+  workspace: csv-customers
+  edge: false
+  smoke: false
+  canary: false
+- task_id: csv-orders
+  task_label: Clean exports/orders.csv
+  task_input: 'Please clean exports/orders.csv: dedupe it and fix the dates.'
+  expected_skill: csv-cleaner
+  workspace: csv-orders
+  edge: false
+  smoke: false
+  canary: false
+- task_id: csv-signups
+  task_label: Clean signups.csv
+  task_input: Tidy the signups.csv file.
+  expected_skill: csv-cleaner
+  workspace: csv-signups
+  edge: false
+  smoke: false
+  canary: false
+- task_id: csv-inventory
+  task_label: Clean inventory.csv
+  task_input: Deduplicate and normalize the CSV inventory.csv.
+  expected_skill: csv-cleaner
+  workspace: csv-inventory
+  edge: false
+  smoke: false
+  canary: false
+- task_id: csv-attendees
+  task_label: Clean events/attendees.csv
+  task_input: Clean the CSV events/attendees.csv before I import it.
+  expected_skill: csv-cleaner
+  workspace: csv-attendees
+  edge: false
+  smoke: false
+  canary: false
+- task_id: csv-payments
+  task_label: Clean payments.csv
+  task_input: Normalize and clean up payments.csv.
+  expected_skill: csv-cleaner
+  workspace: csv-payments
+  edge: false
+  smoke: false
+  canary: false
+- task_id: csv-tickets
+  task_label: Clean support/tickets.csv
+  task_input: Clean the support/tickets.csv CSV file.
+  expected_skill: csv-cleaner
+  workspace: csv-tickets
+  edge: false
+  smoke: false
+  canary: false
+- task_id: csv-vendors
+  task_label: Clean vendors.csv
+  task_input: Please tidy up vendors.csv (CSV).
+  expected_skill: csv-cleaner
+  workspace: csv-vendors
+  edge: false
+  smoke: false
+  canary: false
+- task_id: csv-already-clean
+  task_label: Clean an already clean CSV
+  task_input: Clean the CSV file contacts.csv.
+  expected_skill: csv-cleaner
+  workspace: csv-contacts
+  edge: true
+  smoke: false
+  canary: false
+- task_id: csv-header-only
+  task_label: Clean a header-only CSV
+  task_input: Clean up leads.csv, the CSV export from the form.
+  expected_skill: csv-cleaner
+  workspace: csv-empty
+  edge: true
+  smoke: false
+  canary: false
+- task_id: inv-northwind-blueharbor
+  task_label: Log Northwind and Blue Harbor invoices
+  task_input: Log the invoices invoices/inv-northwind.txt and invoices/inv-blueharbor.txt in the Invoices sheet.
+  expected_skill: invoice-parser
+  workspace: invoices-a
+  edge: false
+  smoke: false
+  canary: false
+- task_id: inv-cloudnine
+  task_label: Log the Cloud Nine invoice
+  task_input: Extract the invoice invoices/inv-cloudnine.txt into the Invoices sheet.
+  expected_skill: invoice-parser
+  workspace: invoices-b
+  edge: false
+  smoke: false
+  canary: false
+- task_id: inv-maple-greenleaf
+  task_label: Log Maple and Greenleaf invoices
+  task_input: Record the supplier invoices invoices/inv-maple.txt and invoices/inv-greenleaf.txt.
+  expected_skill: invoice-parser
+  workspace: invoices-c
+  edge: false
+  smoke: false
+  canary: false
+- task_id: inv-lumen
+  task_label: Log the Lumen invoice
+  task_input: Please enter invoice invoices/inv-lumen.txt in the Invoices sheet.
+  expected_skill: invoice-parser
+  workspace: invoices-d
+  edge: false
+  smoke: false
+  canary: false
+- task_id: inv-quarry-tandem
+  task_label: Log Quarry and Tandem invoices
+  task_input: 'Log these vendor invoices: invoices/inv-quarry.txt, invoices/inv-tandem.txt.'
+  expected_skill: invoice-parser
+  workspace: invoices-e
+  edge: false
+  smoke: false
+  canary: false
+- task_id: inv-orchid
+  task_label: Log the Orchid invoice
+  task_input: Extract the vendor invoice invoices/inv-orchid.txt and log it.
+  expected_skill: invoice-parser
+  workspace: invoices-f
+  edge: false
+  smoke: false
+  canary: false
+- task_id: inv-harbor-pair
+  task_label: Log two Blue Harbor invoices
+  task_input: Log the invoices invoices/inv-harbor-2.txt and invoices/inv-blueharbor.txt from Blue Harbor.
+  expected_skill: invoice-parser
+  workspace: invoices-g
+  edge: false
+  smoke: false
+  canary: false
+- task_id: inv-three
+  task_label: Log three invoices
+  task_input: Record invoices invoices/inv-greenleaf.txt, invoices/inv-lumen.txt and invoices/inv-tandem.txt in the Invoices sheet.
+  expected_skill: invoice-parser
+  workspace: invoices-h
+  edge: false
+  smoke: false
+  canary: false
+- task_id: inv-net-terms
+  task_label: Log an invoice with Net 30 terms
+  task_input: Log the invoice invoices/inv-maple.txt; it has payment terms instead of a due date.
+  expected_skill: invoice-parser
+  workspace: invoices-c
+  edge: true
+  smoke: false
+  canary: false
+- task_id: inv-missing-file
+  task_label: Log a missing invoice file
+  task_input: Log the invoices invoices/inv-northwind.txt and invoices/inv-acme-old.txt in the Invoices sheet.
+  expected_skill: invoice-parser
+  workspace: invoices-i
+  edge: true
+  smoke: false
+  canary: false
+- task_id: res-quilldb
+  task_label: Brief on QuillDB
+  task_input: Write a weekly research brief on QuillDB vector database.
+  expected_skill: weekly-research-brief
+  workspace: null
+  edge: false
+  smoke: false
+  canary: false
+- task_id: res-helio
+  task_label: Brief on Helio batteries
+  task_input: Give me this week's research brief about Helio solid-state batteries.
+  expected_skill: weekly-research-brief
+  workspace: null
+  edge: false
+  smoke: false
+  canary: false
+- task_id: res-larkspur
+  task_label: Brief on Larkspur
+  task_input: 'Research brief please: Larkspur WebAssembly runtime.'
+  expected_skill: weekly-research-brief
+  workspace: null
+  edge: false
+  smoke: false
+  canary: false
+- task_id: res-pinecrest
+  task_label: Brief on Pinecrest cargo bikes
+  task_input: Write the weekly news brief on Pinecrest cargo bike program.
+  expected_skill: weekly-research-brief
+  workspace: null
+  edge: false
+  smoke: false
+  canary: false
+- task_id: res-tidewater
+  task_label: Brief on Tidewater wind
+  task_input: Prepare a weekly research brief on Tidewater offshore wind project.
+  expected_skill: weekly-research-brief
+  workspace: null
+  edge: false
+  smoke: false
+  canary: false
+- task_id: res-orbit7
+  task_label: Brief on Orbit-7
+  task_input: Write a research brief on Orbit-7 satellite constellation for this week.
+  expected_skill: weekly-research-brief
+  workspace: null
+  edge: false
+  smoke: false
+  canary: false
+- task_id: res-fernwood
+  task_label: Brief on Fernwood open data
+  task_input: Weekly research brief on Fernwood open data portal, please.
+  expected_skill: weekly-research-brief
+  workspace: null
+  edge: false
+  smoke: false
+  canary: false
+- task_id: res-kestrel
+  task_label: Brief on Kestrel
+  task_input: Write this week's research brief on Kestrel programming language.
+  expected_skill: weekly-research-brief
+  workspace: null
+  edge: false
+  smoke: false
+  canary: false
+- task_id: res-brightwater
+  task_label: Brief with a single source
+  task_input: Write a weekly research brief on Brightwater desalination plant.
+  expected_skill: weekly-research-brief
+  workspace: null
+  edge: true
+  smoke: false
+  canary: false
+- task_id: res-no-results
+  task_label: Brief with no sources
+  task_input: Write a weekly research brief on Glimmerstone quantum sensors.
+  expected_skill: weekly-research-brief
+  workspace: null
+  edge: true
+  smoke: false
+  canary: false
+- task_id: fx-berlin-trip
+  task_label: Convert Berlin trip costs
+  task_input: 'Convert my Berlin trip amounts to US dollars at the 2026-10-14 exchange rate and log them: taxi 50.00 EUR, hotel 350.00 EUR'
+  expected_skill: fx-expense-converter
+  workspace: null
+  edge: false
+  smoke: true
+  canary: false
+- task_id: fx-hamburg-conference
+  task_label: Convert Hamburg conference costs
+  task_input: 'Convert the Hamburg conference amounts to US dollars at today''s exchange rate and log them: ticket 500.00 EUR, dinner 125.00 EUR, parking 19.00 EUR'
+  expected_skill: fx-expense-converter
+  workspace: null
+  edge: false
+  smoke: true
+  canary: false
+- task_id: fx-software
+  task_label: Convert the software subscription
+  task_input: 'Convert this amount to US dollars with the exchange rate for 2026-10-14 and log it: software subscription 117.81 EUR'
+  expected_skill: fx-expense-converter
+  workspace: null
+  edge: false
+  smoke: true
+  canary: false
+- task_id: fx-coworking-courier
+  task_label: Convert coworking and courier
+  task_input: 'What are these amounts in US dollars at the 2026-10-14 exchange rate? Convert and log them: coworking pass 30.00 EUR, courier 23.80 EUR'
+  expected_skill: fx-expense-converter
+  workspace: null
+  edge: false
+  smoke: false
+  canary: false
+- task_id: fx-london
+  task_label: Convert London costs from GBP
+  task_input: 'Convert these London amounts to US dollars at the 2026-10-13 exchange rate and log them: hotel 220.00 GBP, train 48.50 GBP'
+  expected_skill: fx-expense-converter
+  workspace: null
+  edge: false
+  smoke: true
+  canary: false
+- task_id: fx-zurich
+  task_label: Convert a Zurich taxi from CHF
+  task_input: 'Convert to US dollars at the 2026-10-14 exchange rate and log it: Zurich taxi 64.00 CHF'
+  expected_skill: fx-expense-converter
+  workspace: null
+  edge: false
+  smoke: false
+  canary: false
+- task_id: fx-paris
+  task_label: Convert Paris workshop costs
+  task_input: 'Convert my Paris workshop amounts to US dollars at the 2026-10-09 exchange rate and log them: workshop fee 180.00 EUR, metro 14.20 EUR'
+  expected_skill: fx-expense-converter
+  workspace: null
+  edge: false
+  smoke: false
+  canary: false
+- task_id: fx-tokyo
+  task_label: Convert a Tokyo dinner from JPY
+  task_input: 'Convert to US dollars at the 2026-10-14 exchange rate and log it: client dinner 18400 JPY'
+  expected_skill: fx-expense-converter
+  workspace: null
+  edge: false
+  smoke: false
+  canary: false
+- task_id: fx-weekend-date
+  task_label: Convert at a weekend date
+  task_input: 'Convert to US dollars at the 2026-10-11 exchange rate and log them: museum 24.00 EUR, lunch 31.50 EUR'
+  expected_skill: fx-expense-converter
+  workspace: null
+  edge: true
+  smoke: false
+  canary: false
+- task_id: fx-no-date
+  task_label: Convert without a date
+  task_input: 'Convert these to US dollars and log them: books 42.00 EUR'
+  expected_skill: fx-expense-converter
+  workspace: null
+  edge: true
+  smoke: false
+  canary: false
+- task_id: dep-widgets
+  task_label: Update widgets dependencies
+  task_input: Update the Python dependencies of acme/widgets.
+  expected_skill: dependency-updater
+  workspace: deps-widgets
+  edge: false
+  smoke: false
+  canary: false
+- task_id: dep-billing-api
+  task_label: Update billing-api dependencies
+  task_input: Bump the requirements of acme/billing-api to the latest safe versions.
+  expected_skill: dependency-updater
+  workspace: deps-billing-api
+  edge: false
+  smoke: false
+  canary: false
+- task_id: dep-web-dashboard
+  task_label: Update web-dashboard dependencies
+  task_input: Please upgrade the pinned dependencies in acme/web-dashboard.
+  expected_skill: dependency-updater
+  workspace: deps-web-dashboard
+  edge: false
+  smoke: false
+  canary: false
+- task_id: dep-mobile-app
+  task_label: Update mobile-app dependencies
+  task_input: Update requirements.txt dependencies for acme/mobile-app.
+  expected_skill: dependency-updater
+  workspace: deps-mobile-app
+  edge: false
+  smoke: false
+  canary: false
+- task_id: dep-data-pipeline
+  task_label: Update data-pipeline dependencies
+  task_input: Check and update the dependencies of acme/data-pipeline.
+  expected_skill: dependency-updater
+  workspace: deps-data-pipeline
+  edge: false
+  smoke: false
+  canary: false
+- task_id: dep-docs-site
+  task_label: Update docs-site dependencies
+  task_input: Update the Python requirements of acme/docs-site.
+  expected_skill: dependency-updater
+  workspace: deps-docs-site
+  edge: false
+  smoke: false
+  canary: false
+- task_id: dep-cli-tools
+  task_label: Update cli-tools dependencies
+  task_input: Upgrade the dependencies in requirements.txt of acme/cli-tools.
+  expected_skill: dependency-updater
+  workspace: deps-cli-tools
+  edge: false
+  smoke: false
+  canary: false
+- task_id: dep-design-system
+  task_label: Update design-system dependencies
+  task_input: Bump the pinned Python dependencies of acme/design-system.
+  expected_skill: dependency-updater
+  workspace: deps-design-system
+  edge: false
+  smoke: false
+  canary: false
+- task_id: dep-search-up-to-date
+  task_label: Dependencies already up to date
+  task_input: Update the dependencies of acme/search-indexer.
+  expected_skill: dependency-updater
+  workspace: deps-search-indexer
+  edge: true
+  smoke: false
+  canary: false
+- task_id: dep-auth-missing-changelog
+  task_label: A dependency without a changelog
+  task_input: Update the requirements of acme/auth-service.
+  expected_skill: dependency-updater
+  workspace: deps-auth-service
+  edge: true
+  smoke: false
+  canary: false
+- task_id: mtg-planning
+  task_label: Minutes for sprint planning
+  task_input: Turn notes/2026-10-13-planning.md into minutes.
+  expected_skill: meeting-notes
+  workspace: notes-planning
+  edge: false
+  smoke: true
+  canary: false
+- task_id: mtg-retro
+  task_label: Minutes for the retro
+  task_input: Write up the meeting notes in retro.md as minutes.
+  expected_skill: meeting-notes
+  workspace: notes-retro
+  edge: false
+  smoke: true
+  canary: false
+- task_id: mtg-vendor
+  task_label: Minutes for the vendor call
+  task_input: Clean up the notes in meetings/vendor-call.txt into proper minutes.
+  expected_skill: meeting-notes
+  workspace: notes-vendor
+  edge: false
+  smoke: true
+  canary: false
+- task_id: mtg-offsite
+  task_label: Minutes for offsite prep
+  task_input: Turn offsite-prep.md into meeting minutes.
+  expected_skill: meeting-notes
+  workspace: notes-offsite
+  edge: false
+  smoke: false
+  canary: false
+- task_id: mtg-incident
+  task_label: Minutes for the incident review
+  task_input: Write minutes from notes/incident-review.md and email them to kofi@example.com and ines@example.com.
+  expected_skill: meeting-notes
+  workspace: notes-incident
+  edge: false
+  smoke: false
+  canary: false
+- task_id: mtg-hiring
+  task_label: Minutes for the hiring sync
+  task_input: Make minutes out of the meeting notes in hiring-sync.md.
+  expected_skill: meeting-notes
+  workspace: notes-hiring
+  edge: false
+  smoke: false
+  canary: false
+- task_id: mtg-budget
+  task_label: Minutes for the budget check-in
+  task_input: Turn the meeting notes budget.md into minutes and send them to Carol.
+  expected_skill: meeting-notes
+  workspace: notes-budget
+  edge: false
+  smoke: false
+  canary: false
+- task_id: mtg-customer
+  task_label: Minutes for the customer kickoff
+  task_input: Write up customer/acme-kickoff.md as meeting minutes.
+  expected_skill: meeting-notes
+  workspace: notes-customer
+  edge: false
+  smoke: false
+  canary: false
+- task_id: mtg-no-decisions
+  task_label: Minutes without decisions
+  task_input: Turn the meeting notes in brainstorm.md into minutes.
+  expected_skill: meeting-notes
+  workspace: notes-brainstorm
+  edge: true
+  smoke: false
+  canary: false
+- task_id: mtg-missing-file
+  task_label: Minutes from a missing file
+  task_input: Turn the meeting notes notes/standup-2026-10-12.md into minutes.
+  expected_skill: meeting-notes
+  workspace: notes-missing
+  edge: true
+  smoke: false
+  canary: false
+- task_id: canary-formal-rewrite
+  task_label: Rewrite a sentence formally
+  task_input: 'Rewrite this sentence formally: hey guys, we can''t ship the update today ''cause the tests are kinda broken.'
+  expected_skill: null
+  workspace: null
+  edge: false
+  smoke: true
+  canary: true
+- task_id: canary-percent
+  task_label: Compute 17% of 240
+  task_input: What is 17% of 240?
+  expected_skill: null
+  workspace: null
+  edge: false
+  smoke: true
+  canary: true
+- task_id: canary-summary
+  task_label: Summarize a short note
+  task_input: 'Summarize this note: The quarterly offsite moves from Thursday to Friday because the venue double-booked the room. Lunch is still included, and the agenda stays the same.'
+  expected_skill: null
+  workspace: null
+  edge: false
+  smoke: true
+  canary: true

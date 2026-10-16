@@ -1,0 +1,239 @@
+{
+  "run_id": "run_a432055d0645",
+  "kind": "golden",
+  "task_input": "Please triage the open issues in the acme/billing-api backlog.",
+  "steps": [
+    {
+      "kind": "llm",
+      "step_id": "m001",
+      "tier": "super",
+      "model": "nvidia/nemotron-3-super-120b-a12b",
+      "request_hash": "480f0f76c9465d5db313c18b376a8ed654395e2f0a1213977da6b06377fd97db",
+      "messages_ref": "steps/m001.req.json",
+      "response_ref": "steps/m001.res.json",
+      "prompt_tokens": 4050,
+      "completion_tokens": 67,
+      "usd": 0.0012753,
+      "latency_ms": 1117,
+      "started_at": "2026-10-16T06:22:33.648956Z",
+      "purpose": "agent",
+      "api": "chat",
+      "usage_estimated": false,
+      "tool_calls_requested": [
+        "github.list_issues"
+      ],
+      "content_preview": "I'll help triage the open issues in the acme/billing-api repository. Let me start by listing the open issues."
+    },
+    {
+      "kind": "tool",
+      "step_id": "t001",
+      "tool": "github.list_issues",
+      "args_norm": {
+        "repo": "acme/billing-api",
+        "state": "open"
+      },
+      "args_hash": "dd9e9d8b32df51896eb795f465823be791b39d96fd4b1a757a5b3d290f216dd3",
+      "result_hash": "e736521d7dd309bebc2242d27a8dcb46633896e5b2631a550c072c1d86906452",
+      "side_effect": "read",
+      "source": "live",
+      "cassette_key": "dd9e9d8b32df51896eb795f465823be791b39d96fd4b1a757a5b3d290f216dd3",
+      "result_preview": "{\"issues\":[{\"assignees\":[],\"author\":\"kofi\",\"body\":\"GET /v2/invoices?customer=<archived id> returns a 500 instead of an empty list.\",\"closed_at\":null,\"comments\":3,\"created_at\":\"2026-08-18T09:12:00Z\",\"labels\":[],\"number\":31,\"state\":\"open\",\"state_reason\":null,\"title\":\"Invoices endpoint returns 500 for archived customers\",\"updated_at\":\"2026-08-20T09:12:00Z\"},{\"assignees\":[],\"author\":\"ines\",\"body\":\"La…",
+      "blocked": false,
+      "started_at": "2026-10-16T06:22:34.784717Z"
+    },
+    {
+      "kind": "llm",
+      "step_id": "m002",
+      "tier": "super",
+      "model": "nvidia/nemotron-3-super-120b-a12b",
+      "request_hash": "a05632db1977c5e6d856a816166958900c149a35a0a15b183cdaf8ac808cebf0",
+      "messages_ref": "steps/m002.req.json",
+      "response_ref": "steps/m002.res.json",
+      "prompt_tokens": 4857,
+      "completion_tokens": 400,
+      "usd": 0.0018170999999999999,
+      "latency_ms": 2346,
+      "started_at": "2026-10-16T06:22:34.788351Z",
+      "purpose": "agent",
+      "api": "chat",
+      "usage_estimated": false,
+      "tool_calls_requested": [
+        "github.label",
+        "github.label",
+        "github.label",
+        "github.label"
+      ],
+      "content_preview": "Now I'll process each issue according to the triage rules, skipping any that already have labels (like issue #37 which already has \"enhancement\").\n\nIssue #31: \"Invoices endpoint returns 500 for archived customers\"\n- Title/body mentions \"500\" → matches bug rule\n- Label as: bug\n\nIssue #33: \"Allow paying invoices in multiple installments\"\n- Title/body mentions \"allow\" → matches enhancement rule\n- La…"
+    },
+    {
+      "kind": "tool",
+      "step_id": "t002",
+      "tool": "github.label",
+      "args_norm": {
+        "issue": 31,
+        "labels": [
+          "bug"
+        ],
+        "repo": "acme/billing-api"
+      },
+      "args_hash": "80dd53cce933d5c1931c52566df31febea5d33f48e5c917e0b80dabf25e97eb9",
+      "result_hash": "b7b3628a5e082fce2b83f469c3aac8c36691ad8ae00e1d124a75452cfd04e0b5",
+      "side_effect": "write_reversible",
+      "source": "live",
+      "cassette_key": "80dd53cce933d5c1931c52566df31febea5d33f48e5c917e0b80dabf25e97eb9",
+      "result_preview": "{\"issue\":31,\"labels\":[\"bug\"],\"repo\":\"acme/billing-api\"}",
+      "blocked": false,
+      "started_at": "2026-10-16T06:22:37.149944Z"
+    },
+    {
+      "kind": "tool",
+      "step_id": "t003",
+      "tool": "github.label",
+      "args_norm": {
+        "issue": 33,
+        "labels": [
+          "enhancement"
+        ],
+        "repo": "acme/billing-api"
+      },
+      "args_hash": "69f17c66266eb5ffca391d44856f4d6c72345c03b97ed54dd8f24742d3298ca2",
+      "result_hash": "26b7015944a91a2006c65587a1344f0f273c1bfeb32092a93c48e85f1c504d71",
+      "side_effect": "write_reversible",
+      "source": "live",
+      "cassette_key": "69f17c66266eb5ffca391d44856f4d6c72345c03b97ed54dd8f24742d3298ca2",
+      "result_preview": "{\"issue\":33,\"labels\":[\"enhancement\"],\"repo\":\"acme/billing-api\"}",
+      "blocked": false,
+      "started_at": "2026-10-16T06:22:37.154641Z"
+    },
+    {
+      "kind": "tool",
+      "step_id": "t004",
+      "tool": "github.label",
+      "args_norm": {
+        "issue": 35,
+        "labels": [
+          "documentation"
+        ],
+        "repo": "acme/billing-api"
+      },
+      "args_hash": "dab520ce6705c41f9c3056210b177b53faea251fef802b48744a1730865d1a2c",
+      "result_hash": "89fefe8d86cee9134e21cada2b1365dc22981147f913b1a1f4277bf144ee7500",
+      "side_effect": "write_reversible",
+      "source": "live",
+      "cassette_key": "dab520ce6705c41f9c3056210b177b53faea251fef802b48744a1730865d1a2c",
+      "result_preview": "{\"issue\":35,\"labels\":[\"documentation\"],\"repo\":\"acme/billing-api\"}",
+      "blocked": false,
+      "started_at": "2026-10-16T06:22:37.158316Z"
+    },
+    {
+      "kind": "tool",
+      "step_id": "t005",
+      "tool": "github.label",
+      "args_norm": {
+        "issue": 36,
+        "labels": [
+          "question"
+        ],
+        "repo": "acme/billing-api"
+      },
+      "args_hash": "9b74b18446b806d907e0165ce5ef19027c3f68a928550ed8e166278001116690",
+      "result_hash": "7275b19e60efa36fd012bd24a6566fdcef931b9f2ae888479ebc1874a8f85cc4",
+      "side_effect": "write_reversible",
+      "source": "live",
+      "cassette_key": "9b74b18446b806d907e0165ce5ef19027c3f68a928550ed8e166278001116690",
+      "result_preview": "{\"issue\":36,\"labels\":[\"question\"],\"repo\":\"acme/billing-api\"}",
+      "blocked": false,
+      "started_at": "2026-10-16T06:22:37.162049Z"
+    },
+    {
+      "kind": "llm",
+      "step_id": "m003",
+      "tier": "super",
+      "model": "nvidia/nemotron-3-super-120b-a12b",
+      "request_hash": "33dbb66748a777598be08f90f10fce1f8bb9f3e59b4876e4edf83ac66a20046e",
+      "messages_ref": "steps/m003.req.json",
+      "response_ref": "steps/m003.res.json",
+      "prompt_tokens": 5380,
+      "completion_tokens": 94,
+      "usd": 0.0016986,
+      "latency_ms": 1142,
+      "started_at": "2026-10-16T06:22:37.165783Z",
+      "purpose": "agent",
+      "api": "chat",
+      "usage_estimated": false,
+      "tool_calls_requested": [
+        "github.comment"
+      ],
+      "content_preview": "Now I need to add a comment to issue #36 since it was labeled as \"question\":"
+    },
+    {
+      "kind": "tool",
+      "step_id": "t006",
+      "tool": "github.comment",
+      "args_norm": {
+        "body": "Thanks for the question. Could you share the version you are using and the steps you tried? A maintainer will follow up.",
+        "issue": 36,
+        "repo": "acme/billing-api"
+      },
+      "args_hash": "ad2da2896e64e2fa2850cdcbd5e72bc988e7fbce2f82c8d3a31f03cee0ee0ad9",
+      "result_hash": "10c5b72355bbd61b7186911fe357f9cb47ecb0c5fc3c5d4d5f2e297ce95493a8",
+      "side_effect": "write_irreversible",
+      "source": "live",
+      "cassette_key": "ad2da2896e64e2fa2850cdcbd5e72bc988e7fbce2f82c8d3a31f03cee0ee0ad9",
+      "result_preview": "{\"comment_id\":1331,\"issue\":36,\"repo\":\"acme/billing-api\"}",
+      "blocked": false,
+      "started_at": "2026-10-16T06:22:38.320201Z"
+    },
+    {
+      "kind": "llm",
+      "step_id": "m004",
+      "tier": "super",
+      "model": "nvidia/nemotron-3-super-120b-a12b",
+      "request_hash": "a58473986659a2a35bb0c6c23ba79cd011d16906b19178359004f7680978972d",
+      "messages_ref": "steps/m004.req.json",
+      "response_ref": "steps/m004.res.json",
+      "prompt_tokens": 5517,
+      "completion_tokens": 127,
+      "usd": 0.0017694,
+      "latency_ms": 1262,
+      "started_at": "2026-10-16T06:22:38.323760Z",
+      "purpose": "agent",
+      "api": "chat",
+      "usage_estimated": false,
+      "tool_calls_requested": [],
+      "content_preview": "Now I'll generate the summary:\n\n**Summary:**\n- Triaged acme/billing-api: 5 open issues.\n- #31: bug\n- #33: enhancement\n- #35: documentation\n- #36: question\n- Already labeled: #37\n- Asked for details: #36\n\nFinal answer is: Triaged acme/billing-api: 5 open issues.\n#31: bug\n#33: enhancement\n#35: documentation\n#36: question\nAlready labeled: #37\nAsked for details: #36"
+    }
+  ],
+  "final_output": "Now I'll generate the summary:\n\n**Summary:**\n- Triaged acme/billing-api: 5 open issues.\n- #31: bug\n- #33: enhancement\n- #35: documentation\n- #36: question\n- Already labeled: #37\n- Asked for details: #36\n\nFinal answer is: Triaged acme/billing-api: 5 open issues.\n#31: bug\n#33: enhancement\n#35: documentation\n#36: question\nAlready labeled: #37\nAsked for details: #36",
+  "artifacts_ref": null,
+  "skills_invoked": [
+    "github-triage"
+  ],
+  "world_dependent": false,
+  "world_facts": [],
+  "env": {
+    "workspace_ref": "workspace.tar.zst",
+    "frozen_time": "2026-10-14T16:00:00Z",
+    "harness_version": "minimal/0.1.0",
+    "skills_commit": "dda8ffcb2837fa255c23f29889f82e6f4976ba33",
+    "world_ref": null
+  },
+  "agent_tier": "super",
+  "seed": 1723549220,
+  "created_at": "2026-10-16T06:22:39.609031Z",
+  "golden_of": null,
+  "candidate_commit": null,
+  "success_criteria": [
+    "states the total number of open issues in the acme/billing-api backlog",
+    "lists each of the 5 open issues by their issue number",
+    "identifies the type of each issue (bug, enhancement, documentation, question)",
+    "mentions that issue #37 is already labeled",
+    "mentions that issue #36 requires details",
+    "specifies the artifacts changed (github.label or github.comment) for each issue"
+  ],
+  "archived_reason": null,
+  "blessed_at": "2026-10-16T06:22:41.172347Z",
+  "harness_ok": true,
+  "error_code": null,
+  "task_label": "Triage acme/billing-api"
+}

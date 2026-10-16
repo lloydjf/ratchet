@@ -1,0 +1,1231 @@
+{
+  "version": 1,
+  "labels": [
+    {
+      "edit_id": "n0-csv-cleaner-1",
+      "skill": "csv-cleaner",
+      "type": "N0",
+      "affected_goldens": [],
+      "expected_decision": "PASS",
+      "expected_pair_outcomes": {},
+      "change_summary": "Added a reviewer comment under the title and trimmed whitespace.",
+      "source": "deterministic",
+      "manifested": true,
+      "attempts": 1,
+      "review": {
+        "required": true,
+        "status": "pending",
+        "reviewer": null,
+        "at": null,
+        "decision": null,
+        "note": "",
+        "pair_labels": {}
+      }
+    },
+    {
+      "edit_id": "n0-csv-cleaner-2",
+      "skill": "csv-cleaner",
+      "type": "N0",
+      "affected_goldens": [],
+      "expected_decision": "PASS",
+      "expected_pair_outcomes": {},
+      "change_summary": "Reworded the introduction and retitled the steps section.",
+      "source": "deterministic",
+      "manifested": true,
+      "attempts": 1,
+      "review": {
+        "required": true,
+        "status": "pending",
+        "reviewer": null,
+        "at": null,
+        "decision": null,
+        "note": "",
+        "pair_labels": {}
+      }
+    },
+    {
+      "edit_id": "n0-expense-report-1",
+      "skill": "expense-report",
+      "type": "N0",
+      "affected_goldens": [],
+      "expected_decision": "PASS",
+      "expected_pair_outcomes": {},
+      "change_summary": "Added a reviewer comment under the title and trimmed whitespace.",
+      "source": "deterministic",
+      "manifested": true,
+      "attempts": 1,
+      "review": {
+        "required": true,
+        "status": "pending",
+        "reviewer": null,
+        "at": null,
+        "decision": null,
+        "note": "",
+        "pair_labels": {}
+      }
+    },
+    {
+      "edit_id": "n0-expense-report-2",
+      "skill": "expense-report",
+      "type": "N0",
+      "affected_goldens": [],
+      "expected_decision": "PASS",
+      "expected_pair_outcomes": {},
+      "change_summary": "Reworded the introduction and retitled the steps section.",
+      "source": "deterministic",
+      "manifested": true,
+      "attempts": 1,
+      "review": {
+        "required": true,
+        "status": "pending",
+        "reviewer": null,
+        "at": null,
+        "decision": null,
+        "note": "",
+        "pair_labels": {}
+      }
+    },
+    {
+      "edit_id": "r1-expense-report-1",
+      "skill": "expense-report",
+      "type": "R1",
+      "affected_goldens": [
+        "exp-berlin-trip",
+        "exp-conference",
+        "exp-coworking-courier",
+        "exp-dinner-parking",
+        "exp-ink-fuel-email",
+        "exp-lunch-train",
+        "exp-missing-receipt",
+        "exp-office-supplies",
+        "exp-software"
+      ],
+      "expected_decision": "BLOCK",
+      "expected_pair_outcomes": {
+        "exp-berlin-trip": "regression",
+        "exp-conference": "regression",
+        "exp-coworking-courier": "regression",
+        "exp-dinner-parking": "regression",
+        "exp-ink-fuel-email": "regression",
+        "exp-lunch-train": "regression",
+        "exp-missing-receipt": "regression",
+        "exp-office-supplies": "regression",
+        "exp-software": "regression"
+      },
+      "change_summary": "Reorder receipt block lines to show VAT before total for clarity.",
+      "source": "llm",
+      "manifested": true,
+      "attempts": 1,
+      "review": {
+        "required": false,
+        "status": "not_required",
+        "reviewer": null,
+        "at": null,
+        "decision": null,
+        "note": "",
+        "pair_labels": {}
+      }
+    },
+    {
+      "edit_id": "r1-expense-report-2",
+      "skill": "expense-report",
+      "type": "R1",
+      "affected_goldens": [
+        "exp-ink-fuel-email",
+        "exp-missing-receipt"
+      ],
+      "expected_decision": "BLOCK",
+      "expected_pair_outcomes": {
+        "exp-ink-fuel-email": "regression",
+        "exp-missing-receipt": "regression"
+      },
+      "change_summary": "Refactor VAT reading to prefer summary.vat first, but this reverses the fallback priority and breaks first-layout receipts that only have top-level vat.",
+      "source": "llm",
+      "manifested": true,
+      "attempts": 3,
+      "review": {
+        "required": false,
+        "status": "not_required",
+        "reviewer": null,
+        "at": null,
+        "decision": null,
+        "note": "",
+        "pair_labels": {}
+      }
+    },
+    {
+      "edit_id": "r2-expense-report-1",
+      "skill": "expense-report",
+      "type": "R2",
+      "affected_goldens": [
+        "exp-berlin-trip",
+        "exp-conference",
+        "exp-coworking-courier",
+        "exp-dinner-parking",
+        "exp-ink-fuel-email",
+        "exp-lunch-train",
+        "exp-missing-receipt",
+        "exp-office-supplies",
+        "exp-software"
+      ],
+      "expected_decision": "BLOCK",
+      "expected_pair_outcomes": {
+        "exp-berlin-trip": "regression",
+        "exp-conference": "regression",
+        "exp-coworking-courier": "regression",
+        "exp-dinner-parking": "regression",
+        "exp-ink-fuel-email": "regression",
+        "exp-lunch-train": "regression",
+        "exp-missing-receipt": "regression",
+        "exp-office-supplies": "regression",
+        "exp-software": "regression"
+      },
+      "change_summary": "Consolidate VAT into total line to simplify receipt blocks.",
+      "source": "llm",
+      "manifested": true,
+      "attempts": 2,
+      "review": {
+        "required": false,
+        "status": "not_required",
+        "reviewer": null,
+        "at": null,
+        "decision": null,
+        "note": "",
+        "pair_labels": {}
+      }
+    },
+    {
+      "edit_id": "r3-expense-report-2",
+      "skill": "expense-report",
+      "type": "R3",
+      "affected_goldens": [
+        "exp-ink-fuel-email",
+        "exp-missing-receipt",
+        "exp-no-files"
+      ],
+      "expected_decision": "BLOCK",
+      "expected_pair_outcomes": {
+        "exp-ink-fuel-email": "regression",
+        "exp-missing-receipt": "regression",
+        "exp-no-files": "regression"
+      },
+      "change_summary": "Change receipts.parse argument key from 'file' to 'filename' for clarity.",
+      "source": "llm",
+      "manifested": true,
+      "attempts": 1,
+      "review": {
+        "required": false,
+        "status": "not_required",
+        "reviewer": null,
+        "at": null,
+        "decision": null,
+        "note": "",
+        "pair_labels": {}
+      }
+    },
+    {
+      "edit_id": "r5-expense-report-1",
+      "skill": "expense-report",
+      "type": "R5",
+      "affected_goldens": [
+        "csv-header-only",
+        "csv-payments",
+        "csv-signups",
+        "exp-berlin-trip",
+        "exp-coworking-courier",
+        "exp-dinner-parking",
+        "exp-ink-fuel-email",
+        "exp-lunch-train",
+        "exp-missing-receipt",
+        "exp-office-supplies",
+        "exp-software"
+      ],
+      "expected_decision": "BLOCK",
+      "expected_pair_outcomes": {
+        "csv-header-only": "regression",
+        "csv-payments": "regression",
+        "csv-signups": "regression",
+        "exp-berlin-trip": "regression",
+        "exp-coworking-courier": "regression",
+        "exp-dinner-parking": "regression",
+        "exp-ink-fuel-email": "regression",
+        "exp-lunch-train": "regression",
+        "exp-missing-receipt": "regression",
+        "exp-office-supplies": "regression",
+        "exp-software": "regression"
+      },
+      "change_summary": "Broadened skill description to include invoices and other financial documents, causing it to trigger on unrelated filing tasks.",
+      "source": "llm",
+      "manifested": true,
+      "attempts": 1,
+      "review": {
+        "required": true,
+        "status": "pending",
+        "reviewer": null,
+        "at": null,
+        "decision": null,
+        "note": "",
+        "pair_labels": {}
+      }
+    },
+    {
+      "edit_id": "r6-expense-report-1",
+      "skill": "expense-report",
+      "type": "R6",
+      "affected_goldens": [
+        "exp-ink-fuel-email"
+      ],
+      "expected_decision": "BLOCK",
+      "expected_pair_outcomes": {
+        "exp-ink-fuel-email": "regression"
+      },
+      "change_summary": "Narrowed description to PDF files only, excluding image files.",
+      "source": "llm",
+      "manifested": true,
+      "attempts": 2,
+      "review": {
+        "required": false,
+        "status": "not_required",
+        "reviewer": null,
+        "at": null,
+        "decision": null,
+        "note": "",
+        "pair_labels": {}
+      }
+    },
+    {
+      "edit_id": "d1-fx-expense-converter-1",
+      "skill": "fx-expense-converter",
+      "type": "D1",
+      "affected_goldens": [
+        "canary-formal-rewrite",
+        "canary-percent",
+        "fx-berlin-trip",
+        "fx-coworking-courier",
+        "fx-hamburg-conference",
+        "fx-no-date",
+        "fx-software",
+        "fx-weekend-date"
+      ],
+      "expected_decision": "PASS",
+      "expected_pair_outcomes": {
+        "canary-formal-rewrite": "drift",
+        "canary-percent": "drift",
+        "fx-berlin-trip": "drift",
+        "fx-coworking-courier": "drift",
+        "fx-hamburg-conference": "drift",
+        "fx-no-date": "drift",
+        "fx-software": "drift",
+        "fx-weekend-date": "drift"
+      },
+      "change_summary": "EUR/USD for 2026-10-14 moved from 1.0800 to 1.1630.",
+      "source": "deterministic",
+      "manifested": true,
+      "attempts": 1,
+      "review": {
+        "required": true,
+        "status": "pending",
+        "reviewer": null,
+        "at": null,
+        "decision": null,
+        "note": "",
+        "pair_labels": {}
+      }
+    },
+    {
+      "edit_id": "d1-fx-expense-converter-2",
+      "skill": "fx-expense-converter",
+      "type": "D1",
+      "affected_goldens": [
+        "canary-percent",
+        "fx-london"
+      ],
+      "expected_decision": "PASS",
+      "expected_pair_outcomes": {
+        "canary-percent": "drift",
+        "fx-london": "drift"
+      },
+      "change_summary": "GBP/USD for 2026-10-13 moved from 1.2702 to 1.3105.",
+      "source": "deterministic",
+      "manifested": true,
+      "attempts": 1,
+      "review": {
+        "required": true,
+        "status": "pending",
+        "reviewer": null,
+        "at": null,
+        "decision": null,
+        "note": "",
+        "pair_labels": {}
+      }
+    },
+    {
+      "edit_id": "n0-fx-expense-converter-1",
+      "skill": "fx-expense-converter",
+      "type": "N0",
+      "affected_goldens": [],
+      "expected_decision": "PASS",
+      "expected_pair_outcomes": {},
+      "change_summary": "Added a reviewer comment under the title and trimmed whitespace.",
+      "source": "deterministic",
+      "manifested": true,
+      "attempts": 1,
+      "review": {
+        "required": true,
+        "status": "pending",
+        "reviewer": null,
+        "at": null,
+        "decision": null,
+        "note": "",
+        "pair_labels": {}
+      }
+    },
+    {
+      "edit_id": "n0-fx-expense-converter-2",
+      "skill": "fx-expense-converter",
+      "type": "N0",
+      "affected_goldens": [],
+      "expected_decision": "PASS",
+      "expected_pair_outcomes": {},
+      "change_summary": "Reworded the introduction and retitled the steps section.",
+      "source": "deterministic",
+      "manifested": true,
+      "attempts": 1,
+      "review": {
+        "required": true,
+        "status": "pending",
+        "reviewer": null,
+        "at": null,
+        "decision": null,
+        "note": "",
+        "pair_labels": {}
+      }
+    },
+    {
+      "edit_id": "r1-fx-expense-converter-2",
+      "skill": "fx-expense-converter",
+      "type": "R1",
+      "affected_goldens": [
+        "fx-berlin-trip",
+        "fx-coworking-courier",
+        "fx-paris",
+        "fx-weekend-date"
+      ],
+      "expected_decision": "BLOCK",
+      "expected_pair_outcomes": {
+        "fx-berlin-trip": "regression",
+        "fx-coworking-courier": "regression",
+        "fx-paris": "regression",
+        "fx-weekend-date": "regression"
+      },
+      "change_summary": "Show items in reverse order for better readability.",
+      "source": "llm",
+      "manifested": true,
+      "attempts": 2,
+      "review": {
+        "required": true,
+        "status": "pending",
+        "reviewer": null,
+        "at": null,
+        "decision": null,
+        "note": "",
+        "pair_labels": {}
+      }
+    },
+    {
+      "edit_id": "r2-fx-expense-converter-2",
+      "skill": "fx-expense-converter",
+      "type": "R2",
+      "affected_goldens": [
+        "fx-coworking-courier",
+        "fx-london"
+      ],
+      "expected_decision": "BLOCK",
+      "expected_pair_outcomes": {
+        "fx-coworking-courier": "regression",
+        "fx-london": "regression"
+      },
+      "change_summary": "Omit rate line when rate equals 1.0000 to reduce output clutter.",
+      "source": "llm",
+      "manifested": true,
+      "attempts": 1,
+      "review": {
+        "required": false,
+        "status": "not_required",
+        "reviewer": null,
+        "at": null,
+        "decision": null,
+        "note": "",
+        "pair_labels": {}
+      }
+    },
+    {
+      "edit_id": "r3-fx-expense-converter-1",
+      "skill": "fx-expense-converter",
+      "type": "R3",
+      "affected_goldens": [
+        "fx-berlin-trip",
+        "fx-coworking-courier",
+        "fx-hamburg-conference",
+        "fx-london",
+        "fx-no-date",
+        "fx-paris",
+        "fx-software",
+        "fx-tokyo",
+        "fx-weekend-date",
+        "fx-zurich"
+      ],
+      "expected_decision": "BLOCK",
+      "expected_pair_outcomes": {
+        "fx-berlin-trip": "regression",
+        "fx-coworking-courier": "regression",
+        "fx-hamburg-conference": "regression",
+        "fx-london": "regression",
+        "fx-no-date": "regression",
+        "fx-paris": "regression",
+        "fx-software": "regression",
+        "fx-tokyo": "regression",
+        "fx-weekend-date": "regression",
+        "fx-zurich": "regression"
+      },
+      "change_summary": "Update sheet name to shorter form for consistency",
+      "source": "llm",
+      "manifested": true,
+      "attempts": 1,
+      "review": {
+        "required": false,
+        "status": "not_required",
+        "reviewer": null,
+        "at": null,
+        "decision": null,
+        "note": "",
+        "pair_labels": {}
+      }
+    },
+    {
+      "edit_id": "r3-fx-expense-converter-2",
+      "skill": "fx-expense-converter",
+      "type": "R3",
+      "affected_goldens": [
+        "fx-coworking-courier",
+        "fx-no-date",
+        "fx-paris",
+        "fx-tokyo",
+        "fx-zurich"
+      ],
+      "expected_decision": "BLOCK",
+      "expected_pair_outcomes": {
+        "fx-coworking-courier": "regression",
+        "fx-no-date": "regression",
+        "fx-paris": "regression",
+        "fx-tokyo": "regression",
+        "fx-zurich": "regression"
+      },
+      "change_summary": "Swap base and quote parameters in finance.rate call to match target-base convention.",
+      "source": "llm",
+      "manifested": true,
+      "attempts": 2,
+      "review": {
+        "required": false,
+        "status": "not_required",
+        "reviewer": null,
+        "at": null,
+        "decision": null,
+        "note": "",
+        "pair_labels": {}
+      }
+    },
+    {
+      "edit_id": "r5-fx-expense-converter-1",
+      "skill": "fx-expense-converter",
+      "type": "R5",
+      "affected_goldens": [
+        "fx-coworking-courier",
+        "fx-london",
+        "fx-software"
+      ],
+      "expected_decision": "BLOCK",
+      "expected_pair_outcomes": {
+        "fx-coworking-courier": "regression",
+        "fx-london": "regression",
+        "fx-software": "regression"
+      },
+      "change_summary": "Broaden skill description to trigger on any currency conversion tasks, not just foreign currencies.",
+      "source": "llm",
+      "manifested": true,
+      "attempts": 1,
+      "review": {
+        "required": false,
+        "status": "not_required",
+        "reviewer": null,
+        "at": null,
+        "decision": null,
+        "note": "",
+        "pair_labels": {}
+      }
+    },
+    {
+      "edit_id": "r5-fx-expense-converter-2",
+      "skill": "fx-expense-converter",
+      "type": "R5",
+      "affected_goldens": [
+        "fx-coworking-courier",
+        "fx-london",
+        "fx-weekend-date"
+      ],
+      "expected_decision": "BLOCK",
+      "expected_pair_outcomes": {
+        "fx-coworking-courier": "regression",
+        "fx-london": "regression",
+        "fx-weekend-date": "regression"
+      },
+      "change_summary": "Broaden input parsing to accept amounts and currency codes in tables or bullet points, not just space-separated lines.",
+      "source": "llm",
+      "manifested": true,
+      "attempts": 1,
+      "review": {
+        "required": false,
+        "status": "not_required",
+        "reviewer": null,
+        "at": null,
+        "decision": null,
+        "note": "",
+        "pair_labels": {}
+      }
+    },
+    {
+      "edit_id": "r6-fx-expense-converter-1",
+      "skill": "fx-expense-converter",
+      "type": "R6",
+      "affected_goldens": [
+        "fx-coworking-courier",
+        "fx-london",
+        "fx-software"
+      ],
+      "expected_decision": "BLOCK",
+      "expected_pair_outcomes": {
+        "fx-coworking-courier": "regression",
+        "fx-london": "regression",
+        "fx-software": "regression"
+      },
+      "change_summary": "Narrowed description to specify expense amounts only.",
+      "source": "llm",
+      "manifested": true,
+      "attempts": 1,
+      "review": {
+        "required": false,
+        "status": "not_required",
+        "reviewer": null,
+        "at": null,
+        "decision": null,
+        "note": "",
+        "pair_labels": {}
+      }
+    },
+    {
+      "edit_id": "n0-github-triage-1",
+      "skill": "github-triage",
+      "type": "N0",
+      "affected_goldens": [],
+      "expected_decision": "PASS",
+      "expected_pair_outcomes": {},
+      "change_summary": "Added a reviewer comment under the title and trimmed whitespace.",
+      "source": "deterministic",
+      "manifested": true,
+      "attempts": 1,
+      "review": {
+        "required": true,
+        "status": "pending",
+        "reviewer": null,
+        "at": null,
+        "decision": null,
+        "note": "",
+        "pair_labels": {}
+      }
+    },
+    {
+      "edit_id": "n0-github-triage-2",
+      "skill": "github-triage",
+      "type": "N0",
+      "affected_goldens": [],
+      "expected_decision": "PASS",
+      "expected_pair_outcomes": {},
+      "change_summary": "Reworded the introduction and retitled the steps section.",
+      "source": "deterministic",
+      "manifested": true,
+      "attempts": 1,
+      "review": {
+        "required": true,
+        "status": "pending",
+        "reviewer": null,
+        "at": null,
+        "decision": null,
+        "note": "",
+        "pair_labels": {}
+      }
+    },
+    {
+      "edit_id": "r1-github-triage-1",
+      "skill": "github-triage",
+      "type": "R1",
+      "affected_goldens": [
+        "tri-auth-service",
+        "tri-billing-api",
+        "tri-data-pipeline",
+        "tri-docs-site",
+        "tri-infra-terraform",
+        "tri-mobile-app",
+        "tri-search-indexer",
+        "tri-status-page",
+        "tri-widgets"
+      ],
+      "expected_decision": "BLOCK",
+      "expected_pair_outcomes": {
+        "tri-auth-service": "regression",
+        "tri-billing-api": "regression",
+        "tri-data-pipeline": "regression",
+        "tri-docs-site": "regression",
+        "tri-infra-terraform": "regression",
+        "tri-mobile-app": "regression",
+        "tri-search-indexer": "regression",
+        "tri-status-page": "regression",
+        "tri-widgets": "regression"
+      },
+      "change_summary": "Reorder summary lines to show asked-for-details before already-labeled for clarity.",
+      "source": "llm",
+      "manifested": true,
+      "attempts": 2,
+      "review": {
+        "required": false,
+        "status": "not_required",
+        "reviewer": null,
+        "at": null,
+        "decision": null,
+        "note": "",
+        "pair_labels": {}
+      }
+    },
+    {
+      "edit_id": "r1-github-triage-2",
+      "skill": "github-triage",
+      "type": "R1",
+      "affected_goldens": [
+        "tri-auth-service",
+        "tri-billing-api",
+        "tri-data-pipeline",
+        "tri-docs-site",
+        "tri-infra-terraform",
+        "tri-mobile-app",
+        "tri-no-repo",
+        "tri-search-indexer",
+        "tri-widgets"
+      ],
+      "expected_decision": "BLOCK",
+      "expected_pair_outcomes": {
+        "tri-auth-service": "regression",
+        "tri-billing-api": "regression",
+        "tri-data-pipeline": "regression",
+        "tri-docs-site": "regression",
+        "tri-infra-terraform": "regression",
+        "tri-mobile-app": "regression",
+        "tri-no-repo": "regression",
+        "tri-search-indexer": "regression",
+        "tri-widgets": "regression"
+      },
+      "change_summary": "Extend comment prompt to enhancement issues as well as questions to gather more context from reporters.",
+      "source": "llm",
+      "manifested": true,
+      "attempts": 1,
+      "review": {
+        "required": false,
+        "status": "not_required",
+        "reviewer": null,
+        "at": null,
+        "decision": null,
+        "note": "",
+        "pair_labels": {}
+      }
+    },
+    {
+      "edit_id": "r2-github-triage-1",
+      "skill": "github-triage",
+      "type": "R2",
+      "affected_goldens": [
+        "tri-auth-service",
+        "tri-billing-api",
+        "tri-data-pipeline",
+        "tri-docs-site",
+        "tri-infra-terraform",
+        "tri-mobile-app",
+        "tri-search-indexer",
+        "tri-status-page",
+        "tri-widgets"
+      ],
+      "expected_decision": "BLOCK",
+      "expected_pair_outcomes": {
+        "tri-auth-service": "regression",
+        "tri-billing-api": "regression",
+        "tri-data-pipeline": "regression",
+        "tri-docs-site": "regression",
+        "tri-infra-terraform": "regression",
+        "tri-mobile-app": "regression",
+        "tri-search-indexer": "regression",
+        "tri-status-page": "regression",
+        "tri-widgets": "regression"
+      },
+      "change_summary": "Remove Asked for details line from summary output to simplify report.",
+      "source": "llm",
+      "manifested": true,
+      "attempts": 3,
+      "review": {
+        "required": false,
+        "status": "not_required",
+        "reviewer": null,
+        "at": null,
+        "decision": null,
+        "note": "",
+        "pair_labels": {}
+      }
+    },
+    {
+      "edit_id": "r2-github-triage-2",
+      "skill": "github-triage",
+      "type": "R2",
+      "affected_goldens": [
+        "tri-auth-service",
+        "tri-data-pipeline",
+        "tri-docs-site",
+        "tri-infra-terraform",
+        "tri-mobile-app",
+        "tri-search-indexer"
+      ],
+      "expected_decision": "BLOCK",
+      "expected_pair_outcomes": {
+        "tri-auth-service": "regression",
+        "tri-data-pipeline": "regression",
+        "tri-docs-site": "regression",
+        "tri-infra-terraform": "regression",
+        "tri-mobile-app": "regression",
+        "tri-search-indexer": "regression"
+      },
+      "change_summary": "Added a Rules section that restates the close-issue logic from step 7, but the new rule omits the explicit-request requirement, so the agent may close issues without being asked.",
+      "source": "llm",
+      "manifested": true,
+      "attempts": 1,
+      "review": {
+        "required": true,
+        "status": "pending",
+        "reviewer": null,
+        "at": null,
+        "decision": null,
+        "note": "",
+        "pair_labels": {}
+      }
+    },
+    {
+      "edit_id": "r3-github-triage-1",
+      "skill": "github-triage",
+      "type": "R3",
+      "affected_goldens": [
+        "tri-data-pipeline",
+        "tri-docs-site",
+        "tri-search-indexer"
+      ],
+      "expected_decision": "BLOCK",
+      "expected_pair_outcomes": {
+        "tri-data-pipeline": "regression",
+        "tri-docs-site": "regression",
+        "tri-search-indexer": "regression"
+      },
+      "change_summary": "Simplify label payload to a single string instead of an array.",
+      "source": "llm",
+      "manifested": true,
+      "attempts": 1,
+      "review": {
+        "required": false,
+        "status": "not_required",
+        "reviewer": null,
+        "at": null,
+        "decision": null,
+        "note": "",
+        "pair_labels": {}
+      }
+    },
+    {
+      "edit_id": "r3-github-triage-2",
+      "skill": "github-triage",
+      "type": "R3",
+      "affected_goldens": [
+        "tri-billing-api",
+        "tri-data-pipeline",
+        "tri-docs-site",
+        "tri-status-page"
+      ],
+      "expected_decision": "BLOCK",
+      "expected_pair_outcomes": {
+        "tri-billing-api": "regression",
+        "tri-data-pipeline": "regression",
+        "tri-docs-site": "regression",
+        "tri-status-page": "regression"
+      },
+      "change_summary": "Add default branch parameter to list_issues call for clarity.",
+      "source": "llm",
+      "manifested": true,
+      "attempts": 1,
+      "review": {
+        "required": true,
+        "status": "pending",
+        "reviewer": null,
+        "at": null,
+        "decision": null,
+        "note": "",
+        "pair_labels": {}
+      }
+    },
+    {
+      "edit_id": "r4-github-triage-1",
+      "skill": "github-triage",
+      "type": "R4",
+      "affected_goldens": [
+        "tri-auth-service",
+        "tri-billing-api",
+        "tri-data-pipeline",
+        "tri-docs-site",
+        "tri-infra-terraform",
+        "tri-mobile-app",
+        "tri-search-indexer",
+        "tri-widgets"
+      ],
+      "expected_decision": "BLOCK",
+      "expected_pair_outcomes": {
+        "tri-auth-service": "regression",
+        "tri-billing-api": "regression",
+        "tri-data-pipeline": "regression",
+        "tri-docs-site": "regression",
+        "tri-infra-terraform": "regression",
+        "tri-mobile-app": "regression",
+        "tri-search-indexer": "regression",
+        "tri-widgets": "regression"
+      },
+      "change_summary": "Auto-close question issues after requesting details to reduce backlog noise.",
+      "source": "llm",
+      "manifested": true,
+      "attempts": 2,
+      "review": {
+        "required": false,
+        "status": "not_required",
+        "reviewer": null,
+        "at": null,
+        "decision": null,
+        "note": "",
+        "pair_labels": {}
+      }
+    },
+    {
+      "edit_id": "r4-github-triage-2",
+      "skill": "github-triage",
+      "type": "R4",
+      "affected_goldens": [
+        "tri-auth-service",
+        "tri-billing-api",
+        "tri-data-pipeline",
+        "tri-docs-site",
+        "tri-infra-terraform",
+        "tri-mobile-app",
+        "tri-search-indexer",
+        "tri-status-page",
+        "tri-widgets"
+      ],
+      "expected_decision": "BLOCK",
+      "expected_pair_outcomes": {
+        "tri-auth-service": "regression",
+        "tri-billing-api": "regression",
+        "tri-data-pipeline": "regression",
+        "tri-docs-site": "regression",
+        "tri-infra-terraform": "regression",
+        "tri-mobile-app": "regression",
+        "tri-search-indexer": "regression",
+        "tri-status-page": "regression",
+        "tri-widgets": "regression"
+      },
+      "change_summary": "Added a new summary line reporting closed issues in step 8, introducing a new write operation to the output format.",
+      "source": "llm",
+      "manifested": true,
+      "attempts": 1,
+      "review": {
+        "required": true,
+        "status": "pending",
+        "reviewer": null,
+        "at": null,
+        "decision": null,
+        "note": "",
+        "pair_labels": {}
+      }
+    },
+    {
+      "edit_id": "r5-github-triage-1",
+      "skill": "github-triage",
+      "type": "R5",
+      "affected_goldens": [
+        "tri-auth-service",
+        "tri-billing-api",
+        "tri-data-pipeline",
+        "tri-docs-site",
+        "tri-infra-terraform",
+        "tri-mobile-app",
+        "tri-search-indexer",
+        "tri-status-page"
+      ],
+      "expected_decision": "BLOCK",
+      "expected_pair_outcomes": {
+        "tri-auth-service": "regression",
+        "tri-billing-api": "regression",
+        "tri-data-pipeline": "regression",
+        "tri-docs-site": "regression",
+        "tri-infra-terraform": "regression",
+        "tri-mobile-app": "regression",
+        "tri-search-indexer": "regression",
+        "tri-status-page": "regression"
+      },
+      "change_summary": "Broaden skill description to cover any GitHub-related task beyond issue triage.",
+      "source": "llm",
+      "manifested": true,
+      "attempts": 1,
+      "review": {
+        "required": false,
+        "status": "not_required",
+        "reviewer": null,
+        "at": null,
+        "decision": null,
+        "note": "",
+        "pair_labels": {}
+      }
+    },
+    {
+      "edit_id": "r5-github-triage-2",
+      "skill": "github-triage",
+      "type": "R5",
+      "affected_goldens": [
+        "canary-percent",
+        "tri-auth-service",
+        "tri-billing-api",
+        "tri-data-pipeline",
+        "tri-docs-site",
+        "tri-infra-terraform",
+        "tri-mobile-app",
+        "tri-no-repo",
+        "tri-search-indexer"
+      ],
+      "expected_decision": "BLOCK",
+      "expected_pair_outcomes": {
+        "canary-percent": "regression",
+        "tri-auth-service": "regression",
+        "tri-billing-api": "regression",
+        "tri-data-pipeline": "regression",
+        "tri-docs-site": "regression",
+        "tri-infra-terraform": "regression",
+        "tri-mobile-app": "regression",
+        "tri-no-repo": "regression",
+        "tri-search-indexer": "regression"
+      },
+      "change_summary": "Added a Notes section broadening the skill's applicability to any repository and synonyms like 'categorize', causing it to fire on unrelated tasks.",
+      "source": "llm",
+      "manifested": true,
+      "attempts": 3,
+      "review": {
+        "required": true,
+        "status": "pending",
+        "reviewer": null,
+        "at": null,
+        "decision": null,
+        "note": "",
+        "pair_labels": {}
+      }
+    },
+    {
+      "edit_id": "r6-github-triage-1",
+      "skill": "github-triage",
+      "type": "R6",
+      "affected_goldens": [
+        "tri-data-pipeline",
+        "tri-docs-site"
+      ],
+      "expected_decision": "BLOCK",
+      "expected_pair_outcomes": {
+        "tri-data-pipeline": "regression",
+        "tri-docs-site": "regression"
+      },
+      "change_summary": "Narrowed skill description to only trigger on explicit user requests.",
+      "source": "llm",
+      "manifested": true,
+      "attempts": 1,
+      "review": {
+        "required": false,
+        "status": "not_required",
+        "reviewer": null,
+        "at": null,
+        "decision": null,
+        "note": "",
+        "pair_labels": {}
+      }
+    },
+    {
+      "edit_id": "r6-github-triage-2",
+      "skill": "github-triage",
+      "type": "R6",
+      "affected_goldens": [
+        "tri-billing-api",
+        "tri-data-pipeline",
+        "tri-infra-terraform",
+        "tri-mobile-app",
+        "tri-search-indexer",
+        "tri-widgets"
+      ],
+      "expected_decision": "BLOCK",
+      "expected_pair_outcomes": {
+        "tri-billing-api": "regression",
+        "tri-data-pipeline": "regression",
+        "tri-infra-terraform": "regression",
+        "tri-mobile-app": "regression",
+        "tri-search-indexer": "regression",
+        "tri-widgets": "regression"
+      },
+      "change_summary": "Narrow skill description to initial triage only to avoid firing on follow-up tasks.",
+      "source": "llm",
+      "manifested": true,
+      "attempts": 2,
+      "review": {
+        "required": true,
+        "status": "pending",
+        "reviewer": null,
+        "at": null,
+        "decision": null,
+        "note": "",
+        "pair_labels": {}
+      }
+    }
+  ],
+  "dropped": [
+    {
+      "edit_id": "r2-expense-report-2",
+      "skill": "expense-report",
+      "type": "R2",
+      "tries": 3,
+      "problems": [
+        "try 1: schema_failure",
+        "try 2: schema_failure",
+        "try 3: excerpt not found verbatim"
+      ]
+    },
+    {
+      "edit_id": "r3-expense-report-1",
+      "skill": "expense-report",
+      "type": "R3",
+      "tries": 3,
+      "problems": [
+        "try 1: excerpt not found verbatim",
+        "try 2: excerpt not found verbatim",
+        "try 3: excerpt too short"
+      ]
+    },
+    {
+      "edit_id": "r4-expense-report-1",
+      "skill": "expense-report",
+      "type": "R4",
+      "tries": 3,
+      "problems": [
+        "try 1: excerpt too short",
+        "try 2: excerpt not found verbatim",
+        "try 3: schema_failure"
+      ]
+    },
+    {
+      "edit_id": "r4-expense-report-2",
+      "skill": "expense-report",
+      "type": "R4",
+      "tries": 3,
+      "problems": [
+        "try 1: schema_failure",
+        "try 2: excerpt too short",
+        "try 3: schema_failure"
+      ]
+    },
+    {
+      "edit_id": "r5-expense-report-2",
+      "skill": "expense-report",
+      "type": "R5",
+      "tries": 3,
+      "problems": [
+        "try 1: schema_failure",
+        "try 2: excerpt too short",
+        "try 3: schema_failure"
+      ]
+    },
+    {
+      "edit_id": "r6-expense-report-2",
+      "skill": "expense-report",
+      "type": "R6",
+      "tries": 3,
+      "problems": [
+        "try 1: schema_failure",
+        "try 2: schema_failure",
+        "try 3: excerpt too short"
+      ]
+    },
+    {
+      "edit_id": "r1-fx-expense-converter-1",
+      "skill": "fx-expense-converter",
+      "type": "R1",
+      "tries": 3,
+      "problems": [
+        "try 1: excerpt not found verbatim",
+        "try 2: excerpt not found verbatim",
+        "try 3: excerpt not found verbatim"
+      ]
+    },
+    {
+      "edit_id": "r2-fx-expense-converter-1",
+      "skill": "fx-expense-converter",
+      "type": "R2",
+      "tries": 3,
+      "problems": [
+        "try 1: excerpt not found verbatim",
+        "try 2: excerpt too short",
+        "try 3: excerpt too short"
+      ]
+    },
+    {
+      "edit_id": "r4-fx-expense-converter-1",
+      "skill": "fx-expense-converter",
+      "type": "R4",
+      "tries": 3,
+      "problems": [
+        "try 1: schema_failure",
+        "try 2: schema_failure",
+        "try 3: excerpt too short"
+      ]
+    },
+    {
+      "edit_id": "r4-fx-expense-converter-2",
+      "skill": "fx-expense-converter",
+      "type": "R4",
+      "tries": 3,
+      "problems": [
+        "try 1: schema_failure",
+        "try 2: excerpt too short",
+        "try 3: schema_failure"
+      ]
+    },
+    {
+      "edit_id": "r6-fx-expense-converter-2",
+      "skill": "fx-expense-converter",
+      "type": "R6",
+      "tries": 3,
+      "problems": [
+        "try 1: schema_failure",
+        "try 2: schema_failure",
+        "try 3: schema_failure"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,324 @@
+# CI on every PR and push to main (must be green to merge).
+# lint -> typecheck -> test (unit + integration-recorded, coverage gates) -> security ->
+# schemas drift -> dashboard -> build images. No network to Token Factory or Tavily:
+# RATCHET_UPSTREAM=sim and Tavily fixtures throughout; live tests are live.yml only.
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+env:
+  UV_VERSION: "0.8.18"
+  PYTHON_VERSION: "3.11"
+  NODE_VERSION: "24"
+  RATCHET_UPSTREAM: sim
+  RATCHET_TAVILY_MODE: fixtures
+  FORCE_COLOR: "1"
+
+jobs:
+  lint:
+    name: lint (ruff, shell, docker, workflows)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v10.3.0
+        with:
+          version: ${{ env.UV_VERSION }}
+          python-version: ${{ env.PYTHON_VERSION }}
+          enable-cache: true
+          cache-dependency-glob: uv.lock
+      - run: uv sync --frozen
+      - run: uv run ruff check .
+      - run: uv run ruff format --check .
+      - name: shellcheck
+        run: shellcheck -x -P SCRIPTDIR deploy/*.sh deploy/vm/*.sh
+      - name: hadolint
+        run: |
+          docker run --rm -i hadolint/hadolint:v2.15.1 < deploy/control.Dockerfile
+          docker run --rm -i hadolint/hadolint:v2.15.1 hadolint --failure-threshold error - < worker/Dockerfile
+      - name: actionlint
+        run: docker run --rm -v "$PWD:/repo" -w /repo rhysd/actionlint:1.7.12 -color
+      - name: compose config
+        run: |
+          docker compose -f deploy/docker-compose.yml config --quiet
+          RATCHET_HOST_SRV=/tmp/ratchet-srv docker compose -f deploy/docker-compose.yml \
+            -f deploy/docker-compose.docker-runner.yml config --quiet
+      - name: caddy validate
+        run: |
+          docker run --rm -e RATCHET_SITE_ADDRESS=ratchet.example.com \
+            -v "$PWD/deploy/vm/Caddyfile:/etc/caddy/Caddyfile:ro" caddy:2.11 \
+            caddy validate --config /etc/caddy/Caddyfile --adapter caddyfile
+
+  typecheck:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v10.3.0
+        with:
+          version: ${{ env.UV_VERSION }}
+          python-version: ${{ env.PYTHON_VERSION }}
+          enable-cache: true
+          cache-dependency-glob: uv.lock
+      - run: uv sync --frozen
+      - run: uv run mypy
+
+  test:
+    name: unit + integration (recorded)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v10.3.0
+        with:
+          version: ${{ env.UV_VERSION }}
+          python-version: ${{ env.PYTHON_VERSION }}
+          enable-cache: true
+          cache-dependency-glob: uv.lock
+      - run: uv sync --frozen
+      - name: pytest (no live, no docker; asyncio debug on)
+        env:
+          PYTHONASYNCIODEBUG: "1"
+        run: >
+          uv run pytest -q --cov=ratchet --cov-branch
+          --cov-report=xml --cov-report=term-missing:skip-covered --junitxml=pytest.xml
+      - name: coverage gate, 80% on ratchet/judge and ratchet/replay
+        run: |
+          uv run coverage report --include='ratchet/judge/*' --fail-under=80
+          uv run coverage report --include='ratchet/replay/*' --fail-under=80
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: test-results
+          path: |
+            coverage.xml
+            pytest.xml
+          retention-days: 14
+
+  security:
+    name: security (tests/security, secret scan)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v10.3.0
+        with:
+          version: ${{ env.UV_VERSION }}
+          python-version: ${{ env.PYTHON_VERSION }}
+          enable-cache: true
+          cache-dependency-glob: uv.lock
+      - run: uv sync --frozen
+      - run: uv run pytest tests/security -q
+      # Patterns everywhere, plus the exact values of the repo's real secrets where they are
+      # available (push to main; empty on PRs from forks). Findings are always redacted.
+      - name: secret scan of the git tree
+        env:
+          NEBIUS_TOKEN_FACTORY_KEY: ${{ secrets.NEBIUS_TOKEN_FACTORY_KEY }}
+          TAVILY_API_KEY: ${{ secrets.TAVILY_API_KEY }}
+          NEBIUS_API_KEY: ${{ secrets.NEBIUS_API_KEY }}
+          NEBIUS_S3_SECRET_ACCESS_KEY: ${{ secrets.NEBIUS_S3_SECRET_ACCESS_KEY }}
+        run: uv run python scripts/secret_scan.py --git --untracked --values-from-env
+
+  schemas:
+    name: schemas drift
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v10.3.0
+        with:
+          version: ${{ env.UV_VERSION }}
+          python-version: ${{ env.PYTHON_VERSION }}
+          enable-cache: true
+          cache-dependency-glob: uv.lock
+      - run: uv sync --frozen
+      - run: uv run ratchet schemas export
+      - run: uv run ratchet api export-openapi > schemas/openapi.json
+      - name: fail on drift
+        run: |
+          if [ -n "$(git status --porcelain -- schemas/)" ]; then
+            git status --short -- schemas/
+            git diff -- schemas/
+            echo "::error::schemas/ is stale: run 'uv run ratchet schemas export' and 'uv run ratchet api export-openapi > schemas/openapi.json' and commit"
+            exit 1
+          fi
+
+  dashboard:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: dashboard
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: dashboard/package-lock.json
+      - run: npm ci --no-audit --no-fund
+      - run: npm run typecheck
+      - run: npm run lint
+      - run: npm test
+      - run: npm run build
+      # Playwright against the fixture-mode build (VITE_FIXTURES=1, `vite preview`; no
+      # backend, no network). The real-backend spec runs nightly against the control image.
+      - name: playwright e2e (fixture mode)
+        env:
+          CI: "true"
+        run: |
+          npx playwright install --with-deps chromium
+          npm run e2e
+      - uses: actions/upload-artifact@v7
+        if: failure()
+        with:
+          name: playwright-traces
+          path: dashboard/test-results
+          retention-days: 7
+      - uses: actions/upload-artifact@v7
+        with:
+          name: dashboard-dist
+          path: dashboard/dist
+          retention-days: 7
+
+  docs:
+    name: docs (mkdocs --strict, generated sections fresh)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v10.3.0
+        with:
+          version: ${{ env.UV_VERSION }}
+          python-version: ${{ env.PYTHON_VERSION }}
+          enable-cache: true
+          cache-dependency-glob: uv.lock
+      - run: uv sync --frozen
+      - run: uv sync --group docs
+      - run: uv run python scripts/gen_docs.py --check
+      - run: NO_MKDOCS_2_WARNING=1 uv run --group docs mkdocs build --strict
+      - uses: actions/upload-artifact@v7
+        with:
+          name: docs-site
+          path: site
+          retention-days: 7
+
+  build-worker-image:
+    name: build ratchet-worker (< 2 GB)
+    needs: [lint, test]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v7
+      - uses: docker/setup-buildx-action@v4
+      - uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: worker/Dockerfile
+          tags: ratchet-worker:ci
+          load: true
+          cache-from: type=gha,scope=worker
+          cache-to: type=gha,scope=worker,mode=max
+      - name: image size < 2 GB
+        run: |
+          size=$(docker image inspect ratchet-worker:ci --format '{{.Size}}')
+          echo "ratchet-worker:ci is $((size / 1024 / 1024)) MiB"
+          test "$size" -lt 2000000000
+      - name: smoke (argparse help, no secrets in the image env)
+        run: |
+          docker run --rm ratchet-worker:ci --help
+          ! docker image inspect ratchet-worker:ci --format '{{json .Config.Env}}' \
+            | grep -E 'NEBIUS_TOKEN_FACTORY_KEY|TAVILY_API_KEY|NEBIUS_API_KEY|SECRET_ACCESS_KEY'
+      - name: registry name
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: echo "IMAGE=ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/ratchet-worker" >> "$GITHUB_ENV"
+      - uses: docker/login-action@v4
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: push ratchet-worker:<sha> (deploy.sh step 1)
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: worker/Dockerfile
+          push: true
+          tags: |
+            ${{ env.IMAGE }}:${{ github.sha }}
+            ${{ env.IMAGE }}:main
+          cache-from: type=gha,scope=worker
+
+  build-control-image:
+    name: build ratchet-control (+ boot smoke)
+    needs: [lint, test, dashboard]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v7
+      - uses: docker/setup-buildx-action@v4
+      - uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: deploy/control.Dockerfile
+          target: control
+          tags: ratchet-control:ci
+          load: true
+          cache-from: type=gha,scope=control
+          cache-to: type=gha,scope=control,mode=max
+      - name: image size
+        run: |
+          size=$(docker image inspect ratchet-control:ci --format '{{.Size}}')
+          echo "ratchet-control:ci is $((size / 1024 / 1024)) MiB"
+          test "$size" -lt 2000000000
+      - name: boot in sim mode with no keys; /healthz and the SPA answer
+        run: |
+          docker run -d --name ratchet-control -p 127.0.0.1:8080:8080 ratchet-control:ci
+          for _ in $(seq 1 90); do
+            curl -fsS -o /dev/null http://127.0.0.1:8080/healthz && break
+            sleep 2
+          done
+          curl -fsS http://127.0.0.1:8080/healthz
+          curl -fsS http://127.0.0.1:8080/ | grep -qi '<div id="root"'
+      - name: container logs
+        if: always()
+        run: docker logs ratchet-control 2>&1 | tail -n 200 || true
+      - name: registry name
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: echo "IMAGE=ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/ratchet-control" >> "$GITHUB_ENV"
+      - uses: docker/login-action@v4
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: push ratchet-control:<sha>
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: deploy/control.Dockerfile
+          target: control
+          push: true
+          tags: |
+            ${{ env.IMAGE }}:${{ github.sha }}
+            ${{ env.IMAGE }}:main
+          cache-from: type=gha,scope=control

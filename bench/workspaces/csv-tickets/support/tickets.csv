@@ -1,0 +1,6 @@
+id,subject,email,date
+T-1, Login fails ,USER1@example.com,09/10/2026
+T-2,Export slow,user2@example.com,2026/10/10
+T-2,Export slow,user2@example.com,2026/10/10
+T-3,Billing question,user3@example.com,11/10/2026
+,Spam,spam@example.com,2026-10-11

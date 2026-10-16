@@ -1,0 +1,256 @@
+{
+  "run_id": "run_191e53bab3ae",
+  "kind": "golden",
+  "task_input": "Triage the open issue backlog of acme/cli-tools.",
+  "steps": [
+    {
+      "kind": "llm",
+      "step_id": "m001",
+      "tier": "super",
+      "model": "nvidia/nemotron-3-super-120b-a12b",
+      "request_hash": "0b559f5f52052df2be89fbab6ac1c615c800f8ff1b681af6012721ca02bf8a6b",
+      "messages_ref": "steps/m001.req.json",
+      "response_ref": "steps/m001.res.json",
+      "prompt_tokens": 4047,
+      "completion_tokens": 67,
+      "usd": 0.0012744,
+      "latency_ms": 1171,
+      "started_at": "2026-10-16T06:23:10.770837Z",
+      "purpose": "agent",
+      "api": "chat",
+      "usage_estimated": false,
+      "tool_calls_requested": [
+        "github.list_issues"
+      ],
+      "content_preview": "I'll help you triage the open issues for acme/cli-tools. Let me start by listing the open issues in that repository."
+    },
+    {
+      "kind": "tool",
+      "step_id": "t001",
+      "tool": "github.list_issues",
+      "args_norm": {
+        "repo": "acme/cli-tools",
+        "state": "open"
+      },
+      "args_hash": "fa3090f71e72cdf4e0c6ce4b1cffc636164d9bf1f72643ee0b8fa65cecd99cc8",
+      "result_hash": "897bb8cea7f3ac640f01d63b46fd9d33cb3c4e9ce9223a261b796fdea81ae244",
+      "side_effect": "read",
+      "source": "live",
+      "cassette_key": "fa3090f71e72cdf4e0c6ce4b1cffc636164d9bf1f72643ee0b8fa65cecd99cc8",
+      "result_preview": "{\"issues\":[{\"assignees\":[],\"author\":\"ben\",\"body\":\"Syncing a folder with 40k files takes more than ten minutes.\",\"closed_at\":null,\"comments\":1,\"created_at\":\"2026-08-04T09:12:00Z\",\"labels\":[],\"number\":19,\"state\":\"open\",\"state_reason\":null,\"title\":\"Why is `acme sync` so slow on large folders?\",\"updated_at\":\"2026-08-05T09:12:00Z\"},{\"assignees\":[],\"author\":\"ola\",\"body\":\"Behind the corporate proxy, log…",
+      "blocked": false,
+      "started_at": "2026-10-16T06:23:11.958865Z"
+    },
+    {
+      "kind": "llm",
+      "step_id": "m002",
+      "tier": "super",
+      "model": "nvidia/nemotron-3-super-120b-a12b",
+      "request_hash": "d5209cf3633bc33dbeacd9ed64d37846692e4cabd13293c94388bd3e9a728c28",
+      "messages_ref": "steps/m002.req.json",
+      "response_ref": "steps/m002.res.json",
+      "prompt_tokens": 4674,
+      "completion_tokens": 544,
+      "usd": 0.0018918000000000001,
+      "latency_ms": 3320,
+      "started_at": "2026-10-16T06:23:11.962342Z",
+      "purpose": "agent",
+      "api": "chat",
+      "usage_estimated": false,
+      "tool_calls_requested": [
+        "github.label",
+        "github.label",
+        "github.label"
+      ],
+      "content_preview": "Now I'll process each issue according to the triage rules:\n\nIssue #19: \"Why is `acme sync` so slow on large folders?\" - Mentions performance/slowness → This suggests a potential bug/regression about performance degradation. The word \"slow\" isn't directly in our keyword list, but it implies something is broken/not working properly. Looking at the keywords: crash, crashes, crashed, error, errors, e…"
+    },
+    {
+      "kind": "tool",
+      "step_id": "t002",
+      "tool": "github.label",
+      "args_norm": {
+        "issue": 19,
+        "labels": [
+          "question"
+        ],
+        "repo": "acme/cli-tools"
+      },
+      "args_hash": "e766fb20fd0aab5e967bfda0a250aad81f76331cc200a99bc0c2bdcb91f20eb5",
+      "result_hash": "6be5156a0a1ae38ba3650a2efba92347c32444f37993b6f7ce950a3f7f56378f",
+      "side_effect": "write_reversible",
+      "source": "live",
+      "cassette_key": "e766fb20fd0aab5e967bfda0a250aad81f76331cc200a99bc0c2bdcb91f20eb5",
+      "result_preview": "{\"issue\":19,\"labels\":[\"question\"],\"repo\":\"acme/cli-tools\"}",
+      "blocked": false,
+      "started_at": "2026-10-16T06:23:15.297424Z"
+    },
+    {
+      "kind": "tool",
+      "step_id": "t003",
+      "tool": "github.label",
+      "args_norm": {
+        "issue": 22,
+        "labels": [
+          "bug"
+        ],
+        "repo": "acme/cli-tools"
+      },
+      "args_hash": "6c80a1d881eea2da82c5638211177e706d0e046233dfc842de7355975e7c7333",
+      "result_hash": "4faf9ddfc4e572139556f529b3ee91be70c1a48cbcb1476d26c6f3384739968b",
+      "side_effect": "write_reversible",
+      "source": "live",
+      "cassette_key": "6c80a1d881eea2da82c5638211177e706d0e046233dfc842de7355975e7c7333",
+      "result_preview": "{\"issue\":22,\"labels\":[\"bug\"],\"repo\":\"acme/cli-tools\"}",
+      "blocked": false,
+      "started_at": "2026-10-16T06:23:15.301369Z"
+    },
+    {
+      "kind": "tool",
+      "step_id": "t004",
+      "tool": "github.label",
+      "args_norm": {
+        "issue": 23,
+        "labels": [
+          "enhancement"
+        ],
+        "repo": "acme/cli-tools"
+      },
+      "args_hash": "6a614115945ced9f8f8eb86490dec9a7fee408d54055ddd8cc382f69c8a48087",
+      "result_hash": "f2238c6a8c3744b1eb82adfd543e28d80f464ab872bf59cc08223e8c353cd1e8",
+      "side_effect": "write_reversible",
+      "source": "live",
+      "cassette_key": "6a614115945ced9f8f8eb86490dec9a7fee408d54055ddd8cc382f69c8a48087",
+      "result_preview": "{\"issue\":23,\"labels\":[\"enhancement\"],\"repo\":\"acme/cli-tools\"}",
+      "blocked": false,
+      "started_at": "2026-10-16T06:23:15.304527Z"
+    },
+    {
+      "kind": "llm",
+      "step_id": "m003",
+      "tier": "super",
+      "model": "nvidia/nemotron-3-super-120b-a12b",
+      "request_hash": "0c0248c8759ad2ef021e5581c8c64da1ec9efb86cc95a7ae0342515aa85c26c8",
+      "messages_ref": "steps/m003.req.json",
+      "response_ref": "steps/m003.res.json",
+      "prompt_tokens": 5310,
+      "completion_tokens": 89,
+      "usd": 0.0016730999999999998,
+      "latency_ms": 1505,
+      "started_at": "2026-10-16T06:23:15.307627Z",
+      "purpose": "agent",
+      "api": "chat",
+      "usage_estimated": false,
+      "tool_calls_requested": [
+        "github.comment"
+      ],
+      "content_preview": "Now I need to add a comment to the question-labeled issue (#19):"
+    },
+    {
+      "kind": "tool",
+      "step_id": "t005",
+      "tool": "github.comment",
+      "args_norm": {
+        "body": "Thanks for the question. Could you share the version you are using and the steps you tried? A maintainer will follow up.",
+        "issue": 19,
+        "repo": "acme/cli-tools"
+      },
+      "args_hash": "681bcc78c99821fee0a7e809741fde3489edf513aa0a326b79f5e886b8da59aa",
+      "result_hash": "5ed0b309536b55cb055320a89323af0a8057c43b85b705102cfa6039682a4868",
+      "side_effect": "write_irreversible",
+      "source": "live",
+      "cassette_key": "681bcc78c99821fee0a7e809741fde3489edf513aa0a326b79f5e886b8da59aa",
+      "result_preview": "{\"comment_id\":1191,\"issue\":19,\"repo\":\"acme/cli-tools\"}",
+      "blocked": false,
+      "started_at": "2026-10-16T06:23:16.827543Z"
+    },
+    {
+      "kind": "llm",
+      "step_id": "m004",
+      "tier": "super",
+      "model": "nvidia/nemotron-3-super-120b-a12b",
+      "request_hash": "031386fa0e852ac0a531de1cf10b86b237ab7950e6d12deb259bf012f415f8ff",
+      "messages_ref": "steps/m004.req.json",
+      "response_ref": "steps/m004.res.json",
+      "prompt_tokens": 5441,
+      "completion_tokens": 47,
+      "usd": 0.0016745999999999998,
+      "latency_ms": 1031,
+      "started_at": "2026-10-16T06:23:16.831301Z",
+      "purpose": "agent",
+      "api": "chat",
+      "usage_estimated": false,
+      "tool_calls_requested": [
+        "github.list_issues"
+      ],
+      "content_preview": "Now I'll generate the summary:"
+    },
+    {
+      "kind": "tool",
+      "step_id": "t006",
+      "tool": "github.list_issues",
+      "args_norm": {
+        "repo": "acme/cli-tools",
+        "state": "open"
+      },
+      "args_hash": "fa3090f71e72cdf4e0c6ce4b1cffc636164d9bf1f72643ee0b8fa65cecd99cc8",
+      "result_hash": "c97626dbc5d650f3c70d8f39d9d21a5802b99e0f792bd3f8da2139fc708f9b36",
+      "side_effect": "read",
+      "source": "live",
+      "cassette_key": "fa3090f71e72cdf4e0c6ce4b1cffc636164d9bf1f72643ee0b8fa65cecd99cc8",
+      "result_preview": "{\"issues\":[{\"assignees\":[],\"author\":\"ben\",\"body\":\"Syncing a folder with 40k files takes more than ten minutes.\",\"closed_at\":null,\"comments\":2,\"created_at\":\"2026-08-04T09:12:00Z\",\"labels\":[\"question\"],\"number\":19,\"state\":\"open\",\"state_reason\":null,\"title\":\"Why is `acme sync` so slow on large folders?\",\"updated_at\":\"2026-10-14T16:00:00Z\"},{\"assignees\":[],\"author\":\"ola\",\"body\":\"Behind the corporate …",
+      "blocked": false,
+      "started_at": "2026-10-16T06:23:17.876031Z"
+    },
+    {
+      "kind": "llm",
+      "step_id": "m005",
+      "tier": "super",
+      "model": "nvidia/nemotron-3-super-120b-a12b",
+      "request_hash": "b09cec83f9bbd70992ebfbf25f2dc66989d0365742cfe65247ae91f2f5a214f4",
+      "messages_ref": "steps/m005.req.json",
+      "response_ref": "steps/m005.res.json",
+      "prompt_tokens": 6056,
+      "completion_tokens": 46,
+      "usd": 0.0018582,
+      "latency_ms": 1030,
+      "started_at": "2026-10-16T06:23:17.879974Z",
+      "purpose": "agent",
+      "api": "chat",
+      "usage_estimated": false,
+      "tool_calls_requested": [],
+      "content_preview": "Triaged acme/cli-tools: 4 open issues.\n#19: question\n#22: bug\n#23: enhancement\nAlready labeled: #24\nAsked for details: #19"
+    }
+  ],
+  "final_output": "Triaged acme/cli-tools: 4 open issues.\n#19: question\n#22: bug\n#23: enhancement\nAlready labeled: #24\nAsked for details: #19",
+  "artifacts_ref": null,
+  "skills_invoked": [
+    "github-triage"
+  ],
+  "world_dependent": false,
+  "world_facts": [],
+  "env": {
+    "workspace_ref": "workspace.tar.zst",
+    "frozen_time": "2026-10-14T16:00:00Z",
+    "harness_version": "minimal/0.1.0",
+    "skills_commit": "dda8ffcb2837fa255c23f29889f82e6f4976ba33",
+    "world_ref": null
+  },
+  "agent_tier": "super",
+  "seed": 1057456284,
+  "created_at": "2026-10-16T06:23:18.949076Z",
+  "golden_of": null,
+  "candidate_commit": null,
+  "success_criteria": [
+    "states the number of open issues is 4",
+    "lists issue #19 as a question",
+    "lists issue #22 as a bug",
+    "lists issue #23 as an enhancement",
+    "mentions issue #24 as already labeled",
+    "asks for details about issue #19"
+  ],
+  "archived_reason": null,
+  "blessed_at": "2026-10-16T06:23:20.201489Z",
+  "harness_ok": true,
+  "error_code": null,
+  "task_label": "Triage acme/cli-tools"
+}

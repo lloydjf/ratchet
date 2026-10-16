@@ -1,0 +1,238 @@
+{
+  "run_id": "run_496d10a853ed",
+  "kind": "golden",
+  "task_input": "Triage the open issues in acme/widgets.",
+  "steps": [
+    {
+      "kind": "llm",
+      "step_id": "m001",
+      "tier": "super",
+      "model": "nvidia/nemotron-3-super-120b-a12b",
+      "request_hash": "de01c160a5b6257afe94fe11db49ef97eb0110e9e6d05b048e28223556658a31",
+      "messages_ref": "steps/m001.req.json",
+      "response_ref": "steps/m001.res.json",
+      "prompt_tokens": 4044,
+      "completion_tokens": 64,
+      "usd": 0.0012707999999999999,
+      "latency_ms": 2278,
+      "started_at": "2026-10-16T06:22:25.831935Z",
+      "purpose": "agent",
+      "api": "chat",
+      "usage_estimated": false,
+      "tool_calls_requested": [
+        "github.list_issues"
+      ],
+      "content_preview": "I'll help you triage the open issues in the acme/widgets repository. Let me start by listing the open issues."
+    },
+    {
+      "kind": "tool",
+      "step_id": "t001",
+      "tool": "github.list_issues",
+      "args_norm": {
+        "repo": "acme/widgets",
+        "state": "open"
+      },
+      "args_hash": "729737bc174a16ff2cf61416316c3e252cb7aed12a13ce7f71c082432a18ac4b",
+      "result_hash": "82f2a7d73a7d0befbc728c5a35fd262ad622c7840d0e01975e0582a14ceb322e",
+      "side_effect": "read",
+      "source": "live",
+      "cassette_key": "729737bc174a16ff2cf61416316c3e252cb7aed12a13ce7f71c082432a18ac4b",
+      "result_preview": "{\"issues\":[{\"assignees\":[],\"author\":\"priya\",\"body\":\"It would be great to have SVG export next to PNG so designers can edit the charts in vector tools.\",\"closed_at\":null,\"comments\":2,\"created_at\":\"2026-07-28T09:12:00Z\",\"labels\":[],\"number\":7,\"state\":\"open\",\"state_reason\":null,\"title\":\"Support exporting widgets as SVG\",\"updated_at\":\"2026-08-02T09:12:00Z\"},{\"assignees\":[],\"author\":\"dana\",\"body\":\"Cre…",
+      "blocked": false,
+      "started_at": "2026-10-16T06:22:28.127948Z"
+    },
+    {
+      "kind": "llm",
+      "step_id": "m002",
+      "tier": "super",
+      "model": "nvidia/nemotron-3-super-120b-a12b",
+      "request_hash": "5345c0f0be466c94fbfb10652aa242442a6dadb5680a3a035e30a07dd4a0d5e4",
+      "messages_ref": "steps/m002.req.json",
+      "response_ref": "steps/m002.res.json",
+      "prompt_tokens": 4831,
+      "completion_tokens": 319,
+      "usd": 0.0017364000000000001,
+      "latency_ms": 1557,
+      "started_at": "2026-10-16T06:22:28.131471Z",
+      "purpose": "agent",
+      "api": "chat",
+      "usage_estimated": false,
+      "tool_calls_requested": [
+        "github.label",
+        "github.label",
+        "github.label",
+        "github.label"
+      ],
+      "content_preview": "Now I'll process each issue according to the triage rules:\n\nIssue #7: \"Support exporting widgets as SVG\" - Mentions \"add\" → enhancement\nIssue #9: Already has \"bug\" label → skip\nIssue #12: \"Color picker throws an exception on Safari 17\" - Mentions \"exception\" → bug\nIssue #14: \"Typo in the installation guide\" - Mentions \"typo\" → documentation\nIssue #15: \"How do I theme widgets per tenant?\" - Mentio…"
+    },
+    {
+      "kind": "tool",
+      "step_id": "t002",
+      "tool": "github.label",
+      "args_norm": {
+        "issue": 7,
+        "labels": [
+          "enhancement"
+        ],
+        "repo": "acme/widgets"
+      },
+      "args_hash": "42353693a982c229c0637ca80bdf3fad60fea1c173a61215697ccd1f2598d541",
+      "result_hash": "4ca7356ff23f3996bfc75b922df91e2fa814b0badac79bf9db86cdb57d32b442",
+      "side_effect": "write_reversible",
+      "source": "live",
+      "cassette_key": "42353693a982c229c0637ca80bdf3fad60fea1c173a61215697ccd1f2598d541",
+      "result_preview": "{\"issue\":7,\"labels\":[\"enhancement\"],\"repo\":\"acme/widgets\"}",
+      "blocked": false,
+      "started_at": "2026-10-16T06:22:29.704109Z"
+    },
+    {
+      "kind": "tool",
+      "step_id": "t003",
+      "tool": "github.label",
+      "args_norm": {
+        "issue": 12,
+        "labels": [
+          "bug"
+        ],
+        "repo": "acme/widgets"
+      },
+      "args_hash": "2058494f058ba63057177ca81960b87517b0c91ddf1a41b48efbbb821a747487",
+      "result_hash": "48176e25015352b9c96855035bc45bd7725895b424390a523ee153f5a547f2b8",
+      "side_effect": "write_reversible",
+      "source": "live",
+      "cassette_key": "2058494f058ba63057177ca81960b87517b0c91ddf1a41b48efbbb821a747487",
+      "result_preview": "{\"issue\":12,\"labels\":[\"bug\"],\"repo\":\"acme/widgets\"}",
+      "blocked": false,
+      "started_at": "2026-10-16T06:22:29.708477Z"
+    },
+    {
+      "kind": "tool",
+      "step_id": "t004",
+      "tool": "github.label",
+      "args_norm": {
+        "issue": 14,
+        "labels": [
+          "documentation"
+        ],
+        "repo": "acme/widgets"
+      },
+      "args_hash": "a723bef4d58bacd9e1d49cd340afda6952e60165c75eb87e7685aa9392dba40e",
+      "result_hash": "7d87e0e44704c1c6ac51387ae641401ac63ab449e2bd0230dd3fcb0d5b2e662c",
+      "side_effect": "write_reversible",
+      "source": "live",
+      "cassette_key": "a723bef4d58bacd9e1d49cd340afda6952e60165c75eb87e7685aa9392dba40e",
+      "result_preview": "{\"issue\":14,\"labels\":[\"documentation\"],\"repo\":\"acme/widgets\"}",
+      "blocked": false,
+      "started_at": "2026-10-16T06:22:29.711927Z"
+    },
+    {
+      "kind": "tool",
+      "step_id": "t005",
+      "tool": "github.label",
+      "args_norm": {
+        "issue": 15,
+        "labels": [
+          "question"
+        ],
+        "repo": "acme/widgets"
+      },
+      "args_hash": "93f26283f92dfcfbe4473b5441aa6cba07a6c4f56a988e54db911fa3b17f95a7",
+      "result_hash": "a00955dc199d1a459fe517d0e46ad0d12a14c3383d4b5317ed0c2dc9fc081242",
+      "side_effect": "write_reversible",
+      "source": "live",
+      "cassette_key": "93f26283f92dfcfbe4473b5441aa6cba07a6c4f56a988e54db911fa3b17f95a7",
+      "result_preview": "{\"issue\":15,\"labels\":[\"question\"],\"repo\":\"acme/widgets\"}",
+      "blocked": false,
+      "started_at": "2026-10-16T06:22:29.715254Z"
+    },
+    {
+      "kind": "llm",
+      "step_id": "m003",
+      "tier": "super",
+      "model": "nvidia/nemotron-3-super-120b-a12b",
+      "request_hash": "f8a42140f99015775c103ed8df4b3142d64814c8d6b96b5e061f1a04d93e9023",
+      "messages_ref": "steps/m003.req.json",
+      "response_ref": "steps/m003.res.json",
+      "prompt_tokens": 5264,
+      "completion_tokens": 83,
+      "usd": 0.0016539,
+      "latency_ms": 1098,
+      "started_at": "2026-10-16T06:22:29.718774Z",
+      "purpose": "agent",
+      "api": "chat",
+      "usage_estimated": false,
+      "tool_calls_requested": [
+        "github.comment"
+      ],
+      "content_preview": "Now I'll add comments to the question-labeled issue:"
+    },
+    {
+      "kind": "tool",
+      "step_id": "t006",
+      "tool": "github.comment",
+      "args_norm": {
+        "body": "Thanks for the question. Could you share the version you are using and the steps you tried? A maintainer will follow up.",
+        "issue": 15,
+        "repo": "acme/widgets"
+      },
+      "args_hash": "8e8d0e6575db101e5c8f96415edcc85f949cd77df2a837ecf98e7f44d5d3c5be",
+      "result_hash": "0632d7e811910027b74d8093b3856cbb3fb1387b8c82764faac509bc27dfd6e6",
+      "side_effect": "write_irreversible",
+      "source": "live",
+      "cassette_key": "8e8d0e6575db101e5c8f96415edcc85f949cd77df2a837ecf98e7f44d5d3c5be",
+      "result_preview": "{\"comment_id\":1091,\"issue\":15,\"repo\":\"acme/widgets\"}",
+      "blocked": false,
+      "started_at": "2026-10-16T06:22:30.829323Z"
+    },
+    {
+      "kind": "llm",
+      "step_id": "m004",
+      "tier": "super",
+      "model": "nvidia/nemotron-3-super-120b-a12b",
+      "request_hash": "3cb9caddd29d8855bad77767d2a7f052560eb92e095de7d24809458508c77cb4",
+      "messages_ref": "steps/m004.req.json",
+      "response_ref": "steps/m004.res.json",
+      "prompt_tokens": 5388,
+      "completion_tokens": 49,
+      "usd": 0.0016604999999999999,
+      "latency_ms": 1138,
+      "started_at": "2026-10-16T06:22:30.833055Z",
+      "purpose": "agent",
+      "api": "chat",
+      "usage_estimated": false,
+      "tool_calls_requested": [],
+      "content_preview": "Triaged acme/widgets: 5 open issues.\n#7: enhancement\n#12: bug\n#14: documentation\n#15: question\nAlready labeled: #9\nAsked for details: #15"
+    }
+  ],
+  "final_output": "Triaged acme/widgets: 5 open issues.\n#7: enhancement\n#12: bug\n#14: documentation\n#15: question\nAlready labeled: #9\nAsked for details: #15",
+  "artifacts_ref": null,
+  "skills_invoked": [
+    "github-triage"
+  ],
+  "world_dependent": false,
+  "world_facts": [],
+  "env": {
+    "workspace_ref": "workspace.tar.zst",
+    "frozen_time": "2026-10-14T16:00:00Z",
+    "harness_version": "minimal/0.1.0",
+    "skills_commit": "dda8ffcb2837fa255c23f29889f82e6f4976ba33",
+    "world_ref": null
+  },
+  "agent_tier": "super",
+  "seed": 133098637,
+  "created_at": "2026-10-16T06:22:32.018426Z",
+  "golden_of": null,
+  "candidate_commit": null,
+  "success_criteria": [
+    "states the number of open issues in acme/widgets is 5",
+    "lists the issue identifiers #7, #12, #14, #15, and #9",
+    "mentions that #7 is an enhancement, #12 is a bug, #14 is documentation, and #15 is a question",
+    "indicates that #15 was asked for details",
+    "references the artifacts github.label, github.label, github.label, github.label, and github.comment"
+  ],
+  "archived_reason": null,
+  "blessed_at": "2026-10-16T06:22:33.632365Z",
+  "harness_ok": true,
+  "error_code": null,
+  "task_label": "Triage acme/widgets"
+}

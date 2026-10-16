@@ -1,0 +1,25 @@
+{
+  "merchant": "Hub Kreuzberg",
+  "date": "2026-10-08",
+  "currency": "EUR",
+  "layout": "A",
+  "address": "Oranienstr. 20, Berlin",
+  "lines": [
+    {
+      "description": "Coworking day pass",
+      "quantity": 1,
+      "unit_price": 25.21,
+      "amount": 25.21
+    },
+    {
+      "description": "VAT 19%",
+      "quantity": 1,
+      "unit_price": 4.79,
+      "amount": 4.79
+    }
+  ],
+  "subtotal": 25.21,
+  "vat": 4.79,
+  "vat_rate": 0.19,
+  "total": 30.0
+}

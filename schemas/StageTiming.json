@@ -1,0 +1,25 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "elapsed_ms": {
+      "title": "Elapsed Ms",
+      "type": "integer"
+    },
+    "stage": {
+      "title": "Stage",
+      "type": "string"
+    },
+    "started_at": {
+      "format": "date-time",
+      "title": "Started At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "stage",
+    "started_at",
+    "elapsed_ms"
+  ],
+  "title": "StageTiming",
+  "type": "object"
+}

@@ -1,0 +1,26 @@
+{
+  "description": "Regression injection as the smallest edit rather than the whole file. Asked for the full\nSKILL.md, Ultra (thinking off) described a change in ``change_summary`` but returned the\nfile byte-identical, or broke the YAML front matter; a find/replace pair is applied by\nRatchet, so the rest of the file cannot drift.",
+  "properties": {
+    "change_summary": {
+      "title": "Change Summary",
+      "type": "string"
+    },
+    "find": {
+      "description": "An excerpt copied verbatim from the original; exactly once.",
+      "title": "Find",
+      "type": "string"
+    },
+    "replace": {
+      "description": "What replaces the excerpt.",
+      "title": "Replace",
+      "type": "string"
+    }
+  },
+  "required": [
+    "find",
+    "replace",
+    "change_summary"
+  ],
+  "title": "InjectRegressionOut",
+  "type": "object"
+}

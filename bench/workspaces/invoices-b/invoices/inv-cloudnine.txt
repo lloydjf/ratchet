@@ -1,0 +1,11 @@
+INVOICE
+Vendor: Cloud Nine Hosting
+Invoice number: C9-5531
+Invoice date: 2026-10-01
+Due date: 2026-10-31
+Bill to: Acme GmbH, Attn. Jun, jun@example.com
+
+Description                         Amount
+Services as agreed                  see total
+
+Total due: 312.00 USD

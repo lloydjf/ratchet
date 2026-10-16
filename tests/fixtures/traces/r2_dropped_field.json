@@ -1,0 +1,199 @@
+{
+  "category": "R2",
+  "expect": {
+    "hard_fail": false,
+    "n_changed": 2,
+    "n_missing": 0,
+    "n_new": 0
+  },
+  "golden": {
+    "agent_tier": "super",
+    "archived_reason": null,
+    "artifacts_ref": null,
+    "blessed_at": null,
+    "candidate_commit": null,
+    "created_at": "2026-10-14T09:00:00Z",
+    "env": {
+      "frozen_time": "2026-10-14T09:00:00Z",
+      "harness_version": "minimal/0.1.0",
+      "skills_commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "workspace_ref": "traces/run_r2_dropped_field_g/workspace.tar.zst",
+      "world_ref": null
+    },
+    "error_code": null,
+    "final_output": "Added 3 rows. Emailed finance: Total EUR 412.80 incl. EUR 68.80 VAT.",
+    "golden_of": null,
+    "harness_ok": true,
+    "kind": "golden",
+    "run_id": "run_r2_dropped_field_g",
+    "seed": 7,
+    "skills_invoked": [
+      "expense-report"
+    ],
+    "steps": [
+      {
+        "args_hash": "26d6478ade1bcb10c6d45250a62a18ba07d97f3b7716811ecfbd1d6cf7926635",
+        "args_norm": {
+          "folder": "receipts/2026-10"
+        },
+        "blocked": false,
+        "cassette_key": null,
+        "kind": "tool",
+        "result_hash": "5372ef1e6edba17c6de5a2cf8575f0ff3ed5e3b2c031306e34a62389698caacc",
+        "result_preview": "[{\"vendor\":\"Taxi\",\"net\":34.0,\"vat\":6.8}]",
+        "side_effect": "read",
+        "source": "cassette",
+        "started_at": "2026-10-14T09:00:00Z",
+        "step_id": "t001",
+        "tool": "receipts.parse"
+      },
+      {
+        "args_hash": "02776a32fc6a7c412689c3610ff3cebe840d9617de7e83b54b338c67ee8c4b81",
+        "args_norm": {
+          "rows": [
+            [
+              "Taxi",
+              "34.00",
+              "6.80"
+            ]
+          ],
+          "sheet": "Expenses Oct"
+        },
+        "blocked": false,
+        "cassette_key": null,
+        "kind": "tool",
+        "result_hash": null,
+        "result_preview": "",
+        "side_effect": "write_reversible",
+        "source": "cassette",
+        "started_at": "2026-10-14T09:00:00Z",
+        "step_id": "t002",
+        "tool": "sheets.append"
+      },
+      {
+        "args_hash": "b86804601a3cf9c15876251ceff529aa856ca69a3ef876aad3ce24f22040cb6d",
+        "args_norm": {
+          "body": "Total EUR 412.80 incl. EUR 68.80 VAT",
+          "subject": "October expenses",
+          "to": [
+            "<EMAIL_1>"
+          ]
+        },
+        "blocked": false,
+        "cassette_key": null,
+        "kind": "tool",
+        "result_hash": null,
+        "result_preview": "",
+        "side_effect": "external_send",
+        "source": "cassette",
+        "started_at": "2026-10-14T09:00:00Z",
+        "step_id": "t003",
+        "tool": "gmail.send"
+      }
+    ],
+    "success_criteria": [
+      "Every receipt row has its VAT amount",
+      "Finance receives the correct total"
+    ],
+    "task_input": "File the October receipts into the expense sheet and email the total to finance.",
+    "task_label": "October expenses",
+    "world_dependent": false,
+    "world_facts": []
+  },
+  "name": "r2_dropped_field",
+  "replay": {
+    "agent_tier": "super",
+    "archived_reason": null,
+    "artifacts_ref": null,
+    "blessed_at": null,
+    "candidate_commit": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "created_at": "2026-10-14T09:00:00Z",
+    "env": {
+      "frozen_time": "2026-10-14T09:00:00Z",
+      "harness_version": "minimal/0.1.0",
+      "skills_commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "workspace_ref": "traces/run_r2_dropped_field_r/workspace.tar.zst",
+      "world_ref": null
+    },
+    "error_code": null,
+    "final_output": "Added 3 rows. Emailed finance: Total EUR 412.80.",
+    "golden_of": "run_r2_dropped_field_g",
+    "harness_ok": true,
+    "kind": "replay",
+    "run_id": "run_r2_dropped_field_r",
+    "seed": 7,
+    "skills_invoked": [
+      "expense-report"
+    ],
+    "steps": [
+      {
+        "args_hash": "26d6478ade1bcb10c6d45250a62a18ba07d97f3b7716811ecfbd1d6cf7926635",
+        "args_norm": {
+          "folder": "receipts/2026-10"
+        },
+        "blocked": false,
+        "cassette_key": null,
+        "kind": "tool",
+        "result_hash": "5372ef1e6edba17c6de5a2cf8575f0ff3ed5e3b2c031306e34a62389698caacc",
+        "result_preview": "[{\"vendor\":\"Taxi\",\"net\":34.0,\"vat\":6.8}]",
+        "side_effect": "read",
+        "source": "cassette",
+        "started_at": "2026-10-14T09:00:00Z",
+        "step_id": "t001",
+        "tool": "receipts.parse"
+      },
+      {
+        "args_hash": "2b4eaa23f7c8d605897bd3c556e0b038ff23701ac6dc9495c1ca8411fe2e93cd",
+        "args_norm": {
+          "rows": [
+            [
+              "Taxi",
+              "34.00"
+            ]
+          ],
+          "sheet": "Expenses Oct"
+        },
+        "blocked": false,
+        "cassette_key": null,
+        "kind": "tool",
+        "result_hash": null,
+        "result_preview": "",
+        "side_effect": "write_reversible",
+        "source": "cassette",
+        "started_at": "2026-10-14T09:00:00Z",
+        "step_id": "t002",
+        "tool": "sheets.append"
+      },
+      {
+        "args_hash": "b2cec1005579cb900ad885b2736cef59e77d7760424573eac01a5b182a0360a4",
+        "args_norm": {
+          "body": "Total EUR 412.80",
+          "subject": "October expenses",
+          "to": [
+            "<EMAIL_1>"
+          ]
+        },
+        "blocked": false,
+        "cassette_key": null,
+        "kind": "tool",
+        "result_hash": null,
+        "result_preview": "",
+        "side_effect": "external_send",
+        "source": "cassette",
+        "started_at": "2026-10-14T09:00:00Z",
+        "step_id": "t003",
+        "tool": "gmail.send"
+      }
+    ],
+    "success_criteria": [
+      "Every receipt row has its VAT amount",
+      "Finance receives the correct total"
+    ],
+    "task_input": "File the October receipts into the expense sheet and email the total to finance.",
+    "task_label": "October expenses",
+    "world_dependent": false,
+    "world_facts": []
+  },
+  "skill_diff": "--- a/expense-report/SKILL.md\n+++ b/expense-report/SKILL.md\n@@ -4,1 +4,1 @@\n-Include the VAT line.\n+Keep rows compact.\n",
+  "unexpected": []
+}

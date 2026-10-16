@@ -1,0 +1,142 @@
+{
+  "run_id": "run_d17682926c5f",
+  "kind": "golden",
+  "task_input": "File receipt software-2026-10-10.pdf in the Expenses spreadsheet.",
+  "steps": [
+    {
+      "kind": "llm",
+      "step_id": "m001",
+      "tier": "super",
+      "model": "nvidia/nemotron-3-super-120b-a12b",
+      "request_hash": "a4d01b2959a2bf98faac449676e7eacedfee019139694095790281be2eaba334",
+      "messages_ref": "steps/m001.req.json",
+      "response_ref": "steps/m001.res.json",
+      "prompt_tokens": 3945,
+      "completion_tokens": 63,
+      "usd": 0.0012402000000000001,
+      "latency_ms": 1000,
+      "started_at": "2026-10-16T06:24:10.219799Z",
+      "purpose": "agent",
+      "api": "chat",
+      "usage_estimated": false,
+      "tool_calls_requested": [
+        "receipts.parse"
+      ],
+      "content_preview": "I'll help you file the receipt in the Expenses spreadsheet by parsing the receipt file and adding it to the sheet."
+    },
+    {
+      "kind": "tool",
+      "step_id": "t001",
+      "tool": "receipts.parse",
+      "args_norm": {
+        "file": "software-2026-10-10.pdf"
+      },
+      "args_hash": "22a9126d7fe7872cac63ce92d1e4605d1988219d89332096d92f380ce4e0b291",
+      "result_hash": "9825e67bbd16fb68e37380d08175b3708f39c936f47d58742c60ea7a66038336",
+      "side_effect": "read",
+      "source": "live",
+      "cassette_key": "22a9126d7fe7872cac63ce92d1e4605d1988219d89332096d92f380ce4e0b291",
+      "result_preview": "{\"address\":\"Remote, EU\",\"currency\":\"EUR\",\"date\":\"2026-10-10\",\"file\":\"software-2026-10-10.pdf\",\"layout\":\"A\",\"lines\":[{\"amount\":99.0,\"description\":\"Team plan, October\",\"quantity\":1.0,\"unit_price\":99.0},{\"amount\":18.81,\"description\":\"VAT 19%\",\"quantity\":1.0,\"unit_price\":18.81}],\"merchant\":\"Cloudnote Software\",\"subtotal\":99.0,\"total\":117.81,\"vat\":18.81,\"vat_rate\":0.19}",
+      "blocked": false,
+      "started_at": "2026-10-16T06:24:11.235921Z"
+    },
+    {
+      "kind": "llm",
+      "step_id": "m002",
+      "tier": "super",
+      "model": "nvidia/nemotron-3-super-120b-a12b",
+      "request_hash": "0fc44bd780a08f2d562ee67a03dd2fdd9dbac7acf940381ef85187d2855c263e",
+      "messages_ref": "steps/m002.req.json",
+      "response_ref": "steps/m002.res.json",
+      "prompt_tokens": 4207,
+      "completion_tokens": 100,
+      "usd": 0.0013521,
+      "latency_ms": 801,
+      "started_at": "2026-10-16T06:24:11.239609Z",
+      "purpose": "agent",
+      "api": "chat",
+      "usage_estimated": false,
+      "tool_calls_requested": [
+        "sheets.append"
+      ],
+      "content_preview": "Now I'll append the receipt data to the Expenses sheet:"
+    },
+    {
+      "kind": "tool",
+      "step_id": "t002",
+      "tool": "sheets.append",
+      "args_norm": {
+        "rows": [
+          [
+            "2026-10-10",
+            "Cloudnote Software",
+            "117.81",
+            "EUR",
+            "18.81",
+            "software-2026-10-10.pdf"
+          ]
+        ],
+        "sheet": "Expenses"
+      },
+      "args_hash": "a274b0f74ce9883c0aa4a1fe264eb98df0e7c691d5b957a8d0255aa7919d098b",
+      "result_hash": "25a57c53c312d7cd96aed0fc2099240c15857c4b705f25d8dc7eae6365d89fa7",
+      "side_effect": "write_reversible",
+      "source": "live",
+      "cassette_key": "a274b0f74ce9883c0aa4a1fe264eb98df0e7c691d5b957a8d0255aa7919d098b",
+      "result_preview": "{\"appended\":1,\"sheet\":\"Expenses\",\"total_rows\":3}",
+      "blocked": false,
+      "started_at": "2026-10-16T06:24:12.045805Z"
+    },
+    {
+      "kind": "llm",
+      "step_id": "m003",
+      "tier": "super",
+      "model": "nvidia/nemotron-3-super-120b-a12b",
+      "request_hash": "c2e606cc115d1ac5edd529b067c093e78c0dd4bfd0312bebdce98eb3fc3cd6e3",
+      "messages_ref": "steps/m003.req.json",
+      "response_ref": "steps/m003.res.json",
+      "prompt_tokens": 4344,
+      "completion_tokens": 68,
+      "usd": 0.0013644,
+      "latency_ms": 988,
+      "started_at": "2026-10-16T06:24:12.047307Z",
+      "purpose": "agent",
+      "api": "chat",
+      "usage_estimated": false,
+      "tool_calls_requested": [],
+      "content_preview": "Merchant: Cloudnote Software\nDate: 2026-10-10\nTotal: 117.81 EUR\nVAT: 18.81 EUR\n\nGrand total: 117.81 EUR\nFiled 1 receipts to the Expenses sheet."
+    }
+  ],
+  "final_output": "Merchant: Cloudnote Software\nDate: 2026-10-10\nTotal: 117.81 EUR\nVAT: 18.81 EUR\n\nGrand total: 117.81 EUR\nFiled 1 receipts to the Expenses sheet.",
+  "artifacts_ref": null,
+  "skills_invoked": [
+    "expense-report"
+  ],
+  "world_dependent": false,
+  "world_facts": [],
+  "env": {
+    "workspace_ref": "workspace.tar.zst",
+    "frozen_time": "2026-10-14T16:00:00Z",
+    "harness_version": "minimal/0.1.0",
+    "skills_commit": "dda8ffcb2837fa255c23f29889f82e6f4976ba33",
+    "world_ref": null
+  },
+  "agent_tier": "super",
+  "seed": 1412579645,
+  "created_at": "2026-10-16T06:24:13.073819Z",
+  "golden_of": null,
+  "candidate_commit": null,
+  "success_criteria": [
+    "states the merchant as Cloudnote Software",
+    "states the date as 2026-10-10",
+    "states the total as 117.81 EUR",
+    "states the VAT as 18.81 EUR",
+    "states the grand total as 117.81 EUR",
+    "files 1 receipt to the Expenses sheet"
+  ],
+  "archived_reason": null,
+  "blessed_at": "2026-10-16T06:24:15.043104Z",
+  "harness_ok": true,
+  "error_code": null,
+  "task_label": "File the software subscription receipt"
+}

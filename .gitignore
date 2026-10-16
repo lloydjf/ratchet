@@ -1,0 +1,34 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+.coverage
+coverage.xml
+htmlcov/
+dist/
+build/
+*.egg-info/
+
+# Ratchet runtime state (never commit traces, cassettes, keys)
+var/
+data/
+*.key
+pii.map.enc
+.env
+debug-content.log
+
+# Dashboard
+dashboard/node_modules/
+dashboard/dist/
+dashboard/test-results/
+dashboard/playwright-report/
+
+# OS / editors
+.DS_Store
+*.swp
+*~
+dashboard/screenshots/
+site/

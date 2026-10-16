@@ -1,0 +1,237 @@
+@import 'tailwindcss';
+@import './tokens.css';
+
+/* Only the design-token colors, type sizes and radii exist as utilities. */
+@theme inline {
+  --color-*: initial;
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-text: var(--text);
+  --color-muted: var(--text-muted);
+  --color-pass: var(--pass);
+  --color-warn: var(--warn);
+  --color-block: var(--block);
+  --color-drift: var(--drift);
+  --color-nano: var(--nano);
+  --color-super: var(--super);
+  --color-ultra: var(--ultra);
+  --color-accent: var(--accent);
+  --color-pass-ink: var(--pass-ink);
+  --color-warn-ink: var(--warn-ink);
+  --color-block-ink: var(--block-ink);
+  --color-drift-ink: var(--drift-ink);
+  --color-nano-ink: var(--nano-ink);
+  --color-super-ink: var(--super-ink);
+  --color-ultra-ink: var(--ultra-ink);
+
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
+
+  --text-*: initial;
+  --text-h1: 28px;
+  --text-h1--line-height: 36px;
+  --text-h2: 22px;
+  --text-h2--line-height: 30px;
+  --text-h3: 17px;
+  --text-h3--line-height: 26px;
+  --text-body: 15px;
+  --text-body--line-height: 24px;
+  --text-meta: 13px;
+  --text-meta--line-height: 20px;
+  --text-mono: 12px;
+  --text-mono--line-height: 18px;
+  --text-narrative: 17px;
+  --text-narrative--line-height: 28px;
+
+  --radius-card: var(--radius);
+  --radius-sm: var(--radius-sm);
+
+  --container-content: 1200px;
+  --container-landing: 880px;
+  --container-prose: 68ch;
+}
+
+@layer base {
+  html {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-sans);
+    font-size: 15px;
+    line-height: 24px;
+    font-feature-settings: 'cv11', 'ss01';
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    scrollbar-color: var(--border) transparent;
+  }
+  body {
+    min-height: 100dvh;
+    background: var(--bg);
+  }
+  ::selection {
+    background: color-mix(in srgb, var(--accent) 30%, transparent);
+  }
+  :focus-visible {
+    outline: var(--focus);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+  code,
+  kbd,
+  pre,
+  samp {
+    font-family: var(--font-mono);
+  }
+  h1,
+  h2,
+  h3 {
+    letter-spacing: -0.011em;
+    text-wrap: balance;
+  }
+  p {
+    text-wrap: pretty;
+  }
+}
+
+@layer components {
+  .link {
+    color: var(--accent);
+    text-underline-offset: 3px;
+    text-decoration-thickness: 1px;
+  }
+  .link:hover {
+    text-decoration: underline;
+  }
+  .num {
+    font-variant-numeric: tabular-nums;
+  }
+  .hairline {
+    border: 1px solid var(--border);
+  }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+  }
+  .eyebrow {
+    font-size: 12px;
+    line-height: 18px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    font-weight: 500;
+  }
+  .skeleton {
+    background: var(--surface-2);
+    border-radius: 6px;
+  }
+  .tint-pass {
+    background: color-mix(in srgb, var(--pass) var(--tint), var(--surface));
+    color: var(--pass-ink);
+    border-color: color-mix(in srgb, var(--pass) var(--chip-border-mix), var(--surface));
+  }
+  .tint-warn {
+    background: color-mix(in srgb, var(--warn) var(--tint), var(--surface));
+    color: var(--warn-ink);
+    border-color: color-mix(in srgb, var(--warn) var(--chip-border-mix), var(--surface));
+  }
+  .tint-block {
+    background: color-mix(in srgb, var(--block) var(--tint), var(--surface));
+    color: var(--block-ink);
+    border-color: color-mix(in srgb, var(--block) var(--chip-border-mix), var(--surface));
+  }
+  .tint-drift {
+    background: color-mix(in srgb, var(--drift) var(--tint), var(--surface));
+    color: var(--drift-ink);
+    border-color: color-mix(in srgb, var(--drift) var(--chip-border-mix), var(--surface));
+  }
+  .tint-nano {
+    background: color-mix(in srgb, var(--nano) var(--tint), var(--surface));
+    color: var(--nano-ink);
+    border-color: var(--nano);
+  }
+  .tint-super {
+    background: color-mix(in srgb, var(--super) var(--tint), var(--surface));
+    color: var(--super-ink);
+    border-color: var(--super);
+  }
+  .tint-ultra {
+    background: color-mix(in srgb, var(--ultra) var(--tint), var(--surface));
+    color: var(--ultra-ink);
+    border-color: var(--ultra);
+  }
+  .tint-neutral {
+    background: var(--surface-2);
+    color: var(--text-muted);
+    border-color: var(--border-strong);
+  }
+}
+
+/* Motion: stage 160 ms ease-out, chip fill 240 ms, stalled pulse 1.2 s. */
+@keyframes stalled-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.45;
+  }
+}
+@keyframes chip-fill {
+  from {
+    background-color: var(--surface-2);
+    color: var(--text-muted);
+    border-color: var(--border);
+  }
+}
+@keyframes stage-in {
+  from {
+    opacity: 0;
+    transform: translateY(2px);
+  }
+}
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+@keyframes dialog-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px) scale(0.99);
+  }
+}
+.anim-stalled {
+  animation: stalled-pulse 1.2s ease-in-out infinite;
+}
+.anim-chip-fill {
+  animation: chip-fill var(--t-chip) var(--ease-out);
+}
+.anim-stage {
+  animation: stage-in var(--t-stage) var(--ease-out);
+}
+.anim-toast {
+  animation: toast-in var(--t-stage) var(--ease-out);
+}
+.anim-dialog {
+  animation: dialog-in var(--t-stage) var(--ease-out);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

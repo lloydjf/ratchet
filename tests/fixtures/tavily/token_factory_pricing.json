@@ -1,0 +1,13 @@
+{
+  "query": "Nebius Token Factory Nemotron 3 Ultra price per million tokens",
+  "response_time": 1.5,
+  "results": [
+    {
+      "title": "Pricing - Nebius Token Factory",
+      "url": "https://docs.tokenfactory.nebius.com/pricing",
+      "content": "Nemotron 3 Ultra 550B: $1.00 per 1M input tokens, $3.00 per 1M output tokens.",
+      "score": 0.95,
+      "published_date": "2026-10-12"
+    }
+  ]
+}

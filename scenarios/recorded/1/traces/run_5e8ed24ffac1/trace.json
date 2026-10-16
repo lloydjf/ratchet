@@ -1,0 +1,49 @@
+{
+  "run_id": "run_5e8ed24ffac1",
+  "kind": "replay",
+  "task_input": "Rewrite this sentence formally: hey guys, we can't ship the update today 'cause the tests are kinda broken.",
+  "steps": [
+    {
+      "kind": "llm",
+      "step_id": "m001",
+      "tier": "super",
+      "model": "nvidia/nemotron-3-super-120b-a12b",
+      "request_hash": "5221280dae0bd9dc4d1565fe72ec2ff009c8288e119ad23b2fbedcdcedbd1584",
+      "messages_ref": "steps/m001.req.json",
+      "response_ref": "steps/m001.res.json",
+      "prompt_tokens": 3550,
+      "completion_tokens": 18,
+      "usd": 0.0010812,
+      "latency_ms": 1185,
+      "started_at": "2026-10-16T06:25:11.474074Z",
+      "purpose": "agent",
+      "api": "chat",
+      "usage_estimated": false,
+      "tool_calls_requested": [],
+      "content_preview": "We regret to inform you that we cannot deploy the update today due to test failures."
+    }
+  ],
+  "final_output": "We regret to inform you that we cannot deploy the update today due to test failures.",
+  "artifacts_ref": null,
+  "skills_invoked": [],
+  "world_dependent": false,
+  "world_facts": [],
+  "env": {
+    "workspace_ref": "workspace.tar.zst",
+    "frozen_time": "2026-10-14T16:00:00Z",
+    "harness_version": "minimal/0.1.0",
+    "skills_commit": "bada6931a356ded9f8dc84172bbd06d22e8c27f0",
+    "world_ref": null
+  },
+  "agent_tier": "super",
+  "seed": 1995389765,
+  "created_at": "2026-10-16T06:25:12.735361Z",
+  "golden_of": "run_8edbdac3cda2",
+  "candidate_commit": "bada6931a356ded9f8dc84172bbd06d22e8c27f0",
+  "success_criteria": [],
+  "archived_reason": null,
+  "blessed_at": null,
+  "harness_ok": true,
+  "error_code": null,
+  "task_label": "Rewrite a sentence formally"
+}

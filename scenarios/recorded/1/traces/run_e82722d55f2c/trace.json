@@ -1,0 +1,218 @@
+{
+  "run_id": "run_e82722d55f2c",
+  "kind": "golden",
+  "task_input": "Sort out the open issues on acme/auth-service: label each one.",
+  "steps": [
+    {
+      "kind": "llm",
+      "step_id": "m001",
+      "tier": "super",
+      "model": "nvidia/nemotron-3-super-120b-a12b",
+      "request_hash": "9bb37c3f2616849629661156db382a39ad06affca57e018976c5cca93d0db647",
+      "messages_ref": "steps/m001.req.json",
+      "response_ref": "steps/m001.res.json",
+      "prompt_tokens": 4049,
+      "completion_tokens": 68,
+      "usd": 0.0012759000000000002,
+      "latency_ms": 935,
+      "started_at": "2026-10-16T06:23:04.961421Z",
+      "purpose": "agent",
+      "api": "chat",
+      "usage_estimated": false,
+      "tool_calls_requested": [
+        "github.list_issues"
+      ],
+      "content_preview": "I'll help you triage the open issues on acme/auth-service by labeling them appropriately. Let me start by listing the open issues."
+    },
+    {
+      "kind": "tool",
+      "step_id": "t001",
+      "tool": "github.list_issues",
+      "args_norm": {
+        "repo": "acme/auth-service",
+        "state": "open"
+      },
+      "args_hash": "165ecd23e3a5004d057dfed7f997f1811d22ab67e3d42b2c2322a96e8346fb0d",
+      "result_hash": "93dc8bd0362b8a600573e318a45d0b4028c23a3599991a55ba35515d565b8536",
+      "side_effect": "read",
+      "source": "live",
+      "cassette_key": "165ecd23e3a5004d057dfed7f997f1811d22ab67e3d42b2c2322a96e8346fb0d",
+      "result_preview": "{\"issues\":[{\"assignees\":[],\"author\":\"rafa\",\"body\":\"After the signing key rotates, `/token/refresh` returns 500 until the pod restarts.\",\"closed_at\":null,\"comments\":0,\"created_at\":\"2026-10-12T09:12:00Z\",\"labels\":[],\"number\":88,\"state\":\"open\",\"state_reason\":null,\"title\":\"Token refresh returns a 500 after key rotation\",\"updated_at\":\"2026-10-12T09:12:00Z\"},{\"assignees\":[],\"author\":\"elif\",\"body\":\"Two …",
+      "blocked": false,
+      "started_at": "2026-10-16T06:23:05.914909Z"
+    },
+    {
+      "kind": "llm",
+      "step_id": "m002",
+      "tier": "super",
+      "model": "nvidia/nemotron-3-super-120b-a12b",
+      "request_hash": "7a63f906c79c9a8ffa77645fff2e9616714bf460bdcb79c57161b932e4e625ec",
+      "messages_ref": "steps/m002.req.json",
+      "response_ref": "steps/m002.res.json",
+      "prompt_tokens": 4685,
+      "completion_tokens": 279,
+      "usd": 0.0016565999999999998,
+      "latency_ms": 1614,
+      "started_at": "2026-10-16T06:23:05.918495Z",
+      "purpose": "agent",
+      "api": "chat",
+      "usage_estimated": false,
+      "tool_calls_requested": [
+        "github.label",
+        "github.label",
+        "github.label"
+      ],
+      "content_preview": "Now I'll process each issue according to the triage rules:\n\nIssue #88: \"Token refresh returns a 500 after key rotation\"\n- Mentions \"500\" → matches bug rule\n- Label: bug\n\nIssue #90: \"Allow SAML login for enterprise tenants\"\n- Mentions \"allow\" → matches enhancement rule\n- Label: enhancement\n\nIssue #91: \"How long are refresh tokens valid?\"\n- Mentions \"how\" → matches question rule\n- Label: question\n\n…"
+    },
+    {
+      "kind": "tool",
+      "step_id": "t002",
+      "tool": "github.label",
+      "args_norm": {
+        "issue": 88,
+        "labels": [
+          "bug"
+        ],
+        "repo": "acme/auth-service"
+      },
+      "args_hash": "4ea4d21e2a1d0dd3ca01c29a3e65bcd8fe7aa4a37e07144bdc8048d484827d9c",
+      "result_hash": "8496813d5cbd5c11183bb4688844fc1d3bb884babcfb3ffc0a6c69f1a8894b72",
+      "side_effect": "write_reversible",
+      "source": "live",
+      "cassette_key": "4ea4d21e2a1d0dd3ca01c29a3e65bcd8fe7aa4a37e07144bdc8048d484827d9c",
+      "result_preview": "{\"issue\":88,\"labels\":[\"bug\"],\"repo\":\"acme/auth-service\"}",
+      "blocked": false,
+      "started_at": "2026-10-16T06:23:07.545353Z"
+    },
+    {
+      "kind": "tool",
+      "step_id": "t003",
+      "tool": "github.label",
+      "args_norm": {
+        "issue": 90,
+        "labels": [
+          "enhancement"
+        ],
+        "repo": "acme/auth-service"
+      },
+      "args_hash": "c391ba00a13832be0f100003f4cbf293f28b4d815be4d3ffaa919bfb8e614c8c",
+      "result_hash": "dae7e8c8c86907a052b200e32f71b6a32e5f60e4abbccf075861e0926c575918",
+      "side_effect": "write_reversible",
+      "source": "live",
+      "cassette_key": "c391ba00a13832be0f100003f4cbf293f28b4d815be4d3ffaa919bfb8e614c8c",
+      "result_preview": "{\"issue\":90,\"labels\":[\"enhancement\"],\"repo\":\"acme/auth-service\"}",
+      "blocked": false,
+      "started_at": "2026-10-16T06:23:07.548941Z"
+    },
+    {
+      "kind": "tool",
+      "step_id": "t004",
+      "tool": "github.label",
+      "args_norm": {
+        "issue": 91,
+        "labels": [
+          "question"
+        ],
+        "repo": "acme/auth-service"
+      },
+      "args_hash": "de1e3de378e8027a051f6bb716240f29eefbdba00ca0bf22fbc8daa77fb563ca",
+      "result_hash": "e5660e79f43f91dcae283a183ac25964310f86688d9e3e72928695616c046aed",
+      "side_effect": "write_reversible",
+      "source": "live",
+      "cassette_key": "de1e3de378e8027a051f6bb716240f29eefbdba00ca0bf22fbc8daa77fb563ca",
+      "result_preview": "{\"issue\":91,\"labels\":[\"question\"],\"repo\":\"acme/auth-service\"}",
+      "blocked": false,
+      "started_at": "2026-10-16T06:23:07.551935Z"
+    },
+    {
+      "kind": "llm",
+      "step_id": "m003",
+      "tier": "super",
+      "model": "nvidia/nemotron-3-super-120b-a12b",
+      "request_hash": "69f13cbca8f71fd35b10160541586e02071daf2ea3ebada29d6d3db599280c25",
+      "messages_ref": "steps/m003.req.json",
+      "response_ref": "steps/m003.res.json",
+      "prompt_tokens": 5056,
+      "completion_tokens": 89,
+      "usd": 0.0015968999999999998,
+      "latency_ms": 1089,
+      "started_at": "2026-10-16T06:23:07.555122Z",
+      "purpose": "agent",
+      "api": "chat",
+      "usage_estimated": false,
+      "tool_calls_requested": [
+        "github.comment"
+      ],
+      "content_preview": "Now I need to add a comment to the question-labeled issue (#91):"
+    },
+    {
+      "kind": "tool",
+      "step_id": "t005",
+      "tool": "github.comment",
+      "args_norm": {
+        "body": "Thanks for the question. Could you share the version you are using and the steps you tried? A maintainer will follow up.",
+        "issue": 91,
+        "repo": "acme/auth-service"
+      },
+      "args_hash": "707812ed6261401a0dc5f51a7f53b635558c9b9f99ec5e3b91017c4803ea5255",
+      "result_hash": "71a9839b17c8e7d3549ff2098a5e6f6c642020ae776d0c89cdc426208b13d8ec",
+      "side_effect": "write_irreversible",
+      "source": "live",
+      "cassette_key": "707812ed6261401a0dc5f51a7f53b635558c9b9f99ec5e3b91017c4803ea5255",
+      "result_preview": "{\"comment_id\":1001,\"issue\":91,\"repo\":\"acme/auth-service\"}",
+      "blocked": false,
+      "started_at": "2026-10-16T06:23:08.656805Z"
+    },
+    {
+      "kind": "llm",
+      "step_id": "m004",
+      "tier": "super",
+      "model": "nvidia/nemotron-3-super-120b-a12b",
+      "request_hash": "c76f8238e81f2e23c9970e36b3b4db5f9dccde67da41c7ad946e12b7ad7a8871",
+      "messages_ref": "steps/m004.req.json",
+      "response_ref": "steps/m004.res.json",
+      "prompt_tokens": 5187,
+      "completion_tokens": 46,
+      "usd": 0.0015975,
+      "latency_ms": 937,
+      "started_at": "2026-10-16T06:23:08.660654Z",
+      "purpose": "agent",
+      "api": "chat",
+      "usage_estimated": false,
+      "tool_calls_requested": [],
+      "content_preview": "Triaged acme/auth-service: 4 open issues.\n#88: bug\n#90: enhancement\n#91: question\nAlready labeled: #92\nAsked for details: #91"
+    }
+  ],
+  "final_output": "Triaged acme/auth-service: 4 open issues.\n#88: bug\n#90: enhancement\n#91: question\nAlready labeled: #92\nAsked for details: #91",
+  "artifacts_ref": null,
+  "skills_invoked": [
+    "github-triage"
+  ],
+  "world_dependent": false,
+  "world_facts": [],
+  "env": {
+    "workspace_ref": "workspace.tar.zst",
+    "frozen_time": "2026-10-14T16:00:00Z",
+    "harness_version": "minimal/0.1.0",
+    "skills_commit": "dda8ffcb2837fa255c23f29889f82e6f4976ba33",
+    "world_ref": null
+  },
+  "agent_tier": "super",
+  "seed": 492274084,
+  "created_at": "2026-10-16T06:23:09.639000Z",
+  "golden_of": null,
+  "candidate_commit": null,
+  "success_criteria": [
+    "states the number of open issues is 4",
+    "labels #88 as bug",
+    "labels #90 as enhancement",
+    "labels #91 as question",
+    "labels #92 as already labeled",
+    "mentions that #91 was asked for details"
+  ],
+  "archived_reason": null,
+  "blessed_at": "2026-10-16T06:23:10.745306Z",
+  "harness_ok": true,
+  "error_code": null,
+  "task_label": "Triage acme/auth-service"
+}

@@ -1,0 +1,11 @@
+INVOICE
+Vendor: Maple Studio Design
+Invoice number: MS-2026-77
+Invoice date: 2026-10-08
+Payment terms: Net 30
+Bill to: Acme GmbH, Attn. Jun, jun@example.com
+
+Description                         Amount
+Services as agreed                  see total
+
+Total due: 2,400.00 EUR

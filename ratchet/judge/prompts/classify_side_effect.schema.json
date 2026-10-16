@@ -1,0 +1,27 @@
+{
+  "properties": {
+    "reason": {
+      "title": "Reason",
+      "type": "string"
+    },
+    "side_effect": {
+      "enum": [
+        "none",
+        "read",
+        "write_reversible",
+        "write_irreversible",
+        "destructive",
+        "external_send",
+        "spend"
+      ],
+      "title": "Side Effect",
+      "type": "string"
+    }
+  },
+  "required": [
+    "side_effect",
+    "reason"
+  ],
+  "title": "SideEffectOut",
+  "type": "object"
+}

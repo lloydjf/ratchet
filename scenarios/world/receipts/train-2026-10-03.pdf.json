@@ -1,0 +1,25 @@
+{
+  "merchant": "Rail Express Nord",
+  "date": "2026-10-03",
+  "currency": "EUR",
+  "layout": "A",
+  "address": "Bahnhofplatz 3, Berlin",
+  "lines": [
+    {
+      "description": "Berlin to Hamburg, 2nd class",
+      "quantity": 1,
+      "unit_price": 79.44,
+      "amount": 79.44
+    },
+    {
+      "description": "VAT 7%",
+      "quantity": 1,
+      "unit_price": 5.56,
+      "amount": 5.56
+    }
+  ],
+  "subtotal": 79.44,
+  "vat": 5.56,
+  "vat_rate": 0.07,
+  "total": 85.0
+}

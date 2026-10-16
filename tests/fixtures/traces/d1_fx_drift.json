@@ -1,0 +1,180 @@
+{
+  "category": "D1",
+  "expect": {
+    "hard_fail": false,
+    "n_changed": 1,
+    "n_missing": 0,
+    "n_new": 0
+  },
+  "golden": {
+    "agent_tier": "super",
+    "archived_reason": null,
+    "artifacts_ref": null,
+    "blessed_at": null,
+    "candidate_commit": null,
+    "created_at": "2026-10-14T09:00:00Z",
+    "env": {
+      "frozen_time": "2026-10-14T09:00:00Z",
+      "harness_version": "minimal/0.1.0",
+      "skills_commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "workspace_ref": "traces/run_d1_fx_drift_g/workspace.tar.zst",
+      "world_ref": null
+    },
+    "error_code": null,
+    "final_output": "Converted USD 200.00 at 0.92: EUR 184.00 added to the sheet.",
+    "golden_of": null,
+    "harness_ok": true,
+    "kind": "golden",
+    "run_id": "run_d1_fx_drift_g",
+    "seed": 7,
+    "skills_invoked": [
+      "fx-expense-converter"
+    ],
+    "steps": [
+      {
+        "args_hash": "592465d2b2a677ffdfab230bb20e7726c99b82699158d188fa07f7a8b804d6bd",
+        "args_norm": {
+          "base": "USD",
+          "date": "2026-10-14",
+          "quote": "EUR"
+        },
+        "blocked": false,
+        "cassette_key": null,
+        "kind": "tool",
+        "result_hash": "ec2c8b67630b7804305a44e85eeeed4bf33f625be19955b755f131c75fe67169",
+        "result_preview": "{\"rate\": 0.92}",
+        "side_effect": "read",
+        "source": "cassette",
+        "started_at": "2026-10-14T09:00:00Z",
+        "step_id": "t001",
+        "tool": "finance.rate"
+      },
+      {
+        "args_hash": "bddfd847083a466fe008c5fcbc56f951da850b5aee2dbc8306d32143e779bd72",
+        "args_norm": {
+          "rows": [
+            [
+              "Hotel",
+              "184.00"
+            ]
+          ],
+          "sheet": "Expenses Oct"
+        },
+        "blocked": false,
+        "cassette_key": null,
+        "kind": "tool",
+        "result_hash": null,
+        "result_preview": "",
+        "side_effect": "write_reversible",
+        "source": "cassette",
+        "started_at": "2026-10-14T09:00:00Z",
+        "step_id": "t002",
+        "tool": "sheets.append"
+      }
+    ],
+    "success_criteria": [
+      "Hotel converted at the day's USD/EUR rate",
+      "Row added to the sheet"
+    ],
+    "task_input": "Convert the USD receipts to EUR and add them to the expense sheet.",
+    "task_label": "Convert hotel receipt",
+    "world_dependent": true,
+    "world_facts": [
+      {
+        "fact_id": "f1",
+        "query_hint": "USD to EUR exchange rate today",
+        "source_step": "t001",
+        "statement": "USD/EUR rate on 2026-10-14 was 0.92",
+        "value": "0.92",
+        "volatile": true
+      }
+    ]
+  },
+  "name": "d1_fx_drift",
+  "replay": {
+    "agent_tier": "super",
+    "archived_reason": null,
+    "artifacts_ref": null,
+    "blessed_at": null,
+    "candidate_commit": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "created_at": "2026-10-14T09:00:00Z",
+    "env": {
+      "frozen_time": "2026-10-14T09:00:00Z",
+      "harness_version": "minimal/0.1.0",
+      "skills_commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "workspace_ref": "traces/run_d1_fx_drift_r/workspace.tar.zst",
+      "world_ref": null
+    },
+    "error_code": null,
+    "final_output": "Converted USD 200.00 at 0.95: EUR 190.00 added to the sheet.",
+    "golden_of": "run_d1_fx_drift_g",
+    "harness_ok": true,
+    "kind": "replay",
+    "run_id": "run_d1_fx_drift_r",
+    "seed": 7,
+    "skills_invoked": [
+      "fx-expense-converter"
+    ],
+    "steps": [
+      {
+        "args_hash": "592465d2b2a677ffdfab230bb20e7726c99b82699158d188fa07f7a8b804d6bd",
+        "args_norm": {
+          "base": "USD",
+          "date": "2026-10-14",
+          "quote": "EUR"
+        },
+        "blocked": false,
+        "cassette_key": null,
+        "kind": "tool",
+        "result_hash": "f1b4ab4e60d7141a86c4fa4801df42f91c61c890b798bb1921cf80e7a7417c90",
+        "result_preview": "{\"rate\": 0.95}",
+        "side_effect": "read",
+        "source": "cassette",
+        "started_at": "2026-10-14T09:00:00Z",
+        "step_id": "t001",
+        "tool": "finance.rate"
+      },
+      {
+        "args_hash": "6ea6379e7c113a0852e262906295b41851d8400e21ad3e8c3447eddece768d3e",
+        "args_norm": {
+          "rows": [
+            [
+              "Hotel",
+              "190.00"
+            ]
+          ],
+          "sheet": "Expenses Oct"
+        },
+        "blocked": false,
+        "cassette_key": null,
+        "kind": "tool",
+        "result_hash": null,
+        "result_preview": "",
+        "side_effect": "write_reversible",
+        "source": "cassette",
+        "started_at": "2026-10-14T09:00:00Z",
+        "step_id": "t002",
+        "tool": "sheets.append"
+      }
+    ],
+    "success_criteria": [
+      "Hotel converted at the day's USD/EUR rate",
+      "Row added to the sheet"
+    ],
+    "task_input": "Convert the USD receipts to EUR and add them to the expense sheet.",
+    "task_label": "Convert hotel receipt",
+    "world_dependent": true,
+    "world_facts": [
+      {
+        "fact_id": "f1",
+        "query_hint": "USD to EUR exchange rate today",
+        "source_step": "t001",
+        "statement": "USD/EUR rate on 2026-10-14 was 0.92",
+        "value": "0.92",
+        "volatile": true
+      }
+    ]
+  },
+  "skill_diff": "",
+  "unexpected": []
+}

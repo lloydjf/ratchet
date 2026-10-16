@@ -1,0 +1,13 @@
+{
+  "_note": "Synthetic Tavily response for SkillRegress-Bench; not real data. Every URL is example.com.",
+  "query": "1 CHF to USD exchange rate 2026-10-14",
+  "results": [
+    {
+      "title": "Latest figures (2026-10-15)",
+      "url": "https://facts.example.com/c30ec08bdd",
+      "content": "As of 2026-10-15: The exchange rate 1 CHF = 1.1571 USD was observed on 2026-10-14 Latest reported value: 1.15714.",
+      "score": 0.9,
+      "published_date": "2026-10-15"
+    }
+  ]
+}

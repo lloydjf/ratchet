@@ -1,0 +1,11 @@
+{
+  "pages": {
+    "https://news.example.com/fx/eur-usd": {"title": "EUR/USD holds near 1.08", "text": "The euro traded at 1.0842 dollars on 14 October 2026.", "published": "2026-10-14"},
+    "https://blog.example.com/widgets-2-0": {"title": "Widgets 2.0 released", "text": "Widgets 2.0 adds dark mode and faster startup.", "published": "2026-10-01"}
+  },
+  "search": {
+    "eur usd rate today": [
+      {"title": "EUR/USD holds near 1.08", "url": "https://news.example.com/fx/eur-usd", "snippet": "The euro traded at 1.0842 dollars."}
+    ]
+  }
+}

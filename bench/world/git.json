@@ -1,0 +1,294 @@
+{
+  "repos": {
+    "widgets": [
+      {
+        "sha": "f7a8b9c",
+        "date": "2026-10-13T17:00:00Z",
+        "author": "priya",
+        "message": "feat: keyboard shortcuts for the editor"
+      },
+      {
+        "sha": "e5f6a7b",
+        "date": "2026-10-12T10:00:00Z",
+        "author": "dana",
+        "message": "fix: empty widget names no longer crash the list view"
+      },
+      {
+        "sha": "d4e5f6a",
+        "date": "2026-10-10T15:30:00Z",
+        "author": "priya",
+        "message": "feat(export): add PNG export at 2x resolution"
+      },
+      {
+        "sha": "c3d4e5f",
+        "date": "2026-10-08T09:20:00Z",
+        "author": "sam",
+        "message": "docs: fix typo in the installation guide"
+      },
+      {
+        "sha": "b2c3d4e",
+        "date": "2026-10-06T11:45:00Z",
+        "author": "marco",
+        "message": "Bump chart-core to 5.2.0"
+      },
+      {
+        "sha": "a1b2c3d",
+        "date": "2026-09-30T12:00:00Z",
+        "author": "dana",
+        "message": "chore(release): 2.3.1",
+        "tags": [
+          "v2.3.1"
+        ]
+      },
+      {
+        "sha": "9f8e7d6",
+        "date": "2026-09-28T08:00:00Z",
+        "author": "dana",
+        "message": "fix: legend overlaps the x-axis on small screens"
+      }
+    ],
+    "billing-api": [
+      {
+        "sha": "4c5d6e7",
+        "date": "2026-10-11T13:00:00Z",
+        "author": "ines",
+        "message": "feat: idempotency keys for refunds"
+      },
+      {
+        "sha": "3b4c5d6",
+        "date": "2026-10-09T09:00:00Z",
+        "author": "kofi",
+        "message": "fix: return 404 instead of 500 for archived customers"
+      },
+      {
+        "sha": "2a3b4c5",
+        "date": "2026-10-01T10:00:00Z",
+        "author": "jo",
+        "message": "chore(release): 4.8.0",
+        "tags": [
+          "v4.8.0"
+        ]
+      }
+    ],
+    "mobile-app": [
+      {
+        "sha": "71a2b3c",
+        "date": "2026-10-13T10:00:00Z",
+        "author": "kofi",
+        "message": "feat: offline mode for the order list"
+      },
+      {
+        "sha": "70f1e2d",
+        "date": "2026-10-11T09:00:00Z",
+        "author": "ines",
+        "message": "fix: crash when the camera permission is denied"
+      },
+      {
+        "sha": "6fe0d1c",
+        "date": "2026-10-09T14:00:00Z",
+        "author": "kofi",
+        "message": "docs: document the release checklist"
+      },
+      {
+        "sha": "6edfc0b",
+        "date": "2026-10-07T08:00:00Z",
+        "author": "sam",
+        "message": "Merge pull request #63 from acme/fix-icons"
+      },
+      {
+        "sha": "6dcebfa",
+        "date": "2026-10-02T12:00:00Z",
+        "author": "ines",
+        "message": "chore(release): 3.1.0",
+        "tags": [
+          "v3.1.0"
+        ]
+      }
+    ],
+    "docs-site": [
+      {
+        "sha": "8b1c2d3",
+        "date": "2026-10-12T11:00:00Z",
+        "author": "lee",
+        "message": "docs: new tutorial for webhooks"
+      },
+      {
+        "sha": "8a0b1c2",
+        "date": "2026-10-10T10:00:00Z",
+        "author": "lee",
+        "message": "fix: broken links in the API reference"
+      },
+      {
+        "sha": "89fa0b1",
+        "date": "2026-10-05T10:00:00Z",
+        "author": "priya",
+        "message": "chore(release): 1.7.2",
+        "tags": [
+          "v1.7.2"
+        ]
+      }
+    ],
+    "data-pipeline": [
+      {
+        "sha": "a4b5c6d",
+        "date": "2026-10-13T16:00:00Z",
+        "author": "marco",
+        "message": "feat: parquet output for daily exports"
+      },
+      {
+        "sha": "a3a4b5c",
+        "date": "2026-10-12T16:00:00Z",
+        "author": "marco",
+        "message": "feat(scheduler): support cron expressions"
+      },
+      {
+        "sha": "a293a4b",
+        "date": "2026-10-10T16:00:00Z",
+        "author": "dana",
+        "message": "fix: retry on transient S3 errors"
+      },
+      {
+        "sha": "a18293a",
+        "date": "2026-10-08T16:00:00Z",
+        "author": "dana",
+        "message": "Bump arrowlib to 14.0.1"
+      },
+      {
+        "sha": "a071829",
+        "date": "2026-09-29T16:00:00Z",
+        "author": "marco",
+        "message": "chore(release): 0.8.0",
+        "tags": [
+          "v0.8.0"
+        ]
+      }
+    ],
+    "cli-tools": [
+      {
+        "sha": "c1d2e3f",
+        "date": "2026-10-12T09:00:00Z",
+        "author": "sam",
+        "message": "fix: --quiet flag ignored by the sync command"
+      },
+      {
+        "sha": "c0c1d2e",
+        "date": "2026-10-06T09:00:00Z",
+        "author": "sam",
+        "message": "feat: add shell completion for zsh"
+      },
+      {
+        "sha": "bfb0c1d",
+        "date": "2026-10-01T09:00:00Z",
+        "author": "jo",
+        "message": "chore(release): 5.0.3",
+        "tags": [
+          "v5.0.3"
+        ]
+      }
+    ],
+    "design-system": [
+      {
+        "sha": "d9e0f1a",
+        "date": "2026-10-13T13:00:00Z",
+        "author": "priya",
+        "message": "feat!: rename Button variants to primary and subtle"
+      },
+      {
+        "sha": "d8d9e0f",
+        "date": "2026-10-11T13:00:00Z",
+        "author": "priya",
+        "message": "feat: dark theme tokens"
+      },
+      {
+        "sha": "d7c8d9e",
+        "date": "2026-10-09T13:00:00Z",
+        "author": "lee",
+        "message": "docs: migration guide for 2.0"
+      },
+      {
+        "sha": "d6b7c8d",
+        "date": "2026-10-07T13:00:00Z",
+        "author": "marco",
+        "message": "fix: focus ring hidden in Safari"
+      },
+      {
+        "sha": "d5a6b7c",
+        "date": "2026-10-03T13:00:00Z",
+        "author": "priya",
+        "message": "refactor: split tokens into separate packages"
+      },
+      {
+        "sha": "d495a6b",
+        "date": "2026-09-26T13:00:00Z",
+        "author": "priya",
+        "message": "chore(release): 1.12.0",
+        "tags": [
+          "v1.12.0"
+        ]
+      }
+    ],
+    "search-indexer": [
+      {
+        "sha": "e5f6a7b",
+        "date": "2026-10-12T15:00:00Z",
+        "author": "kofi",
+        "message": "feat: synonym dictionaries per index"
+      },
+      {
+        "sha": "e4e5f6a",
+        "date": "2026-10-08T15:00:00Z",
+        "author": "kofi",
+        "message": "fix: memory leak in the batch indexer"
+      },
+      {
+        "sha": "e3d4e5f",
+        "date": "2026-10-02T15:00:00Z",
+        "author": "jo",
+        "message": "chore(release): 1.2.0",
+        "tags": [
+          "v1.2.0"
+        ]
+      }
+    ],
+    "auth-service": [
+      {
+        "sha": "f6a7b8c",
+        "date": "2026-10-13T09:30:00Z",
+        "author": "ines",
+        "message": "fix: refresh tokens expire one hour early"
+      },
+      {
+        "sha": "f596a7b",
+        "date": "2026-10-10T09:30:00Z",
+        "author": "ines",
+        "message": "feat: WebAuthn sign-in for admins"
+      },
+      {
+        "sha": "f4859a6",
+        "date": "2026-10-04T09:30:00Z",
+        "author": "kofi",
+        "message": "chore(release): 3.4.1",
+        "tags": [
+          "v3.4.1"
+        ]
+      }
+    ],
+    "infra-terraform": [
+      {
+        "sha": "0a1b2c3",
+        "date": "2026-10-09T08:00:00Z",
+        "author": "marco",
+        "message": "chore(release): 0.6.0",
+        "tags": [
+          "v0.6.0"
+        ]
+      },
+      {
+        "sha": "09f0a1b",
+        "date": "2026-10-07T08:00:00Z",
+        "author": "marco",
+        "message": "feat: module for the staging VPC"
+      }
+    ]
+  }
+}

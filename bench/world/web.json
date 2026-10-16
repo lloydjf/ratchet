@@ -1,0 +1,300 @@
+{
+  "pages": {
+    "https://fx.example.com/eur-usd": {
+      "title": "EUR/USD reference rate (synthetic)",
+      "text": "Reference rate on 2026-10-14: 1 EUR = 1.0800 USD.",
+      "published": "2026-10-14"
+    },
+    "https://news.example.com/quilldb-4-2": {
+      "title": "QuillDB 4.2 ships hybrid search",
+      "text": "QuillDB 4.2 was released on 2026-10-09 with hybrid keyword and vector search. The project reports 1,200 contributors.",
+      "published": "2026-10-09"
+    },
+    "https://blog.example.com/quilldb-benchmarks": {
+      "title": "QuillDB publishes new benchmarks",
+      "text": "On 2026-10-11 the QuillDB team published benchmarks showing 38% lower query latency than version 4.1.",
+      "published": "2026-10-11"
+    },
+    "https://forum.example.com/quilldb-cloud": {
+      "title": "QuillDB Cloud pricing update",
+      "text": "QuillDB Cloud lowered its starter plan to $19 per month on 2026-10-12.",
+      "published": "2026-10-12"
+    },
+    "https://energy.example.com/helio-pilot": {
+      "title": "Helio Cells opens pilot line",
+      "text": "Helio Cells opened its pilot line in Tampere on 2026-10-08 with a capacity of 40 MWh per year.",
+      "published": "2026-10-08"
+    },
+    "https://news.example.com/helio-funding": {
+      "title": "Helio Cells raises Series C",
+      "text": "Helio Cells announced a $210 million Series C round on 2026-10-10.",
+      "published": "2026-10-10"
+    },
+    "https://review.example.com/helio-density": {
+      "title": "Independent test of Helio cells",
+      "text": "An independent lab measured 412 Wh/kg on Helio sample cells, results published 2026-10-13.",
+      "published": "2026-10-13"
+    },
+    "https://dev.example.com/larkspur-1-9": {
+      "title": "Larkspur 1.9 adds component model support",
+      "text": "Larkspur version 1.9 shipped on 2026-10-07 with full component model support.",
+      "published": "2026-10-07"
+    },
+    "https://blog.example.com/larkspur-edge": {
+      "title": "Larkspur on the edge",
+      "text": "Three CDN providers announced Larkspur-based edge functions on 2026-10-12.",
+      "published": "2026-10-12"
+    },
+    "https://city.example.com/pinecrest-cargo": {
+      "title": "Pinecrest expands cargo bike subsidies",
+      "text": "Pinecrest city council raised the cargo bike subsidy to $900 per household on 2026-10-09.",
+      "published": "2026-10-09"
+    },
+    "https://news.example.com/pinecrest-deliveries": {
+      "title": "Deliveries by cargo bike up in Pinecrest",
+      "text": "Courier firms reported 18% of downtown deliveries by cargo bike in September, published 2026-10-13.",
+      "published": "2026-10-13"
+    },
+    "https://forum.example.com/pinecrest-lanes": {
+      "title": "New protected lanes in Pinecrest",
+      "text": "Pinecrest opened 6 km of protected lanes on 2026-10-11.",
+      "published": "2026-10-11"
+    },
+    "https://energy.example.com/tidewater-turbines": {
+      "title": "Tidewater installs first turbines",
+      "text": "The Tidewater project installed its first 12 turbines by 2026-10-08.",
+      "published": "2026-10-08"
+    },
+    "https://news.example.com/tidewater-grid": {
+      "title": "Tidewater grid connection approved",
+      "text": "Regulators approved the Tidewater grid connection on 2026-10-12; first power is expected in March 2027.",
+      "published": "2026-10-12"
+    },
+    "https://space.example.com/orbit7-launch": {
+      "title": "Orbit-7 launches batch 5",
+      "text": "Orbit-7 launched its fifth batch of 24 satellites on 2026-10-10, bringing the total to 118.",
+      "published": "2026-10-10"
+    },
+    "https://news.example.com/orbit7-service": {
+      "title": "Orbit-7 begins beta service",
+      "text": "Orbit-7 started a beta broadband service in two regions on 2026-10-13 at $49 per month.",
+      "published": "2026-10-13"
+    },
+    "https://review.example.com/orbit7-speeds": {
+      "title": "Orbit-7 speed tests",
+      "text": "Early testers measured median downloads of 140 Mbps, published 2026-10-14.",
+      "published": "2026-10-14"
+    },
+    "https://city.example.com/fernwood-portal": {
+      "title": "Fernwood relaunches its open data portal",
+      "text": "Fernwood relaunched its open data portal on 2026-10-09 with 340 datasets.",
+      "published": "2026-10-09"
+    },
+    "https://blog.example.com/fernwood-api": {
+      "title": "Fernwood portal gets an API",
+      "text": "The Fernwood portal API reached version 2.0 on 2026-10-12.",
+      "published": "2026-10-12"
+    },
+    "https://dev.example.com/kestrel-0-14": {
+      "title": "Kestrel 0.14 released",
+      "text": "Kestrel 0.14 was released on 2026-10-08 with a new borrow checker.",
+      "published": "2026-10-08"
+    },
+    "https://forum.example.com/kestrel-survey": {
+      "title": "Kestrel community survey results",
+      "text": "The 2026 Kestrel survey, published 2026-10-11, counted 9,400 respondents.",
+      "published": "2026-10-11"
+    },
+    "https://blog.example.com/kestrel-foundation": {
+      "title": "Kestrel Foundation formed",
+      "text": "The Kestrel Foundation was formed on 2026-10-13 with 11 founding members.",
+      "published": "2026-10-13"
+    },
+    "https://news.example.com/brightwater-capacity": {
+      "title": "Brightwater plant reaches full capacity",
+      "text": "The Brightwater desalination plant reached 150 million litres per day on 2026-10-12.",
+      "published": "2026-10-12"
+    },
+    "https://pkgs.example.com/httpkit/changelog": {
+      "title": "httpkit changelog",
+      "text": "# httpkit changelog\n\n## 2.5.1 (2026-10-10)\n- Maintenance release 2.5.1 of httpkit.\n\n## 2.5.0 (2026-09-22)\n- Maintenance release 2.5.0 of httpkit.\n\n## 2.4.3 (2026-08-30)\n- Maintenance release 2.4.3 of httpkit.",
+      "published": "2026-10-10"
+    },
+    "https://pkgs.example.com/tinyorm/changelog": {
+      "title": "tinyorm changelog",
+      "text": "# tinyorm changelog\n\n## 1.9.0 (2026-10-08)\n- Maintenance release 1.9.0 of tinyorm.\n\n## 1.8.2 (2026-09-15)\n- Maintenance release 1.8.2 of tinyorm.",
+      "published": "2026-10-08"
+    },
+    "https://pkgs.example.com/fastjsonx/changelog": {
+      "title": "fastjsonx changelog",
+      "text": "# fastjsonx changelog\n\n## 4.0.0 (2026-10-06)\n- Maintenance release 4.0.0 of fastjsonx.\n\n## 3.11.2 (2026-09-01)\n- Maintenance release 3.11.2 of fastjsonx.",
+      "published": "2026-10-06"
+    },
+    "https://pkgs.example.com/logmint/changelog": {
+      "title": "logmint changelog",
+      "text": "# logmint changelog\n\n## 0.12.4 (2026-10-12)\n- Maintenance release 0.12.4 of logmint.\n\n## 0.12.3 (2026-09-28)\n- Maintenance release 0.12.3 of logmint.",
+      "published": "2026-10-12"
+    },
+    "https://pkgs.example.com/retrykit/changelog": {
+      "title": "retrykit changelog",
+      "text": "# retrykit changelog\n\n## 3.2.0 (2026-10-01)\n- Maintenance release 3.2.0 of retrykit.\n\n## 3.1.5 (2026-09-10)\n- Maintenance release 3.1.5 of retrykit.",
+      "published": "2026-10-01"
+    },
+    "https://pkgs.example.com/datewise/changelog": {
+      "title": "datewise changelog",
+      "text": "# datewise changelog\n\n## 2.0.1 (2026-10-09)\n- Maintenance release 2.0.1 of datewise.\n\n## 1.18.0 (2026-08-20)\n- Maintenance release 1.18.0 of datewise.",
+      "published": "2026-10-09"
+    },
+    "https://pkgs.example.com/cachebox/changelog": {
+      "title": "cachebox changelog",
+      "text": "# cachebox changelog\n\n## 5.4.2 (2026-10-11)\n- Maintenance release 5.4.2 of cachebox.\n\n## 5.4.1 (2026-09-30)\n- Maintenance release 5.4.1 of cachebox.",
+      "published": "2026-10-11"
+    },
+    "https://pkgs.example.com/yamlette/changelog": {
+      "title": "yamlette changelog",
+      "text": "# yamlette changelog\n\n## 1.3.0 (2026-10-05)\n- Maintenance release 1.3.0 of yamlette.\n\n## 1.2.9 (2026-09-12)\n- Maintenance release 1.2.9 of yamlette.",
+      "published": "2026-10-05"
+    },
+    "https://pkgs.example.com/clickpath/changelog": {
+      "title": "clickpath changelog",
+      "text": "# clickpath changelog\n\n## 8.2.1 (2026-10-13)\n- Maintenance release 8.2.1 of clickpath.\n\n## 8.2.0 (2026-10-02)\n- Maintenance release 8.2.0 of clickpath.",
+      "published": "2026-10-13"
+    },
+    "https://pkgs.example.com/pixelpress/changelog": {
+      "title": "pixelpress changelog",
+      "text": "# pixelpress changelog\n\n## 6.1.0 (2026-10-07)\n- Maintenance release 6.1.0 of pixelpress.\n\n## 6.0.4 (2026-09-19)\n- Maintenance release 6.0.4 of pixelpress.",
+      "published": "2026-10-07"
+    }
+  },
+  "search": {
+    "QuillDB vector database news": [
+      {
+        "title": "QuillDB 4.2 ships hybrid search",
+        "url": "https://news.example.com/quilldb-4-2",
+        "snippet": "QuillDB 4.2 was released on 2026-10-09 with hybrid keyword and vector search. The project reports 1,200 contributors."
+      },
+      {
+        "title": "QuillDB publishes new benchmarks",
+        "url": "https://blog.example.com/quilldb-benchmarks",
+        "snippet": "On 2026-10-11 the QuillDB team published benchmarks showing 38% lower query latency than version 4.1."
+      },
+      {
+        "title": "QuillDB Cloud pricing update",
+        "url": "https://forum.example.com/quilldb-cloud",
+        "snippet": "QuillDB Cloud lowered its starter plan to $19 per month on 2026-10-12."
+      }
+    ],
+    "Helio solid-state batteries news": [
+      {
+        "title": "Helio Cells opens pilot line",
+        "url": "https://energy.example.com/helio-pilot",
+        "snippet": "Helio Cells opened its pilot line in Tampere on 2026-10-08 with a capacity of 40 MWh per year."
+      },
+      {
+        "title": "Helio Cells raises Series C",
+        "url": "https://news.example.com/helio-funding",
+        "snippet": "Helio Cells announced a $210 million Series C round on 2026-10-10."
+      },
+      {
+        "title": "Independent test of Helio cells",
+        "url": "https://review.example.com/helio-density",
+        "snippet": "An independent lab measured 412 Wh/kg on Helio sample cells, results published 2026-10-13."
+      }
+    ],
+    "Larkspur WebAssembly runtime news": [
+      {
+        "title": "Larkspur 1.9 adds component model support",
+        "url": "https://dev.example.com/larkspur-1-9",
+        "snippet": "Larkspur version 1.9 shipped on 2026-10-07 with full component model support."
+      },
+      {
+        "title": "Larkspur on the edge",
+        "url": "https://blog.example.com/larkspur-edge",
+        "snippet": "Three CDN providers announced Larkspur-based edge functions on 2026-10-12."
+      }
+    ],
+    "Pinecrest cargo bike program news": [
+      {
+        "title": "Pinecrest expands cargo bike subsidies",
+        "url": "https://city.example.com/pinecrest-cargo",
+        "snippet": "Pinecrest city council raised the cargo bike subsidy to $900 per household on 2026-10-09."
+      },
+      {
+        "title": "Deliveries by cargo bike up in Pinecrest",
+        "url": "https://news.example.com/pinecrest-deliveries",
+        "snippet": "Courier firms reported 18% of downtown deliveries by cargo bike in September, published 2026-10-13."
+      },
+      {
+        "title": "New protected lanes in Pinecrest",
+        "url": "https://forum.example.com/pinecrest-lanes",
+        "snippet": "Pinecrest opened 6 km of protected lanes on 2026-10-11."
+      }
+    ],
+    "Tidewater offshore wind project news": [
+      {
+        "title": "Tidewater installs first turbines",
+        "url": "https://energy.example.com/tidewater-turbines",
+        "snippet": "The Tidewater project installed its first 12 turbines by 2026-10-08."
+      },
+      {
+        "title": "Tidewater grid connection approved",
+        "url": "https://news.example.com/tidewater-grid",
+        "snippet": "Regulators approved the Tidewater grid connection on 2026-10-12; first power is expected in March 2027."
+      }
+    ],
+    "Orbit-7 satellite constellation news": [
+      {
+        "title": "Orbit-7 launches batch 5",
+        "url": "https://space.example.com/orbit7-launch",
+        "snippet": "Orbit-7 launched its fifth batch of 24 satellites on 2026-10-10, bringing the total to 118."
+      },
+      {
+        "title": "Orbit-7 begins beta service",
+        "url": "https://news.example.com/orbit7-service",
+        "snippet": "Orbit-7 started a beta broadband service in two regions on 2026-10-13 at $49 per month."
+      },
+      {
+        "title": "Orbit-7 speed tests",
+        "url": "https://review.example.com/orbit7-speeds",
+        "snippet": "Early testers measured median downloads of 140 Mbps, published 2026-10-14."
+      }
+    ],
+    "Fernwood open data portal news": [
+      {
+        "title": "Fernwood relaunches its open data portal",
+        "url": "https://city.example.com/fernwood-portal",
+        "snippet": "Fernwood relaunched its open data portal on 2026-10-09 with 340 datasets."
+      },
+      {
+        "title": "Fernwood portal gets an API",
+        "url": "https://blog.example.com/fernwood-api",
+        "snippet": "The Fernwood portal API reached version 2.0 on 2026-10-12."
+      }
+    ],
+    "Kestrel programming language news": [
+      {
+        "title": "Kestrel 0.14 released",
+        "url": "https://dev.example.com/kestrel-0-14",
+        "snippet": "Kestrel 0.14 was released on 2026-10-08 with a new borrow checker."
+      },
+      {
+        "title": "Kestrel community survey results",
+        "url": "https://forum.example.com/kestrel-survey",
+        "snippet": "The 2026 Kestrel survey, published 2026-10-11, counted 9,400 respondents."
+      },
+      {
+        "title": "Kestrel Foundation formed",
+        "url": "https://blog.example.com/kestrel-foundation",
+        "snippet": "The Kestrel Foundation was formed on 2026-10-13 with 11 founding members."
+      }
+    ],
+    "Brightwater desalination plant news": [
+      {
+        "title": "Brightwater plant reaches full capacity",
+        "url": "https://news.example.com/brightwater-capacity",
+        "snippet": "The Brightwater desalination plant reached 150 million litres per day on 2026-10-12."
+      }
+    ],
+    "Glimmerstone quantum sensors news": []
+  }
+}

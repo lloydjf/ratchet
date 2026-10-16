@@ -1,0 +1,218 @@
+{
+  "run_id": "run_b947e4e55191",
+  "kind": "golden",
+  "task_input": "Go through the open issues in acme/mobile-app and triage them.",
+  "steps": [
+    {
+      "kind": "llm",
+      "step_id": "m001",
+      "tier": "super",
+      "model": "nvidia/nemotron-3-super-120b-a12b",
+      "request_hash": "e696bbfe45fd06636f83555b3fabc705745bea0bbbfc41bc1fbe102b4b970d78",
+      "messages_ref": "steps/m001.req.json",
+      "response_ref": "steps/m001.res.json",
+      "prompt_tokens": 4050,
+      "completion_tokens": 68,
+      "usd": 0.0012762000000000001,
+      "latency_ms": 727,
+      "started_at": "2026-10-16T06:22:47.850611Z",
+      "purpose": "agent",
+      "api": "chat",
+      "usage_estimated": false,
+      "tool_calls_requested": [
+        "github.list_issues"
+      ],
+      "content_preview": "I'll help you triage the open issues in the acme/mobile-app repository. Let me start by listing the open issues."
+    },
+    {
+      "kind": "tool",
+      "step_id": "t001",
+      "tool": "github.list_issues",
+      "args_norm": {
+        "repo": "acme/mobile-app",
+        "state": "open"
+      },
+      "args_hash": "60bd59213ee3a322acdef1ecf50d757c63152dfa5638cc3bd3b512012ae00402",
+      "result_hash": "8c94c42d1403e79b6a4fc4572a946268c74cd51d9ed96ede2830a02ac53e1d7f",
+      "side_effect": "read",
+      "source": "live",
+      "cassette_key": "60bd59213ee3a322acdef1ecf50d757c63152dfa5638cc3bd3b512012ae00402",
+      "result_preview": "{\"issues\":[{\"assignees\":[],\"author\":\"arjun\",\"body\":\"Tapping the scan button crashes the app on a Pixel 5 with Android 12.\",\"closed_at\":null,\"comments\":2,\"created_at\":\"2026-08-25T09:12:00Z\",\"labels\":[],\"number\":58,\"state\":\"open\",\"state_reason\":null,\"title\":\"App crashes on Android 12 when opening the camera\",\"updated_at\":\"2026-08-28T09:12:00Z\"},{\"assignees\":[],\"author\":\"mia\",\"body\":\"Face ID and Tou…",
+      "blocked": false,
+      "started_at": "2026-10-16T06:22:48.595247Z"
+    },
+    {
+      "kind": "llm",
+      "step_id": "m002",
+      "tier": "super",
+      "model": "nvidia/nemotron-3-super-120b-a12b",
+      "request_hash": "c6a77318a9b36b59427b9b5a45153bbf5520961647dc59b834e2bd09f9037ee3",
+      "messages_ref": "steps/m002.req.json",
+      "response_ref": "steps/m002.res.json",
+      "prompt_tokens": 4694,
+      "completion_tokens": 253,
+      "usd": 0.0016359,
+      "latency_ms": 1474,
+      "started_at": "2026-10-16T06:22:48.599528Z",
+      "purpose": "agent",
+      "api": "chat",
+      "usage_estimated": false,
+      "tool_calls_requested": [
+        "github.label",
+        "github.label",
+        "github.label"
+      ],
+      "content_preview": "Now I'll process each issue according to the triage rules:\n\nIssue #58: Already has no relevant labels. Title contains \"crashes\" → label as **bug**\nIssue #61: No relevant labels. Title mentions \"Support\" → label as **enhancement**  \nIssue #62: Already has \"bug\" label → skip\nIssue #64: No relevant labels. Body contains \"possible\" → label as **question**\n\nLet me apply the labels:"
+    },
+    {
+      "kind": "tool",
+      "step_id": "t002",
+      "tool": "github.label",
+      "args_norm": {
+        "issue": 58,
+        "labels": [
+          "bug"
+        ],
+        "repo": "acme/mobile-app"
+      },
+      "args_hash": "2bd03227a15019cdb901b9cd9cc2d706af520f6eac9be267f7a867d071baeade",
+      "result_hash": "1418931ff2a76ef7851701fb3fea09d74cb38c3321386ac20e7b0e24d5d79f89",
+      "side_effect": "write_reversible",
+      "source": "live",
+      "cassette_key": "2bd03227a15019cdb901b9cd9cc2d706af520f6eac9be267f7a867d071baeade",
+      "result_preview": "{\"issue\":58,\"labels\":[\"bug\"],\"repo\":\"acme/mobile-app\"}",
+      "blocked": false,
+      "started_at": "2026-10-16T06:22:50.084448Z"
+    },
+    {
+      "kind": "tool",
+      "step_id": "t003",
+      "tool": "github.label",
+      "args_norm": {
+        "issue": 61,
+        "labels": [
+          "enhancement"
+        ],
+        "repo": "acme/mobile-app"
+      },
+      "args_hash": "a5621917187b8cbe66a1d0d1f123fde46ddc17c9ce8f5028505d8c4527c4f979",
+      "result_hash": "68e68bc2895341fa0dc83787bfbb960cd3bd218f1ff9435efd2892387645a863",
+      "side_effect": "write_reversible",
+      "source": "live",
+      "cassette_key": "a5621917187b8cbe66a1d0d1f123fde46ddc17c9ce8f5028505d8c4527c4f979",
+      "result_preview": "{\"issue\":61,\"labels\":[\"enhancement\"],\"repo\":\"acme/mobile-app\"}",
+      "blocked": false,
+      "started_at": "2026-10-16T06:22:50.087714Z"
+    },
+    {
+      "kind": "tool",
+      "step_id": "t004",
+      "tool": "github.label",
+      "args_norm": {
+        "issue": 64,
+        "labels": [
+          "question"
+        ],
+        "repo": "acme/mobile-app"
+      },
+      "args_hash": "245b98e8c43161f37979b24f8acc76ac3bd6ebde327ffdf9ce1cee478af5efca",
+      "result_hash": "a4693f5f80430290fc1a56894cfbaaa969401146350c12fa143392e5b449b040",
+      "side_effect": "write_reversible",
+      "source": "live",
+      "cassette_key": "245b98e8c43161f37979b24f8acc76ac3bd6ebde327ffdf9ce1cee478af5efca",
+      "result_preview": "{\"issue\":64,\"labels\":[\"question\"],\"repo\":\"acme/mobile-app\"}",
+      "blocked": false,
+      "started_at": "2026-10-16T06:22:50.090998Z"
+    },
+    {
+      "kind": "llm",
+      "step_id": "m003",
+      "tier": "super",
+      "model": "nvidia/nemotron-3-super-120b-a12b",
+      "request_hash": "ca587880cf7bdee70c52450e43112f9e184dc736d2dcb18bc2eac3c0e2be7b7c",
+      "messages_ref": "steps/m003.req.json",
+      "response_ref": "steps/m003.res.json",
+      "prompt_tokens": 5042,
+      "completion_tokens": 90,
+      "usd": 0.0015936,
+      "latency_ms": 1098,
+      "started_at": "2026-10-16T06:22:50.093773Z",
+      "purpose": "agent",
+      "api": "chat",
+      "usage_estimated": false,
+      "tool_calls_requested": [
+        "github.comment"
+      ],
+      "content_preview": "Now I need to add a comment to the question-labeled issue (#64):"
+    },
+    {
+      "kind": "tool",
+      "step_id": "t005",
+      "tool": "github.comment",
+      "args_norm": {
+        "body": "Thanks for the question. Could you share the version you are using and the steps you tried? A maintainer will follow up.",
+        "issue": 64,
+        "repo": "acme/mobile-app"
+      },
+      "args_hash": "f3bc750d2a8343204e83e180cfbb65362464a19843ebadf78e1f76587ad4ab51",
+      "result_hash": "ba519f0119daa10c16316a346a5ef41ed6fb2adb43cada1e4e6e07bb3c91c9a2",
+      "side_effect": "write_irreversible",
+      "source": "live",
+      "cassette_key": "f3bc750d2a8343204e83e180cfbb65362464a19843ebadf78e1f76587ad4ab51",
+      "result_preview": "{\"comment_id\":1582,\"issue\":64,\"repo\":\"acme/mobile-app\"}",
+      "blocked": false,
+      "started_at": "2026-10-16T06:22:51.202716Z"
+    },
+    {
+      "kind": "llm",
+      "step_id": "m004",
+      "tier": "super",
+      "model": "nvidia/nemotron-3-super-120b-a12b",
+      "request_hash": "bc086c3475ab8d81be28678abed81aaf3df4082d4c4803d7bd907dabc10b5bc0",
+      "messages_ref": "steps/m004.req.json",
+      "response_ref": "steps/m004.res.json",
+      "prompt_tokens": 5175,
+      "completion_tokens": 54,
+      "usd": 0.0016010999999999998,
+      "latency_ms": 736,
+      "started_at": "2026-10-16T06:22:51.206031Z",
+      "purpose": "agent",
+      "api": "chat",
+      "usage_estimated": false,
+      "tool_calls_requested": [],
+      "content_preview": "Here's the triage summary:\n\nTriaged acme/mobile-app: 4 open issues.\n#58: bug\n#61: enhancement\n#64: question\nAlready labeled: #62\nAsked for details: #64"
+    }
+  ],
+  "final_output": "Here's the triage summary:\n\nTriaged acme/mobile-app: 4 open issues.\n#58: bug\n#61: enhancement\n#64: question\nAlready labeled: #62\nAsked for details: #64",
+  "artifacts_ref": null,
+  "skills_invoked": [
+    "github-triage"
+  ],
+  "world_dependent": false,
+  "world_facts": [],
+  "env": {
+    "workspace_ref": "workspace.tar.zst",
+    "frozen_time": "2026-10-14T16:00:00Z",
+    "harness_version": "minimal/0.1.0",
+    "skills_commit": "dda8ffcb2837fa255c23f29889f82e6f4976ba33",
+    "world_ref": null
+  },
+  "agent_tier": "super",
+  "seed": 1046591418,
+  "created_at": "2026-10-16T06:22:51.978194Z",
+  "golden_of": null,
+  "candidate_commit": null,
+  "success_criteria": [
+    "states the number of open issues in acme/mobile-app is 4",
+    "lists issue #58 as bug",
+    "lists issue #61 as enhancement",
+    "lists issue #64 as question",
+    "mentions issue #62 is already labeled",
+    "mentions issue #64 was asked for details"
+  ],
+  "archived_reason": null,
+  "blessed_at": "2026-10-16T06:22:53.514833Z",
+  "harness_ok": true,
+  "error_code": null,
+  "task_label": "Triage acme/mobile-app"
+}

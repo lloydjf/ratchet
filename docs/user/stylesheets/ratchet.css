@@ -1,0 +1,331 @@
+/*
+ * Ratchet docs theme: the dashboard's design tokens mapped onto Material for MkDocs.
+ * Dark (slate) is the default scheme; light follows the dashboard's light tokens.
+ * Chips always pair a color with a word or glyph (ADR 0015).
+ */
+
+/* ---------------------------------------------------------------- dark (default) */
+[data-md-color-scheme="slate"] {
+  --r-bg: #0e1116;
+  --r-surface: #161b22;
+  --r-surface-2: #1f2630;
+  --r-border: #2d3540;
+  --r-text: #e6edf3;
+  --r-muted: #9da7b3;
+  --r-pass: #3fb950;
+  --r-warn: #d29922;
+  --r-block: #f85149;
+  --r-block-ink: #ff7b72;
+  --r-drift: #58a6ff;
+  --r-nano: #7ee787;
+  --r-super: #d2a8ff;
+  --r-ultra: #ffa657;
+  --r-accent: #79c0ff;
+
+  --md-hue: 215;
+  --md-default-bg-color: var(--r-bg);
+  --md-default-bg-color--light: rgba(14, 17, 22, 0.7);
+  --md-default-fg-color: var(--r-text);
+  --md-default-fg-color--light: var(--r-muted);
+  --md-default-fg-color--lighter: #6e7681;
+  --md-default-fg-color--lightest: var(--r-border);
+  --md-primary-fg-color: var(--r-bg);
+  --md-primary-fg-color--light: var(--r-surface);
+  --md-primary-fg-color--dark: var(--r-bg);
+  --md-primary-bg-color: var(--r-text);
+  --md-primary-bg-color--light: var(--r-muted);
+  --md-accent-fg-color: var(--r-accent);
+  --md-accent-fg-color--transparent: rgba(121, 192, 255, 0.12);
+  --md-typeset-color: var(--r-text);
+  --md-typeset-a-color: var(--r-accent);
+  --md-code-bg-color: var(--r-surface);
+  --md-code-fg-color: #d5dde6;
+  --md-footer-bg-color: var(--r-bg);
+  --md-footer-bg-color--dark: var(--r-bg);
+  --md-footer-fg-color: var(--r-text);
+  --md-footer-fg-color--light: var(--r-muted);
+  --md-typeset-table-color: var(--r-border);
+  --md-typeset-kbd-color: var(--r-surface-2);
+  --md-admonition-bg-color: var(--r-surface);
+}
+
+/* ---------------------------------------------------------------- light */
+[data-md-color-scheme="default"] {
+  --r-bg: #ffffff;
+  --r-surface: #f6f8fa;
+  --r-surface-2: #eaeef2;
+  --r-border: #d0d7de;
+  --r-text: #1f2328;
+  --r-muted: #59636e;
+  --r-pass: #1a7f37;
+  --r-warn: #9a6700;
+  --r-block: #cf222e;
+  --r-block-ink: #cf222e;
+  --r-drift: #0969da;
+  --r-nano: #2da44e;
+  --r-super: #8250df;
+  --r-ultra: #bc4c00;
+  --r-accent: #0969da;
+
+  --md-default-fg-color: var(--r-text);
+  --md-default-fg-color--light: var(--r-muted);
+  --md-primary-fg-color: var(--r-bg);
+  --md-primary-fg-color--light: var(--r-surface);
+  --md-primary-fg-color--dark: var(--r-bg);
+  --md-primary-bg-color: var(--r-text);
+  --md-primary-bg-color--light: var(--r-muted);
+  --md-accent-fg-color: var(--r-accent);
+  --md-accent-fg-color--transparent: rgba(9, 105, 218, 0.1);
+  --md-typeset-a-color: var(--r-accent);
+  --md-code-bg-color: var(--r-surface);
+  --md-footer-bg-color: var(--r-surface);
+  --md-footer-bg-color--dark: var(--r-surface);
+  --md-footer-fg-color: var(--r-text);
+  --md-footer-fg-color--light: var(--r-muted);
+  --md-typeset-table-color: var(--r-border);
+}
+
+/* ---------------------------------------------------------------- chrome */
+.md-header,
+.md-tabs {
+  background-color: var(--r-bg);
+  color: var(--r-text);
+}
+.md-header {
+  box-shadow: none;
+  border-bottom: 1px solid var(--r-border);
+}
+.md-header--shadow {
+  box-shadow: none;
+}
+.md-tabs {
+  border-bottom: 1px solid var(--r-border);
+}
+.md-tabs__link {
+  opacity: 1;
+  color: var(--r-muted);
+  font-weight: 500;
+}
+.md-tabs__item--active .md-tabs__link,
+.md-tabs__link:hover {
+  color: var(--r-text);
+}
+.md-tabs__item--active .md-tabs__link {
+  text-decoration: underline 2px var(--r-accent);
+  text-underline-offset: 0.6rem;
+}
+.md-search__form {
+  background-color: var(--r-surface);
+  border: 1px solid var(--r-border);
+  border-radius: 6px;
+}
+.md-header__button.md-logo img {
+  height: 1.4rem;
+}
+.md-footer {
+  border-top: 1px solid var(--r-border);
+}
+.md-footer-meta {
+  background-color: var(--r-bg);
+}
+[data-md-color-scheme="default"] .md-footer-meta {
+  background-color: var(--r-surface);
+}
+
+/* ---------------------------------------------------------------- typography */
+.md-typeset {
+  font-size: 0.8rem;
+  line-height: 1.65;
+}
+.md-typeset h1 {
+  font-weight: 650;
+  color: var(--r-text);
+  letter-spacing: -0.015em;
+}
+.md-typeset h2 {
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  border-top: 1px solid var(--r-border);
+  padding-top: 1.2rem;
+}
+.md-typeset h1 + h2,
+.md-typeset .lead + h2 {
+  border-top: none;
+}
+.md-typeset h3 {
+  font-weight: 600;
+}
+.md-typeset code {
+  border-radius: 4px;
+  font-size: 0.82em;
+}
+.md-typeset pre > code {
+  border: 1px solid var(--r-border);
+  border-radius: 8px;
+}
+.md-typeset .lead {
+  font-size: 1.05rem;
+  line-height: 1.6;
+  color: var(--r-muted);
+  max-width: 44rem;
+}
+
+/* tables: hairlines, no shadow */
+.md-typeset table:not([class]) {
+  border: 1px solid var(--r-border);
+  border-radius: 8px;
+  box-shadow: none;
+  font-size: 0.72rem;
+  display: table;
+  width: 100%;
+}
+.md-typeset table:not([class]) th {
+  background-color: var(--r-surface);
+  color: var(--r-text);
+  font-weight: 600;
+}
+.md-typeset table:not([class]) td,
+.md-typeset table:not([class]) th {
+  border-top: 1px solid var(--r-border);
+}
+.md-typeset table:not([class]) th,
+.md-typeset table:not([class]) td {
+  padding: 0.6em 0.85em;
+}
+.md-typeset table:not([class]) code {
+  word-break: normal;
+  overflow-wrap: anywhere;
+}
+.md-typeset table:not([class]) td:first-child code {
+  white-space: nowrap;
+  overflow-wrap: normal;
+}
+.md-typeset__table {
+  width: 100%;
+  padding: 0;
+}
+.md-typeset__scrollwrap {
+  margin: 1em 0;
+}
+
+/* admonitions: surface cards with a colored rule */
+.md-typeset .admonition,
+.md-typeset details {
+  border: 1px solid var(--r-border);
+  border-left-width: 3px;
+  border-radius: 8px;
+  box-shadow: none;
+  background-color: var(--r-surface);
+  font-size: 0.74rem;
+}
+.md-typeset .admonition.info,
+.md-typeset details.info {
+  border-left-color: var(--r-accent);
+}
+.md-typeset .admonition.warning,
+.md-typeset details.warning {
+  border-left-color: var(--r-warn);
+}
+.md-typeset .admonition.danger {
+  border-left-color: var(--r-block);
+}
+.md-typeset .admonition.tip,
+.md-typeset .admonition.success {
+  border-left-color: var(--r-pass);
+}
+.md-typeset .admonition.note {
+  border-left-color: var(--r-drift);
+}
+
+/* images (screenshots) */
+.md-typeset img.shot,
+.md-typeset figure img {
+  border: 1px solid var(--r-border);
+  border-radius: 10px;
+}
+.md-typeset figure {
+  margin: 1.2em 0;
+}
+.md-typeset figcaption {
+  max-width: none;
+  color: var(--r-muted);
+  font-style: normal;
+  font-size: 0.72rem;
+}
+
+/* ---------------------------------------------------------------- chips and badges */
+.md-typeset .chip,
+.md-typeset .tier,
+.md-typeset .badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25em;
+  border: 1px solid currentColor;
+  border-radius: 6px;
+  padding: 0 0.45em;
+  font-family: var(--md-code-font-family);
+  font-size: 0.72em;
+  font-weight: 600;
+  line-height: 1.7;
+  white-space: nowrap;
+  vertical-align: 0.08em;
+}
+.md-typeset .chip.pass { color: var(--r-pass); background: color-mix(in srgb, var(--r-pass) 15%, var(--r-surface)); }
+.md-typeset .chip.warn { color: var(--r-warn); background: color-mix(in srgb, var(--r-warn) 15%, var(--r-surface)); }
+.md-typeset .chip.block { color: var(--r-block-ink); background: color-mix(in srgb, var(--r-block) 15%, var(--r-surface)); }
+.md-typeset .chip.drift { color: var(--r-drift); background: color-mix(in srgb, var(--r-drift) 15%, var(--r-surface)); }
+.md-typeset .chip.neutral,
+.md-typeset .badge { color: var(--r-muted); background: var(--r-surface-2); }
+.md-typeset .tier { min-width: 1.6em; justify-content: center; }
+.md-typeset .tier.nano { color: var(--r-nano); background: color-mix(in srgb, var(--r-nano) 15%, var(--r-surface)); }
+.md-typeset .tier.super { color: var(--r-super); background: color-mix(in srgb, var(--r-super) 15%, var(--r-surface)); }
+.md-typeset .tier.ultra { color: var(--r-ultra); background: color-mix(in srgb, var(--r-ultra) 15%, var(--r-surface)); }
+.md-typeset .tier.skipped { color: var(--r-muted); background: transparent; border-style: dashed; }
+.md-typeset .badge.block { color: var(--r-block-ink); background: color-mix(in srgb, var(--r-block) 15%, var(--r-surface)); }
+.md-typeset .badge.warn { color: var(--r-warn); background: color-mix(in srgb, var(--r-warn) 15%, var(--r-surface)); }
+
+/* the loop on the home page */
+.md-typeset ol.loop {
+  list-style: none;
+  margin-left: 0;
+  padding-left: 0;
+  counter-reset: loop;
+}
+.md-typeset ol.loop > li {
+  counter-increment: loop;
+  position: relative;
+  margin: 0 0 0.7em;
+  padding: 0.65em 0.9em 0.65em 3em;
+  border: 1px solid var(--r-border);
+  border-radius: 10px;
+  background: var(--r-surface);
+}
+.md-typeset ol.loop > li::before {
+  content: counter(loop);
+  position: absolute;
+  left: 0.9em;
+  top: 0.62em;
+  width: 1.5em;
+  height: 1.5em;
+  border-radius: 6px;
+  display: grid;
+  place-items: center;
+  font-family: var(--md-code-font-family);
+  font-size: 0.8em;
+  color: var(--r-accent);
+  border: 1px solid var(--r-border);
+  background: var(--r-surface-2);
+}
+
+/* home-page cards */
+.md-typeset .grid.cards > ul > li,
+.md-typeset .grid > .card {
+  border: 1px solid var(--r-border);
+  border-radius: 10px;
+  background: var(--r-surface);
+  box-shadow: none;
+}
+.md-typeset .grid.cards > ul > li:hover {
+  border-color: var(--r-accent);
+  box-shadow: none;
+}

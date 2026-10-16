@@ -1,0 +1,2 @@
+tinyorm==1.9.0
+logmint==0.12.4

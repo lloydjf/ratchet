@@ -1,0 +1,10 @@
+# E4: single-tier judging. The only judge's `regressed` may BLOCK (decide.py
+# single_judge_blocks). Re-judges the cascade run's replays (run cascade.yaml first).
+name: super_only
+description: Super only — every pair judged by super alone (Level 0 and drift as in the cascade).
+experiments: [E4]
+mode: edits
+cascade: {mode: super_only, level0: true, drift: true}
+single_judge_blocks: true
+reuse_replays: cascade
+concurrency: 2

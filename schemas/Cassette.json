@@ -1,0 +1,60 @@
+{
+  "additionalProperties": false,
+  "description": "Storage layout: data/cassettes/<tool>/<args_hash>.json.",
+  "properties": {
+    "args_norm": {
+      "additionalProperties": true,
+      "title": "Args Norm",
+      "type": "object"
+    },
+    "args_raw_hash": {
+      "default": "",
+      "title": "Args Raw Hash",
+      "type": "string"
+    },
+    "later_responses": {
+      "items": {
+        "additionalProperties": true,
+        "type": "object"
+      },
+      "title": "Later Responses",
+      "type": "array"
+    },
+    "recorded_at": {
+      "format": "date-time",
+      "title": "Recorded At",
+      "type": "string"
+    },
+    "response": {
+      "additionalProperties": true,
+      "title": "Response",
+      "type": "object"
+    },
+    "side_effect": {
+      "enum": [
+        "none",
+        "read",
+        "write_reversible",
+        "write_irreversible",
+        "destructive",
+        "external_send",
+        "spend"
+      ],
+      "title": "Side Effect",
+      "type": "string"
+    },
+    "tool": {
+      "title": "Tool",
+      "type": "string"
+    }
+  },
+  "required": [
+    "tool",
+    "args_norm",
+    "response",
+    "recorded_at",
+    "side_effect"
+  ],
+  "title": "Cassette",
+  "type": "object"
+}

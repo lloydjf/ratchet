@@ -1,0 +1,974 @@
+{
+  "repos": {
+    "acme/widgets": {
+      "description": "Embeddable chart and form widgets for acme apps.",
+      "labels": [
+        "bug",
+        "enhancement",
+        "documentation",
+        "question"
+      ],
+      "issues": [
+        {
+          "number": 7,
+          "title": "Support exporting widgets as SVG",
+          "body": "It would be great to have SVG export next to PNG so designers can edit the charts in vector tools.",
+          "state": "open",
+          "state_reason": null,
+          "labels": [],
+          "author": "priya",
+          "assignees": [],
+          "created_at": "2026-07-28T09:12:00Z",
+          "updated_at": "2026-08-02T09:12:00Z",
+          "closed_at": null,
+          "comments": [
+            {
+              "comment_id": 1070,
+              "author": "priya",
+              "body": "Any update on this?",
+              "created_at": "2026-08-02T09:12:00Z"
+            },
+            {
+              "comment_id": 1071,
+              "author": "lee",
+              "body": "Seeing this too on our side.",
+              "created_at": "2026-08-02T09:12:00Z"
+            }
+          ]
+        },
+        {
+          "number": 9,
+          "title": "Widget list crashes when a name is empty",
+          "body": "Creating a widget with an empty name and opening the list view throws and the page goes blank.",
+          "state": "open",
+          "state_reason": null,
+          "labels": [
+            "bug"
+          ],
+          "author": "dana",
+          "assignees": [],
+          "created_at": "2026-10-01T09:12:00Z",
+          "updated_at": "2026-10-08T09:12:00Z",
+          "closed_at": null,
+          "comments": [
+            {
+              "comment_id": 1090,
+              "author": "dana",
+              "body": "Any update on this?",
+              "created_at": "2026-10-08T09:12:00Z"
+            }
+          ]
+        },
+        {
+          "number": 12,
+          "title": "Color picker throws an exception on Safari 17",
+          "body": "Opening the color picker logs `TypeError: undefined is not an object` and the picker never renders.",
+          "state": "open",
+          "state_reason": null,
+          "labels": [],
+          "author": "marco",
+          "assignees": [],
+          "created_at": "2026-10-10T09:12:00Z",
+          "updated_at": "2026-10-11T09:12:00Z",
+          "closed_at": null,
+          "comments": []
+        },
+        {
+          "number": 14,
+          "title": "Typo in the installation guide",
+          "body": "Step 3 of the installation guide says `npm instal` instead of `npm install`.",
+          "state": "open",
+          "state_reason": null,
+          "labels": [],
+          "author": "sam",
+          "assignees": [],
+          "created_at": "2026-10-02T09:12:00Z",
+          "updated_at": "2026-10-02T09:12:00Z",
+          "closed_at": null,
+          "comments": []
+        },
+        {
+          "number": 15,
+          "title": "How do I theme widgets per tenant?",
+          "body": "We host several tenants on one page and want each tenant to get its own palette. What is the recommended way?",
+          "state": "open",
+          "state_reason": null,
+          "labels": [],
+          "author": "noor",
+          "assignees": [],
+          "created_at": "2026-10-12T09:12:00Z",
+          "updated_at": "2026-10-12T09:12:00Z",
+          "closed_at": null,
+          "comments": []
+        },
+        {
+          "number": 16,
+          "title": "Legend overlaps the x-axis on small screens",
+          "body": "Fixed in 2.3.1.",
+          "state": "closed",
+          "state_reason": "completed",
+          "labels": [
+            "bug"
+          ],
+          "author": "dana",
+          "assignees": [],
+          "created_at": "2026-09-12T09:12:00Z",
+          "updated_at": "2026-09-30T09:12:00Z",
+          "closed_at": "2026-09-30T09:12:00Z",
+          "comments": []
+        }
+      ],
+      "pulls": [
+        {
+          "number": 17,
+          "title": "Fix empty-name crash in widget list",
+          "body": "Closes #9.",
+          "head": "fix/empty-name",
+          "base": "main",
+          "state": "open",
+          "author": "dana",
+          "created_at": "2026-10-09T09:12:00Z",
+          "merged_at": null
+        }
+      ]
+    },
+    "acme/billing-api": {
+      "description": "Invoicing, payments and subscription billing service.",
+      "labels": [
+        "bug",
+        "enhancement",
+        "documentation",
+        "question"
+      ],
+      "issues": [
+        {
+          "number": 31,
+          "title": "Invoices endpoint returns 500 for archived customers",
+          "body": "GET /v2/invoices?customer=<archived id> returns a 500 instead of an empty list.",
+          "state": "open",
+          "state_reason": null,
+          "labels": [],
+          "author": "kofi",
+          "assignees": [],
+          "created_at": "2026-08-18T09:12:00Z",
+          "updated_at": "2026-08-20T09:12:00Z",
+          "closed_at": null,
+          "comments": [
+            {
+              "comment_id": 1310,
+              "author": "kofi",
+              "body": "Any update on this?",
+              "created_at": "2026-08-20T09:12:00Z"
+            },
+            {
+              "comment_id": 1311,
+              "author": "lee",
+              "body": "Seeing this too on our side.",
+              "created_at": "2026-08-20T09:12:00Z"
+            },
+            {
+              "comment_id": 1312,
+              "author": "kofi",
+              "body": "Any update on this?",
+              "created_at": "2026-08-20T09:12:00Z"
+            }
+          ]
+        },
+        {
+          "number": 33,
+          "title": "Allow paying invoices in multiple installments",
+          "body": "Larger customers want to split an annual invoice into four quarterly payments.",
+          "state": "open",
+          "state_reason": null,
+          "labels": [],
+          "author": "ines",
+          "assignees": [],
+          "created_at": "2026-07-10T09:12:00Z",
+          "updated_at": "2026-07-15T09:12:00Z",
+          "closed_at": null,
+          "comments": [
+            {
+              "comment_id": 1330,
+              "author": "ines",
+              "body": "Any update on this?",
+              "created_at": "2026-07-15T09:12:00Z"
+            }
+          ]
+        },
+        {
+          "number": 35,
+          "title": "Webhook signature docs are out of date",
+          "body": "The webhook docs still describe the v1 HMAC header; v2 uses `Acme-Signature` with a timestamp.",
+          "state": "open",
+          "state_reason": null,
+          "labels": [],
+          "author": "kofi",
+          "assignees": [],
+          "created_at": "2026-09-29T09:12:00Z",
+          "updated_at": "2026-10-01T09:12:00Z",
+          "closed_at": null,
+          "comments": []
+        },
+        {
+          "number": 36,
+          "title": "Rate limit headers missing on 429 responses",
+          "body": "Our retry logic fails because 429 responses carry no `Retry-After` header.",
+          "state": "open",
+          "state_reason": null,
+          "labels": [],
+          "author": "jo",
+          "assignees": [],
+          "created_at": "2026-10-09T09:12:00Z",
+          "updated_at": "2026-10-09T09:12:00Z",
+          "closed_at": null,
+          "comments": []
+        },
+        {
+          "number": 37,
+          "title": "Add idempotency keys to refunds",
+          "body": "Refund requests should accept an `Idempotency-Key` header like charges do.",
+          "state": "open",
+          "state_reason": null,
+          "labels": [
+            "enhancement"
+          ],
+          "author": "ines",
+          "assignees": [],
+          "created_at": "2026-09-26T09:12:00Z",
+          "updated_at": "2026-09-28T09:12:00Z",
+          "closed_at": null,
+          "comments": []
+        }
+      ],
+      "pulls": []
+    },
+    "acme/web-dashboard": {
+      "description": "The customer-facing web dashboard.",
+      "labels": [
+        "bug",
+        "enhancement",
+        "documentation",
+        "question"
+      ],
+      "issues": [
+        {
+          "number": 102,
+          "title": "Dark mode toggle resets after reload",
+          "body": "The theme setting is not persisted, so dark mode is broken after every page reload since 3.2.",
+          "state": "open",
+          "state_reason": null,
+          "labels": [],
+          "author": "lena",
+          "assignees": [],
+          "created_at": "2026-10-09T09:12:00Z",
+          "updated_at": "2026-10-10T09:12:00Z",
+          "closed_at": null,
+          "comments": []
+        },
+        {
+          "number": 104,
+          "title": "Add CSV export to the usage chart",
+          "body": "Finance would like to pull the monthly usage numbers into a spreadsheet.",
+          "state": "open",
+          "state_reason": null,
+          "labels": [],
+          "author": "omar",
+          "assignees": [],
+          "created_at": "2026-10-05T09:12:00Z",
+          "updated_at": "2026-10-06T09:12:00Z",
+          "closed_at": null,
+          "comments": []
+        },
+        {
+          "number": 105,
+          "title": "Why does the dashboard show UTC instead of my timezone?",
+          "body": "All timestamps on the activity page are in UTC for me, even though my profile says Europe/Berlin.",
+          "state": "open",
+          "state_reason": null,
+          "labels": [],
+          "author": "yuki",
+          "assignees": [],
+          "created_at": "2026-10-13T09:12:00Z",
+          "updated_at": "2026-10-13T09:12:00Z",
+          "closed_at": null,
+          "comments": []
+        },
+        {
+          "number": 107,
+          "title": "Screenshot in README is outdated",
+          "body": "The README still shows the old navigation bar.",
+          "state": "open",
+          "state_reason": null,
+          "labels": [
+            "documentation"
+          ],
+          "author": "lena",
+          "assignees": [],
+          "created_at": "2026-09-24T09:12:00Z",
+          "updated_at": "2026-09-25T09:12:00Z",
+          "closed_at": null,
+          "comments": []
+        }
+      ],
+      "pulls": []
+    },
+    "acme/mobile-app": {
+      "description": "iOS and Android app for acme customers.",
+      "labels": [
+        "bug",
+        "enhancement",
+        "documentation",
+        "question"
+      ],
+      "issues": [
+        {
+          "number": 58,
+          "title": "App crashes on Android 12 when opening the camera",
+          "body": "Tapping the scan button crashes the app on a Pixel 5 with Android 12.",
+          "state": "open",
+          "state_reason": null,
+          "labels": [],
+          "author": "arjun",
+          "assignees": [],
+          "created_at": "2026-08-25T09:12:00Z",
+          "updated_at": "2026-08-28T09:12:00Z",
+          "closed_at": null,
+          "comments": [
+            {
+              "comment_id": 1580,
+              "author": "arjun",
+              "body": "Any update on this?",
+              "created_at": "2026-08-28T09:12:00Z"
+            },
+            {
+              "comment_id": 1581,
+              "author": "lee",
+              "body": "Seeing this too on our side.",
+              "created_at": "2026-08-28T09:12:00Z"
+            }
+          ]
+        },
+        {
+          "number": 61,
+          "title": "Support biometric login on iOS",
+          "body": "Face ID and Touch ID would save customers from typing their password every time.",
+          "state": "open",
+          "state_reason": null,
+          "labels": [],
+          "author": "mia",
+          "assignees": [],
+          "created_at": "2026-10-02T09:12:00Z",
+          "updated_at": "2026-10-03T09:12:00Z",
+          "closed_at": null,
+          "comments": []
+        },
+        {
+          "number": 62,
+          "title": "Push notifications arrive twice",
+          "body": "Every push notification shows up two times on iOS 18.",
+          "state": "open",
+          "state_reason": null,
+          "labels": [
+            "bug"
+          ],
+          "author": "arjun",
+          "assignees": [],
+          "created_at": "2026-10-04T09:12:00Z",
+          "updated_at": "2026-10-07T09:12:00Z",
+          "closed_at": null,
+          "comments": []
+        },
+        {
+          "number": 64,
+          "title": "Is it possible to schedule offline sync?",
+          "body": "Field teams lose signal for hours. Can the app sync at a fixed time once it is back online?",
+          "state": "open",
+          "state_reason": null,
+          "labels": [],
+          "author": "tomas",
+          "assignees": [],
+          "created_at": "2026-10-12T09:12:00Z",
+          "updated_at": "2026-10-12T09:12:00Z",
+          "closed_at": null,
+          "comments": []
+        }
+      ],
+      "pulls": []
+    },
+    "acme/docs-site": {
+      "description": "Source of docs.acme.example.",
+      "labels": [
+        "bug",
+        "enhancement",
+        "documentation",
+        "question"
+      ],
+      "issues": [
+        {
+          "number": 210,
+          "title": "Dead link on the quickstart page",
+          "body": "The link to the API reference in the quickstart guide returns a 404.",
+          "state": "open",
+          "state_reason": null,
+          "labels": [],
+          "author": "sam",
+          "assignees": [],
+          "created_at": "2026-10-08T09:12:00Z",
+          "updated_at": "2026-10-09T09:12:00Z",
+          "closed_at": null,
+          "comments": []
+        },
+        {
+          "number": 211,
+          "title": "Search ignores the version selector",
+          "body": "Search fails to respect the selected version: on the v2 pages it returns v1 results.",
+          "state": "open",
+          "state_reason": null,
+          "labels": [],
+          "author": "hana",
+          "assignees": [],
+          "created_at": "2026-10-10T09:12:00Z",
+          "updated_at": "2026-10-11T09:12:00Z",
+          "closed_at": null,
+          "comments": []
+        },
+        {
+          "number": 213,
+          "title": "Add a dark theme",
+          "body": "A dark theme for the site would match the dashboard.",
+          "state": "open",
+          "state_reason": null,
+          "labels": [],
+          "author": "omar",
+          "assignees": [],
+          "created_at": "2026-10-04T09:12:00Z",
+          "updated_at": "2026-10-04T09:12:00Z",
+          "closed_at": null,
+          "comments": []
+        },
+        {
+          "number": 214,
+          "title": "Can we self-host the site?",
+          "body": "Some customers run air-gapped networks.",
+          "state": "open",
+          "state_reason": null,
+          "labels": [
+            "question"
+          ],
+          "author": "hana",
+          "assignees": [],
+          "created_at": "2026-09-29T09:12:00Z",
+          "updated_at": "2026-09-30T09:12:00Z",
+          "closed_at": null,
+          "comments": []
+        }
+      ],
+      "pulls": []
+    },
+    "acme/data-pipeline": {
+      "description": "Event ingestion and nightly batch jobs.",
+      "labels": [
+        "bug",
+        "enhancement",
+        "documentation",
+        "question"
+      ],
+      "issues": [
+        {
+          "number": 401,
+          "title": "Nightly job fails when the S3 bucket is empty",
+          "body": "The export step raises `KeyError: Contents` when there are no new objects.",
+          "state": "open",
+          "state_reason": null,
+          "labels": [],
+          "author": "femi",
+          "assignees": [],
+          "created_at": "2026-07-29T09:12:00Z",
+          "updated_at": "2026-07-30T09:12:00Z",
+          "closed_at": null,
+          "comments": [
+            {
+              "comment_id": 5010,
+              "author": "femi",
+              "body": "Any update on this?",
+              "created_at": "2026-07-30T09:12:00Z"
+            }
+          ]
+        },
+        {
+          "number": 402,
+          "title": "Support Parquet output",
+          "body": "Analytics would prefer Parquet files over gzipped CSV.",
+          "state": "open",
+          "state_reason": null,
+          "labels": [],
+          "author": "chen",
+          "assignees": [],
+          "created_at": "2026-08-12T09:12:00Z",
+          "updated_at": "2026-08-14T09:12:00Z",
+          "closed_at": null,
+          "comments": []
+        },
+        {
+          "number": 404,
+          "title": "Explain the retry settings",
+          "body": "The README does not say what `max_retries` and `backoff_s` do.",
+          "state": "open",
+          "state_reason": null,
+          "labels": [],
+          "author": "chen",
+          "assignees": [],
+          "created_at": "2026-10-05T09:12:00Z",
+          "updated_at": "2026-10-05T09:12:00Z",
+          "closed_at": null,
+          "comments": []
+        },
+        {
+          "number": 406,
+          "title": "Dedup step drops late events",
+          "body": "Events that arrive more than an hour late are discarded by the dedup window.",
+          "state": "open",
+          "state_reason": null,
+          "labels": [
+            "bug"
+          ],
+          "author": "femi",
+          "assignees": [],
+          "created_at": "2026-10-10T09:12:00Z",
+          "updated_at": "2026-10-11T09:12:00Z",
+          "closed_at": null,
+          "comments": []
+        }
+      ],
+      "pulls": []
+    },
+    "acme/auth-service": {
+      "description": "Login, sessions and token issuance.",
+      "labels": [
+        "bug",
+        "enhancement",
+        "documentation",
+        "question"
+      ],
+      "issues": [
+        {
+          "number": 88,
+          "title": "Token refresh returns a 500 after key rotation",
+          "body": "After the signing key rotates, `/token/refresh` returns 500 until the pod restarts.",
+          "state": "open",
+          "state_reason": null,
+          "labels": [],
+          "author": "rafa",
+          "assignees": [],
+          "created_at": "2026-10-12T09:12:00Z",
+          "updated_at": "2026-10-12T09:12:00Z",
+          "closed_at": null,
+          "comments": []
+        },
+        {
+          "number": 90,
+          "title": "Allow SAML login for enterprise tenants",
+          "body": "Two enterprise customers need SAML next to OIDC.",
+          "state": "open",
+          "state_reason": null,
+          "labels": [],
+          "author": "elif",
+          "assignees": [],
+          "created_at": "2026-09-30T09:12:00Z",
+          "updated_at": "2026-10-01T09:12:00Z",
+          "closed_at": null,
+          "comments": []
+        },
+        {
+          "number": 91,
+          "title": "How long are refresh tokens valid?",
+          "body": "We want to tell our users when they will have to sign in again.",
+          "state": "open",
+          "state_reason": null,
+          "labels": [],
+          "author": "nora",
+          "assignees": [],
+          "created_at": "2026-10-13T09:12:00Z",
+          "updated_at": "2026-10-13T09:12:00Z",
+          "closed_at": null,
+          "comments": []
+        },
+        {
+          "number": 92,
+          "title": "Password policy guide skips MFA",
+          "body": "The password policy guide has no section on MFA enrollment.",
+          "state": "open",
+          "state_reason": null,
+          "labels": [
+            "documentation"
+          ],
+          "author": "elif",
+          "assignees": [],
+          "created_at": "2026-09-28T09:12:00Z",
+          "updated_at": "2026-09-29T09:12:00Z",
+          "closed_at": null,
+          "comments": []
+        }
+      ],
+      "pulls": []
+    },
+    "acme/cli-tools": {
+      "description": "The `acme` command-line client.",
+      "labels": [
+        "bug",
+        "enhancement",
+        "documentation",
+        "question"
+      ],
+      "issues": [
+        {
+          "number": 19,
+          "title": "Why is `acme sync` so slow on large folders?",
+          "body": "Syncing a folder with 40k files takes more than ten minutes.",
+          "state": "open",
+          "state_reason": null,
+          "labels": [],
+          "author": "ben",
+          "assignees": [],
+          "created_at": "2026-08-04T09:12:00Z",
+          "updated_at": "2026-08-05T09:12:00Z",
+          "closed_at": null,
+          "comments": [
+            {
+              "comment_id": 1190,
+              "author": "ben",
+              "body": "Any update on this?",
+              "created_at": "2026-08-05T09:12:00Z"
+            }
+          ]
+        },
+        {
+          "number": 22,
+          "title": "`acme login` error: certificate verify failed",
+          "body": "Behind the corporate proxy, login stops with an SSL certificate error.",
+          "state": "open",
+          "state_reason": null,
+          "labels": [],
+          "author": "ola",
+          "assignees": [],
+          "created_at": "2026-10-07T09:12:00Z",
+          "updated_at": "2026-10-08T09:12:00Z",
+          "closed_at": null,
+          "comments": []
+        },
+        {
+          "number": 23,
+          "title": "Add shell completion for zsh",
+          "body": "Bash completion exists; zsh users would like the same.",
+          "state": "open",
+          "state_reason": null,
+          "labels": [],
+          "author": "ben",
+          "assignees": [],
+          "created_at": "2026-10-09T09:12:00Z",
+          "updated_at": "2026-10-10T09:12:00Z",
+          "closed_at": null,
+          "comments": []
+        },
+        {
+          "number": 24,
+          "title": "JSON output for `acme status`",
+          "body": "Scripts need a machine-readable status.",
+          "state": "open",
+          "state_reason": null,
+          "labels": [
+            "enhancement"
+          ],
+          "author": "ola",
+          "assignees": [],
+          "created_at": "2026-09-26T09:12:00Z",
+          "updated_at": "2026-09-27T09:12:00Z",
+          "closed_at": null,
+          "comments": []
+        }
+      ],
+      "pulls": []
+    },
+    "acme/design-system": {
+      "description": "Shared UI components and design tokens.",
+      "labels": [
+        "bug",
+        "enhancement",
+        "documentation",
+        "question"
+      ],
+      "issues": [
+        {
+          "number": 301,
+          "title": "Button focus ring missing in high-contrast mode",
+          "body": "Keyboard users cannot see focus any more; this is a regression from 4.1.",
+          "state": "open",
+          "state_reason": null,
+          "labels": [],
+          "author": "ivy",
+          "assignees": [],
+          "created_at": "2026-10-08T09:12:00Z",
+          "updated_at": "2026-10-09T09:12:00Z",
+          "closed_at": null,
+          "comments": []
+        },
+        {
+          "number": 302,
+          "title": "Typo in the Tooltip props table",
+          "body": "`placment` should be `placement`.",
+          "state": "open",
+          "state_reason": null,
+          "labels": [],
+          "author": "kai",
+          "assignees": [],
+          "created_at": "2026-10-07T09:12:00Z",
+          "updated_at": "2026-10-07T09:12:00Z",
+          "closed_at": null,
+          "comments": []
+        },
+        {
+          "number": 303,
+          "title": "Add a compact density option for tables",
+          "body": "Admin screens need denser rows.",
+          "state": "open",
+          "state_reason": null,
+          "labels": [],
+          "author": "ivy",
+          "assignees": [],
+          "created_at": "2026-10-10T09:12:00Z",
+          "updated_at": "2026-10-11T09:12:00Z",
+          "closed_at": null,
+          "comments": []
+        },
+        {
+          "number": 305,
+          "title": "Figma library or code tokens: which one is the source of truth?",
+          "body": "Designers and engineers disagree.",
+          "state": "open",
+          "state_reason": null,
+          "labels": [
+            "question"
+          ],
+          "author": "kai",
+          "assignees": [],
+          "created_at": "2026-09-23T09:12:00Z",
+          "updated_at": "2026-09-24T09:12:00Z",
+          "closed_at": null,
+          "comments": []
+        }
+      ],
+      "pulls": []
+    },
+    "acme/infra-terraform": {
+      "description": "Terraform modules for acme cloud infrastructure.",
+      "labels": [
+        "bug",
+        "enhancement",
+        "documentation",
+        "question"
+      ],
+      "issues": [
+        {
+          "number": 71,
+          "title": "Plan stalls on the eu-west VPC module",
+          "body": "`terraform plan` hits a timeout after 20 minutes on the eu-west VPC module.",
+          "state": "open",
+          "state_reason": null,
+          "labels": [],
+          "author": "uma",
+          "assignees": [],
+          "created_at": "2026-08-10T09:12:00Z",
+          "updated_at": "2026-08-11T09:12:00Z",
+          "closed_at": null,
+          "comments": [
+            {
+              "comment_id": 1710,
+              "author": "uma",
+              "body": "Any update on this?",
+              "created_at": "2026-08-11T09:12:00Z"
+            },
+            {
+              "comment_id": 1711,
+              "author": "lee",
+              "body": "Seeing this too on our side.",
+              "created_at": "2026-08-11T09:12:00Z"
+            }
+          ]
+        },
+        {
+          "number": 72,
+          "title": "Support the new Postgres 17 instance class",
+          "body": "The database module only accepts instance classes up to Postgres 16.",
+          "state": "open",
+          "state_reason": null,
+          "labels": [],
+          "author": "leo",
+          "assignees": [],
+          "created_at": "2026-06-28T09:12:00Z",
+          "updated_at": "2026-06-30T09:12:00Z",
+          "closed_at": null,
+          "comments": []
+        },
+        {
+          "number": 75,
+          "title": "README does not list required IAM permissions",
+          "body": "New team members keep hitting AccessDenied on their first apply.",
+          "state": "open",
+          "state_reason": null,
+          "labels": [],
+          "author": "uma",
+          "assignees": [],
+          "created_at": "2026-10-03T09:12:00Z",
+          "updated_at": "2026-10-03T09:12:00Z",
+          "closed_at": null,
+          "comments": []
+        },
+        {
+          "number": 76,
+          "title": "State lock not released after failed apply",
+          "body": "The DynamoDB lock stays after an apply is interrupted.",
+          "state": "open",
+          "state_reason": null,
+          "labels": [
+            "bug"
+          ],
+          "author": "leo",
+          "assignees": [],
+          "created_at": "2026-10-05T09:12:00Z",
+          "updated_at": "2026-10-06T09:12:00Z",
+          "closed_at": null,
+          "comments": []
+        },
+        {
+          "number": 77,
+          "title": "Is it possible to run plans per workspace in CI?",
+          "body": "We would like one plan per workspace on each pull request.",
+          "state": "open",
+          "state_reason": null,
+          "labels": [],
+          "author": "zoe",
+          "assignees": [],
+          "created_at": "2026-10-12T09:12:00Z",
+          "updated_at": "2026-10-12T09:12:00Z",
+          "closed_at": null,
+          "comments": []
+        }
+      ],
+      "pulls": []
+    },
+    "acme/search-indexer": {
+      "description": "Full-text indexing workers.",
+      "labels": [
+        "bug",
+        "enhancement",
+        "documentation",
+        "question"
+      ],
+      "issues": [
+        {
+          "number": 500,
+          "title": "Indexer crashes on documents larger than 10 MB",
+          "body": "Workers restart in a loop when a document is over 10 MB.",
+          "state": "open",
+          "state_reason": null,
+          "labels": [],
+          "author": "pia",
+          "assignees": [],
+          "created_at": "2026-10-09T09:12:00Z",
+          "updated_at": "2026-10-10T09:12:00Z",
+          "closed_at": null,
+          "comments": []
+        },
+        {
+          "number": 502,
+          "title": "Improve ranking for exact title matches",
+          "body": "A query that equals a document title should rank that document first.",
+          "state": "open",
+          "state_reason": null,
+          "labels": [],
+          "author": "raj",
+          "assignees": [],
+          "created_at": "2026-10-07T09:12:00Z",
+          "updated_at": "2026-10-08T09:12:00Z",
+          "closed_at": null,
+          "comments": []
+        },
+        {
+          "number": 503,
+          "title": "Reindex job leaks memory",
+          "body": "Memory grows by about 1 GB per hour during a full reindex.",
+          "state": "open",
+          "state_reason": null,
+          "labels": [
+            "bug"
+          ],
+          "author": "pia",
+          "assignees": [],
+          "created_at": "2026-10-01T09:12:00Z",
+          "updated_at": "2026-10-02T09:12:00Z",
+          "closed_at": null,
+          "comments": []
+        },
+        {
+          "number": 504,
+          "title": "Where are the synonym files configured?",
+          "body": "We would like product nicknames to count as synonyms.",
+          "state": "open",
+          "state_reason": null,
+          "labels": [],
+          "author": "dev",
+          "assignees": [],
+          "created_at": "2026-10-13T09:12:00Z",
+          "updated_at": "2026-10-13T09:12:00Z",
+          "closed_at": null,
+          "comments": []
+        }
+      ],
+      "pulls": []
+    },
+    "acme/status-page": {
+      "description": "Public status page (synthetic).",
+      "labels": [
+        "bug",
+        "enhancement",
+        "documentation",
+        "question"
+      ],
+      "issues": [
+        {
+          "number": 8,
+          "title": "Incident history page times out",
+          "body": "Loading 90 days of incidents gives a timeout.",
+          "state": "open",
+          "state_reason": null,
+          "labels": [
+            "bug"
+          ],
+          "author": "lee",
+          "assignees": [],
+          "created_at": "2026-10-01T09:00:00Z",
+          "updated_at": "2026-10-09T09:00:00Z",
+          "closed_at": null,
+          "comments": []
+        },
+        {
+          "number": 11,
+          "title": "Add RSS feed for incidents",
+          "body": "Allow subscribing via RSS.",
+          "state": "open",
+          "state_reason": null,
+          "labels": [
+            "enhancement"
+          ],
+          "author": "priya",
+          "assignees": [],
+          "created_at": "2026-10-03T09:00:00Z",
+          "updated_at": "2026-10-10T09:00:00Z",
+          "closed_at": null,
+          "comments": []
+        }
+      ],
+      "pulls": []
+    }
+  }
+}

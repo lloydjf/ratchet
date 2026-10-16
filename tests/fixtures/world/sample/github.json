@@ -1,0 +1,18 @@
+{
+  "repos": {
+    "acme/widgets": {
+      "description": "Widget service for the fictional acme org.",
+      "labels": ["bug", "enhancement", "stale", "needs-triage", "p1"],
+      "issues": [
+        {"number": 11, "title": "Crash when widget name is empty", "body": "Steps: create a widget with an empty name.", "state": "open", "labels": ["bug"], "author": "dana", "created_at": "2026-09-01T10:00:00Z", "updated_at": "2026-09-02T08:00:00Z"},
+        {"number": 12, "title": "Add dark mode to the widget editor", "body": "Requested by carol@example.com", "state": "open", "labels": [], "author": "carol", "created_at": "2026-06-10T12:00:00Z", "updated_at": "2026-06-10T12:00:00Z"},
+        {"number": 13, "title": "Old flaky test in CI", "body": "Seen twice in June.", "state": "open", "labels": ["needs-triage"], "author": "erin", "created_at": "2026-05-20T09:30:00Z", "updated_at": "2026-05-21T09:30:00Z",
+         "comments": [{"comment_id": 1001, "author": "dana", "body": "Still flaky.", "created_at": "2026-05-21T09:30:00Z"}]},
+        {"number": 14, "title": "Docs typo in README", "body": "", "state": "closed", "state_reason": "completed", "labels": ["docs"], "author": "frank", "created_at": "2026-04-01T09:00:00Z", "updated_at": "2026-04-02T09:00:00Z", "closed_at": "2026-04-02T09:00:00Z"}
+      ],
+      "pulls": [
+        {"number": 15, "title": "Fix empty-name crash", "body": "Fixes #11", "head": "fix/empty-name", "base": "main", "state": "open", "author": "dana", "created_at": "2026-09-03T10:00:00Z"}
+      ]
+    }
+  }
+}

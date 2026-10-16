@@ -1,0 +1,84 @@
+{
+  "$defs": {
+    "CriterionOut": {
+      "properties": {
+        "criterion": {
+          "title": "Criterion",
+          "type": "string"
+        },
+        "evidence_steps": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Evidence Steps",
+          "type": "array"
+        },
+        "met": {
+          "title": "Met",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "criterion",
+        "met"
+      ],
+      "title": "CriterionOut",
+      "type": "object"
+    }
+  },
+  "description": "JudgeOpinion plus per-criterion findings.",
+  "properties": {
+    "confidence": {
+      "maximum": 1.0,
+      "minimum": 0.0,
+      "title": "Confidence",
+      "type": "number"
+    },
+    "criteria_met": {
+      "items": {
+        "$ref": "#/$defs/CriterionOut"
+      },
+      "title": "Criteria Met",
+      "type": "array"
+    },
+    "evidence_steps": {
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 8,
+      "title": "Evidence Steps",
+      "type": "array"
+    },
+    "failure_summary": {
+      "default": "",
+      "description": "Only when verdict is regressed: what got worse, as a verb phrase of at most 8 words that completes 'the skill now ...', e.g. 'drops the VAT line'. Else empty.",
+      "title": "Failure Summary",
+      "type": "string"
+    },
+    "reasons": {
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 5,
+      "title": "Reasons",
+      "type": "array"
+    },
+    "verdict": {
+      "enum": [
+        "equivalent",
+        "regressed",
+        "improved",
+        "uncertain"
+      ],
+      "title": "Verdict",
+      "type": "string"
+    }
+  },
+  "required": [
+    "verdict",
+    "confidence",
+    "reasons"
+  ],
+  "title": "CheckOut",
+  "type": "object"
+}

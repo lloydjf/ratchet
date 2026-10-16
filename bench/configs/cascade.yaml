@@ -1,0 +1,11 @@
+# E1 (recall per type), E2 (false blocks on N0 + D1), the "on" arm of E3 and E5, and the
+# cascade point of E4. The primary run: it replays every edit; the judge-only ablations reuse
+# these replays (paired comparison).
+name: cascade
+description: Full cascade — Level 0, Nano screen, Super check, Ultra adjudication, drift check.
+experiments: [E1, E2, E3, E4, E5]
+mode: edits
+cascade: {mode: cascade, level0: true, drift: true}
+runner: local
+concurrency: 2
+max_traces: 40

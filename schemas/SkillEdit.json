@@ -1,0 +1,78 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "affected_skills": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Affected Skills",
+      "type": "array"
+    },
+    "author": {
+      "enum": [
+        "agent",
+        "user",
+        "seeded"
+      ],
+      "title": "Author",
+      "type": "string"
+    },
+    "commit": {
+      "title": "Commit",
+      "type": "string"
+    },
+    "detected_at": {
+      "format": "date-time",
+      "title": "Detected At",
+      "type": "string"
+    },
+    "diff_ref": {
+      "title": "Diff Ref",
+      "type": "string"
+    },
+    "edit_id": {
+      "title": "Edit Id",
+      "type": "string"
+    },
+    "files": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Files",
+      "type": "array"
+    },
+    "parent": {
+      "title": "Parent",
+      "type": "string"
+    },
+    "session_hash": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Session Hash"
+    },
+    "summary": {
+      "default": "",
+      "title": "Summary",
+      "type": "string"
+    }
+  },
+  "required": [
+    "edit_id",
+    "commit",
+    "parent",
+    "files",
+    "diff_ref",
+    "affected_skills",
+    "author",
+    "detected_at"
+  ],
+  "title": "SkillEdit",
+  "type": "object"
+}

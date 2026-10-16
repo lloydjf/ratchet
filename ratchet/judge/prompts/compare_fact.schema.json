@@ -1,0 +1,33 @@
+{
+  "description": "Nano's old-vs-new fact comparison (drift check step 2).",
+  "properties": {
+    "changed": {
+      "title": "Changed",
+      "type": "boolean"
+    },
+    "confidence": {
+      "maximum": 1.0,
+      "minimum": 0.0,
+      "title": "Confidence",
+      "type": "number"
+    },
+    "new_value": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "New Value"
+    }
+  },
+  "required": [
+    "changed",
+    "confidence"
+  ],
+  "title": "CompareFactOut",
+  "type": "object"
+}

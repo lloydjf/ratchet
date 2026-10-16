@@ -1,0 +1,44 @@
+{
+  "description": "The JudgeOpinion fields a model fills (tier and usd are ours).",
+  "properties": {
+    "confidence": {
+      "maximum": 1.0,
+      "minimum": 0.0,
+      "title": "Confidence",
+      "type": "number"
+    },
+    "evidence_steps": {
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 4,
+      "title": "Evidence Steps",
+      "type": "array"
+    },
+    "reasons": {
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 3,
+      "title": "Reasons",
+      "type": "array"
+    },
+    "verdict": {
+      "enum": [
+        "equivalent",
+        "regressed",
+        "improved",
+        "uncertain"
+      ],
+      "title": "Verdict",
+      "type": "string"
+    }
+  },
+  "required": [
+    "verdict",
+    "confidence",
+    "reasons"
+  ],
+  "title": "ScreenOut",
+  "type": "object"
+}

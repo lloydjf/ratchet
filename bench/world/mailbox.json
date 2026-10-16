@@ -1,0 +1,54 @@
+{
+  "address": "jun@example.com",
+  "messages": [
+    {
+      "message_id": "msg_0001",
+      "from": "finance@example.com",
+      "to": [
+        "jun@example.com"
+      ],
+      "cc": [],
+      "subject": "October expenses due on the 20th",
+      "body": "Hi Jun, please file your October receipts in the Expenses sheet by 2026-10-20. Amounts in EUR go to the Expenses USD sheet as well. Thanks, Finance",
+      "date": "2026-10-13T08:30:00Z",
+      "labels": [
+        "INBOX"
+      ],
+      "thread_id": "thr_0001"
+    },
+    {
+      "message_id": "msg_0002",
+      "from": "dana@example.com",
+      "to": [
+        "jun@example.com"
+      ],
+      "cc": [
+        "lee@example.com"
+      ],
+      "subject": "Backlog cleanup before planning",
+      "body": "Could you triage the open issues in our repos before Thursday's planning? Labels only, please; we close issues together in the meeting.",
+      "date": "2026-10-13T15:10:00Z",
+      "labels": [
+        "INBOX"
+      ],
+      "thread_id": "thr_0002"
+    },
+    {
+      "message_id": "msg_0003",
+      "from": "noreply@hotel-spreeblick.example.com",
+      "to": [
+        "jun@example.com"
+      ],
+      "cc": [],
+      "subject": "Your invoice",
+      "body": "Thank you for staying with us. Your invoice hotel-2026-10-02.pdf is attached.",
+      "date": "2026-10-03T07:00:00Z",
+      "labels": [
+        "INBOX",
+        "receipts"
+      ],
+      "thread_id": null
+    }
+  ],
+  "outbox": []
+}

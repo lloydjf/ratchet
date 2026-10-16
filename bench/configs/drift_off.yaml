@@ -1,0 +1,8 @@
+# E3: the drift check off. Re-judges the cascade run's replays.
+name: drift_off
+description: Full cascade without Tavily drift disambiguation.
+experiments: [E3]
+mode: edits
+cascade: {mode: cascade, level0: true, drift: false}
+reuse_replays: cascade
+concurrency: 2

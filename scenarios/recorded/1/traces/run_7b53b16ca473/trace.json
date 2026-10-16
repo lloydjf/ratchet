@@ -1,0 +1,239 @@
+{
+  "run_id": "run_7b53b16ca473",
+  "kind": "golden",
+  "task_input": "Triage the open issues in acme/infra-terraform before Thursday.",
+  "steps": [
+    {
+      "kind": "llm",
+      "step_id": "m001",
+      "tier": "super",
+      "model": "nvidia/nemotron-3-super-120b-a12b",
+      "request_hash": "24aea101129168b44b5af0138d3bedf51803c04296a86054a46925726ea96b87",
+      "messages_ref": "steps/m001.req.json",
+      "response_ref": "steps/m001.res.json",
+      "prompt_tokens": 4049,
+      "completion_tokens": 67,
+      "usd": 0.001275,
+      "latency_ms": 925,
+      "started_at": "2026-10-16T06:23:26.227903Z",
+      "purpose": "agent",
+      "api": "chat",
+      "usage_estimated": false,
+      "tool_calls_requested": [
+        "github.list_issues"
+      ],
+      "content_preview": "I'll help triage the open issues in acme/infra-terraform. Let me start by listing the open issues."
+    },
+    {
+      "kind": "tool",
+      "step_id": "t001",
+      "tool": "github.list_issues",
+      "args_norm": {
+        "repo": "acme/infra-terraform",
+        "state": "open"
+      },
+      "args_hash": "b8144d139d90b177aa54e9d2d3f1374eed959bcf5bc4f755b52855d3e5d30a9b",
+      "result_hash": "1c5322c98a6f76d58111baa163cd278755a8fb349b8f253a4c2062695caa46bd",
+      "side_effect": "read",
+      "source": "live",
+      "cassette_key": "b8144d139d90b177aa54e9d2d3f1374eed959bcf5bc4f755b52855d3e5d30a9b",
+      "result_preview": "{\"issues\":[{\"assignees\":[],\"author\":\"uma\",\"body\":\"`terraform plan` hits a timeout after 20 minutes on the eu-west VPC module.\",\"closed_at\":null,\"comments\":2,\"created_at\":\"2026-08-10T09:12:00Z\",\"labels\":[],\"number\":71,\"state\":\"open\",\"state_reason\":null,\"title\":\"Plan stalls on the eu-west VPC module\",\"updated_at\":\"2026-08-11T09:12:00Z\"},{\"assignees\":[],\"author\":\"leo\",\"body\":\"The database module onl…",
+      "blocked": false,
+      "started_at": "2026-10-16T06:23:27.166617Z"
+    },
+    {
+      "kind": "llm",
+      "step_id": "m002",
+      "tier": "super",
+      "model": "nvidia/nemotron-3-super-120b-a12b",
+      "request_hash": "6c059d13b6f53cb647d33ef0ba2c0193dc4874819567caaf02f2a7f8aae8d946",
+      "messages_ref": "steps/m002.req.json",
+      "response_ref": "steps/m002.res.json",
+      "prompt_tokens": 4817,
+      "completion_tokens": 343,
+      "usd": 0.0017538,
+      "latency_ms": 1765,
+      "started_at": "2026-10-16T06:23:27.170036Z",
+      "purpose": "agent",
+      "api": "chat",
+      "usage_estimated": false,
+      "tool_calls_requested": [
+        "github.label",
+        "github.label",
+        "github.label",
+        "github.label"
+      ],
+      "content_preview": "Now I'll process each issue according to the triage rules:\n\nIssue #71: \"Plan stalls on the eu-west VPC module\" - Mentions \"timeout\" → bug\nIssue #72: \"Support the new Postgres 17 instance class\" - Mentions \"support\" → enhancement  \nIssue #75: \"README does not list required IAM permissions\" - Mentions \"README\" → documentation\nIssue #76: Already has \"bug\" label → skip\nIssue #77: \"Is it possible to r…"
+    },
+    {
+      "kind": "tool",
+      "step_id": "t002",
+      "tool": "github.label",
+      "args_norm": {
+        "issue": 71,
+        "labels": [
+          "bug"
+        ],
+        "repo": "acme/infra-terraform"
+      },
+      "args_hash": "7527d13227ed96c2ff60e29783f218b7388941e322de88d715d160a9fdf50621",
+      "result_hash": "63308d1e14212879106a13660f4a1ebf621311437090a9c85d49990c3e04b17b",
+      "side_effect": "write_reversible",
+      "source": "live",
+      "cassette_key": "7527d13227ed96c2ff60e29783f218b7388941e322de88d715d160a9fdf50621",
+      "result_preview": "{\"issue\":71,\"labels\":[\"bug\"],\"repo\":\"acme/infra-terraform\"}",
+      "blocked": false,
+      "started_at": "2026-10-16T06:23:28.948966Z"
+    },
+    {
+      "kind": "tool",
+      "step_id": "t003",
+      "tool": "github.label",
+      "args_norm": {
+        "issue": 72,
+        "labels": [
+          "enhancement"
+        ],
+        "repo": "acme/infra-terraform"
+      },
+      "args_hash": "1c1ccadf0e6fb8b158543d39f67b3fdb1dffb35f1db84834fcec21b8f3bb9faf",
+      "result_hash": "c6079082be3d31efd675e88b835ac8a44c4b0c7815fe992358beef2268c67331",
+      "side_effect": "write_reversible",
+      "source": "live",
+      "cassette_key": "1c1ccadf0e6fb8b158543d39f67b3fdb1dffb35f1db84834fcec21b8f3bb9faf",
+      "result_preview": "{\"issue\":72,\"labels\":[\"enhancement\"],\"repo\":\"acme/infra-terraform\"}",
+      "blocked": false,
+      "started_at": "2026-10-16T06:23:28.952958Z"
+    },
+    {
+      "kind": "tool",
+      "step_id": "t004",
+      "tool": "github.label",
+      "args_norm": {
+        "issue": 75,
+        "labels": [
+          "documentation"
+        ],
+        "repo": "acme/infra-terraform"
+      },
+      "args_hash": "b38f9a1e2b8711a0e1b633fc3861451bcd9c5a1a8993895573a505bb320e7b4a",
+      "result_hash": "bbc1f0601b2e981a46d31fa7992e010712fd61e5f1c1aff17671cebe204b8d3f",
+      "side_effect": "write_reversible",
+      "source": "live",
+      "cassette_key": "b38f9a1e2b8711a0e1b633fc3861451bcd9c5a1a8993895573a505bb320e7b4a",
+      "result_preview": "{\"issue\":75,\"labels\":[\"documentation\"],\"repo\":\"acme/infra-terraform\"}",
+      "blocked": false,
+      "started_at": "2026-10-16T06:23:28.955980Z"
+    },
+    {
+      "kind": "tool",
+      "step_id": "t005",
+      "tool": "github.label",
+      "args_norm": {
+        "issue": 77,
+        "labels": [
+          "question"
+        ],
+        "repo": "acme/infra-terraform"
+      },
+      "args_hash": "7cd2db88cc8b980adff115805a18d599fd92e27723f86a62a90e043c87c59f68",
+      "result_hash": "332f4c6c295a78678b9d2b05013379b43e2712e7e4a0166c5ed570f57ee43996",
+      "side_effect": "write_reversible",
+      "source": "live",
+      "cassette_key": "7cd2db88cc8b980adff115805a18d599fd92e27723f86a62a90e043c87c59f68",
+      "result_preview": "{\"issue\":77,\"labels\":[\"question\"],\"repo\":\"acme/infra-terraform\"}",
+      "blocked": false,
+      "started_at": "2026-10-16T06:23:28.958954Z"
+    },
+    {
+      "kind": "llm",
+      "step_id": "m003",
+      "tier": "super",
+      "model": "nvidia/nemotron-3-super-120b-a12b",
+      "request_hash": "792b77f35dbeee2e23bd4d4f0ddc2e2fbd7eaa3e2edf9454388a152a48e153f7",
+      "messages_ref": "steps/m003.req.json",
+      "response_ref": "steps/m003.res.json",
+      "prompt_tokens": 5287,
+      "completion_tokens": 91,
+      "usd": 0.001668,
+      "latency_ms": 1101,
+      "started_at": "2026-10-16T06:23:28.962321Z",
+      "purpose": "agent",
+      "api": "chat",
+      "usage_estimated": false,
+      "tool_calls_requested": [
+        "github.comment"
+      ],
+      "content_preview": "Now I need to add a comment to the question-labeled issue (#77):"
+    },
+    {
+      "kind": "tool",
+      "step_id": "t006",
+      "tool": "github.comment",
+      "args_norm": {
+        "body": "Thanks for the question. Could you share the version you are using and the steps you tried? A maintainer will follow up.",
+        "issue": 77,
+        "repo": "acme/infra-terraform"
+      },
+      "args_hash": "6fb93790427e50a7adb78b9b346c10e1296c05cc253998fcd145d85126396769",
+      "result_hash": "9f287d4a4aaabe84e3095938ea7c55c409b0d2837f4a374d2157fcc9cbe28d97",
+      "side_effect": "write_irreversible",
+      "source": "live",
+      "cassette_key": "6fb93790427e50a7adb78b9b346c10e1296c05cc253998fcd145d85126396769",
+      "result_preview": "{\"comment_id\":1712,\"issue\":77,\"repo\":\"acme/infra-terraform\"}",
+      "blocked": false,
+      "started_at": "2026-10-16T06:23:30.078476Z"
+    },
+    {
+      "kind": "llm",
+      "step_id": "m004",
+      "tier": "super",
+      "model": "nvidia/nemotron-3-super-120b-a12b",
+      "request_hash": "11fa6b3e2950aabf9d72b754c853226b892f85576996fc8d32412989bef91f9f",
+      "messages_ref": "steps/m004.req.json",
+      "response_ref": "steps/m004.res.json",
+      "prompt_tokens": 5422,
+      "completion_tokens": 54,
+      "usd": 0.0016751999999999997,
+      "latency_ms": 799,
+      "started_at": "2026-10-16T06:23:30.082513Z",
+      "purpose": "agent",
+      "api": "chat",
+      "usage_estimated": false,
+      "tool_calls_requested": [],
+      "content_preview": "Triaged acme/infra-terraform: 5 open issues.\n#71: bug\n#72: enhancement\n#75: documentation\n#77: question\nAlready labeled: #76\nAsked for details: #77"
+    }
+  ],
+  "final_output": "Triaged acme/infra-terraform: 5 open issues.\n#71: bug\n#72: enhancement\n#75: documentation\n#77: question\nAlready labeled: #76\nAsked for details: #77",
+  "artifacts_ref": null,
+  "skills_invoked": [
+    "github-triage"
+  ],
+  "world_dependent": false,
+  "world_facts": [],
+  "env": {
+    "workspace_ref": "workspace.tar.zst",
+    "frozen_time": "2026-10-14T16:00:00Z",
+    "harness_version": "minimal/0.1.0",
+    "skills_commit": "dda8ffcb2837fa255c23f29889f82e6f4976ba33",
+    "world_ref": null
+  },
+  "agent_tier": "super",
+  "seed": 234058728,
+  "created_at": "2026-10-16T06:23:30.923123Z",
+  "golden_of": null,
+  "candidate_commit": null,
+  "success_criteria": [
+    "states the number of open issues in acme/infra-terraform as 5",
+    "lists issue #71 as bug",
+    "lists issue #72 as enhancement",
+    "lists issue #75 as documentation",
+    "lists issue #77 as question",
+    "mentions issue #76 as already labeled"
+  ],
+  "archived_reason": null,
+  "blessed_at": "2026-10-16T06:23:32.117753Z",
+  "harness_ok": true,
+  "error_code": null,
+  "task_label": "Triage acme/infra-terraform"
+}

@@ -1,0 +1,16 @@
+{
+  "edit_id": "edit_8796c4358b15",
+  "commit": "7668b12d50161e53c87bf9701a5bb5cd39733dc4",
+  "parent": "dda8ffcb2837fa255c23f29889f82e6f4976ba33",
+  "files": [
+    "expense-report/SKILL.md"
+  ],
+  "diff_ref": "edits/edit_8796c4358b15/diff.patch",
+  "affected_skills": [
+    "expense-report"
+  ],
+  "author": "seeded",
+  "detected_at": "2026-10-16T06:25:34.970744Z",
+  "summary": "expense-report: SKILL.md changed (+9 −4)",
+  "session_hash": "4d3fa3720b5cf9a2"
+}

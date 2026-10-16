@@ -1,0 +1,13 @@
+{
+  "_note": "Synthetic Tavily response for SkillRegress-Bench; not real data. Every URL is example.com.",
+  "query": "EUR USD exchange rate 2026-10-11",
+  "results": [
+    {
+      "title": "Latest figures (2026-10-15)",
+      "url": "https://facts.example.com/31caef287d",
+      "content": "As of 2026-10-15: The EUR/USD exchange rate on 2026-10-11 was 1.0768",
+      "score": 0.9,
+      "published_date": "2026-10-15"
+    }
+  ]
+}

@@ -1,0 +1,107 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "args_hash": {
+      "title": "Args Hash",
+      "type": "string"
+    },
+    "args_norm": {
+      "additionalProperties": true,
+      "title": "Args Norm",
+      "type": "object"
+    },
+    "blocked": {
+      "default": false,
+      "title": "Blocked",
+      "type": "boolean"
+    },
+    "cassette_key": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Cassette Key"
+    },
+    "kind": {
+      "const": "tool",
+      "default": "tool",
+      "title": "Kind",
+      "type": "string"
+    },
+    "result_hash": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Result Hash"
+    },
+    "result_preview": {
+      "default": "",
+      "title": "Result Preview",
+      "type": "string"
+    },
+    "side_effect": {
+      "enum": [
+        "none",
+        "read",
+        "write_reversible",
+        "write_irreversible",
+        "destructive",
+        "external_send",
+        "spend"
+      ],
+      "title": "Side Effect",
+      "type": "string"
+    },
+    "source": {
+      "enum": [
+        "cassette",
+        "live",
+        "local"
+      ],
+      "title": "Source",
+      "type": "string"
+    },
+    "started_at": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Started At"
+    },
+    "step_id": {
+      "title": "Step Id",
+      "type": "string"
+    },
+    "tool": {
+      "title": "Tool",
+      "type": "string"
+    }
+  },
+  "required": [
+    "step_id",
+    "tool",
+    "args_norm",
+    "args_hash",
+    "result_hash",
+    "side_effect",
+    "source",
+    "cassette_key"
+  ],
+  "title": "ToolCall",
+  "type": "object"
+}

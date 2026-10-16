@@ -1,0 +1,8 @@
+[Unit]
+Description=Ratchet alert checks (health, disk, spend surge) -> RATCHET_NOTIFY_WEBHOOK
+Documentation=file:///opt/ratchet/docs/RUNBOOK.md
+
+[Service]
+Type=oneshot
+EnvironmentFile=/etc/ratchet/env
+ExecStart=/opt/ratchet/deploy/vm/alerts.sh

@@ -1,0 +1,121 @@
+# User documentation site for Ratchet (MkDocs + Material for MkDocs).
+#
+#   uv sync --group docs
+#   uv run python scripts/gen_docs.py            # regenerate CLI, settings, API, reference copies
+#   uv run --group docs mkdocs build --strict    # → site/
+#   uv run --group docs mkdocs serve             # → http://127.0.0.1:8000
+#
+# Pages live in docs/user/. Generated sections carry a banner naming their generator.
+
+site_name: Ratchet
+site_description: >-
+  Regression CI for self-improving agents: replay blessed tasks against every skill edit,
+  judge with a Nemotron cascade, block what breaks.
+site_author: Ratchet contributors
+repo_url: https://github.com/lloydjf/ratchet
+repo_name: lloydjf/ratchet
+edit_uri: ""
+copyright: Code Apache-2.0 · SkillRegress-Bench data CC BY 4.0
+
+docs_dir: docs/user
+site_dir: site
+strict: true
+
+theme:
+  name: material
+  language: en
+  logo: assets/logo.svg
+  favicon: assets/favicon.svg
+  font:
+    text: Inter
+    code: JetBrains Mono
+  palette:
+    # Dark first (ADR 0015), matching the dashboard tokens.
+    - scheme: slate
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to the light theme
+    - scheme: default
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/weather-night
+        name: Switch to the dark theme
+  icon:
+    repo: material/source-repository
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.indexes
+    - navigation.top
+    - navigation.footer
+    - navigation.tracking
+    - search.suggest
+    - search.highlight
+    - search.share
+    - content.code.copy
+    - content.tabs.link
+    - toc.follow
+
+extra_css:
+  - stylesheets/ratchet.css
+
+plugins:
+  - search
+
+markdown_extensions:
+  - abbr
+  - admonition
+  - attr_list
+  - def_list
+  - footnotes
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+      toc_depth: 3
+  - pymdownx.details
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.keys
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+
+validation:
+  omitted_files: warn
+  absolute_links: warn
+  unrecognized_links: warn
+  anchors: warn
+
+# Individual ADR copies are reached from the ADR index, not the sidebar.
+not_in_nav: |
+  /reference/adr/0*.md
+
+nav:
+  - Home: index.md
+  - Get started: getting-started.md
+  - Guide:
+      - Concepts: concepts.md
+      - Dashboard: dashboard.md
+      - Benchmark: benchmark.md
+  - Reference:
+      - reference/index.md
+      - CLI: cli.md
+      - Configuration: configuration.md
+      - Dashboard API: api.md
+      - API models: reference/api-models.md
+      - Decision records: reference/adr/index.md
+      - Verified against live APIs: reference/verified.md
+      - Implementation contracts: reference/contracts.md
+      - Feedback memo: reference/feedback.md
+  - Operate:
+      - Operations: operations.md
+      - Security and privacy: security.md
+  - About:
+      - Limitations: limitations.md
+      - FAQ: faq.md
+      - Contributing to the docs: contributing.md

@@ -1,0 +1,106 @@
+# Local stack for development. From the repo root:
+#
+#   docker compose -f deploy/docker-compose.yml up --build control          # sim, no keys
+#   docker compose -f deploy/docker-compose.yml --profile worker build worker-local
+#   docker compose -f deploy/docker-compose.yml -f deploy/docker-compose.docker-runner.yml up control
+#
+# `control` runs `ratchet serve`: dashboard + API on 8080 (published on 127.0.0.1 only by
+# default), capture proxy on 8081 and mock tools on 8082 (in-container only, never
+# published). With no ../.env, Settings defaults apply: RATCHET_UPSTREAM=sim, local
+# process runner, process sandbox, Tavily fixtures — no key needed, every verdict labeled
+# "Simulated models".
+#
+# Sandbox egress (a trust boundary: no real key, no internet): replay sandboxes never join the
+# `egress` network. With RATCHET_SANDBOX=docker each sandbox is a container on the
+# *internal* bridge `ratchet-sandbox` (172.30.0.0/24, no route off the host, ICC off). The
+# worker binds its proxy and mock-tool sidecars on the bridge gateway 172.30.0.1, so those
+# two sidecars are the only endpoints a sandbox can reach; only the sidecar (outside the
+# sandbox) talks to Token Factory. The network is created by deploy/sandbox-network.sh (or
+# lazily by DockerSandbox) with the exact spec below, so it is `external` here — compose
+# never owns or deletes it. See docs/RUNBOOK.md "Sandbox network".
+
+name: ratchet
+
+services:
+  control:
+    image: ${RATCHET_CONTROL_IMAGE:-ratchet-control:dev}
+    build:
+      context: ..
+      dockerfile: deploy/control.Dockerfile
+      target: control
+    env_file:
+      - path: ../.env
+        required: false
+    # Container paths win over a host .env written for `uv run` (./var/...).
+    environment:
+      RATCHET_DATA_DIR: /srv/ratchet/data
+      RATCHET_SKILLS_REPO: /srv/ratchet/skills
+      RATCHET_PII_KEY_FILE: /srv/ratchet/pii.key
+      RATCHET_DASHBOARD_HOST: 0.0.0.0
+      RATCHET_DASHBOARD_PORT: "8080"
+      RATCHET_DASHBOARD_DIST: /app/dashboard/dist
+      RATCHET_SCENARIOS_DIR: /app/scenarios
+      RATCHET_TAVILY_FIXTURES_DIR: /app/tests/fixtures/tavily
+      RATCHET_PROXY_URL: http://127.0.0.1:8081/v1
+      RATCHET_MOCK_TOOLS_URL: http://127.0.0.1:8082
+      # The local stack is a demo host: Simulate on (the Settings default is off).
+      RATCHET_SIMULATE_ENABLED: ${RATCHET_SIMULATE_ENABLED:-true}
+      HOME: /srv/ratchet
+      TMPDIR: /srv/ratchet/tmp
+    ports:
+      - "${RATCHET_BIND_ADDR:-127.0.0.1}:${RATCHET_HOST_PORT:-8080}:8080"
+    expose:
+      - "8081"
+      - "8082"
+    volumes:
+      - ratchet-srv:/srv/ratchet
+    networks:
+      - egress
+    read_only: true
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,size=64m
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    restart: unless-stopped
+    stop_grace_period: 20s
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - "import sys, urllib.request; r = urllib.request.urlopen('http://127.0.0.1:8080/healthz', timeout=4); sys.exit(0 if r.status == 200 else 1)"
+      interval: 15s
+      timeout: 5s
+      start_period: 90s
+      retries: 3
+
+  # The replay worker image (worker/Dockerfile). LocalJobRunner launches it itself with
+  # `docker run` when RATCHET_LOCAL_RUNNER_MODE=docker; this service exists to build and tag
+  # it (`--profile worker build worker-local`) and to smoke-test it (prints --help, exits).
+  worker-local:
+    image: ${RATCHET_WORKER_IMAGE:-ratchet-worker:dev}
+    build:
+      context: ..
+      dockerfile: worker/Dockerfile
+    profiles:
+      - worker
+    command: ["--help"]
+    networks:
+      - sandbox
+    read_only: true
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    restart: "no"
+
+networks:
+  egress: {}
+  sandbox:
+    name: ratchet-sandbox
+    external: true
+
+volumes:
+  ratchet-srv: {}

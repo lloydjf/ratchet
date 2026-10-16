@@ -1,0 +1,4 @@
+# widgets runtime dependencies
+httpkit==2.4.3
+tinyorm==1.8.2
+logmint==0.12.3

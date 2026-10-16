@@ -1,0 +1,122 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "api": {
+      "default": "chat",
+      "enum": [
+        "chat",
+        "responses"
+      ],
+      "title": "Api",
+      "type": "string"
+    },
+    "cached_prompt_tokens": {
+      "default": 0,
+      "title": "Cached Prompt Tokens",
+      "type": "integer"
+    },
+    "completion_tokens": {
+      "title": "Completion Tokens",
+      "type": "integer"
+    },
+    "content_preview": {
+      "default": "",
+      "title": "Content Preview",
+      "type": "string"
+    },
+    "kind": {
+      "const": "llm",
+      "default": "llm",
+      "title": "Kind",
+      "type": "string"
+    },
+    "latency_ms": {
+      "title": "Latency Ms",
+      "type": "integer"
+    },
+    "messages_ref": {
+      "title": "Messages Ref",
+      "type": "string"
+    },
+    "model": {
+      "title": "Model",
+      "type": "string"
+    },
+    "prompt_tokens": {
+      "title": "Prompt Tokens",
+      "type": "integer"
+    },
+    "purpose": {
+      "default": "agent",
+      "enum": [
+        "agent",
+        "screen",
+        "check",
+        "adjudicate",
+        "extract",
+        "narrative",
+        "bench",
+        "embed"
+      ],
+      "title": "Purpose",
+      "type": "string"
+    },
+    "request_hash": {
+      "title": "Request Hash",
+      "type": "string"
+    },
+    "response_ref": {
+      "title": "Response Ref",
+      "type": "string"
+    },
+    "started_at": {
+      "format": "date-time",
+      "title": "Started At",
+      "type": "string"
+    },
+    "step_id": {
+      "title": "Step Id",
+      "type": "string"
+    },
+    "tier": {
+      "enum": [
+        "nano",
+        "super",
+        "ultra"
+      ],
+      "title": "Tier",
+      "type": "string"
+    },
+    "tool_calls_requested": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Tool Calls Requested",
+      "type": "array"
+    },
+    "usage_estimated": {
+      "default": false,
+      "title": "Usage Estimated",
+      "type": "boolean"
+    },
+    "usd": {
+      "title": "Usd",
+      "type": "number"
+    }
+  },
+  "required": [
+    "step_id",
+    "tier",
+    "model",
+    "request_hash",
+    "messages_ref",
+    "response_ref",
+    "prompt_tokens",
+    "completion_tokens",
+    "usd",
+    "latency_ms",
+    "started_at"
+  ],
+  "title": "LLMCall",
+  "type": "object"
+}

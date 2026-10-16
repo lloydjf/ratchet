@@ -1,0 +1,167 @@
+{
+  "run_id": "run_1b4db34439a9",
+  "kind": "golden",
+  "task_input": "Please file these receipts in the Expenses sheet: lunch-2026-10-03.pdf, train-2026-10-03.pdf.",
+  "steps": [
+    {
+      "kind": "llm",
+      "step_id": "m001",
+      "tier": "super",
+      "model": "nvidia/nemotron-3-super-120b-a12b",
+      "request_hash": "bc41cb48162dba6a8793e7215f1b959a5bb2b24fc0edd1c41fe5c8b253a11f76",
+      "messages_ref": "steps/m001.req.json",
+      "response_ref": "steps/m001.res.json",
+      "prompt_tokens": 3963,
+      "completion_tokens": 93,
+      "usd": 0.0012725999999999998,
+      "latency_ms": 1038,
+      "started_at": "2026-10-16T06:23:43.256706Z",
+      "purpose": "agent",
+      "api": "chat",
+      "usage_estimated": false,
+      "tool_calls_requested": [
+        "receipts.parse",
+        "receipts.parse"
+      ],
+      "content_preview": "I'll parse those receipts and file them in the Expenses sheet."
+    },
+    {
+      "kind": "tool",
+      "step_id": "t001",
+      "tool": "receipts.parse",
+      "args_norm": {
+        "file": "lunch-2026-10-03.pdf"
+      },
+      "args_hash": "a65ae562364153663a7eb4e1e98807a74d8877f67d480f74b11c8bcc067caa48",
+      "result_hash": "e97a1736fd3b7680e9271f0180ec65fd63ab66403dc1f70b4e3322cbd6c99c00",
+      "side_effect": "read",
+      "source": "live",
+      "cassette_key": "a65ae562364153663a7eb4e1e98807a74d8877f67d480f74b11c8bcc067caa48",
+      "result_preview": "{\"address\":\"Torstr. 40, Berlin\",\"currency\":\"EUR\",\"date\":\"2026-10-03\",\"file\":\"lunch-2026-10-03.pdf\",\"layout\":\"B\",\"lines\":[{\"amount\":29.0,\"description\":\"Pasta al pomodoro\",\"quantity\":2.0,\"unit_price\":14.5},{\"amount\":7.5,\"description\":\"Mineral water 0.75 l\",\"quantity\":2.0,\"unit_price\":3.75}],\"merchant\":\"Trattoria Roma\",\"subtotal\":36.5,\"summary\":{\"gross\":36.5,\"net\":30.67,\"note\":\"All prices include 19…",
+      "blocked": false,
+      "started_at": "2026-10-16T06:23:44.306036Z"
+    },
+    {
+      "kind": "tool",
+      "step_id": "t002",
+      "tool": "receipts.parse",
+      "args_norm": {
+        "file": "train-2026-10-03.pdf"
+      },
+      "args_hash": "eb63567dece965035f494f25c0f099ab38b5b869a7948ab83b738542b8601509",
+      "result_hash": "936edc66239b548485ff8d179fd237a52ca2c2187f4d357ef88965b3d1fba7cf",
+      "side_effect": "read",
+      "source": "live",
+      "cassette_key": "eb63567dece965035f494f25c0f099ab38b5b869a7948ab83b738542b8601509",
+      "result_preview": "{\"address\":\"Bahnhofplatz 3, Berlin\",\"currency\":\"EUR\",\"date\":\"2026-10-03\",\"file\":\"train-2026-10-03.pdf\",\"layout\":\"A\",\"lines\":[{\"amount\":79.44,\"description\":\"Berlin to Hamburg, 2nd class\",\"quantity\":1.0,\"unit_price\":79.44},{\"amount\":5.56,\"description\":\"VAT 7%\",\"quantity\":1.0,\"unit_price\":5.56}],\"merchant\":\"Rail Express Nord\",\"subtotal\":79.44,\"total\":85.0,\"vat\":5.56,\"vat_rate\":0.07}",
+      "blocked": false,
+      "started_at": "2026-10-16T06:23:44.308897Z"
+    },
+    {
+      "kind": "llm",
+      "step_id": "m002",
+      "tier": "super",
+      "model": "nvidia/nemotron-3-super-120b-a12b",
+      "request_hash": "155efd06fcb5c75efa1650d1ad554ca6a35655b2287df7bcc46d19ccc6a74230",
+      "messages_ref": "steps/m002.req.json",
+      "response_ref": "steps/m002.res.json",
+      "prompt_tokens": 4504,
+      "completion_tokens": 150,
+      "usd": 0.0014862,
+      "latency_ms": 1367,
+      "started_at": "2026-10-16T06:23:44.311239Z",
+      "purpose": "agent",
+      "api": "chat",
+      "usage_estimated": false,
+      "tool_calls_requested": [
+        "sheets.append"
+      ],
+      "content_preview": "Now I'll append both receipts to the Expenses sheet."
+    },
+    {
+      "kind": "tool",
+      "step_id": "t003",
+      "tool": "sheets.append",
+      "args_norm": {
+        "rows": [
+          [
+            "2026-10-03",
+            "Trattoria Roma",
+            "36.50",
+            "EUR",
+            "5.83",
+            "lunch-2026-10-03.pdf"
+          ],
+          [
+            "2026-10-03",
+            "Rail Express Nord",
+            "85.00",
+            "EUR",
+            "5.56",
+            "train-2026-10-03.pdf"
+          ]
+        ],
+        "sheet": "Expenses"
+      },
+      "args_hash": "f3cabb3596b913a5797443da4832ae278aeea2539f347861ad58f8b785922965",
+      "result_hash": "174c8ac7af810ed879dea88bf68767574ee560ac7af3f2a3dd4577ba9bd6ea34",
+      "side_effect": "write_reversible",
+      "source": "live",
+      "cassette_key": "f3cabb3596b913a5797443da4832ae278aeea2539f347861ad58f8b785922965",
+      "result_preview": "{\"appended\":2,\"sheet\":\"Expenses\",\"total_rows\":4}",
+      "blocked": false,
+      "started_at": "2026-10-16T06:23:45.691969Z"
+    },
+    {
+      "kind": "llm",
+      "step_id": "m003",
+      "tier": "super",
+      "model": "nvidia/nemotron-3-super-120b-a12b",
+      "request_hash": "7a78708dbed529f98a3ac343b1ff4c7585ade0c845fe2287e185cd69a34ce518",
+      "messages_ref": "steps/m003.req.json",
+      "response_ref": "steps/m003.res.json",
+      "prompt_tokens": 4691,
+      "completion_tokens": 108,
+      "usd": 0.0015045,
+      "latency_ms": 1160,
+      "started_at": "2026-10-16T06:23:45.695900Z",
+      "purpose": "agent",
+      "api": "chat",
+      "usage_estimated": false,
+      "tool_calls_requested": [],
+      "content_preview": "Merchant: Trattoria Roma\nDate: 2026-10-03\nTotal: 36.50 EUR\nVAT: 5.83 EUR\n\nMerchant: Rail Express Nord\nDate: 2026-10-03\nTotal: 85.00 EUR\nVAT: 5.56 EUR\n\nGrand total: 121.50 EUR\nFiled 2 receipts to the Expenses sheet."
+    }
+  ],
+  "final_output": "Merchant: Trattoria Roma\nDate: 2026-10-03\nTotal: 36.50 EUR\nVAT: 5.83 EUR\n\nMerchant: Rail Express Nord\nDate: 2026-10-03\nTotal: 85.00 EUR\nVAT: 5.56 EUR\n\nGrand total: 121.50 EUR\nFiled 2 receipts to the Expenses sheet.",
+  "artifacts_ref": null,
+  "skills_invoked": [
+    "expense-report"
+  ],
+  "world_dependent": false,
+  "world_facts": [],
+  "env": {
+    "workspace_ref": "workspace.tar.zst",
+    "frozen_time": "2026-10-14T16:00:00Z",
+    "harness_version": "minimal/0.1.0",
+    "skills_commit": "dda8ffcb2837fa255c23f29889f82e6f4976ba33",
+    "world_ref": null
+  },
+  "agent_tier": "super",
+  "seed": 396776640,
+  "created_at": "2026-10-16T06:23:46.890763Z",
+  "golden_of": null,
+  "candidate_commit": null,
+  "success_criteria": [
+    "states the merchant, date, total and VAT for each of the 2 receipts",
+    "includes the grand total of 121.50 EUR",
+    "mentions that 2 receipts were filed to the Expenses sheet",
+    "lists the merchant 'Trattoria Roma' with date 2026-10-03, total 36.50 EUR and VAT 5.83 EUR",
+    "lists the merchant 'Rail Express Nord' with date 2026-10-03, total 85.00 EUR and VAT 5.56 EUR",
+    "specifies the file names 'lunch-2026-10-03.pdf' and 'train-2026-10-03.pdf' were filed"
+  ],
+  "archived_reason": null,
+  "blessed_at": "2026-10-16T06:23:49.715100Z",
+  "harness_ok": true,
+  "error_code": null,
+  "task_label": "File lunch and train receipts"
+}

@@ -1,0 +1,26 @@
+{
+  "merchant": "Blitz Kurier",
+  "date": "2026-10-09",
+  "currency": "EUR",
+  "layout": "B",
+  "address": "Lindenstr. 2, Berlin",
+  "lines": [
+    {
+      "description": "Same-day delivery, documents",
+      "quantity": 1,
+      "unit_price": 23.8,
+      "amount": 23.8
+    }
+  ],
+  "subtotal": 23.8,
+  "vat": null,
+  "vat_rate": null,
+  "total": 23.8,
+  "summary": {
+    "note": "All prices include 19% VAT.",
+    "net": 20.0,
+    "vat": 3.8,
+    "vat_rate": 0.19,
+    "gross": 23.8
+  }
+}

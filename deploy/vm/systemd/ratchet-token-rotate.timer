@@ -1,0 +1,16 @@
+# The demo action token is HMAC(RATCHET_ACTION_TOKEN_SECRET, UTC date)[:24], computed per
+# request (orchestrator-api-cli.md §8), so it already rotates every day with no restart and
+# no timer. What a timer can still do is rotate the *secret* behind it: weekly, Monday
+# 04:30 UTC (the quietest hour), which invalidates every token ever issued. That needs a
+# restart (Settings load once at start), so pages open across it re-fetch /meta for a new
+# token. During the judging window, pause it: systemctl disable --now ratchet-token-rotate.timer
+[Unit]
+Description=Weekly rotation of the Ratchet action-token secret
+
+[Timer]
+OnCalendar=Mon *-*-* 04:30:00 UTC
+Persistent=true
+RandomizedDelaySec=0
+
+[Install]
+WantedBy=timers.target

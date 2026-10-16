@@ -1,0 +1,84 @@
+# Live integration against real Token Factory and Tavily (the `live` test marker): manual
+# only, with a hard $2 daily cap enforced by the proxy's budget ledger. Store the keys as
+# secrets of the `live` environment (Settings -> Environments), optionally with required
+# reviewers so nobody spends credits by accident.
+name: Live
+
+on:
+  workflow_dispatch:
+    inputs:
+      verify_live:
+        description: "Also run `ratchet verify-live` (model and Tavily checks, about $0.05) and upload VERIFIED.md"
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: live
+  cancel-in-progress: false
+
+env:
+  UV_VERSION: "0.8.18"
+  PYTHON_VERSION: "3.11"
+
+jobs:
+  live:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    environment: live
+    env:
+      RATCHET_UPSTREAM: live
+      RATCHET_TAVILY_MODE: live
+      RATCHET_DAILY_USD_CAP: "2"
+      RATCHET_BENCH_USD_CAP: "0"
+      NEBIUS_TF_BASE_URL: ${{ vars.NEBIUS_TF_BASE_URL || 'https://api.tokenfactory.nebius.com/v1/' }}
+    # Keys are passed per step (never to third-party actions).
+    steps:
+      - name: keys present
+        env:
+          NEBIUS_TOKEN_FACTORY_KEY: ${{ secrets.NEBIUS_TOKEN_FACTORY_KEY }}
+          TAVILY_API_KEY: ${{ secrets.TAVILY_API_KEY }}
+        run: |
+          test -n "$NEBIUS_TOKEN_FACTORY_KEY" || { echo "::error::NEBIUS_TOKEN_FACTORY_KEY secret missing"; exit 1; }
+          test -n "$TAVILY_API_KEY" || { echo "::error::TAVILY_API_KEY secret missing"; exit 1; }
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v10.3.0
+        with:
+          version: ${{ env.UV_VERSION }}
+          python-version: ${{ env.PYTHON_VERSION }}
+          enable-cache: true
+          cache-dependency-glob: uv.lock
+      - run: uv sync --frozen
+      - name: pytest -m live ($2 cap)
+        env:
+          NEBIUS_TOKEN_FACTORY_KEY: ${{ secrets.NEBIUS_TOKEN_FACTORY_KEY }}
+          TAVILY_API_KEY: ${{ secrets.TAVILY_API_KEY }}
+        run: uv run pytest -m live -q --junitxml=live.xml
+      - name: ratchet verify-live
+        if: inputs.verify_live
+        env:
+          NEBIUS_TOKEN_FACTORY_KEY: ${{ secrets.NEBIUS_TOKEN_FACTORY_KEY }}
+          TAVILY_API_KEY: ${{ secrets.TAVILY_API_KEY }}
+        run: uv run ratchet verify-live
+      # Secret-leak check with the real keys: nothing the live run wrote may contain them.
+      - name: secret scan of the run's data dir and logs
+        if: always()
+        env:
+          NEBIUS_TOKEN_FACTORY_KEY: ${{ secrets.NEBIUS_TOKEN_FACTORY_KEY }}
+          TAVILY_API_KEY: ${{ secrets.TAVILY_API_KEY }}
+        run: |
+          paths=()
+          for p in var docs/VERIFIED.md; do [ -e "$p" ] && paths+=("$p"); done
+          if [ "${#paths[@]}" -gt 0 ]; then
+            uv run python scripts/secret_scan.py --values-from-env "${paths[@]}"
+          fi
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: live-results
+          path: |
+            live.xml
+            docs/VERIFIED.md
+          retention-days: 30

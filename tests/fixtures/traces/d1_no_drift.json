@@ -1,0 +1,198 @@
+{
+  "category": "D1-control",
+  "expect": {
+    "hard_fail": false,
+    "n_changed": 1,
+    "n_missing": 0,
+    "n_new": 0
+  },
+  "golden": {
+    "agent_tier": "super",
+    "archived_reason": null,
+    "artifacts_ref": null,
+    "blessed_at": null,
+    "candidate_commit": null,
+    "created_at": "2026-10-14T09:00:00Z",
+    "env": {
+      "frozen_time": "2026-10-14T09:00:00Z",
+      "harness_version": "minimal/0.1.0",
+      "skills_commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "workspace_ref": "traces/run_d1_no_drift_g/workspace.tar.zst",
+      "world_ref": null
+    },
+    "error_code": null,
+    "final_output": "Brief written: Ultra $1.00/M in, $3.00/M out. Sections: prices, changes, sources.",
+    "golden_of": null,
+    "harness_ok": true,
+    "kind": "golden",
+    "run_id": "run_d1_no_drift_g",
+    "seed": 7,
+    "skills_invoked": [
+      "weekly-research-brief"
+    ],
+    "steps": [
+      {
+        "args_hash": "6ef2859f073921d556c28fe1c40eb0a3a7139dde685adcb0bebcf888a9fdeec5",
+        "args_norm": {
+          "query": "Token Factory pricing"
+        },
+        "blocked": false,
+        "cassette_key": null,
+        "kind": "tool",
+        "result_hash": "c68ca372e75f1661ef1218b182c364c017840805fc97b1ba89bab9a3fbeec1ae",
+        "result_preview": "https://docs.tokenfactory.nebius.com/pricing",
+        "side_effect": "read",
+        "source": "cassette",
+        "started_at": "2026-10-14T09:00:00Z",
+        "step_id": "t001",
+        "tool": "web.search"
+      },
+      {
+        "args_hash": "65adbfd1c7ca2994e1b8325e7354720386ca736d86b21ac4356a98c162f0a7b0",
+        "args_norm": {
+          "url": "https://docs.tokenfactory.nebius.com/pricing"
+        },
+        "blocked": false,
+        "cassette_key": null,
+        "kind": "tool",
+        "result_hash": "7aef68c3aafb7481710e0ed73dec9fc4e1ef12eae8957b5ca176e73c091035c2",
+        "result_preview": "Nemotron 3 Ultra: $1.00 / 1M input, $3.00 / 1M output",
+        "side_effect": "read",
+        "source": "cassette",
+        "started_at": "2026-10-14T09:00:00Z",
+        "step_id": "t002",
+        "tool": "web.fetch"
+      },
+      {
+        "args_hash": "a243e3f259cb42aad2f2f2ef8416c6de288319e12846ab3283544f0ae1af5ec6",
+        "args_norm": {
+          "content": "Prices; Changes; Sources",
+          "path": "briefs/week42.md"
+        },
+        "blocked": false,
+        "cassette_key": null,
+        "kind": "tool",
+        "result_hash": null,
+        "result_preview": "",
+        "side_effect": "write_reversible",
+        "source": "local",
+        "started_at": "2026-10-14T09:00:00Z",
+        "step_id": "t003",
+        "tool": "fs.write"
+      }
+    ],
+    "success_criteria": [
+      "Brief lists Ultra input and output prices",
+      "Brief cites its sources"
+    ],
+    "task_input": "Write this week's research brief on Token Factory pricing to briefs/week42.md.",
+    "task_label": "Week 42 pricing brief",
+    "world_dependent": true,
+    "world_facts": [
+      {
+        "fact_id": "f1",
+        "query_hint": "Nebius Token Factory Nemotron 3 Ultra price per million tokens",
+        "source_step": "t002",
+        "statement": "Token Factory lists Nemotron 3 Ultra at $1.00 per 1M input tokens",
+        "value": "$1.00",
+        "volatile": true
+      }
+    ]
+  },
+  "name": "d1_no_drift",
+  "replay": {
+    "agent_tier": "super",
+    "archived_reason": null,
+    "artifacts_ref": null,
+    "blessed_at": null,
+    "candidate_commit": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "created_at": "2026-10-14T09:00:00Z",
+    "env": {
+      "frozen_time": "2026-10-14T09:00:00Z",
+      "harness_version": "minimal/0.1.0",
+      "skills_commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "workspace_ref": "traces/run_d1_no_drift_r/workspace.tar.zst",
+      "world_ref": null
+    },
+    "error_code": null,
+    "final_output": "Brief written: Ultra $1.00/M in. Sections: prices.",
+    "golden_of": "run_d1_no_drift_g",
+    "harness_ok": true,
+    "kind": "replay",
+    "run_id": "run_d1_no_drift_r",
+    "seed": 7,
+    "skills_invoked": [
+      "weekly-research-brief"
+    ],
+    "steps": [
+      {
+        "args_hash": "6ef2859f073921d556c28fe1c40eb0a3a7139dde685adcb0bebcf888a9fdeec5",
+        "args_norm": {
+          "query": "Token Factory pricing"
+        },
+        "blocked": false,
+        "cassette_key": null,
+        "kind": "tool",
+        "result_hash": "c68ca372e75f1661ef1218b182c364c017840805fc97b1ba89bab9a3fbeec1ae",
+        "result_preview": "https://docs.tokenfactory.nebius.com/pricing",
+        "side_effect": "read",
+        "source": "cassette",
+        "started_at": "2026-10-14T09:00:00Z",
+        "step_id": "t001",
+        "tool": "web.search"
+      },
+      {
+        "args_hash": "65adbfd1c7ca2994e1b8325e7354720386ca736d86b21ac4356a98c162f0a7b0",
+        "args_norm": {
+          "url": "https://docs.tokenfactory.nebius.com/pricing"
+        },
+        "blocked": false,
+        "cassette_key": null,
+        "kind": "tool",
+        "result_hash": "7aef68c3aafb7481710e0ed73dec9fc4e1ef12eae8957b5ca176e73c091035c2",
+        "result_preview": "Nemotron 3 Ultra: $1.00 / 1M input, $3.00 / 1M output",
+        "side_effect": "read",
+        "source": "cassette",
+        "started_at": "2026-10-14T09:00:00Z",
+        "step_id": "t002",
+        "tool": "web.fetch"
+      },
+      {
+        "args_hash": "c8af3bf2a94989dceeaa6155b914e6afed904a6d5ce0dec2333b77d07b5548b7",
+        "args_norm": {
+          "content": "Prices",
+          "path": "briefs/week42.md"
+        },
+        "blocked": false,
+        "cassette_key": null,
+        "kind": "tool",
+        "result_hash": null,
+        "result_preview": "",
+        "side_effect": "write_reversible",
+        "source": "local",
+        "started_at": "2026-10-14T09:00:00Z",
+        "step_id": "t003",
+        "tool": "fs.write"
+      }
+    ],
+    "success_criteria": [
+      "Brief lists Ultra input and output prices",
+      "Brief cites its sources"
+    ],
+    "task_input": "Write this week's research brief on Token Factory pricing to briefs/week42.md.",
+    "task_label": "Week 42 pricing brief",
+    "world_dependent": true,
+    "world_facts": [
+      {
+        "fact_id": "f1",
+        "query_hint": "Nebius Token Factory Nemotron 3 Ultra price per million tokens",
+        "source_step": "t002",
+        "statement": "Token Factory lists Nemotron 3 Ultra at $1.00 per 1M input tokens",
+        "value": "$1.00",
+        "volatile": true
+      }
+    ]
+  },
+  "skill_diff": "--- a/weekly-research-brief/SKILL.md\n+++ b/weekly-research-brief/SKILL.md\n@@ -4,1 +4,1 @@\n-Cite sources.\n+Keep briefs to one section.\n",
+  "unexpected": []
+}

@@ -1,0 +1,24 @@
+{
+  "merchant": "Tankstelle Nord",
+  "date": "2026-10-12",
+  "currency": "EUR",
+  "layout": "A",
+  "lines": [
+    {
+      "description": "Diesel 38.2 l",
+      "quantity": 1,
+      "unit_price": 59.2,
+      "amount": 59.2
+    },
+    {
+      "description": "VAT 19%",
+      "quantity": 1,
+      "unit_price": 11.25,
+      "amount": 11.25
+    }
+  ],
+  "subtotal": 59.2,
+  "vat": 11.25,
+  "vat_rate": 0.19,
+  "total": 70.45
+}

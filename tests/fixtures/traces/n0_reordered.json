@@ -1,0 +1,316 @@
+{
+  "category": "N0",
+  "expect": {
+    "hard_fail": false,
+    "n_changed": 0,
+    "n_missing": 0,
+    "n_new": 0
+  },
+  "golden": {
+    "agent_tier": "super",
+    "archived_reason": null,
+    "artifacts_ref": null,
+    "blessed_at": null,
+    "candidate_commit": null,
+    "created_at": "2026-10-14T09:00:00Z",
+    "env": {
+      "frozen_time": "2026-10-14T09:00:00Z",
+      "harness_version": "minimal/0.1.0",
+      "skills_commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "workspace_ref": "traces/run_n0_reordered_g/workspace.tar.zst",
+      "world_ref": null
+    },
+    "error_code": null,
+    "final_output": "Labeled #12 bug and #15 docs; closed stale #7.",
+    "golden_of": null,
+    "harness_ok": true,
+    "kind": "golden",
+    "run_id": "run_n0_reordered_g",
+    "seed": 7,
+    "skills_invoked": [
+      "github-triage"
+    ],
+    "steps": [
+      {
+        "api": "chat",
+        "cached_prompt_tokens": 0,
+        "completion_tokens": 150,
+        "content_preview": "Listing open issues.",
+        "kind": "llm",
+        "latency_ms": 900,
+        "messages_ref": "steps/m001.req.json",
+        "model": "ratchet-sim/super",
+        "prompt_tokens": 1200,
+        "purpose": "agent",
+        "request_hash": "cfe06f08ab429330f6379379fc0ffd8db7e0b63ef50234eea199c61c8c5f9490",
+        "response_ref": "steps/m001.res.json",
+        "started_at": "2026-10-14T09:00:00Z",
+        "step_id": "m001",
+        "tier": "super",
+        "tool_calls_requested": [
+          "github.list_issues"
+        ],
+        "usage_estimated": false,
+        "usd": 0.0005
+      },
+      {
+        "args_hash": "f71e93761f909aa6c95bac29ca822d10a9493edf8477ef3dbe908f1962d8f8ff",
+        "args_norm": {
+          "repo": "acme/widgets",
+          "state": "open"
+        },
+        "blocked": false,
+        "cassette_key": null,
+        "kind": "tool",
+        "result_hash": "865dc80130d3b1dcb7fc703247b82f14fae280f700e18bd4c301b93367f69cc8",
+        "result_preview": "[{\"number\":7,\"stale\":true},{\"number\":12},{\"number\":15}]",
+        "side_effect": "read",
+        "source": "cassette",
+        "started_at": "2026-10-14T09:00:00Z",
+        "step_id": "t001",
+        "tool": "github.list_issues"
+      },
+      {
+        "args_hash": "55849bd03ec18e03b6d22a65d3a6a5ca69780bc8d50e2dfea8e95464851973eb",
+        "args_norm": {
+          "issue": 12,
+          "labels": [
+            "bug"
+          ],
+          "repo": "acme/widgets"
+        },
+        "blocked": false,
+        "cassette_key": null,
+        "kind": "tool",
+        "result_hash": null,
+        "result_preview": "",
+        "side_effect": "write_reversible",
+        "source": "cassette",
+        "started_at": "2026-10-14T09:00:00Z",
+        "step_id": "t002",
+        "tool": "github.label"
+      },
+      {
+        "args_hash": "aeaf1c72ac3f7caeffe370edecce2ef99a86a383f88911c576b33b23d505eeb6",
+        "args_norm": {
+          "issue": 15,
+          "labels": [
+            "docs"
+          ],
+          "repo": "acme/widgets"
+        },
+        "blocked": false,
+        "cassette_key": null,
+        "kind": "tool",
+        "result_hash": null,
+        "result_preview": "",
+        "side_effect": "write_reversible",
+        "source": "cassette",
+        "started_at": "2026-10-14T09:00:00Z",
+        "step_id": "t003",
+        "tool": "github.label"
+      },
+      {
+        "args_hash": "2f3bddac30eb6c962c3ee490d6d27d622926fd12c635bf595c5c5d5916435bde",
+        "args_norm": {
+          "issue": 7,
+          "labels": [
+            "stale"
+          ],
+          "repo": "acme/widgets"
+        },
+        "blocked": false,
+        "cassette_key": null,
+        "kind": "tool",
+        "result_hash": null,
+        "result_preview": "",
+        "side_effect": "write_reversible",
+        "source": "cassette",
+        "started_at": "2026-10-14T09:00:00Z",
+        "step_id": "t004",
+        "tool": "github.label"
+      },
+      {
+        "args_hash": "c8b635d4c0b0d1ba63ca827f676fc9b8290e8ca5b8c5528a491135f49f7054d5",
+        "args_norm": {
+          "issue": 7,
+          "repo": "acme/widgets"
+        },
+        "blocked": false,
+        "cassette_key": null,
+        "kind": "tool",
+        "result_hash": null,
+        "result_preview": "",
+        "side_effect": "write_irreversible",
+        "source": "cassette",
+        "started_at": "2026-10-14T09:00:00Z",
+        "step_id": "t009",
+        "tool": "github.close_issue"
+      }
+    ],
+    "success_criteria": [
+      "#12 labeled bug",
+      "#15 labeled docs",
+      "Stale issue #7 is closed"
+    ],
+    "task_input": "Triage the open issues in acme/widgets: label bugs and docs, close stale ones.",
+    "task_label": "Triage acme/widgets backlog",
+    "world_dependent": false,
+    "world_facts": []
+  },
+  "name": "n0_reordered",
+  "replay": {
+    "agent_tier": "super",
+    "archived_reason": null,
+    "artifacts_ref": null,
+    "blessed_at": null,
+    "candidate_commit": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "created_at": "2026-10-14T09:00:00Z",
+    "env": {
+      "frozen_time": "2026-10-14T09:00:00Z",
+      "harness_version": "minimal/0.1.0",
+      "skills_commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "workspace_ref": "traces/run_n0_reordered_r/workspace.tar.zst",
+      "world_ref": null
+    },
+    "error_code": null,
+    "final_output": "Closed stale #7, labeled #15 docs and #12 bug.",
+    "golden_of": "run_n0_reordered_g",
+    "harness_ok": true,
+    "kind": "replay",
+    "run_id": "run_n0_reordered_r",
+    "seed": 7,
+    "skills_invoked": [
+      "github-triage"
+    ],
+    "steps": [
+      {
+        "api": "chat",
+        "cached_prompt_tokens": 0,
+        "completion_tokens": 150,
+        "content_preview": "Listing open issues.",
+        "kind": "llm",
+        "latency_ms": 900,
+        "messages_ref": "steps/m001.req.json",
+        "model": "ratchet-sim/super",
+        "prompt_tokens": 1200,
+        "purpose": "agent",
+        "request_hash": "cfe06f08ab429330f6379379fc0ffd8db7e0b63ef50234eea199c61c8c5f9490",
+        "response_ref": "steps/m001.res.json",
+        "started_at": "2026-10-14T09:00:00Z",
+        "step_id": "m001",
+        "tier": "super",
+        "tool_calls_requested": [
+          "github.list_issues"
+        ],
+        "usage_estimated": false,
+        "usd": 0.0005
+      },
+      {
+        "args_hash": "f71e93761f909aa6c95bac29ca822d10a9493edf8477ef3dbe908f1962d8f8ff",
+        "args_norm": {
+          "repo": "acme/widgets",
+          "state": "open"
+        },
+        "blocked": false,
+        "cassette_key": null,
+        "kind": "tool",
+        "result_hash": "865dc80130d3b1dcb7fc703247b82f14fae280f700e18bd4c301b93367f69cc8",
+        "result_preview": "[{\"number\":7,\"stale\":true},{\"number\":12},{\"number\":15}]",
+        "side_effect": "read",
+        "source": "cassette",
+        "started_at": "2026-10-14T09:00:00Z",
+        "step_id": "t001",
+        "tool": "github.list_issues"
+      },
+      {
+        "args_hash": "aeaf1c72ac3f7caeffe370edecce2ef99a86a383f88911c576b33b23d505eeb6",
+        "args_norm": {
+          "issue": 15,
+          "labels": [
+            "docs"
+          ],
+          "repo": "acme/widgets"
+        },
+        "blocked": false,
+        "cassette_key": null,
+        "kind": "tool",
+        "result_hash": null,
+        "result_preview": "",
+        "side_effect": "write_reversible",
+        "source": "cassette",
+        "started_at": "2026-10-14T09:00:00Z",
+        "step_id": "t002",
+        "tool": "github.label"
+      },
+      {
+        "args_hash": "55849bd03ec18e03b6d22a65d3a6a5ca69780bc8d50e2dfea8e95464851973eb",
+        "args_norm": {
+          "issue": 12,
+          "labels": [
+            "bug"
+          ],
+          "repo": "acme/widgets"
+        },
+        "blocked": false,
+        "cassette_key": null,
+        "kind": "tool",
+        "result_hash": null,
+        "result_preview": "",
+        "side_effect": "write_reversible",
+        "source": "cassette",
+        "started_at": "2026-10-14T09:00:00Z",
+        "step_id": "t003",
+        "tool": "github.label"
+      },
+      {
+        "args_hash": "2f3bddac30eb6c962c3ee490d6d27d622926fd12c635bf595c5c5d5916435bde",
+        "args_norm": {
+          "issue": 7,
+          "labels": [
+            "stale"
+          ],
+          "repo": "acme/widgets"
+        },
+        "blocked": false,
+        "cassette_key": null,
+        "kind": "tool",
+        "result_hash": null,
+        "result_preview": "",
+        "side_effect": "write_reversible",
+        "source": "cassette",
+        "started_at": "2026-10-14T09:00:00Z",
+        "step_id": "t004",
+        "tool": "github.label"
+      },
+      {
+        "args_hash": "c8b635d4c0b0d1ba63ca827f676fc9b8290e8ca5b8c5528a491135f49f7054d5",
+        "args_norm": {
+          "issue": 7,
+          "repo": "acme/widgets"
+        },
+        "blocked": false,
+        "cassette_key": null,
+        "kind": "tool",
+        "result_hash": null,
+        "result_preview": "",
+        "side_effect": "write_irreversible",
+        "source": "cassette",
+        "started_at": "2026-10-14T09:00:00Z",
+        "step_id": "t009",
+        "tool": "github.close_issue"
+      }
+    ],
+    "success_criteria": [
+      "#12 labeled bug",
+      "#15 labeled docs",
+      "Stale issue #7 is closed"
+    ],
+    "task_input": "Triage the open issues in acme/widgets: label bugs and docs, close stale ones.",
+    "task_label": "Triage acme/widgets backlog",
+    "world_dependent": false,
+    "world_facts": []
+  },
+  "skill_diff": "--- a/github-triage/SKILL.md\n+++ b/github-triage/SKILL.md\n@@ -4,1 +4,1 @@\n-Label first.\n+Label issues before closing.\n",
+  "unexpected": []
+}

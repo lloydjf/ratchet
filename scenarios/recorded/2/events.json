@@ -1,0 +1,908 @@
+[
+  {
+    "kind": "edit.detected",
+    "offset_ms": 0,
+    "payload": {
+      "affected_skills": [
+        "expense-report"
+      ],
+      "author": "seeded",
+      "commit": "7668b12d50161e53c87bf9701a5bb5cd39733dc4",
+      "edit_id": "edit_8796c4358b15",
+      "summary": "expense-report: SKILL.md changed (+9 −4)",
+      "verdict_id": "verdict_8796c4358b15"
+    },
+    "ref": "edit_8796c4358b15"
+  },
+  {
+    "kind": "simulate.started",
+    "offset_ms": 1,
+    "payload": {
+      "edit_id": "edit_8796c4358b15",
+      "scenario": "2",
+      "session_hash": "4d3fa3720b5cf9a2",
+      "status": "running",
+      "verdict_id": "verdict_8796c4358b15"
+    },
+    "ref": "verdict_8796c4358b15"
+  },
+  {
+    "kind": "orchestrator.state",
+    "offset_ms": 4,
+    "payload": {
+      "edit_id": "edit_8796c4358b15",
+      "elapsed_ms": 5,
+      "from": "detected",
+      "to": "selecting",
+      "verdict_id": "verdict_8796c4358b15"
+    },
+    "ref": "edit_8796c4358b15"
+  },
+  {
+    "kind": "edit.selected",
+    "offset_ms": 72,
+    "payload": {
+      "edit_id": "edit_8796c4358b15",
+      "n_canary": 3,
+      "n_direct": 7,
+      "n_neighborhood": 0,
+      "n_traces": 10,
+      "verdict_id": "verdict_8796c4358b15"
+    },
+    "ref": "edit_8796c4358b15"
+  },
+  {
+    "kind": "orchestrator.state",
+    "offset_ms": 74,
+    "payload": {
+      "edit_id": "edit_8796c4358b15",
+      "elapsed_ms": 68,
+      "from": "selecting",
+      "to": "dispatching",
+      "verdict_id": "verdict_8796c4358b15"
+    },
+    "ref": "edit_8796c4358b15"
+  },
+  {
+    "kind": "batch.submitted",
+    "offset_ms": 138,
+    "payload": {
+      "batch_id": "batch_8796c4358b15_a1_00",
+      "edit_id": "edit_8796c4358b15",
+      "k": 0,
+      "n": 4,
+      "runner": "local-process",
+      "status": "submitted",
+      "verdict_id": "verdict_8796c4358b15"
+    },
+    "ref": "edit_8796c4358b15"
+  },
+  {
+    "kind": "batch.submitted",
+    "offset_ms": 146,
+    "payload": {
+      "batch_id": "batch_8796c4358b15_a1_01",
+      "edit_id": "edit_8796c4358b15",
+      "k": 0,
+      "n": 4,
+      "runner": "local-process",
+      "status": "submitted",
+      "verdict_id": "verdict_8796c4358b15"
+    },
+    "ref": "edit_8796c4358b15"
+  },
+  {
+    "kind": "batch.submitted",
+    "offset_ms": 155,
+    "payload": {
+      "batch_id": "batch_8796c4358b15_a1_02",
+      "edit_id": "edit_8796c4358b15",
+      "k": 0,
+      "n": 2,
+      "runner": "local-process",
+      "status": "submitted",
+      "verdict_id": "verdict_8796c4358b15"
+    },
+    "ref": "edit_8796c4358b15"
+  },
+  {
+    "kind": "orchestrator.state",
+    "offset_ms": 159,
+    "payload": {
+      "edit_id": "edit_8796c4358b15",
+      "elapsed_ms": 83,
+      "from": "dispatching",
+      "to": "collecting",
+      "verdict_id": "verdict_8796c4358b15"
+    },
+    "ref": "edit_8796c4358b15"
+  },
+  {
+    "kind": "batch.heartbeat",
+    "offset_ms": 4537,
+    "payload": {
+      "batch_id": "batch_8796c4358b15_a1_02",
+      "edit_id": "edit_8796c4358b15",
+      "k": 1,
+      "n": 2,
+      "runner": "local-process",
+      "status": "running",
+      "verdict_id": "verdict_8796c4358b15"
+    },
+    "ref": "edit_8796c4358b15"
+  },
+  {
+    "kind": "batch.heartbeat",
+    "offset_ms": 5561,
+    "payload": {
+      "batch_id": "batch_8796c4358b15_a1_00",
+      "edit_id": "edit_8796c4358b15",
+      "k": 1,
+      "n": 4,
+      "runner": "local-process",
+      "status": "running",
+      "verdict_id": "verdict_8796c4358b15"
+    },
+    "ref": "edit_8796c4358b15"
+  },
+  {
+    "kind": "batch.heartbeat",
+    "offset_ms": 5564,
+    "payload": {
+      "batch_id": "batch_8796c4358b15_a1_01",
+      "edit_id": "edit_8796c4358b15",
+      "k": 1,
+      "n": 4,
+      "runner": "local-process",
+      "status": "running",
+      "verdict_id": "verdict_8796c4358b15"
+    },
+    "ref": "edit_8796c4358b15"
+  },
+  {
+    "kind": "batch.heartbeat",
+    "offset_ms": 6329,
+    "payload": {
+      "batch_id": "batch_8796c4358b15_a1_02",
+      "edit_id": "edit_8796c4358b15",
+      "k": 2,
+      "n": 2,
+      "runner": "local-process",
+      "status": "running",
+      "verdict_id": "verdict_8796c4358b15"
+    },
+    "ref": "edit_8796c4358b15"
+  },
+  {
+    "kind": "batch.finished",
+    "offset_ms": 6617,
+    "payload": {
+      "batch_id": "batch_8796c4358b15_a1_02",
+      "edit_id": "edit_8796c4358b15",
+      "k": 2,
+      "n": 2,
+      "runner": "local-process",
+      "status": "ok",
+      "verdict_id": "verdict_8796c4358b15"
+    },
+    "ref": "edit_8796c4358b15"
+  },
+  {
+    "kind": "batch.heartbeat",
+    "offset_ms": 10468,
+    "payload": {
+      "batch_id": "batch_8796c4358b15_a1_00",
+      "edit_id": "edit_8796c4358b15",
+      "k": 2,
+      "n": 4,
+      "runner": "local-process",
+      "status": "running",
+      "verdict_id": "verdict_8796c4358b15"
+    },
+    "ref": "edit_8796c4358b15"
+  },
+  {
+    "kind": "batch.heartbeat",
+    "offset_ms": 10470,
+    "payload": {
+      "batch_id": "batch_8796c4358b15_a1_01",
+      "edit_id": "edit_8796c4358b15",
+      "k": 2,
+      "n": 4,
+      "runner": "local-process",
+      "status": "running",
+      "verdict_id": "verdict_8796c4358b15"
+    },
+    "ref": "edit_8796c4358b15"
+  },
+  {
+    "kind": "batch.heartbeat",
+    "offset_ms": 14849,
+    "payload": {
+      "batch_id": "batch_8796c4358b15_a1_00",
+      "edit_id": "edit_8796c4358b15",
+      "k": 3,
+      "n": 4,
+      "runner": "local-process",
+      "status": "running",
+      "verdict_id": "verdict_8796c4358b15"
+    },
+    "ref": "edit_8796c4358b15"
+  },
+  {
+    "kind": "batch.heartbeat",
+    "offset_ms": 14851,
+    "payload": {
+      "batch_id": "batch_8796c4358b15_a1_01",
+      "edit_id": "edit_8796c4358b15",
+      "k": 3,
+      "n": 4,
+      "runner": "local-process",
+      "status": "running",
+      "verdict_id": "verdict_8796c4358b15"
+    },
+    "ref": "edit_8796c4358b15"
+  },
+  {
+    "kind": "batch.heartbeat",
+    "offset_ms": 16398,
+    "payload": {
+      "batch_id": "batch_8796c4358b15_a1_01",
+      "edit_id": "edit_8796c4358b15",
+      "k": 4,
+      "n": 4,
+      "runner": "local-process",
+      "status": "running",
+      "verdict_id": "verdict_8796c4358b15"
+    },
+    "ref": "edit_8796c4358b15"
+  },
+  {
+    "kind": "batch.finished",
+    "offset_ms": 16696,
+    "payload": {
+      "batch_id": "batch_8796c4358b15_a1_01",
+      "edit_id": "edit_8796c4358b15",
+      "k": 4,
+      "n": 4,
+      "runner": "local-process",
+      "status": "ok",
+      "verdict_id": "verdict_8796c4358b15"
+    },
+    "ref": "edit_8796c4358b15"
+  },
+  {
+    "kind": "batch.heartbeat",
+    "offset_ms": 19270,
+    "payload": {
+      "batch_id": "batch_8796c4358b15_a1_00",
+      "edit_id": "edit_8796c4358b15",
+      "k": 4,
+      "n": 4,
+      "runner": "local-process",
+      "status": "running",
+      "verdict_id": "verdict_8796c4358b15"
+    },
+    "ref": "edit_8796c4358b15"
+  },
+  {
+    "kind": "batch.finished",
+    "offset_ms": 19320,
+    "payload": {
+      "batch_id": "batch_8796c4358b15_a1_00",
+      "edit_id": "edit_8796c4358b15",
+      "k": 4,
+      "n": 4,
+      "runner": "local-process",
+      "status": "ok",
+      "verdict_id": "verdict_8796c4358b15"
+    },
+    "ref": "edit_8796c4358b15"
+  },
+  {
+    "kind": "orchestrator.state",
+    "offset_ms": 19323,
+    "payload": {
+      "edit_id": "edit_8796c4358b15",
+      "elapsed_ms": 19164,
+      "from": "collecting",
+      "to": "judging",
+      "verdict_id": "verdict_8796c4358b15"
+    },
+    "ref": "edit_8796c4358b15"
+  },
+  {
+    "kind": "pair.level0",
+    "offset_ms": 19333,
+    "payload": {
+      "edit_id": "edit_8796c4358b15",
+      "golden": "run_8edbdac3cda2",
+      "hard_fail": false,
+      "n_missing": 0,
+      "n_new": 0,
+      "replay": "run_28fe8e4fdd26",
+      "verdict_id": "verdict_8796c4358b15"
+    },
+    "ref": "edit_8796c4358b15"
+  },
+  {
+    "kind": "pair.level0",
+    "offset_ms": 19333,
+    "payload": {
+      "edit_id": "edit_8796c4358b15",
+      "golden": "run_87777a342819",
+      "hard_fail": false,
+      "n_missing": 0,
+      "n_new": 0,
+      "replay": "run_c06ef10c8246",
+      "verdict_id": "verdict_8796c4358b15"
+    },
+    "ref": "edit_8796c4358b15"
+  },
+  {
+    "kind": "pair.level0",
+    "offset_ms": 19334,
+    "payload": {
+      "edit_id": "edit_8796c4358b15",
+      "golden": "run_3d09f7108d37",
+      "hard_fail": false,
+      "n_missing": 0,
+      "n_new": 0,
+      "replay": "run_ba9e5e014118",
+      "verdict_id": "verdict_8796c4358b15"
+    },
+    "ref": "edit_8796c4358b15"
+  },
+  {
+    "kind": "pair.level0",
+    "offset_ms": 19334,
+    "payload": {
+      "edit_id": "edit_8796c4358b15",
+      "golden": "run_1f04fbd21982",
+      "hard_fail": false,
+      "n_missing": 0,
+      "n_new": 0,
+      "replay": "run_f719312b1aa2",
+      "verdict_id": "verdict_8796c4358b15"
+    },
+    "ref": "edit_8796c4358b15"
+  },
+  {
+    "kind": "pair.level0",
+    "offset_ms": 19334,
+    "payload": {
+      "edit_id": "edit_8796c4358b15",
+      "golden": "run_76ecacfc70a6",
+      "hard_fail": false,
+      "n_missing": 0,
+      "n_new": 0,
+      "replay": "run_fb22fe2f4a6a",
+      "verdict_id": "verdict_8796c4358b15"
+    },
+    "ref": "edit_8796c4358b15"
+  },
+  {
+    "kind": "pair.level0",
+    "offset_ms": 19335,
+    "payload": {
+      "edit_id": "edit_8796c4358b15",
+      "golden": "run_d17682926c5f",
+      "hard_fail": false,
+      "n_missing": 0,
+      "n_new": 0,
+      "replay": "run_4d79265a4513",
+      "verdict_id": "verdict_8796c4358b15"
+    },
+    "ref": "edit_8796c4358b15"
+  },
+  {
+    "kind": "pair.level0",
+    "offset_ms": 19335,
+    "payload": {
+      "edit_id": "edit_8796c4358b15",
+      "golden": "run_1b4db34439a9",
+      "hard_fail": false,
+      "n_missing": 0,
+      "n_new": 0,
+      "replay": "run_adb18951a6be",
+      "verdict_id": "verdict_8796c4358b15"
+    },
+    "ref": "edit_8796c4358b15"
+  },
+  {
+    "kind": "pair.level0",
+    "offset_ms": 19335,
+    "payload": {
+      "edit_id": "edit_8796c4358b15",
+      "golden": "run_70c317da058a",
+      "hard_fail": false,
+      "n_missing": 0,
+      "n_new": 0,
+      "replay": "run_72f38f48bfee",
+      "verdict_id": "verdict_8796c4358b15"
+    },
+    "ref": "edit_8796c4358b15"
+  },
+  {
+    "kind": "pair.opinion",
+    "offset_ms": 20717,
+    "payload": {
+      "confidence": 0.95,
+      "edit_id": "edit_8796c4358b15",
+      "golden": "run_8edbdac3cda2",
+      "replay": "run_28fe8e4fdd26",
+      "tier": "nano",
+      "usd": 6.738e-05,
+      "verdict": "equivalent",
+      "verdict_id": "verdict_8796c4358b15"
+    },
+    "ref": "edit_8796c4358b15"
+  },
+  {
+    "kind": "pair.level0",
+    "offset_ms": 20719,
+    "payload": {
+      "edit_id": "edit_8796c4358b15",
+      "golden": "run_f8fa40ff55bf",
+      "hard_fail": false,
+      "n_missing": 0,
+      "n_new": 0,
+      "replay": "run_66a7e3211f15",
+      "verdict_id": "verdict_8796c4358b15"
+    },
+    "ref": "edit_8796c4358b15"
+  },
+  {
+    "kind": "pair.decided",
+    "offset_ms": 20719,
+    "payload": {
+      "edit_id": "edit_8796c4358b15",
+      "golden": "run_8edbdac3cda2",
+      "outcome": "pass",
+      "replay": "run_28fe8e4fdd26",
+      "verdict_id": "verdict_8796c4358b15"
+    },
+    "ref": "edit_8796c4358b15"
+  },
+  {
+    "kind": "pair.opinion",
+    "offset_ms": 20789,
+    "payload": {
+      "confidence": 0.95,
+      "edit_id": "edit_8796c4358b15",
+      "golden": "run_1b4db34439a9",
+      "replay": "run_adb18951a6be",
+      "tier": "nano",
+      "usd": 9.48e-05,
+      "verdict": "regressed",
+      "verdict_id": "verdict_8796c4358b15"
+    },
+    "ref": "edit_8796c4358b15"
+  },
+  {
+    "kind": "pair.opinion",
+    "offset_ms": 20910,
+    "payload": {
+      "confidence": 0.95,
+      "edit_id": "edit_8796c4358b15",
+      "golden": "run_70c317da058a",
+      "replay": "run_72f38f48bfee",
+      "tier": "nano",
+      "usd": 8.874e-05,
+      "verdict": "equivalent",
+      "verdict_id": "verdict_8796c4358b15"
+    },
+    "ref": "edit_8796c4358b15"
+  },
+  {
+    "kind": "pair.level0",
+    "offset_ms": 20913,
+    "payload": {
+      "edit_id": "edit_8796c4358b15",
+      "golden": "run_3423fd4b299a",
+      "hard_fail": false,
+      "n_missing": 0,
+      "n_new": 0,
+      "replay": "run_5b60b07fdd0a",
+      "verdict_id": "verdict_8796c4358b15"
+    },
+    "ref": "edit_8796c4358b15"
+  },
+  {
+    "kind": "pair.decided",
+    "offset_ms": 20913,
+    "payload": {
+      "edit_id": "edit_8796c4358b15",
+      "golden": "run_70c317da058a",
+      "outcome": "pass",
+      "replay": "run_72f38f48bfee",
+      "verdict_id": "verdict_8796c4358b15"
+    },
+    "ref": "edit_8796c4358b15"
+  },
+  {
+    "kind": "pair.opinion",
+    "offset_ms": 20959,
+    "payload": {
+      "confidence": 0.95,
+      "edit_id": "edit_8796c4358b15",
+      "golden": "run_87777a342819",
+      "replay": "run_c06ef10c8246",
+      "tier": "nano",
+      "usd": 9.72e-05,
+      "verdict": "equivalent",
+      "verdict_id": "verdict_8796c4358b15"
+    },
+    "ref": "edit_8796c4358b15"
+  },
+  {
+    "kind": "pair.decided",
+    "offset_ms": 20961,
+    "payload": {
+      "edit_id": "edit_8796c4358b15",
+      "golden": "run_87777a342819",
+      "outcome": "pass",
+      "replay": "run_c06ef10c8246",
+      "verdict_id": "verdict_8796c4358b15"
+    },
+    "ref": "edit_8796c4358b15"
+  },
+  {
+    "kind": "pair.opinion",
+    "offset_ms": 20979,
+    "payload": {
+      "confidence": 0.95,
+      "edit_id": "edit_8796c4358b15",
+      "golden": "run_76ecacfc70a6",
+      "replay": "run_fb22fe2f4a6a",
+      "tier": "nano",
+      "usd": 9.018e-05,
+      "verdict": "equivalent",
+      "verdict_id": "verdict_8796c4358b15"
+    },
+    "ref": "edit_8796c4358b15"
+  },
+  {
+    "kind": "pair.decided",
+    "offset_ms": 20981,
+    "payload": {
+      "edit_id": "edit_8796c4358b15",
+      "golden": "run_76ecacfc70a6",
+      "outcome": "pass",
+      "replay": "run_fb22fe2f4a6a",
+      "verdict_id": "verdict_8796c4358b15"
+    },
+    "ref": "edit_8796c4358b15"
+  },
+  {
+    "kind": "pair.opinion",
+    "offset_ms": 20997,
+    "payload": {
+      "confidence": 0.95,
+      "edit_id": "edit_8796c4358b15",
+      "golden": "run_1f04fbd21982",
+      "replay": "run_f719312b1aa2",
+      "tier": "nano",
+      "usd": 0.00010098,
+      "verdict": "regressed",
+      "verdict_id": "verdict_8796c4358b15"
+    },
+    "ref": "edit_8796c4358b15"
+  },
+  {
+    "kind": "pair.opinion",
+    "offset_ms": 21042,
+    "payload": {
+      "confidence": 0.95,
+      "edit_id": "edit_8796c4358b15",
+      "golden": "run_d17682926c5f",
+      "replay": "run_4d79265a4513",
+      "tier": "nano",
+      "usd": 9.366e-05,
+      "verdict": "equivalent",
+      "verdict_id": "verdict_8796c4358b15"
+    },
+    "ref": "edit_8796c4358b15"
+  },
+  {
+    "kind": "pair.decided",
+    "offset_ms": 21044,
+    "payload": {
+      "edit_id": "edit_8796c4358b15",
+      "golden": "run_d17682926c5f",
+      "outcome": "pass",
+      "replay": "run_4d79265a4513",
+      "verdict_id": "verdict_8796c4358b15"
+    },
+    "ref": "edit_8796c4358b15"
+  },
+  {
+    "kind": "pair.opinion",
+    "offset_ms": 21213,
+    "payload": {
+      "confidence": 0.99,
+      "edit_id": "edit_8796c4358b15",
+      "golden": "run_3d09f7108d37",
+      "replay": "run_ba9e5e014118",
+      "tier": "nano",
+      "usd": 0.000105,
+      "verdict": "equivalent",
+      "verdict_id": "verdict_8796c4358b15"
+    },
+    "ref": "edit_8796c4358b15"
+  },
+  {
+    "kind": "pair.decided",
+    "offset_ms": 21215,
+    "payload": {
+      "edit_id": "edit_8796c4358b15",
+      "golden": "run_3d09f7108d37",
+      "outcome": "pass",
+      "replay": "run_ba9e5e014118",
+      "verdict_id": "verdict_8796c4358b15"
+    },
+    "ref": "edit_8796c4358b15"
+  },
+  {
+    "kind": "pair.opinion",
+    "offset_ms": 21703,
+    "payload": {
+      "confidence": 0.95,
+      "edit_id": "edit_8796c4358b15",
+      "golden": "run_f8fa40ff55bf",
+      "replay": "run_66a7e3211f15",
+      "tier": "nano",
+      "usd": 7.386e-05,
+      "verdict": "equivalent",
+      "verdict_id": "verdict_8796c4358b15"
+    },
+    "ref": "edit_8796c4358b15"
+  },
+  {
+    "kind": "pair.decided",
+    "offset_ms": 21706,
+    "payload": {
+      "edit_id": "edit_8796c4358b15",
+      "golden": "run_f8fa40ff55bf",
+      "outcome": "pass",
+      "replay": "run_66a7e3211f15",
+      "verdict_id": "verdict_8796c4358b15"
+    },
+    "ref": "edit_8796c4358b15"
+  },
+  {
+    "kind": "pair.opinion",
+    "offset_ms": 21826,
+    "payload": {
+      "confidence": 0.99,
+      "edit_id": "edit_8796c4358b15",
+      "golden": "run_3423fd4b299a",
+      "replay": "run_5b60b07fdd0a",
+      "tier": "nano",
+      "usd": 7.98e-05,
+      "verdict": "equivalent",
+      "verdict_id": "verdict_8796c4358b15"
+    },
+    "ref": "edit_8796c4358b15"
+  },
+  {
+    "kind": "pair.decided",
+    "offset_ms": 21830,
+    "payload": {
+      "edit_id": "edit_8796c4358b15",
+      "golden": "run_3423fd4b299a",
+      "outcome": "pass",
+      "replay": "run_5b60b07fdd0a",
+      "verdict_id": "verdict_8796c4358b15"
+    },
+    "ref": "edit_8796c4358b15"
+  },
+  {
+    "kind": "pair.opinion",
+    "offset_ms": 22554,
+    "payload": {
+      "confidence": 0.95,
+      "edit_id": "edit_8796c4358b15",
+      "golden": "run_1f04fbd21982",
+      "replay": "run_f719312b1aa2",
+      "tier": "super",
+      "usd": 0.0012822,
+      "verdict": "regressed",
+      "verdict_id": "verdict_8796c4358b15"
+    },
+    "ref": "edit_8796c4358b15"
+  },
+  {
+    "kind": "pair.opinion",
+    "offset_ms": 22748,
+    "payload": {
+      "confidence": 0.95,
+      "edit_id": "edit_8796c4358b15",
+      "golden": "run_1b4db34439a9",
+      "replay": "run_adb18951a6be",
+      "tier": "super",
+      "usd": 0.0013344,
+      "verdict": "regressed",
+      "verdict_id": "verdict_8796c4358b15"
+    },
+    "ref": "edit_8796c4358b15"
+  },
+  {
+    "kind": "pair.opinion",
+    "offset_ms": 28225,
+    "payload": {
+      "confidence": 0.95,
+      "edit_id": "edit_8796c4358b15",
+      "golden": "run_1f04fbd21982",
+      "replay": "run_f719312b1aa2",
+      "tier": "ultra",
+      "usd": 0.008696,
+      "verdict": "regressed",
+      "verdict_id": "verdict_8796c4358b15"
+    },
+    "ref": "edit_8796c4358b15"
+  },
+  {
+    "kind": "pair.decided",
+    "offset_ms": 28227,
+    "payload": {
+      "edit_id": "edit_8796c4358b15",
+      "golden": "run_1f04fbd21982",
+      "outcome": "regression",
+      "replay": "run_f719312b1aa2",
+      "verdict_id": "verdict_8796c4358b15"
+    },
+    "ref": "edit_8796c4358b15"
+  },
+  {
+    "kind": "pair.opinion",
+    "offset_ms": 31839,
+    "payload": {
+      "confidence": 0.95,
+      "edit_id": "edit_8796c4358b15",
+      "golden": "run_1b4db34439a9",
+      "replay": "run_adb18951a6be",
+      "tier": "ultra",
+      "usd": 0.013601,
+      "verdict": "regressed",
+      "verdict_id": "verdict_8796c4358b15"
+    },
+    "ref": "edit_8796c4358b15"
+  },
+  {
+    "kind": "pair.decided",
+    "offset_ms": 31842,
+    "payload": {
+      "edit_id": "edit_8796c4358b15",
+      "golden": "run_1b4db34439a9",
+      "outcome": "regression",
+      "replay": "run_adb18951a6be",
+      "verdict_id": "verdict_8796c4358b15"
+    },
+    "ref": "edit_8796c4358b15"
+  },
+  {
+    "kind": "orchestrator.state",
+    "offset_ms": 31849,
+    "payload": {
+      "edit_id": "edit_8796c4358b15",
+      "elapsed_ms": 12523,
+      "from": "judging",
+      "to": "drifting",
+      "verdict_id": "verdict_8796c4358b15"
+    },
+    "ref": "edit_8796c4358b15"
+  },
+  {
+    "kind": "orchestrator.state",
+    "offset_ms": 31863,
+    "payload": {
+      "edit_id": "edit_8796c4358b15",
+      "elapsed_ms": 14,
+      "from": "drifting",
+      "to": "deciding",
+      "verdict_id": "verdict_8796c4358b15"
+    },
+    "ref": "edit_8796c4358b15"
+  },
+  {
+    "kind": "verdict.decided",
+    "offset_ms": 32803,
+    "payload": {
+      "action": "reverted",
+      "affected_skills": [
+        "expense-report"
+      ],
+      "decision": "BLOCK",
+      "duration_s": 32,
+      "edit_id": "edit_8796c4358b15",
+      "headline": "Blocked: expense-report now omits the merchant, date, total and VAT for each of the 2 receipts on 2 of 10 past tasks.",
+      "n_by_outcome": {
+        "pass": 8,
+        "regression": 2
+      },
+      "reasons": [
+        "agreed_regression"
+      ],
+      "usd_by_tier": {
+        "nano": 0.0008915999999999999,
+        "super": 0.0026166,
+        "ultra": 0.022986
+      },
+      "verdict_id": "verdict_8796c4358b15"
+    },
+    "ref": "verdict_8796c4358b15"
+  },
+  {
+    "kind": "orchestrator.state",
+    "offset_ms": 32808,
+    "payload": {
+      "edit_id": "edit_8796c4358b15",
+      "elapsed_ms": 4,
+      "from": "deciding",
+      "to": "acting",
+      "verdict_id": "verdict_8796c4358b15"
+    },
+    "ref": "edit_8796c4358b15"
+  },
+  {
+    "kind": "verdict.acted",
+    "offset_ms": 33017,
+    "payload": {
+      "action": "reverted",
+      "commit": "f8c4787d0536f81a127ca8987d74633edf41e03c",
+      "decision": "BLOCK",
+      "edit_id": "edit_8796c4358b15",
+      "verdict_id": "verdict_8796c4358b15"
+    },
+    "ref": "verdict_8796c4358b15"
+  },
+  {
+    "kind": "orchestrator.state",
+    "offset_ms": 33020,
+    "payload": {
+      "edit_id": "edit_8796c4358b15",
+      "elapsed_ms": 212,
+      "from": "acting",
+      "to": "notifying",
+      "verdict_id": "verdict_8796c4358b15"
+    },
+    "ref": "edit_8796c4358b15"
+  },
+  {
+    "kind": "verdict.notified",
+    "offset_ms": 33021,
+    "payload": {
+      "delivered": false,
+      "edit_id": "edit_8796c4358b15",
+      "text": "Ratchet BLOCK: Blocked: expense-report now omits the merchant, date, total and VAT for each of the 2 rece… — http://127.0.0.1:8080/verdicts/verdict_8796c4358b15",
+      "verdict_id": "verdict_8796c4358b15"
+    },
+    "ref": "verdict_8796c4358b15"
+  },
+  {
+    "kind": "simulate.finished",
+    "offset_ms": 33024,
+    "payload": {
+      "decision": "BLOCK",
+      "edit_id": "edit_8796c4358b15",
+      "scenario": "2",
+      "session_hash": "4d3fa3720b5cf9a2",
+      "status": "done",
+      "verdict_id": "verdict_8796c4358b15"
+    },
+    "ref": "verdict_8796c4358b15"
+  },
+  {
+    "kind": "orchestrator.state",
+    "offset_ms": 33026,
+    "payload": {
+      "edit_id": "edit_8796c4358b15",
+      "elapsed_ms": 6,
+      "from": "notifying",
+      "to": "done",
+      "verdict_id": "verdict_8796c4358b15"
+    },
+    "ref": "edit_8796c4358b15"
+  }
+]

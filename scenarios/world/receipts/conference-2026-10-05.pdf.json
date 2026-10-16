@@ -1,0 +1,25 @@
+{
+  "merchant": "DevSummit Europe",
+  "date": "2026-10-05",
+  "currency": "EUR",
+  "layout": "A",
+  "address": "Messeweg 5, Hamburg",
+  "lines": [
+    {
+      "description": "Conference ticket, 2 days",
+      "quantity": 1,
+      "unit_price": 420.17,
+      "amount": 420.17
+    },
+    {
+      "description": "VAT 19%",
+      "quantity": 1,
+      "unit_price": 79.83,
+      "amount": 79.83
+    }
+  ],
+  "subtotal": 420.17,
+  "vat": 79.83,
+  "vat_rate": 0.19,
+  "total": 500.0
+}

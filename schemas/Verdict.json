@@ -1,0 +1,831 @@
+{
+  "$defs": {
+    "CriterionCheck": {
+      "additionalProperties": false,
+      "properties": {
+        "criterion": {
+          "title": "Criterion",
+          "type": "string"
+        },
+        "evidence_steps": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Evidence Steps",
+          "type": "array"
+        },
+        "met": {
+          "title": "Met",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "criterion",
+        "met"
+      ],
+      "title": "CriterionCheck",
+      "type": "object"
+    },
+    "DriftCheck": {
+      "additionalProperties": false,
+      "properties": {
+        "attributable": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Attributable"
+        },
+        "changed": {
+          "title": "Changed",
+          "type": "boolean"
+        },
+        "confidence": {
+          "title": "Confidence",
+          "type": "number"
+        },
+        "fact_id": {
+          "title": "Fact Id",
+          "type": "string"
+        },
+        "new_value": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "New Value"
+        },
+        "old_value": {
+          "title": "Old Value",
+          "type": "string"
+        },
+        "query": {
+          "title": "Query",
+          "type": "string"
+        },
+        "replay_value": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Replay Value"
+        },
+        "ruling": {
+          "default": "",
+          "title": "Ruling",
+          "type": "string"
+        },
+        "source_title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Title"
+        },
+        "source_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Url"
+        },
+        "statement": {
+          "default": "",
+          "title": "Statement",
+          "type": "string"
+        },
+        "status": {
+          "default": "checked",
+          "enum": [
+            "checked",
+            "unavailable"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "tavily_results_ref": {
+          "title": "Tavily Results Ref",
+          "type": "string"
+        }
+      },
+      "required": [
+        "fact_id",
+        "query",
+        "tavily_results_ref",
+        "changed",
+        "old_value",
+        "new_value",
+        "confidence"
+      ],
+      "title": "DriftCheck",
+      "type": "object"
+    },
+    "JudgeOpinion": {
+      "additionalProperties": false,
+      "properties": {
+        "causal_explanation": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Causal Explanation"
+        },
+        "caused_by_diff": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Caused By Diff"
+        },
+        "completion_tokens": {
+          "default": 0,
+          "title": "Completion Tokens",
+          "type": "integer"
+        },
+        "confidence": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Confidence",
+          "type": "number"
+        },
+        "criteria_met": {
+          "items": {
+            "$ref": "#/$defs/CriterionCheck"
+          },
+          "title": "Criteria Met",
+          "type": "array"
+        },
+        "evidence_steps": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Evidence Steps",
+          "type": "array"
+        },
+        "failure_summary": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Failure Summary"
+        },
+        "possible_drift_fact": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Possible Drift Fact"
+        },
+        "prompt_hash": {
+          "default": "",
+          "title": "Prompt Hash",
+          "type": "string"
+        },
+        "prompt_tokens": {
+          "default": 0,
+          "title": "Prompt Tokens",
+          "type": "integer"
+        },
+        "reasons": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Reasons",
+          "type": "array"
+        },
+        "tier": {
+          "enum": [
+            "nano",
+            "super",
+            "ultra"
+          ],
+          "title": "Tier",
+          "type": "string"
+        },
+        "truncated": {
+          "default": false,
+          "title": "Truncated",
+          "type": "boolean"
+        },
+        "usd": {
+          "title": "Usd",
+          "type": "number"
+        },
+        "verdict": {
+          "enum": [
+            "equivalent",
+            "regressed",
+            "improved",
+            "uncertain"
+          ],
+          "title": "Verdict",
+          "type": "string"
+        }
+      },
+      "required": [
+        "tier",
+        "verdict",
+        "confidence",
+        "reasons",
+        "evidence_steps",
+        "usd"
+      ],
+      "title": "JudgeOpinion",
+      "type": "object"
+    },
+    "Level0Finding": {
+      "additionalProperties": false,
+      "properties": {
+        "changed_args": {
+          "items": {
+            "maxItems": 2,
+            "minItems": 2,
+            "prefixItems": [
+              {
+                "$ref": "#/$defs/ToolCall"
+              },
+              {
+                "$ref": "#/$defs/ToolCall"
+              }
+            ],
+            "type": "array"
+          },
+          "title": "Changed Args",
+          "type": "array"
+        },
+        "golden_run_id": {
+          "title": "Golden Run Id",
+          "type": "string"
+        },
+        "hard_fail": {
+          "title": "Hard Fail",
+          "type": "boolean"
+        },
+        "missing_calls": {
+          "items": {
+            "$ref": "#/$defs/ToolCall"
+          },
+          "title": "Missing Calls",
+          "type": "array"
+        },
+        "missing_hard": {
+          "default": false,
+          "title": "Missing Hard",
+          "type": "boolean"
+        },
+        "new_calls": {
+          "items": {
+            "$ref": "#/$defs/ToolCall"
+          },
+          "title": "New Calls",
+          "type": "array"
+        },
+        "output_similarity": {
+          "default": 1.0,
+          "title": "Output Similarity",
+          "type": "number"
+        },
+        "replay_run_id": {
+          "title": "Replay Run Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "golden_run_id",
+        "replay_run_id",
+        "new_calls",
+        "missing_calls",
+        "changed_args",
+        "hard_fail"
+      ],
+      "title": "Level0Finding",
+      "type": "object"
+    },
+    "PairVerdict": {
+      "additionalProperties": false,
+      "properties": {
+        "control_outcome": {
+          "anyOf": [
+            {
+              "enum": [
+                "agrees",
+                "diverges"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Control Outcome"
+        },
+        "control_run_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Control Run Id"
+        },
+        "decided_by": {
+          "default": "nano",
+          "enum": [
+            "level0",
+            "nano",
+            "super",
+            "ultra",
+            "drift",
+            "infra",
+            "control"
+          ],
+          "title": "Decided By",
+          "type": "string"
+        },
+        "drift": {
+          "items": {
+            "$ref": "#/$defs/DriftCheck"
+          },
+          "title": "Drift",
+          "type": "array"
+        },
+        "error_code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Error Code"
+        },
+        "golden_run_id": {
+          "title": "Golden Run Id",
+          "type": "string"
+        },
+        "level0": {
+          "$ref": "#/$defs/Level0Finding"
+        },
+        "opinions": {
+          "items": {
+            "$ref": "#/$defs/JudgeOpinion"
+          },
+          "title": "Opinions",
+          "type": "array"
+        },
+        "outcome": {
+          "enum": [
+            "pass",
+            "regression",
+            "drift",
+            "improved",
+            "uncertain",
+            "failed"
+          ],
+          "title": "Outcome",
+          "type": "string"
+        },
+        "reason": {
+          "default": "",
+          "title": "Reason",
+          "type": "string"
+        },
+        "replay_run_id": {
+          "title": "Replay Run Id",
+          "type": "string"
+        },
+        "task_input": {
+          "default": "",
+          "title": "Task Input",
+          "type": "string"
+        },
+        "task_label": {
+          "default": "",
+          "title": "Task Label",
+          "type": "string"
+        },
+        "usd": {
+          "title": "Usd",
+          "type": "number"
+        }
+      },
+      "required": [
+        "golden_run_id",
+        "replay_run_id",
+        "level0",
+        "opinions",
+        "drift",
+        "outcome",
+        "usd"
+      ],
+      "title": "PairVerdict",
+      "type": "object"
+    },
+    "StageTiming": {
+      "additionalProperties": false,
+      "properties": {
+        "elapsed_ms": {
+          "title": "Elapsed Ms",
+          "type": "integer"
+        },
+        "stage": {
+          "title": "Stage",
+          "type": "string"
+        },
+        "started_at": {
+          "format": "date-time",
+          "title": "Started At",
+          "type": "string"
+        }
+      },
+      "required": [
+        "stage",
+        "started_at",
+        "elapsed_ms"
+      ],
+      "title": "StageTiming",
+      "type": "object"
+    },
+    "ToolCall": {
+      "additionalProperties": false,
+      "properties": {
+        "args_hash": {
+          "title": "Args Hash",
+          "type": "string"
+        },
+        "args_norm": {
+          "additionalProperties": true,
+          "title": "Args Norm",
+          "type": "object"
+        },
+        "blocked": {
+          "default": false,
+          "title": "Blocked",
+          "type": "boolean"
+        },
+        "cassette_key": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Cassette Key"
+        },
+        "kind": {
+          "const": "tool",
+          "default": "tool",
+          "title": "Kind",
+          "type": "string"
+        },
+        "result_hash": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Result Hash"
+        },
+        "result_preview": {
+          "default": "",
+          "title": "Result Preview",
+          "type": "string"
+        },
+        "side_effect": {
+          "enum": [
+            "none",
+            "read",
+            "write_reversible",
+            "write_irreversible",
+            "destructive",
+            "external_send",
+            "spend"
+          ],
+          "title": "Side Effect",
+          "type": "string"
+        },
+        "source": {
+          "enum": [
+            "cassette",
+            "live",
+            "local"
+          ],
+          "title": "Source",
+          "type": "string"
+        },
+        "started_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Started At"
+        },
+        "step_id": {
+          "title": "Step Id",
+          "type": "string"
+        },
+        "tool": {
+          "title": "Tool",
+          "type": "string"
+        }
+      },
+      "required": [
+        "step_id",
+        "tool",
+        "args_norm",
+        "args_hash",
+        "result_hash",
+        "side_effect",
+        "source",
+        "cassette_key"
+      ],
+      "title": "ToolCall",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "action": {
+      "enum": [
+        "merged",
+        "held",
+        "reverted"
+      ],
+      "title": "Action",
+      "type": "string"
+    },
+    "action_commit": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Action Commit"
+    },
+    "affected_skills": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Affected Skills",
+      "type": "array"
+    },
+    "approved_at": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Approved At"
+    },
+    "author": {
+      "default": "",
+      "title": "Author",
+      "type": "string"
+    },
+    "batch_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Batch Ids",
+      "type": "array"
+    },
+    "cost": {
+      "additionalProperties": {
+        "type": "number"
+      },
+      "propertyNames": {
+        "enum": [
+          "nano",
+          "super",
+          "ultra"
+        ]
+      },
+      "title": "Cost",
+      "type": "object"
+    },
+    "counterfactual_usd": {
+      "default": 0.0,
+      "title": "Counterfactual Usd",
+      "type": "number"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "decision": {
+      "enum": [
+        "PASS",
+        "WARN",
+        "BLOCK"
+      ],
+      "title": "Decision",
+      "type": "string"
+    },
+    "duration_s": {
+      "title": "Duration S",
+      "type": "integer"
+    },
+    "edit_id": {
+      "title": "Edit Id",
+      "type": "string"
+    },
+    "headline": {
+      "default": "",
+      "title": "Headline",
+      "type": "string"
+    },
+    "narrative": {
+      "title": "Narrative",
+      "type": "string"
+    },
+    "pairs": {
+      "items": {
+        "$ref": "#/$defs/PairVerdict"
+      },
+      "title": "Pairs",
+      "type": "array"
+    },
+    "reasons": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Reasons",
+      "type": "array"
+    },
+    "recorded": {
+      "default": false,
+      "title": "Recorded",
+      "type": "boolean"
+    },
+    "replay_cost": {
+      "additionalProperties": {
+        "type": "number"
+      },
+      "propertyNames": {
+        "enum": [
+          "nano",
+          "super",
+          "ultra"
+        ]
+      },
+      "title": "Replay Cost",
+      "type": "object"
+    },
+    "rolled_back_at": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Rolled Back At"
+    },
+    "rolled_back_by": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Rolled Back By"
+    },
+    "runner": {
+      "default": "",
+      "title": "Runner",
+      "type": "string"
+    },
+    "session_hash": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Session Hash"
+    },
+    "simulated_models": {
+      "default": false,
+      "title": "Simulated Models",
+      "type": "boolean"
+    },
+    "stages": {
+      "items": {
+        "$ref": "#/$defs/StageTiming"
+      },
+      "title": "Stages",
+      "type": "array"
+    },
+    "tokens": {
+      "additionalProperties": {
+        "type": "integer"
+      },
+      "propertyNames": {
+        "enum": [
+          "nano",
+          "super",
+          "ultra"
+        ]
+      },
+      "title": "Tokens",
+      "type": "object"
+    },
+    "verdict_id": {
+      "title": "Verdict Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "verdict_id",
+    "edit_id",
+    "pairs",
+    "decision",
+    "action",
+    "narrative",
+    "cost",
+    "duration_s",
+    "created_at"
+  ],
+  "title": "Verdict",
+  "type": "object"
+}

@@ -1,0 +1,49 @@
+{
+  "run_id": "run_66a7e3211f15",
+  "kind": "replay",
+  "task_input": "Summarize this note: The quarterly offsite moves from Thursday to Friday because the venue double-booked the room. Lunch is still included, and the agenda stays the same.",
+  "steps": [
+    {
+      "kind": "llm",
+      "step_id": "m001",
+      "tier": "super",
+      "model": "nvidia/nemotron-3-super-120b-a12b",
+      "request_hash": "40f0ce5b2e4764f5890a2d3585b9f34536d12700e2527da9d9f2557dc5f22422",
+      "messages_ref": "steps/m001.req.json",
+      "response_ref": "steps/m001.res.json",
+      "prompt_tokens": 3565,
+      "completion_tokens": 33,
+      "usd": 0.0010992,
+      "latency_ms": 1123,
+      "started_at": "2026-10-16T06:25:39.711858Z",
+      "purpose": "agent",
+      "api": "chat",
+      "usage_estimated": false,
+      "tool_calls_requested": [],
+      "content_preview": "The quarterly offsite has been rescheduled from Thursday to Friday due to a venue double-booking. Lunch remains included, and the agenda is unchanged."
+    }
+  ],
+  "final_output": "The quarterly offsite has been rescheduled from Thursday to Friday due to a venue double-booking. Lunch remains included, and the agenda is unchanged.",
+  "artifacts_ref": null,
+  "skills_invoked": [],
+  "world_dependent": false,
+  "world_facts": [],
+  "env": {
+    "workspace_ref": "workspace.tar.zst",
+    "frozen_time": "2026-10-14T16:00:00Z",
+    "harness_version": "minimal/0.1.0",
+    "skills_commit": "7668b12d50161e53c87bf9701a5bb5cd39733dc4",
+    "world_ref": null
+  },
+  "agent_tier": "super",
+  "seed": 1187746047,
+  "created_at": "2026-10-16T06:25:40.890757Z",
+  "golden_of": "run_f8fa40ff55bf",
+  "candidate_commit": "7668b12d50161e53c87bf9701a5bb5cd39733dc4",
+  "success_criteria": [],
+  "archived_reason": null,
+  "blessed_at": null,
+  "harness_ok": true,
+  "error_code": null,
+  "task_label": "Summarize a short note"
+}

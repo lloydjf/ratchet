@@ -1,0 +1,6 @@
+{
+  "invoices": {
+    "INV-1001": {"amount": "250.00", "currency": "EUR", "payee": "Widget Parts GmbH", "status": "open"}
+  },
+  "payments": []
+}

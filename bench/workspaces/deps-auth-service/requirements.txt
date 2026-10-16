@@ -1,0 +1,2 @@
+httpkit==2.5.0
+secretsauce==0.4.0

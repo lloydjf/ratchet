@@ -1,0 +1,108 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "agent_tier": {
+      "enum": [
+        "nano",
+        "super",
+        "ultra"
+      ],
+      "title": "Agent Tier",
+      "type": "string"
+    },
+    "batch_id": {
+      "title": "Batch Id",
+      "type": "string"
+    },
+    "budget_allowance_usd": {
+      "anyOf": [
+        {
+          "additionalProperties": {
+            "type": "number"
+          },
+          "type": "object"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Budget Allowance Usd"
+    },
+    "candidate_commit": {
+      "default": "",
+      "title": "Candidate Commit",
+      "type": "string"
+    },
+    "cassettes_ref": {
+      "title": "Cassettes Ref",
+      "type": "string"
+    },
+    "edit_id": {
+      "title": "Edit Id",
+      "type": "string"
+    },
+    "golden_run_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Golden Run Ids",
+      "type": "array"
+    },
+    "harness": {
+      "default": "minimal",
+      "enum": [
+        "hermes",
+        "minimal"
+      ],
+      "title": "Harness",
+      "type": "string"
+    },
+    "sandbox": {
+      "enum": [
+        "openshell",
+        "docker",
+        "process"
+      ],
+      "title": "Sandbox",
+      "type": "string"
+    },
+    "skills_tar_ref": {
+      "title": "Skills Tar Ref",
+      "type": "string"
+    },
+    "timeout_s": {
+      "default": 600,
+      "title": "Timeout S",
+      "type": "integer"
+    },
+    "worker_image": {
+      "title": "Worker Image",
+      "type": "string"
+    },
+    "world_ref": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "World Ref"
+    }
+  },
+  "required": [
+    "batch_id",
+    "edit_id",
+    "golden_run_ids",
+    "skills_tar_ref",
+    "cassettes_ref",
+    "worker_image",
+    "agent_tier",
+    "sandbox"
+  ],
+  "title": "ReplayBatch",
+  "type": "object"
+}

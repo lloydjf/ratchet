@@ -1,0 +1,161 @@
+{
+  "run_id": "run_d8cdf9a7d4f3",
+  "kind": "golden",
+  "task_input": "What are these amounts in US dollars at the 2026-10-14 exchange rate? Convert and log them: coworking pass 30.00 EUR, courier 23.80 EUR",
+  "steps": [
+    {
+      "kind": "llm",
+      "step_id": "m001",
+      "tier": "super",
+      "model": "nvidia/nemotron-3-super-120b-a12b",
+      "request_hash": "58dfcaae403b30b5682b67897d6dd0b9f4ac710c4f8859f66b40d1e34d29e01a",
+      "messages_ref": "steps/m001.req.json",
+      "response_ref": "steps/m001.res.json",
+      "prompt_tokens": 3884,
+      "completion_tokens": 106,
+      "usd": 0.0012606000000000002,
+      "latency_ms": 1204,
+      "started_at": "2026-10-16T06:24:31.574297Z",
+      "purpose": "agent",
+      "api": "chat",
+      "usage_estimated": false,
+      "tool_calls_requested": [
+        "finance.rate"
+      ],
+      "content_preview": "I'll help you convert those amounts to USD using the current date's exchange rate and log them in the Expenses USD sheet.\n\nFirst, let me get the EUR to USD exchange rate for 2026-10-14:"
+    },
+    {
+      "kind": "tool",
+      "step_id": "t001",
+      "tool": "finance.rate",
+      "args_norm": {
+        "base": "EUR",
+        "date": "2026-10-14",
+        "quote": "USD"
+      },
+      "args_hash": "e670f6df119eb6018bbd3ad301891fc2dc1919e995d5502789f7a4c98d59f043",
+      "result_hash": "1aa3ae27d9d220bb23c90b87d4d18c6b9fca7c504ee2bf6c5e7c1812afc9662a",
+      "side_effect": "read",
+      "source": "live",
+      "cassette_key": "e670f6df119eb6018bbd3ad301891fc2dc1919e995d5502789f7a4c98d59f043",
+      "result_preview": "{\"base\":\"EUR\",\"date\":\"2026-10-14\",\"quote\":\"USD\",\"rate\":1.08}",
+      "blocked": false,
+      "started_at": "2026-10-16T06:24:32.793956Z"
+    },
+    {
+      "kind": "llm",
+      "step_id": "m002",
+      "tier": "super",
+      "model": "nvidia/nemotron-3-super-120b-a12b",
+      "request_hash": "e81a8e80f661544c49891b58f8dcb906ffb21ba9100d1ff34a618cf22d5463e9",
+      "messages_ref": "steps/m002.req.json",
+      "response_ref": "steps/m002.res.json",
+      "prompt_tokens": 4043,
+      "completion_tokens": 192,
+      "usd": 0.0013857,
+      "latency_ms": 1367,
+      "started_at": "2026-10-16T06:24:32.797161Z",
+      "purpose": "agent",
+      "api": "chat",
+      "usage_estimated": false,
+      "tool_calls_requested": [
+        "sheets.append"
+      ],
+      "content_preview": "Now I'll calculate the conversions:\n- Coworking pass: 30.00 EUR × 1.08 = 32.40 USD\n- Courier: 23.80 EUR × 1.08 = 25.70 USD\n\nLet me append these to the Expenses USD sheet:"
+    },
+    {
+      "kind": "tool",
+      "step_id": "t002",
+      "tool": "sheets.append",
+      "args_norm": {
+        "rows": [
+          [
+            "2026-10-14",
+            "coworking pass",
+            "30.00",
+            "EUR",
+            "32.40",
+            "1.08"
+          ],
+          [
+            "2026-10-14",
+            "courier",
+            "23.80",
+            "EUR",
+            "25.70",
+            "1.08"
+          ]
+        ],
+        "sheet": "Expenses USD"
+      },
+      "args_hash": "364e040c581e17f2127497c4173722bbb7491c46abad4126c4fc0643f7ed482e",
+      "result_hash": "2dabcaa42dfac43c7cb710f3a45d4f8c0671517e332b452103f9aa368221419f",
+      "side_effect": "write_reversible",
+      "source": "live",
+      "cassette_key": "364e040c581e17f2127497c4173722bbb7491c46abad4126c4fc0643f7ed482e",
+      "result_preview": "{\"appended\":2,\"sheet\":\"Expenses USD\",\"total_rows\":3}",
+      "blocked": false,
+      "started_at": "2026-10-16T06:24:34.178719Z"
+    },
+    {
+      "kind": "llm",
+      "step_id": "m003",
+      "tier": "super",
+      "model": "nvidia/nemotron-3-super-120b-a12b",
+      "request_hash": "9e09d9522d16ac30ee1727216f3ba2753b756c30f1cce69331fc9c45f201d0de",
+      "messages_ref": "steps/m003.req.json",
+      "response_ref": "steps/m003.res.json",
+      "prompt_tokens": 4273,
+      "completion_tokens": 86,
+      "usd": 0.0013593,
+      "latency_ms": 982,
+      "started_at": "2026-10-16T06:24:34.182730Z",
+      "purpose": "agent",
+      "api": "chat",
+      "usage_estimated": false,
+      "tool_calls_requested": [],
+      "content_preview": "Coworking pass: 30.00 EUR = 32.40 USD\nCourier: 23.80 EUR = 25.70 USD\nTotal: 53.80 EUR = 58.10 USD\nRate used: 1 EUR = 1.0800 USD (2026-10-14)"
+    }
+  ],
+  "final_output": "Coworking pass: 30.00 EUR = 32.40 USD\nCourier: 23.80 EUR = 25.70 USD\nTotal: 53.80 EUR = 58.10 USD\nRate used: 1 EUR = 1.0800 USD (2026-10-14)",
+  "artifacts_ref": null,
+  "skills_invoked": [
+    "fx-expense-converter"
+  ],
+  "world_dependent": true,
+  "world_facts": [
+    {
+      "fact_id": "f001",
+      "statement": "The EUR/USD exchange rate on 2026-10-14 was 1.0800",
+      "source_step": "t001",
+      "volatile": true,
+      "query_hint": "EUR USD exchange rate 2026-10-14",
+      "value": "1.0800"
+    }
+  ],
+  "env": {
+    "workspace_ref": "workspace.tar.zst",
+    "frozen_time": "2026-10-14T16:00:00Z",
+    "harness_version": "minimal/0.1.0",
+    "skills_commit": "dda8ffcb2837fa255c23f29889f82e6f4976ba33",
+    "world_ref": null
+  },
+  "agent_tier": "super",
+  "seed": 13558408,
+  "created_at": "2026-10-16T06:24:35.205154Z",
+  "golden_of": null,
+  "candidate_commit": null,
+  "success_criteria": [
+    "states the coworking pass amount in EUR and its equivalent in USD",
+    "states the courier amount in EUR and its equivalent in USD",
+    "states the total amount in EUR and its equivalent in USD",
+    "states the exchange rate used and the date it applies to",
+    "uses the exact field names 'Coworking pass', 'Courier', and 'Total' for the entries",
+    "includes the exact amounts in EUR and USD as shown in the example output"
+  ],
+  "archived_reason": null,
+  "blessed_at": "2026-10-16T06:24:37.113001Z",
+  "harness_ok": true,
+  "error_code": null,
+  "task_label": "Convert coworking and courier to USD"
+}

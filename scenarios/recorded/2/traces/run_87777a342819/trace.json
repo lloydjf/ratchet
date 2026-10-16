@@ -1,0 +1,167 @@
+{
+  "run_id": "run_87777a342819",
+  "kind": "golden",
+  "task_input": "File the receipts dinner-2026-10-07.pdf and parking-2026-10-07.pdf in the Expenses sheet.",
+  "steps": [
+    {
+      "kind": "llm",
+      "step_id": "m001",
+      "tier": "super",
+      "model": "nvidia/nemotron-3-super-120b-a12b",
+      "request_hash": "c482a8f1688908438e31fe7a2cbb0a7dfa33bde7ca1139da37f5d7feb3f0a6bb",
+      "messages_ref": "steps/m001.req.json",
+      "response_ref": "steps/m001.res.json",
+      "prompt_tokens": 3961,
+      "completion_tokens": 94,
+      "usd": 0.0012728999999999998,
+      "latency_ms": 741,
+      "started_at": "2026-10-16T06:23:59.847617Z",
+      "purpose": "agent",
+      "api": "chat",
+      "usage_estimated": false,
+      "tool_calls_requested": [
+        "receipts.parse",
+        "receipts.parse"
+      ],
+      "content_preview": "I'll parse both receipts and append them to the Expenses sheet."
+    },
+    {
+      "kind": "tool",
+      "step_id": "t001",
+      "tool": "receipts.parse",
+      "args_norm": {
+        "file": "dinner-2026-10-07.pdf"
+      },
+      "args_hash": "02448494090dc07ea98b4cc3f1d3dc00dc312f6b2bc36d3bf55e7e2f75f40a96",
+      "result_hash": "763220ef8028e3b74f7743cc72f82b8817fc0806fd3c4ae0b7629aefa44bf62c",
+      "side_effect": "read",
+      "source": "live",
+      "cassette_key": "02448494090dc07ea98b4cc3f1d3dc00dc312f6b2bc36d3bf55e7e2f75f40a96",
+      "result_preview": "{\"address\":\"Hafenstr. 9, Hamburg\",\"currency\":\"EUR\",\"date\":\"2026-10-07\",\"file\":\"dinner-2026-10-07.pdf\",\"layout\":\"A\",\"lines\":[{\"amount\":105.04,\"description\":\"Team dinner, 3 guests\",\"quantity\":1.0,\"unit_price\":105.04},{\"amount\":19.96,\"description\":\"VAT 19%\",\"quantity\":1.0,\"unit_price\":19.96}],\"merchant\":\"Brasserie Nord\",\"subtotal\":105.04,\"total\":125.0,\"vat\":19.96,\"vat_rate\":0.19}",
+      "blocked": false,
+      "started_at": "2026-10-16T06:24:00.607267Z"
+    },
+    {
+      "kind": "tool",
+      "step_id": "t002",
+      "tool": "receipts.parse",
+      "args_norm": {
+        "file": "parking-2026-10-07.pdf"
+      },
+      "args_hash": "3f73946159306eb044b5dad2a283ca5e4155ffe76c87c8bbba0c013cc4987769",
+      "result_hash": "ef726ff447b8112d7e7f943d8703712a2c0151af27aa4424ab0345a6309d513c",
+      "side_effect": "read",
+      "source": "live",
+      "cassette_key": "3f73946159306eb044b5dad2a283ca5e4155ffe76c87c8bbba0c013cc4987769",
+      "result_preview": "{\"address\":\"Garage Mitte, Berlin\",\"currency\":\"EUR\",\"date\":\"2026-10-07\",\"file\":\"parking-2026-10-07.pdf\",\"layout\":\"A\",\"lines\":[{\"amount\":15.97,\"description\":\"Parking, 6 hours\",\"quantity\":1.0,\"unit_price\":15.97},{\"amount\":3.03,\"description\":\"VAT 19%\",\"quantity\":1.0,\"unit_price\":3.03}],\"merchant\":\"Park & Go Mitte\",\"subtotal\":15.97,\"total\":19.0,\"vat\":3.03,\"vat_rate\":0.19}",
+      "blocked": false,
+      "started_at": "2026-10-16T06:24:00.611069Z"
+    },
+    {
+      "kind": "llm",
+      "step_id": "m002",
+      "tier": "super",
+      "model": "nvidia/nemotron-3-super-120b-a12b",
+      "request_hash": "f6c434efc48283fd2f26d1f8d55bf56760f8d0cecdd287315cc2a661b6edaf94",
+      "messages_ref": "steps/m002.req.json",
+      "response_ref": "steps/m002.res.json",
+      "prompt_tokens": 4459,
+      "completion_tokens": 153,
+      "usd": 0.0014754000000000002,
+      "latency_ms": 1294,
+      "started_at": "2026-10-16T06:24:00.614094Z",
+      "purpose": "agent",
+      "api": "chat",
+      "usage_estimated": false,
+      "tool_calls_requested": [
+        "sheets.append"
+      ],
+      "content_preview": "Now I'll append both receipts to the Expenses sheet."
+    },
+    {
+      "kind": "tool",
+      "step_id": "t003",
+      "tool": "sheets.append",
+      "args_norm": {
+        "rows": [
+          [
+            "2026-10-07",
+            "Brasserie Nord",
+            "125.00",
+            "EUR",
+            "19.96",
+            "dinner-2026-10-07.pdf"
+          ],
+          [
+            "2026-10-07",
+            "Park & Go Mitte",
+            "19.00",
+            "EUR",
+            "3.03",
+            "parking-2026-10-07.pdf"
+          ]
+        ],
+        "sheet": "Expenses"
+      },
+      "args_hash": "d8edb1be50137f49da69fbc1def73fa01db028edc044b639c1d0c605ad9d42ca",
+      "result_hash": "174c8ac7af810ed879dea88bf68767574ee560ac7af3f2a3dd4577ba9bd6ea34",
+      "side_effect": "write_reversible",
+      "source": "live",
+      "cassette_key": "d8edb1be50137f49da69fbc1def73fa01db028edc044b639c1d0c605ad9d42ca",
+      "result_preview": "{\"appended\":2,\"sheet\":\"Expenses\",\"total_rows\":4}",
+      "blocked": false,
+      "started_at": "2026-10-16T06:24:01.916253Z"
+    },
+    {
+      "kind": "llm",
+      "step_id": "m003",
+      "tier": "super",
+      "model": "nvidia/nemotron-3-super-120b-a12b",
+      "request_hash": "34baa9b102cd60edb54c193ce1edc7b5a29a6ead9204c5ccd79177aa84432544",
+      "messages_ref": "steps/m003.req.json",
+      "response_ref": "steps/m003.res.json",
+      "prompt_tokens": 4649,
+      "completion_tokens": 111,
+      "usd": 0.0014946000000000002,
+      "latency_ms": 1218,
+      "started_at": "2026-10-16T06:24:01.918595Z",
+      "purpose": "agent",
+      "api": "chat",
+      "usage_estimated": false,
+      "tool_calls_requested": [],
+      "content_preview": "Merchant: Brasserie Nord\nDate: 2026-10-07\nTotal: 125.00 EUR\nVAT: 19.96 EUR\n\nMerchant: Park & Go Mitte\nDate: 2026-10-07\nTotal: 19.00 EUR\nVAT: 3.03 EUR\n\nGrand total: 144.00 EUR\nFiled 2 receipts to the Expenses sheet."
+    }
+  ],
+  "final_output": "Merchant: Brasserie Nord\nDate: 2026-10-07\nTotal: 125.00 EUR\nVAT: 19.96 EUR\n\nMerchant: Park & Go Mitte\nDate: 2026-10-07\nTotal: 19.00 EUR\nVAT: 3.03 EUR\n\nGrand total: 144.00 EUR\nFiled 2 receipts to the Expenses sheet.",
+  "artifacts_ref": null,
+  "skills_invoked": [
+    "expense-report"
+  ],
+  "world_dependent": false,
+  "world_facts": [],
+  "env": {
+    "workspace_ref": "workspace.tar.zst",
+    "frozen_time": "2026-10-14T16:00:00Z",
+    "harness_version": "minimal/0.1.0",
+    "skills_commit": "dda8ffcb2837fa255c23f29889f82e6f4976ba33",
+    "world_ref": null
+  },
+  "agent_tier": "super",
+  "seed": 1045324709,
+  "created_at": "2026-10-16T06:24:03.168395Z",
+  "golden_of": null,
+  "candidate_commit": null,
+  "success_criteria": [
+    "states the merchant, date, total and VAT for each of the 2 receipts",
+    "states the grand total of 144.00 EUR",
+    "states that 2 receipts were filed",
+    "states the file operation was performed on the Expenses sheet",
+    "includes the merchant names 'Brasserie Nord' and 'Park & Go Mitte'",
+    "includes the date '2026-10-07' for both receipts"
+  ],
+  "archived_reason": null,
+  "blessed_at": "2026-10-16T06:24:05.069278Z",
+  "harness_ok": true,
+  "error_code": null,
+  "task_label": "File dinner and parking receipts"
+}

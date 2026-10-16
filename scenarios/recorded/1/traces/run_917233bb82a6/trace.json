@@ -1,0 +1,218 @@
+{
+  "run_id": "run_917233bb82a6",
+  "kind": "golden",
+  "task_input": "Run issue triage on acme/search-indexer and label the open issues.",
+  "steps": [
+    {
+      "kind": "llm",
+      "step_id": "m001",
+      "tier": "super",
+      "model": "nvidia/nemotron-3-super-120b-a12b",
+      "request_hash": "5333a59954ab6c7b20e3da158217e1096aef8f4db800050c523652954d8bb414",
+      "messages_ref": "steps/m001.req.json",
+      "response_ref": "steps/m001.res.json",
+      "prompt_tokens": 4050,
+      "completion_tokens": 68,
+      "usd": 0.0012762000000000001,
+      "latency_ms": 964,
+      "started_at": "2026-10-16T06:23:32.143326Z",
+      "purpose": "agent",
+      "api": "chat",
+      "usage_estimated": false,
+      "tool_calls_requested": [
+        "github.list_issues"
+      ],
+      "content_preview": "I'll run issue triage on acme/search-indexer by listing open issues, labeling them appropriately, and adding comments for questions."
+    },
+    {
+      "kind": "tool",
+      "step_id": "t001",
+      "tool": "github.list_issues",
+      "args_norm": {
+        "repo": "acme/search-indexer",
+        "state": "open"
+      },
+      "args_hash": "bb6c98d24ee6d9d623c41512514d99d63b1cd09379074ef644aa62533c6fd364",
+      "result_hash": "c459fa90b025335bbfee1682e4ce7269558bd6a5f492770a175f1f8ec98cb82f",
+      "side_effect": "read",
+      "source": "live",
+      "cassette_key": "bb6c98d24ee6d9d623c41512514d99d63b1cd09379074ef644aa62533c6fd364",
+      "result_preview": "{\"issues\":[{\"assignees\":[],\"author\":\"pia\",\"body\":\"Workers restart in a loop when a document is over 10 MB.\",\"closed_at\":null,\"comments\":0,\"created_at\":\"2026-10-09T09:12:00Z\",\"labels\":[],\"number\":500,\"state\":\"open\",\"state_reason\":null,\"title\":\"Indexer crashes on documents larger than 10 MB\",\"updated_at\":\"2026-10-10T09:12:00Z\"},{\"assignees\":[],\"author\":\"raj\",\"body\":\"A query that equals a document t…",
+      "blocked": false,
+      "started_at": "2026-10-16T06:23:33.122650Z"
+    },
+    {
+      "kind": "llm",
+      "step_id": "m002",
+      "tier": "super",
+      "model": "nvidia/nemotron-3-super-120b-a12b",
+      "request_hash": "29e4351aa011de130df2a11d88d860422c0fdfe3fb34d8584fccbd5300401ebc",
+      "messages_ref": "steps/m002.req.json",
+      "response_ref": "steps/m002.res.json",
+      "prompt_tokens": 4682,
+      "completion_tokens": 227,
+      "usd": 0.0016089,
+      "latency_ms": 1300,
+      "started_at": "2026-10-16T06:23:33.126233Z",
+      "purpose": "agent",
+      "api": "chat",
+      "usage_estimated": false,
+      "tool_calls_requested": [
+        "github.label",
+        "github.label",
+        "github.label"
+      ],
+      "content_preview": "Now I'll process each issue according to the triage rules:\n\nIssue #500: Title contains \"crashes\" → bug\nIssue #502: Contains \"improve\" → enhancement  \nIssue #503: Already has \"bug\" label → skip\nIssue #504: Contains \"where\" → question"
+    },
+    {
+      "kind": "tool",
+      "step_id": "t002",
+      "tool": "github.label",
+      "args_norm": {
+        "issue": 500,
+        "labels": [
+          "bug"
+        ],
+        "repo": "acme/search-indexer"
+      },
+      "args_hash": "76aa0ff18538f3fd9f5b9729bcc1ef06ee9ae819e39295b5b3d8258b23bbae3b",
+      "result_hash": "882200da9c337308c9e28035209c8d42c31adf614a5c24f7cdc88dfad3cbc819",
+      "side_effect": "write_reversible",
+      "source": "live",
+      "cassette_key": "76aa0ff18538f3fd9f5b9729bcc1ef06ee9ae819e39295b5b3d8258b23bbae3b",
+      "result_preview": "{\"issue\":500,\"labels\":[\"bug\"],\"repo\":\"acme/search-indexer\"}",
+      "blocked": false,
+      "started_at": "2026-10-16T06:23:34.440266Z"
+    },
+    {
+      "kind": "tool",
+      "step_id": "t003",
+      "tool": "github.label",
+      "args_norm": {
+        "issue": 502,
+        "labels": [
+          "enhancement"
+        ],
+        "repo": "acme/search-indexer"
+      },
+      "args_hash": "abd6bc7e001500fb5bac6295fb810fa571132a044e6a9cf6cf51c19563a15ead",
+      "result_hash": "6d0b6ce063431c3bb29b220112e279cc0c9bf4d70478fa555f71f30b02dca971",
+      "side_effect": "write_reversible",
+      "source": "live",
+      "cassette_key": "abd6bc7e001500fb5bac6295fb810fa571132a044e6a9cf6cf51c19563a15ead",
+      "result_preview": "{\"issue\":502,\"labels\":[\"enhancement\"],\"repo\":\"acme/search-indexer\"}",
+      "blocked": false,
+      "started_at": "2026-10-16T06:23:34.443983Z"
+    },
+    {
+      "kind": "tool",
+      "step_id": "t004",
+      "tool": "github.label",
+      "args_norm": {
+        "issue": 504,
+        "labels": [
+          "question"
+        ],
+        "repo": "acme/search-indexer"
+      },
+      "args_hash": "4797729f3f2e5cd92ff5de7e9811abab00b5841766a7c750ba1634c3d215e688",
+      "result_hash": "b8e6b50eae0ce1a29ff82219e7f9936611949e6379f9604bbd4197fd06a32a3b",
+      "side_effect": "write_reversible",
+      "source": "live",
+      "cassette_key": "4797729f3f2e5cd92ff5de7e9811abab00b5841766a7c750ba1634c3d215e688",
+      "result_preview": "{\"issue\":504,\"labels\":[\"question\"],\"repo\":\"acme/search-indexer\"}",
+      "blocked": false,
+      "started_at": "2026-10-16T06:23:34.446836Z"
+    },
+    {
+      "kind": "llm",
+      "step_id": "m003",
+      "tier": "super",
+      "model": "nvidia/nemotron-3-super-120b-a12b",
+      "request_hash": "0c08df423f15aa2b484373d5d5039edd73f64fc67952f88f1da57c9d98e79e70",
+      "messages_ref": "steps/m003.req.json",
+      "response_ref": "steps/m003.res.json",
+      "prompt_tokens": 5007,
+      "completion_tokens": 91,
+      "usd": 0.001584,
+      "latency_ms": 1237,
+      "started_at": "2026-10-16T06:23:34.449995Z",
+      "purpose": "agent",
+      "api": "chat",
+      "usage_estimated": false,
+      "tool_calls_requested": [
+        "github.comment"
+      ],
+      "content_preview": "Now I'll add a comment to the question-labeled issue (#504):"
+    },
+    {
+      "kind": "tool",
+      "step_id": "t005",
+      "tool": "github.comment",
+      "args_norm": {
+        "body": "Thanks for the question. Could you share the version you are using and the steps you tried? A maintainer will follow up.",
+        "issue": 504,
+        "repo": "acme/search-indexer"
+      },
+      "args_hash": "761c96ac09c2284d09560fac81c2a87813d95ff5b3908c48b17f92fa9a3a3c52",
+      "result_hash": "c3537d7e6d82d91a6c29f648af58beb2e3f715a65a97d81df59f1cd9e447ea00",
+      "side_effect": "write_irreversible",
+      "source": "live",
+      "cassette_key": "761c96ac09c2284d09560fac81c2a87813d95ff5b3908c48b17f92fa9a3a3c52",
+      "result_preview": "{\"comment_id\":1001,\"issue\":504,\"repo\":\"acme/search-indexer\"}",
+      "blocked": false,
+      "started_at": "2026-10-16T06:23:35.701301Z"
+    },
+    {
+      "kind": "llm",
+      "step_id": "m004",
+      "tier": "super",
+      "model": "nvidia/nemotron-3-super-120b-a12b",
+      "request_hash": "cdb727f978f680084e68ba4dda0f23272b73118af84cf0ebc14117384d00d72c",
+      "messages_ref": "steps/m004.req.json",
+      "response_ref": "steps/m004.res.json",
+      "prompt_tokens": 5142,
+      "completion_tokens": 52,
+      "usd": 0.0015894,
+      "latency_ms": 1056,
+      "started_at": "2026-10-16T06:23:35.705520Z",
+      "purpose": "agent",
+      "api": "chat",
+      "usage_estimated": false,
+      "tool_calls_requested": [],
+      "content_preview": "Triaged acme/search-indexer: 4 open issues.\n#500: bug\n#502: enhancement\n#504: question\nAlready labeled: #503\nAsked for details: #504"
+    }
+  ],
+  "final_output": "Triaged acme/search-indexer: 4 open issues.\n#500: bug\n#502: enhancement\n#504: question\nAlready labeled: #503\nAsked for details: #504",
+  "artifacts_ref": null,
+  "skills_invoked": [
+    "github-triage"
+  ],
+  "world_dependent": false,
+  "world_facts": [],
+  "env": {
+    "workspace_ref": "workspace.tar.zst",
+    "frozen_time": "2026-10-14T16:00:00Z",
+    "harness_version": "minimal/0.1.0",
+    "skills_commit": "dda8ffcb2837fa255c23f29889f82e6f4976ba33",
+    "world_ref": null
+  },
+  "agent_tier": "super",
+  "seed": 103166219,
+  "created_at": "2026-10-16T06:23:36.797083Z",
+  "golden_of": null,
+  "candidate_commit": null,
+  "success_criteria": [
+    "states the number of open issues for acme/search-indexer",
+    "lists the issue numbers that are labeled as bug, enhancement, or question",
+    "mentions that #503 was already labeled",
+    "mentions that #504 was asked for details",
+    "indicates that github.label was changed for at least four distinct issues",
+    "indicates that github.comment was changed"
+  ],
+  "archived_reason": null,
+  "blessed_at": "2026-10-16T06:23:38.090370Z",
+  "harness_ok": true,
+  "error_code": null,
+  "task_label": "Triage acme/search-indexer"
+}

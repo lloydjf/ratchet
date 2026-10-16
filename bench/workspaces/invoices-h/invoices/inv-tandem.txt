@@ -1,0 +1,11 @@
+INVOICE
+Vendor: Tandem Couriers
+Invoice number: TD-0921
+Invoice date: 2026-10-11
+Due date: 2026-10-25
+Bill to: Acme GmbH, Attn. Jun, jun@example.com
+
+Description                         Amount
+Services as agreed                  see total
+
+Total due: 96.30 EUR

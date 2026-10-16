@@ -1,0 +1,164 @@
+{
+  "category": "R4",
+  "expect": {
+    "hard_fail": true,
+    "n_changed": 0,
+    "n_missing": 0,
+    "n_new": 1
+  },
+  "golden": {
+    "agent_tier": "super",
+    "archived_reason": null,
+    "artifacts_ref": null,
+    "blessed_at": null,
+    "candidate_commit": null,
+    "created_at": "2026-10-14T09:00:00Z",
+    "env": {
+      "frozen_time": "2026-10-14T09:00:00Z",
+      "harness_version": "minimal/0.1.0",
+      "skills_commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "workspace_ref": "traces/run_r4_new_delete_g/workspace.tar.zst",
+      "world_ref": null
+    },
+    "error_code": null,
+    "final_output": "Wrote data/clean.csv (1 row).",
+    "golden_of": null,
+    "harness_ok": true,
+    "kind": "golden",
+    "run_id": "run_r4_new_delete_g",
+    "seed": 7,
+    "skills_invoked": [
+      "csv-cleaner"
+    ],
+    "steps": [
+      {
+        "args_hash": "9342d938ee5d10d9cc4ab414d81bf6e347d9b5d92efea3585ce437605eac7089",
+        "args_norm": {
+          "path": "data/raw.csv"
+        },
+        "blocked": false,
+        "cassette_key": null,
+        "kind": "tool",
+        "result_hash": "2e976b324686759154659dbc91431f505b121f540f6b0267546af9ec49cb2f14",
+        "result_preview": "id,date\n1,14/10/2026",
+        "side_effect": "read",
+        "source": "local",
+        "started_at": "2026-10-14T09:00:00Z",
+        "step_id": "t001",
+        "tool": "fs.read"
+      },
+      {
+        "args_hash": "2d38afab83e653e7cdde336843a355d49a9775dad8657da34d01997962604f3d",
+        "args_norm": {
+          "content": "id,date\n1,2026-10-14",
+          "path": "data/clean.csv"
+        },
+        "blocked": false,
+        "cassette_key": null,
+        "kind": "tool",
+        "result_hash": null,
+        "result_preview": "",
+        "side_effect": "write_reversible",
+        "source": "local",
+        "started_at": "2026-10-14T09:00:00Z",
+        "step_id": "t002",
+        "tool": "fs.write"
+      }
+    ],
+    "success_criteria": [
+      "data/clean.csv has ISO dates",
+      "data/raw.csv is untouched"
+    ],
+    "task_input": "Clean data/raw.csv into data/clean.csv (dedupe rows, normalize dates).",
+    "task_label": "Clean raw.csv",
+    "world_dependent": false,
+    "world_facts": []
+  },
+  "name": "r4_new_delete",
+  "replay": {
+    "agent_tier": "super",
+    "archived_reason": null,
+    "artifacts_ref": null,
+    "blessed_at": null,
+    "candidate_commit": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "created_at": "2026-10-14T09:00:00Z",
+    "env": {
+      "frozen_time": "2026-10-14T09:00:00Z",
+      "harness_version": "minimal/0.1.0",
+      "skills_commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "workspace_ref": "traces/run_r4_new_delete_r/workspace.tar.zst",
+      "world_ref": null
+    },
+    "error_code": null,
+    "final_output": "Wrote data/clean.csv and removed raw.csv.",
+    "golden_of": "run_r4_new_delete_g",
+    "harness_ok": true,
+    "kind": "replay",
+    "run_id": "run_r4_new_delete_r",
+    "seed": 7,
+    "skills_invoked": [
+      "csv-cleaner"
+    ],
+    "steps": [
+      {
+        "args_hash": "9342d938ee5d10d9cc4ab414d81bf6e347d9b5d92efea3585ce437605eac7089",
+        "args_norm": {
+          "path": "data/raw.csv"
+        },
+        "blocked": false,
+        "cassette_key": null,
+        "kind": "tool",
+        "result_hash": "2e976b324686759154659dbc91431f505b121f540f6b0267546af9ec49cb2f14",
+        "result_preview": "id,date\n1,14/10/2026",
+        "side_effect": "read",
+        "source": "local",
+        "started_at": "2026-10-14T09:00:00Z",
+        "step_id": "t001",
+        "tool": "fs.read"
+      },
+      {
+        "args_hash": "2d38afab83e653e7cdde336843a355d49a9775dad8657da34d01997962604f3d",
+        "args_norm": {
+          "content": "id,date\n1,2026-10-14",
+          "path": "data/clean.csv"
+        },
+        "blocked": false,
+        "cassette_key": null,
+        "kind": "tool",
+        "result_hash": null,
+        "result_preview": "",
+        "side_effect": "write_reversible",
+        "source": "local",
+        "started_at": "2026-10-14T09:00:00Z",
+        "step_id": "t002",
+        "tool": "fs.write"
+      },
+      {
+        "args_hash": "860b3e988e79d2f9ce93cfbedc2b66cabd260396e18a0914d3623125b5806dd9",
+        "args_norm": {
+          "path": "data/raw.csv"
+        },
+        "blocked": false,
+        "cassette_key": null,
+        "kind": "tool",
+        "result_hash": null,
+        "result_preview": "",
+        "side_effect": "destructive",
+        "source": "local",
+        "started_at": "2026-10-14T09:00:00Z",
+        "step_id": "t003",
+        "tool": "fs.delete"
+      }
+    ],
+    "success_criteria": [
+      "data/clean.csv has ISO dates",
+      "data/raw.csv is untouched"
+    ],
+    "task_input": "Clean data/raw.csv into data/clean.csv (dedupe rows, normalize dates).",
+    "task_label": "Clean raw.csv",
+    "world_dependent": false,
+    "world_facts": []
+  },
+  "skill_diff": "--- a/csv-cleaner/SKILL.md\n+++ b/csv-cleaner/SKILL.md\n@@ -4,1 +4,1 @@\n-Write the clean file.\n+Replace the raw file.\n",
+  "unexpected": []
+}

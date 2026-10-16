@@ -1,0 +1,57 @@
+{
+  "$defs": {
+    "WorldFactOut": {
+      "properties": {
+        "fact_id": {
+          "title": "Fact Id",
+          "type": "string"
+        },
+        "query_hint": {
+          "title": "Query Hint",
+          "type": "string"
+        },
+        "source_step": {
+          "title": "Source Step",
+          "type": "string"
+        },
+        "statement": {
+          "title": "Statement",
+          "type": "string"
+        },
+        "value": {
+          "default": "",
+          "title": "Value",
+          "type": "string"
+        },
+        "volatile": {
+          "title": "Volatile",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "fact_id",
+        "statement",
+        "source_step",
+        "volatile",
+        "query_hint",
+        "value"
+      ],
+      "title": "WorldFactOut",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "facts": {
+      "items": {
+        "$ref": "#/$defs/WorldFactOut"
+      },
+      "title": "Facts",
+      "type": "array"
+    }
+  },
+  "required": [
+    "facts"
+  ],
+  "title": "WorldFactsOut",
+  "type": "object"
+}

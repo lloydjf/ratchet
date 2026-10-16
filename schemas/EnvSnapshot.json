@@ -1,0 +1,42 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "frozen_time": {
+      "format": "date-time",
+      "title": "Frozen Time",
+      "type": "string"
+    },
+    "harness_version": {
+      "title": "Harness Version",
+      "type": "string"
+    },
+    "skills_commit": {
+      "title": "Skills Commit",
+      "type": "string"
+    },
+    "workspace_ref": {
+      "title": "Workspace Ref",
+      "type": "string"
+    },
+    "world_ref": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "World Ref"
+    }
+  },
+  "required": [
+    "workspace_ref",
+    "frozen_time",
+    "harness_version",
+    "skills_commit"
+  ],
+  "title": "EnvSnapshot",
+  "type": "object"
+}

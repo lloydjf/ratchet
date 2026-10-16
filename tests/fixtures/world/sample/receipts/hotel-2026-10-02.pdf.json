@@ -1,0 +1,14 @@
+{
+  "merchant": "Hotel Example Mitte",
+  "date": "2026-10-02",
+  "currency": "EUR",
+  "lines": [
+    {"description": "Room, 1 night", "quantity": 1, "unit_price": 120.00, "amount": 120.00},
+    {"description": "Breakfast", "quantity": 1, "unit_price": 15.00, "amount": 15.00}
+  ],
+  "subtotal": 135.00,
+  "vat": 9.45,
+  "vat_rate": 0.07,
+  "total": 144.45,
+  "contact": "reservations@example.com"
+}

@@ -1,0 +1,1165 @@
+{
+  "verdict_id": "verdict_76334528a026",
+  "edit_id": "edit_76334528a026",
+  "pairs": [
+    {
+      "golden_run_id": "run_d8cdf9a7d4f3",
+      "replay_run_id": "run_58906697fb2b",
+      "level0": {
+        "golden_run_id": "run_d8cdf9a7d4f3",
+        "replay_run_id": "run_58906697fb2b",
+        "new_calls": [],
+        "missing_calls": [],
+        "changed_args": [
+          [
+            {
+              "kind": "tool",
+              "step_id": "t002",
+              "tool": "sheets.append",
+              "args_norm": {
+                "rows": [
+                  [
+                    "2026-10-14",
+                    "coworking pass",
+                    "30.00",
+                    "EUR",
+                    "32.40",
+                    "1.08"
+                  ],
+                  [
+                    "2026-10-14",
+                    "courier",
+                    "23.80",
+                    "EUR",
+                    "25.70",
+                    "1.08"
+                  ]
+                ],
+                "sheet": "Expenses USD"
+              },
+              "args_hash": "364e040c581e17f2127497c4173722bbb7491c46abad4126c4fc0643f7ed482e",
+              "result_hash": "2dabcaa42dfac43c7cb710f3a45d4f8c0671517e332b452103f9aa368221419f",
+              "side_effect": "write_reversible",
+              "source": "live",
+              "cassette_key": "364e040c581e17f2127497c4173722bbb7491c46abad4126c4fc0643f7ed482e",
+              "result_preview": "{\"appended\":2,\"sheet\":\"Expenses USD\",\"total_rows\":3}",
+              "blocked": false,
+              "started_at": "2026-10-16T06:24:34.178719Z"
+            },
+            {
+              "kind": "tool",
+              "step_id": "t002",
+              "tool": "sheets.append",
+              "args_norm": {
+                "rows": [
+                  [
+                    "2026-10-14",
+                    "coworking pass",
+                    "30.00",
+                    "EUR",
+                    "33.59",
+                    "1.1196"
+                  ],
+                  [
+                    "2026-10-14",
+                    "courier",
+                    "23.80",
+                    "EUR",
+                    "26.65",
+                    "1.1196"
+                  ]
+                ],
+                "sheet": "Expenses USD"
+              },
+              "args_hash": "cd4e75114335c753acfb0c4985942428dc959724e47e12b0636dc080670ed4b5",
+              "result_hash": "b1e8bdd2e81cdc31e36b49663dd01d519fe286066b5135d7a8b6d00b91b243c3",
+              "side_effect": "write_reversible",
+              "source": "cassette",
+              "cassette_key": null,
+              "result_preview": "{\"appended\":0,\"sheet\":\"Expenses USD\"}",
+              "blocked": false,
+              "started_at": "2026-10-16T06:26:17.229826Z"
+            }
+          ]
+        ],
+        "hard_fail": false,
+        "missing_hard": false
+      },
+      "opinions": [
+        {
+          "tier": "nano",
+          "verdict": "regressed",
+          "confidence": 0.95,
+          "reasons": [
+            "The output uses lowercase field names ('coworking pass', 'courier', 'total') instead of the required exact capitalised names 'Coworking pass', 'Courier', and 'Total'.",
+            "The exchange rate and USD equivalents differ from the golden values (32.40 USD, 25.70 USD, 58.10 USD vs 33.59 USD, 26.65 USD, 60.24 USD).",
+            "The required field names and exact amounts are not matched, failing the success criteria."
+          ],
+          "evidence_steps": [
+            "t001",
+            "t002"
+          ],
+          "usd": 0.00010806,
+          "prompt_hash": "9879b836e004ed79fc44c1cbc411708846b0245070e97352509ba49937e3931a",
+          "truncated": false,
+          "criteria_met": [],
+          "causal_explanation": null,
+          "possible_drift_fact": null,
+          "failure_summary": null,
+          "prompt_tokens": 1081,
+          "completion_tokens": 180
+        },
+        {
+          "tier": "super",
+          "verdict": "regressed",
+          "confidence": 0.95,
+          "reasons": [
+            "Uses lowercase descriptions instead of required exact field names 'Coworking pass', 'Courier', and 'Total'.",
+            "Amounts in USD differ due to changed exchange rate (1.08 vs 1.1196)."
+          ],
+          "evidence_steps": [
+            "m003",
+            "t002"
+          ],
+          "usd": 0.0010677,
+          "prompt_hash": "1a527736dff3c0754ba4cef197793eb59eaff83d0aa5e35c30b6715ffb7ad701",
+          "truncated": false,
+          "criteria_met": [
+            {
+              "criterion": "states the coworking pass amount in EUR and its equivalent in USD",
+              "met": false,
+              "evidence_steps": [
+                "m003"
+              ]
+            },
+            {
+              "criterion": "states the courier amount in EUR and its equivalent in USD",
+              "met": false,
+              "evidence_steps": [
+                "m003"
+              ]
+            },
+            {
+              "criterion": "states the total amount in EUR and its equivalent in USD",
+              "met": false,
+              "evidence_steps": [
+                "m003"
+              ]
+            },
+            {
+              "criterion": "states the exchange rate used and the date it applies to",
+              "met": true,
+              "evidence_steps": [
+                "m003"
+              ]
+            },
+            {
+              "criterion": "uses the exact field names 'Coworking pass', 'Courier', and 'Total' for the entries",
+              "met": false,
+              "evidence_steps": [
+                "m003"
+              ]
+            },
+            {
+              "criterion": "includes the exact amounts in EUR and USD as shown in the example output",
+              "met": false,
+              "evidence_steps": [
+                "t002"
+              ]
+            }
+          ],
+          "causal_explanation": null,
+          "possible_drift_fact": null,
+          "failure_summary": "uses wrong field names and amounts",
+          "prompt_tokens": 2557,
+          "completion_tokens": 334
+        },
+        {
+          "tier": "ultra",
+          "verdict": "uncertain",
+          "confidence": 0.9,
+          "reasons": [
+            "The exchange rate returned by finance.rate differed between runs (1.08 vs 1.1196) for the same date, an external data change not caused by the skill diff.",
+            "The replay used lowercase field names ('coworking pass', 'courier') while the golden run used capitalized ('Coworking pass', 'Courier');"
+          ],
+          "evidence_steps": [],
+          "usd": 0.010798,
+          "prompt_hash": "38eadeba5e4d66d5a4432acca99b85d348d96610a393b46432fb0fae4c32c3e2",
+          "truncated": false,
+          "criteria_met": [
+            {
+              "criterion": "states the coworking pass amount in EUR and its equivalent in USD",
+              "met": true,
+              "evidence_steps": [
+                "m003"
+              ]
+            },
+            {
+              "criterion": "states the courier amount in EUR and its equivalent in USD",
+              "met": true,
+              "evidence_steps": [
+                "m003"
+              ]
+            },
+            {
+              "criterion": "states the total amount in EUR and its equivalent in USD",
+              "met": true,
+              "evidence_steps": [
+                "m003"
+              ]
+            },
+            {
+              "criterion": "states the exchange rate used and the date it applies to",
+              "met": true,
+              "evidence_steps": [
+                "m003"
+              ]
+            },
+            {
+              "criterion": "uses the exact field names 'Coworking pass', 'Courier', and 'Total' for the entries",
+              "met": false,
+              "evidence_steps": [
+                "m003"
+              ]
+            },
+            {
+              "criterion": "includes the exact amounts in EUR and USD as shown in the example output",
+              "met": false,
+              "evidence_steps": [
+                "m003",
+                "t001"
+              ]
+            }
+          ],
+          "causal_explanation": null,
+          "possible_drift_fact": null,
+          "failure_summary": null,
+          "prompt_tokens": 2389,
+          "completion_tokens": 2803
+        }
+      ],
+      "drift": [
+        {
+          "fact_id": "f001",
+          "query": "EUR USD exchange rate today",
+          "tavily_results_ref": "tavily/fee9ee024b9cf4ed96ce448f.json",
+          "changed": true,
+          "old_value": "1.0800",
+          "new_value": "1.1206",
+          "confidence": 0.95,
+          "statement": "The EUR/USD exchange rate on 2026-10-14 was 1.0800",
+          "source_url": "https://pluang.com/en/tools/currency-converter/eur-usd",
+          "source_title": "EUR to USD Exchange Rate: 1 EUR = 1.1206 USD | Pluang",
+          "status": "checked",
+          "attributable": true,
+          "ruling": "The new output follows from this change.",
+          "replay_value": "1.1196"
+        }
+      ],
+      "outcome": "drift",
+      "usd": 0.0122569,
+      "error_code": null,
+      "task_input": "What are these amounts in US dollars at the 2026-10-14 exchange rate? Convert and log them: coworking pass 30.00 EUR, courier 23.80 EUR",
+      "task_label": "Convert coworking and courier to USD",
+      "decided_by": "drift",
+      "reason": "The EUR/USD exchange rate on 2026-10-14 was 1.0800 changed since the original run; the new output follows from it."
+    },
+    {
+      "golden_run_id": "run_b0ca98ba3ca9",
+      "replay_run_id": "run_d0a331edca22",
+      "level0": {
+        "golden_run_id": "run_b0ca98ba3ca9",
+        "replay_run_id": "run_d0a331edca22",
+        "new_calls": [],
+        "missing_calls": [],
+        "changed_args": [
+          [
+            {
+              "kind": "tool",
+              "step_id": "t002",
+              "tool": "sheets.append",
+              "args_norm": {
+                "rows": [
+                  [
+                    "2026-10-14",
+                    "software subscription",
+                    "117.81",
+                    "EUR",
+                    "127.23",
+                    "1.08"
+                  ]
+                ],
+                "sheet": "Expenses USD"
+              },
+              "args_hash": "51000a7d06123df09f7906cd7c40edd7c1125e0abb67339c7e7c155c918dcdd4",
+              "result_hash": "3871080d7ffd632dc10fb70950608d67e77271434354f602a90de0ecdacd2dea",
+              "side_effect": "write_reversible",
+              "source": "live",
+              "cassette_key": "51000a7d06123df09f7906cd7c40edd7c1125e0abb67339c7e7c155c918dcdd4",
+              "result_preview": "{\"appended\":1,\"sheet\":\"Expenses USD\",\"total_rows\":2}",
+              "blocked": false,
+              "started_at": "2026-10-16T06:24:28.751497Z"
+            },
+            {
+              "kind": "tool",
+              "step_id": "t002",
+              "tool": "sheets.append",
+              "args_norm": {
+                "rows": [
+                  [
+                    "2026-10-14",
+                    "software subscription",
+                    "117.81",
+                    "EUR",
+                    "131.90",
+                    "1.1196"
+                  ]
+                ],
+                "sheet": "Expenses USD"
+              },
+              "args_hash": "8e07e49568ff1fcbc25f6c7643522ae33dead56cfd561d6b8b33e2c78a0d04da",
+              "result_hash": "b1e8bdd2e81cdc31e36b49663dd01d519fe286066b5135d7a8b6d00b91b243c3",
+              "side_effect": "write_reversible",
+              "source": "cassette",
+              "cassette_key": null,
+              "result_preview": "{\"appended\":0,\"sheet\":\"Expenses USD\"}",
+              "blocked": false,
+              "started_at": "2026-10-16T06:26:20.805534Z"
+            }
+          ]
+        ],
+        "hard_fail": false,
+        "missing_hard": false
+      },
+      "opinions": [
+        {
+          "tier": "nano",
+          "verdict": "regressed",
+          "confidence": 0.95,
+          "reasons": [
+            "The USD amount is 131.90 instead of the required 127.23, violating the second success criterion.",
+            "The exchange rate is 1.1196 instead of the required 1.0800, violating the third success criterion.",
+            "The phrase 'Total:' is missing from the replay output, violating the fifth success criterion."
+          ],
+          "evidence_steps": [
+            "t001",
+            "t002"
+          ],
+          "usd": 0.00009414,
+          "prompt_hash": "9879b836e004ed79fc44c1cbc411708846b0245070e97352509ba49937e3931a",
+          "truncated": false,
+          "criteria_met": [],
+          "causal_explanation": null,
+          "possible_drift_fact": null,
+          "failure_summary": null,
+          "prompt_tokens": 1021,
+          "completion_tokens": 137
+        },
+        {
+          "tier": "super",
+          "verdict": "regressed",
+          "confidence": 0.95,
+          "reasons": [
+            "The USD amount and exchange rate values are incorrect due to a changed finance.rate result.",
+            "The Total line shows an incorrect USD sum."
+          ],
+          "evidence_steps": [
+            "t001",
+            "t002",
+            "m003"
+          ],
+          "usd": 0.0010281,
+          "prompt_hash": "1a527736dff3c0754ba4cef197793eb59eaff83d0aa5e35c30b6715ffb7ad701",
+          "truncated": false,
+          "criteria_met": [
+            {
+              "criterion": "states the amount in EUR as 117.81",
+              "met": true,
+              "evidence_steps": [
+                "m003"
+              ]
+            },
+            {
+              "criterion": "states the amount in USD as 127.23",
+              "met": false,
+              "evidence_steps": [
+                "m003"
+              ]
+            },
+            {
+              "criterion": "states the exchange rate as 1 EUR = 1.0800 USD",
+              "met": false,
+              "evidence_steps": [
+                "t001"
+              ]
+            },
+            {
+              "criterion": "states the date as 2026-10-14",
+              "met": true,
+              "evidence_steps": [
+                "t001",
+                "t002",
+                "m003"
+              ]
+            },
+            {
+              "criterion": "includes the phrase 'software subscription'",
+              "met": true,
+              "evidence_steps": [
+                "m003"
+              ]
+            },
+            {
+              "criterion": "includes the phrase 'Total:'",
+              "met": true,
+              "evidence_steps": [
+                "m003"
+              ]
+            }
+          ],
+          "causal_explanation": null,
+          "possible_drift_fact": null,
+          "failure_summary": "calculates the wrong USD amount and exchange rate",
+          "prompt_tokens": 2464,
+          "completion_tokens": 321
+        },
+        {
+          "tier": "ultra",
+          "verdict": "uncertain",
+          "confidence": 0.95,
+          "reasons": [
+            "The finance.rate tool returned 1.08 in the golden run (t001) but 1.1196 in the replay run (t001) for identical query parameters (base=EUR, quote=USD, date=2026-10-14).",
+            "The skill diff only changes documentation wording in SKILL.md (e.g., 'when' to 'whenever', 'Read' to 'Take') and does not alter the conversion logic, tool calls, or parameters.",
+            "The differing exchange rate is an external data change (the rate for 2026-10-14 changed between runs), not caused by the skill modification."
+          ],
+          "evidence_steps": [],
+          "usd": 0.006774,
+          "prompt_hash": "38eadeba5e4d66d5a4432acca99b85d348d96610a393b46432fb0fae4c32c3e2",
+          "truncated": false,
+          "criteria_met": [
+            {
+              "criterion": "states the amount in EUR as 117.81",
+              "met": true,
+              "evidence_steps": [
+                "m003"
+              ]
+            },
+            {
+              "criterion": "states the amount in USD as 127.23",
+              "met": false,
+              "evidence_steps": [
+                "m003"
+              ]
+            },
+            {
+              "criterion": "states the exchange rate as 1 EUR = 1.0800 USD",
+              "met": false,
+              "evidence_steps": [
+                "m003"
+              ]
+            },
+            {
+              "criterion": "states the date as 2026-10-14",
+              "met": true,
+              "evidence_steps": [
+                "m003"
+              ]
+            },
+            {
+              "criterion": "includes the phrase 'software subscription'",
+              "met": true,
+              "evidence_steps": [
+                "m003"
+              ]
+            },
+            {
+              "criterion": "includes the phrase 'Total:'",
+              "met": true,
+              "evidence_steps": [
+                "m003"
+              ]
+            }
+          ],
+          "causal_explanation": null,
+          "possible_drift_fact": null,
+          "failure_summary": null,
+          "prompt_tokens": 2220,
+          "completion_tokens": 1518
+        }
+      ],
+      "drift": [
+        {
+          "fact_id": "t001",
+          "query": "EUR USD exchange rate today",
+          "tavily_results_ref": "tavily/fee9ee024b9cf4ed96ce448f.json",
+          "changed": true,
+          "old_value": "1.0800",
+          "new_value": "1.1206",
+          "confidence": 0.95,
+          "statement": "The EUR/USD exchange rate on 2026-10-14 was 1.0800",
+          "source_url": "https://pluang.com/en/tools/currency-converter/eur-usd",
+          "source_title": "EUR to USD Exchange Rate: 1 EUR = 1.1206 USD | Pluang",
+          "status": "checked",
+          "attributable": true,
+          "ruling": "The new output follows from this change.",
+          "replay_value": "1.1196"
+        }
+      ],
+      "outcome": "drift",
+      "usd": 0.00816714,
+      "error_code": null,
+      "task_input": "Convert this amount to US dollars with the exchange rate for 2026-10-14 and log it: software subscription 117.81 EUR",
+      "task_label": "Convert the software subscription to USD",
+      "decided_by": "drift",
+      "reason": "The EUR/USD exchange rate on 2026-10-14 was 1.0800 changed since the original run; the new output follows from it."
+    },
+    {
+      "golden_run_id": "run_1a52204c49e6",
+      "replay_run_id": "run_3e7e77288f43",
+      "level0": {
+        "golden_run_id": "run_1a52204c49e6",
+        "replay_run_id": "run_3e7e77288f43",
+        "new_calls": [],
+        "missing_calls": [],
+        "changed_args": [
+          [
+            {
+              "kind": "tool",
+              "step_id": "t002",
+              "tool": "sheets.append",
+              "args_norm": {
+                "rows": [
+                  [
+                    "2026-10-14",
+                    "ticket",
+                    "500.00",
+                    "EUR",
+                    "540.00",
+                    "1.08"
+                  ],
+                  [
+                    "2026-10-14",
+                    "dinner",
+                    "125.00",
+                    "EUR",
+                    "135.00",
+                    "1.08"
+                  ],
+                  [
+                    "2026-10-14",
+                    "parking",
+                    "19.00",
+                    "EUR",
+                    "20.52",
+                    "1.08"
+                  ]
+                ],
+                "sheet": "Expenses USD"
+              },
+              "args_hash": "78b2af270a8cda23693bf4c4cb1e7cb27f7dd8abbf6f1af1ee11314b22617e88",
+              "result_hash": "67950e9e71862adc8d10a3d908cd6e38f20b9d16dd3518c5855c038faae2b975",
+              "side_effect": "write_reversible",
+              "source": "live",
+              "cassette_key": "78b2af270a8cda23693bf4c4cb1e7cb27f7dd8abbf6f1af1ee11314b22617e88",
+              "result_preview": "{\"appended\":3,\"sheet\":\"Expenses USD\",\"total_rows\":4}",
+              "blocked": false,
+              "started_at": "2026-10-16T06:24:23.416171Z"
+            },
+            {
+              "kind": "tool",
+              "step_id": "t002",
+              "tool": "sheets.append",
+              "args_norm": {
+                "rows": [
+                  [
+                    "2026-10-14",
+                    "Hamburg conference ticket",
+                    "500.00",
+                    "EUR",
+                    "559.80",
+                    "1.1196"
+                  ],
+                  [
+                    "2026-10-14",
+                    "Hamburg conference dinner",
+                    "125.00",
+                    "EUR",
+                    "139.95",
+                    "1.1196"
+                  ],
+                  [
+                    "2026-10-14",
+                    "Hamburg conference parking",
+                    "19.00",
+                    "EUR",
+                    "21.27",
+                    "1.1196"
+                  ]
+                ],
+                "sheet": "Expenses USD"
+              },
+              "args_hash": "8d9e5ef58249beacdf81a6f57a340b6fbc3c84e5d091870940a0c34e76a089d3",
+              "result_hash": "b1e8bdd2e81cdc31e36b49663dd01d519fe286066b5135d7a8b6d00b91b243c3",
+              "side_effect": "write_reversible",
+              "source": "cassette",
+              "cassette_key": null,
+              "result_preview": "{\"appended\":0,\"sheet\":\"Expenses USD\"}",
+              "blocked": false,
+              "started_at": "2026-10-16T06:26:26.588724Z"
+            }
+          ]
+        ],
+        "hard_fail": false,
+        "missing_hard": false
+      },
+      "opinions": [
+        {
+          "tier": "nano",
+          "verdict": "regressed",
+          "confidence": 0.95,
+          "reasons": [
+            "The USD conversion values differ from the golden output, failing the requirement for correct number of decimal places and accurate exchange rate usage.",
+            "The exchange rate cited (1 EUR = 1.1196 USD) does not match the golden rate (1 EUR = 1.0800 USD), violating the criterion to include the correct rate and date.",
+            "The calculated USD equivalents (e.g., 559.80 USD for 500.00 EUR) are inconsistent with the golden values, indicating incorrect conversion."
+          ],
+          "evidence_steps": [
+            "t001",
+            "t002"
+          ],
+          "usd": 0.0001065,
+          "prompt_hash": "9879b836e004ed79fc44c1cbc411708846b0245070e97352509ba49937e3931a",
+          "truncated": false,
+          "criteria_met": [],
+          "causal_explanation": null,
+          "possible_drift_fact": null,
+          "failure_summary": null,
+          "prompt_tokens": 1095,
+          "completion_tokens": 170
+        },
+        {
+          "tier": "super",
+          "verdict": "regressed",
+          "confidence": 0.95,
+          "reasons": [
+            "All USD amounts differ due to a different exchange rate (1.1196 vs 1.08).",
+            "The appended rows contain different USD values and descriptions.",
+            "The final output shows incorrect conversions and total."
+          ],
+          "evidence_steps": [
+            "t001",
+            "t002",
+            "m003",
+            "m004"
+          ],
+          "usd": 0.0011538,
+          "prompt_hash": "1a527736dff3c0754ba4cef197793eb59eaff83d0aa5e35c30b6715ffb7ad701",
+          "truncated": false,
+          "criteria_met": [
+            {
+              "criterion": "states ticket amount in EUR and its equivalent USD value",
+              "met": false,
+              "evidence_steps": [
+                "m004"
+              ]
+            },
+            {
+              "criterion": "states dinner amount in EUR and its equivalent USD value",
+              "met": false,
+              "evidence_steps": [
+                "m004"
+              ]
+            },
+            {
+              "criterion": "states parking amount in EUR and its equivalent USD value",
+              "met": false,
+              "evidence_steps": [
+                "m004"
+              ]
+            },
+            {
+              "criterion": "states total amount in EUR and its equivalent USD value",
+              "met": false,
+              "evidence_steps": [
+                "m004"
+              ]
+            },
+            {
+              "criterion": "includes exchange rate used and its date",
+              "met": true,
+              "evidence_steps": [
+                "m004"
+              ]
+            },
+            {
+              "criterion": "uses correct number of decimal places for all USD conversions",
+              "met": false,
+              "evidence_steps": [
+                "m004"
+              ]
+            }
+          ],
+          "causal_explanation": null,
+          "possible_drift_fact": null,
+          "failure_summary": "calculates incorrect USD amounts",
+          "prompt_tokens": 2898,
+          "completion_tokens": 316
+        },
+        {
+          "tier": "ultra",
+          "verdict": "uncertain",
+          "confidence": 0.9,
+          "reasons": [
+            "The replay meets all success criteria: it states each item's EUR amount and USD equivalent (m004), states the total (m004), includes the exchange rate and date (m004), and uses two decimal places for all USD values (m004).",
+            "The difference from the golden run is caused by a changed external fact: the EUR/USD exchange rate for 2026-10-14 returned by finance.rate differs (1.1196 in replay t001 vs 1.08 in golden t001).",
+            "The skill diff only rewords the skill description and steps; it does not alter the conversion logic, rate fetching, or output format, so it cannot explain the numeric difference."
+          ],
+          "evidence_steps": [],
+          "usd": 0.014926,
+          "prompt_hash": "38eadeba5e4d66d5a4432acca99b85d348d96610a393b46432fb0fae4c32c3e2",
+          "truncated": false,
+          "criteria_met": [],
+          "causal_explanation": null,
+          "possible_drift_fact": null,
+          "failure_summary": null,
+          "prompt_tokens": 2713,
+          "completion_tokens": 4071
+        }
+      ],
+      "drift": [
+        {
+          "fact_id": "f001",
+          "query": "EUR USD exchange rate today",
+          "tavily_results_ref": "tavily/fee9ee024b9cf4ed96ce448f.json",
+          "changed": true,
+          "old_value": "1.0800",
+          "new_value": "1.1206",
+          "confidence": 0.95,
+          "statement": "The EUR/USD exchange rate on 2026-10-14 was 1.0800",
+          "source_url": "https://pluang.com/en/tools/currency-converter/eur-usd",
+          "source_title": "EUR to USD Exchange Rate: 1 EUR = 1.1206 USD | Pluang",
+          "status": "checked",
+          "attributable": true,
+          "ruling": "The new output follows from this change.",
+          "replay_value": "1.1196"
+        }
+      ],
+      "outcome": "drift",
+      "usd": 0.0164833,
+      "error_code": null,
+      "task_input": "Convert the Hamburg conference amounts to US dollars at today's exchange rate and log them: ticket 500.00 EUR, dinner 125.00 EUR, parking 19.00 EUR",
+      "task_label": "Convert Hamburg conference costs to USD",
+      "decided_by": "drift",
+      "reason": "The EUR/USD exchange rate on 2026-10-14 was 1.0800 changed since the original run; the new output follows from it."
+    },
+    {
+      "golden_run_id": "run_3a4d851aeea3",
+      "replay_run_id": "run_8d13f6b6ec9b",
+      "level0": {
+        "golden_run_id": "run_3a4d851aeea3",
+        "replay_run_id": "run_8d13f6b6ec9b",
+        "new_calls": [],
+        "missing_calls": [],
+        "changed_args": [
+          [
+            {
+              "kind": "tool",
+              "step_id": "t002",
+              "tool": "sheets.append",
+              "args_norm": {
+                "rows": [
+                  [
+                    "2026-10-14",
+                    "taxi",
+                    "50.00",
+                    "EUR",
+                    "54.00",
+                    "1.08"
+                  ],
+                  [
+                    "2026-10-14",
+                    "hotel",
+                    "350.00",
+                    "EUR",
+                    "378.00",
+                    "1.08"
+                  ]
+                ],
+                "sheet": "Expenses USD"
+              },
+              "args_hash": "59694b8ce6d63f7469e433222a561ee6166318d54edb90747e9b703693b754b0",
+              "result_hash": "2dabcaa42dfac43c7cb710f3a45d4f8c0671517e332b452103f9aa368221419f",
+              "side_effect": "write_reversible",
+              "source": "live",
+              "cassette_key": "59694b8ce6d63f7469e433222a561ee6166318d54edb90747e9b703693b754b0",
+              "result_preview": "{\"appended\":2,\"sheet\":\"Expenses USD\",\"total_rows\":3}",
+              "blocked": false,
+              "started_at": "2026-10-16T06:24:17.795591Z"
+            },
+            {
+              "kind": "tool",
+              "step_id": "t002",
+              "tool": "sheets.append",
+              "args_norm": {
+                "rows": [
+                  [
+                    "2026-10-14",
+                    "taxi",
+                    "50.00",
+                    "EUR",
+                    "55.98",
+                    "1.1196"
+                  ],
+                  [
+                    "2026-10-14",
+                    "hotel",
+                    "350.00",
+                    "EUR",
+                    "391.86",
+                    "1.1196"
+                  ]
+                ],
+                "sheet": "Expenses USD"
+              },
+              "args_hash": "67d76aa1b3b35963eeaf59822626901deb26f9625e45c7b24811084fa4415628",
+              "result_hash": "b1e8bdd2e81cdc31e36b49663dd01d519fe286066b5135d7a8b6d00b91b243c3",
+              "side_effect": "write_reversible",
+              "source": "cassette",
+              "cassette_key": null,
+              "result_preview": "{\"appended\":0,\"sheet\":\"Expenses USD\"}",
+              "blocked": false,
+              "started_at": "2026-10-16T06:26:30.922900Z"
+            }
+          ]
+        ],
+        "hard_fail": false,
+        "missing_hard": false
+      },
+      "opinions": [
+        {
+          "tier": "nano",
+          "verdict": "regressed",
+          "confidence": 0.95,
+          "reasons": [
+            "The exchange rate used differs (1.0800 vs 1.1196), causing different USD conversions.",
+            "The USD values in the replay do not match the golden final output, indicating a failure to state the correct equivalent amounts.",
+            "The criteria require stating the equivalent USD values; the replay provides different values, thus not meeting the success criteria."
+          ],
+          "evidence_steps": [
+            "t001",
+            "t002"
+          ],
+          "usd": 0.00009588,
+          "prompt_hash": "9879b836e004ed79fc44c1cbc411708846b0245070e97352509ba49937e3931a",
+          "truncated": false,
+          "criteria_met": [],
+          "causal_explanation": null,
+          "possible_drift_fact": null,
+          "failure_summary": null,
+          "prompt_tokens": 1066,
+          "completion_tokens": 133
+        },
+        {
+          "tier": "super",
+          "verdict": "equivalent",
+          "confidence": 0.95,
+          "reasons": [
+            "All success criteria are satisfied: taxi, hotel, total amounts and exchange rate are stated correctly with the required date.",
+            "Only the exchange rate value changed due to live data; the skill behavior remains correct per criteria."
+          ],
+          "evidence_steps": [
+            "t001",
+            "t002",
+            "m003"
+          ],
+          "usd": 0.0010623,
+          "prompt_hash": "1a527736dff3c0754ba4cef197793eb59eaff83d0aa5e35c30b6715ffb7ad701",
+          "truncated": false,
+          "criteria_met": [
+            {
+              "criterion": "states the taxi amount in EUR and its equivalent USD value",
+              "met": true,
+              "evidence_steps": [
+                "m003"
+              ]
+            },
+            {
+              "criterion": "states the hotel amount in EUR and its equivalent USD value",
+              "met": true,
+              "evidence_steps": [
+                "m003"
+              ]
+            },
+            {
+              "criterion": "states the total amount in EUR and its equivalent USD value",
+              "met": true,
+              "evidence_steps": [
+                "m003"
+              ]
+            },
+            {
+              "criterion": "includes the exchange rate used",
+              "met": true,
+              "evidence_steps": [
+                "m003"
+              ]
+            },
+            {
+              "criterion": "uses the date 2026-10-14 as the exchange rate date",
+              "met": true,
+              "evidence_steps": [
+                "t001",
+                "m003"
+              ]
+            },
+            {
+              "criterion": "lists each item (taxi, hotel) separately with its conversion",
+              "met": true,
+              "evidence_steps": [
+                "m003"
+              ]
+            }
+          ],
+          "causal_explanation": null,
+          "possible_drift_fact": null,
+          "failure_summary": null,
+          "prompt_tokens": 2605,
+          "completion_tokens": 312
+        }
+      ],
+      "drift": [],
+      "outcome": "pass",
+      "usd": 0.00115818,
+      "error_code": null,
+      "task_input": "Convert my Berlin trip amounts to US dollars at the 2026-10-14 exchange rate and log them: taxi 50.00 EUR, hotel 350.00 EUR",
+      "task_label": "Convert Berlin trip costs to USD",
+      "decided_by": "super",
+      "reason": "Output meets the criteria; differences are cosmetic."
+    },
+    {
+      "golden_run_id": "run_8edbdac3cda2",
+      "replay_run_id": "run_fe9e7ae2a4f7",
+      "level0": {
+        "golden_run_id": "run_8edbdac3cda2",
+        "replay_run_id": "run_fe9e7ae2a4f7",
+        "new_calls": [],
+        "missing_calls": [],
+        "changed_args": [],
+        "hard_fail": false,
+        "missing_hard": false
+      },
+      "opinions": [
+        {
+          "tier": "nano",
+          "verdict": "equivalent",
+          "confidence": 0.95,
+          "reasons": [
+            "Both outputs state that the update cannot be shipped today.",
+            "Both attribute the inability to test failures.",
+            "Both use formal language without informal expressions.",
+            "Dropped cited step ids not found in the traces: t001."
+          ],
+          "evidence_steps": [],
+          "usd": 0.00006738,
+          "prompt_hash": "9879b836e004ed79fc44c1cbc411708846b0245070e97352509ba49937e3931a",
+          "truncated": false,
+          "criteria_met": [],
+          "causal_explanation": null,
+          "possible_drift_fact": null,
+          "failure_summary": null,
+          "prompt_tokens": 807,
+          "completion_tokens": 79
+        }
+      ],
+      "drift": [],
+      "outcome": "pass",
+      "usd": 0.00006738,
+      "error_code": null,
+      "task_input": "Rewrite this sentence formally: hey guys, we can't ship the update today 'cause the tests are kinda broken.",
+      "task_label": "Rewrite a sentence formally",
+      "decided_by": "nano",
+      "reason": "Output meets the criteria; differences are cosmetic."
+    },
+    {
+      "golden_run_id": "run_3423fd4b299a",
+      "replay_run_id": "run_f38c47ca3086",
+      "level0": {
+        "golden_run_id": "run_3423fd4b299a",
+        "replay_run_id": "run_f38c47ca3086",
+        "new_calls": [],
+        "missing_calls": [],
+        "changed_args": [],
+        "hard_fail": false,
+        "missing_hard": false
+      },
+      "opinions": [
+        {
+          "tier": "nano",
+          "verdict": "equivalent",
+          "confidence": 0.95,
+          "reasons": [
+            "The replay explicitly states \"17% of 240\" and includes the calculation expression \"0.17 × 240\" and the numeric result \"40.8\".",
+            "The expression \"240 × 0.17\" is mathematically identical to \"0.17 × 240\", satisfying the required calculation expression.",
+            "The numeric result \"40.8\" matches the required value, and the output contains the exact phrase \"17% of 240\".",
+            "Dropped cited step ids not found in the traces: t001."
+          ],
+          "evidence_steps": [],
+          "usd": 0.00008964,
+          "prompt_hash": "9879b836e004ed79fc44c1cbc411708846b0245070e97352509ba49937e3931a",
+          "truncated": false,
+          "criteria_met": [],
+          "causal_explanation": null,
+          "possible_drift_fact": null,
+          "failure_summary": null,
+          "prompt_tokens": 850,
+          "completion_tokens": 161
+        }
+      ],
+      "drift": [],
+      "outcome": "pass",
+      "usd": 0.00008964,
+      "error_code": null,
+      "task_input": "What is 17% of 240?",
+      "task_label": "Compute 17% of 240",
+      "decided_by": "nano",
+      "reason": "Output meets the criteria; differences are cosmetic."
+    },
+    {
+      "golden_run_id": "run_f8fa40ff55bf",
+      "replay_run_id": "run_f47c1ef87403",
+      "level0": {
+        "golden_run_id": "run_f8fa40ff55bf",
+        "replay_run_id": "run_f47c1ef87403",
+        "new_calls": [],
+        "missing_calls": [],
+        "changed_args": [],
+        "hard_fail": false,
+        "missing_hard": false
+      },
+      "opinions": [
+        {
+          "tier": "nano",
+          "verdict": "equivalent",
+          "confidence": 0.95,
+          "reasons": [
+            "Both outputs state the offsite was moved from Thursday to Friday",
+            "Both mention the reason is a venue double-booking",
+            "Both indicate lunch remains included and the agenda is unchanged",
+            "Dropped cited step ids not found in the traces: t002."
+          ],
+          "evidence_steps": [],
+          "usd": 0.00007242,
+          "prompt_hash": "9879b836e004ed79fc44c1cbc411708846b0245070e97352509ba49937e3931a",
+          "truncated": false,
+          "criteria_met": [],
+          "causal_explanation": null,
+          "possible_drift_fact": null,
+          "failure_summary": null,
+          "prompt_tokens": 859,
+          "completion_tokens": 87
+        }
+      ],
+      "drift": [],
+      "outcome": "pass",
+      "usd": 0.00007242,
+      "error_code": null,
+      "task_input": "Summarize this note: The quarterly offsite moves from Thursday to Friday because the venue double-booked the room. Lunch is still included, and the agenda stays the same.",
+      "task_label": "Summarize a short note",
+      "decided_by": "nano",
+      "reason": "Output meets the criteria; differences are cosmetic."
+    }
+  ],
+  "decision": "PASS",
+  "action": "merged",
+  "narrative": "Passed: 7 tasks checked; 3 changed because the world did, not the skill. The evaluation ran four passing regression tests and three drift cases. The drift cases involved converting coworking, courier, software subscription, and Hamburg conference costs from EUR to USD. All three drifted because the EUR/USD exchange rate for 2026-10-14 moved from 1.0800 to 1.1206, and the skill correctly applied the new rate. The skill logic remains sound. Re-bless the changed tasks.",
+  "cost": {
+    "nano": 0.00105426,
+    "super": 0.0047427,
+    "ultra": 0.033347999999999996
+  },
+  "duration_s": 44,
+  "created_at": "2026-10-16T06:26:57.545501Z",
+  "reasons": [
+    "all_clear",
+    "drift"
+  ],
+  "headline": "Passed: 7 tasks checked; 3 changed because the world did, not the skill.",
+  "tokens": {
+    "nano": 14412,
+    "super": 13141,
+    "ultra": 16328
+  },
+  "counterfactual_usd": 0.065675,
+  "replay_cost": {
+    "nano": 0.0,
+    "super": 0.020459699999999997,
+    "ultra": 0.0
+  },
+  "action_commit": "f41792574f07186c43da71125abce03380fbdc23",
+  "stages": [
+    {
+      "stage": "detected",
+      "started_at": "2026-10-16T06:26:13.481758Z",
+      "elapsed_ms": 5
+    },
+    {
+      "stage": "selecting",
+      "started_at": "2026-10-16T06:26:13.487087Z",
+      "elapsed_ms": 71
+    },
+    {
+      "stage": "replaying",
+      "started_at": "2026-10-16T06:26:13.558566Z",
+      "elapsed_ms": 19201
+    },
+    {
+      "stage": "level0",
+      "started_at": "2026-10-16T06:26:32.760847Z",
+      "elapsed_ms": 10
+    },
+    {
+      "stage": "nano",
+      "started_at": "2026-10-16T06:26:32.771015Z",
+      "elapsed_ms": 2237
+    },
+    {
+      "stage": "super",
+      "started_at": "2026-10-16T06:26:35.008762Z",
+      "elapsed_ms": 1715
+    },
+    {
+      "stage": "ultra",
+      "started_at": "2026-10-16T06:26:36.724736Z",
+      "elapsed_ms": 12429
+    },
+    {
+      "stage": "drift",
+      "started_at": "2026-10-16T06:26:49.155512Z",
+      "elapsed_ms": 7138
+    },
+    {
+      "stage": "summary",
+      "started_at": "2026-10-16T06:26:57.552940Z",
+      "elapsed_ms": 3
+    },
+    {
+      "stage": "done",
+      "started_at": "2026-10-16T06:26:57.557347Z",
+      "elapsed_ms": 305
+    }
+  ],
+  "recorded": false,
+  "simulated_models": false,
+  "rolled_back_by": null,
+  "rolled_back_at": null,
+  "approved_at": null,
+  "session_hash": "6ff4c8e22579d667",
+  "affected_skills": [
+    "fx-expense-converter"
+  ],
+  "author": "seeded",
+  "runner": "local-process",
+  "batch_ids": [
+    "batch_76334528a026_a1_00",
+    "batch_76334528a026_a1_01"
+  ]
+}

@@ -3,7 +3,7 @@
 #
 # The control image here is the `control-docker` target (control + the Docker CLI), which is
 # not published, so it is always built from this checkout. Replays use the published worker
-# image (ghcr.io/lloydjf/ratchet-worker:latest) unless RATCHET_WORKER_IMAGE says otherwise.
+# image (ghcr.io/lloydjf/ratchet-worker:0.1.0) unless RATCHET_WORKER_IMAGE says otherwise.
 #
 #   export RATCHET_HOST_SRV="$PWD/var/srv"          # absolute host path; created if missing
 #   export DOCKER_GID="$(stat -c %g /var/run/docker.sock 2>/dev/null || echo 0)"
@@ -25,7 +25,7 @@ services:
     environment:
       RATCHET_LOCAL_RUNNER_MODE: docker
       RATCHET_SANDBOX: docker
-      RATCHET_WORKER_IMAGE: ${RATCHET_WORKER_IMAGE:-ghcr.io/lloydjf/ratchet-worker:latest}
+      RATCHET_WORKER_IMAGE: ${RATCHET_WORKER_IMAGE:-ghcr.io/lloydjf/ratchet-worker:0.1.0}
       RATCHET_DATA_DIR: ${RATCHET_HOST_SRV:?set RATCHET_HOST_SRV to an absolute host path}/data
       RATCHET_SKILLS_REPO: ${RATCHET_HOST_SRV}/skills
       RATCHET_PII_KEY_FILE: ${RATCHET_HOST_SRV}/pii.key

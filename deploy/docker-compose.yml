@@ -5,8 +5,8 @@
 #   docker compose -f deploy/docker-compose.yml --profile worker build worker-local
 #   docker compose -f deploy/docker-compose.yml -f deploy/docker-compose.docker-runner.yml up control
 #
-# Images: by default the published release images (ghcr.io/lloydjf/ratchet-control:latest and
-# ratchet-worker:latest) are pulled; if the pull fails, compose builds them from this checkout
+# Images: by default the published release images (ghcr.io/lloydjf/ratchet-control:0.1.0 and
+# ratchet-worker:0.1.0) are pulled; if the pull fails, compose builds them from this checkout
 # (the `build:` sections). `--build` always builds locally. Override the tags with
 # RATCHET_CONTROL_IMAGE / RATCHET_WORKER_IMAGE (e.g. `ratchet-control:dev` for CI builds).
 #
@@ -29,7 +29,7 @@ name: ratchet
 
 services:
   control:
-    image: ${RATCHET_CONTROL_IMAGE:-ghcr.io/lloydjf/ratchet-control:latest}
+    image: ${RATCHET_CONTROL_IMAGE:-ghcr.io/lloydjf/ratchet-control:0.1.0}
     build:
       context: ..
       dockerfile: deploy/control.Dockerfile
@@ -86,7 +86,7 @@ services:
   # `docker run` when RATCHET_LOCAL_RUNNER_MODE=docker; this service exists to build and tag
   # it (`--profile worker build worker-local`) and to smoke-test it (prints --help, exits).
   worker-local:
-    image: ${RATCHET_WORKER_IMAGE:-ghcr.io/lloydjf/ratchet-worker:latest}
+    image: ${RATCHET_WORKER_IMAGE:-ghcr.io/lloydjf/ratchet-worker:0.1.0}
     build:
       context: ..
       dockerfile: worker/Dockerfile

@@ -7,11 +7,16 @@ verdict under fresh ids with ``recorded=True`` and the session hash, then re-emi
 events at their original relative times compressed ×2, so the progress strip still moves.
 The verdict appears when its ``verdict.decided`` event does. No model is called; the
 record keeps ``simulated_models`` exactly as it was produced.
+
+``import_recorded`` also keeps every record in the store as a *global* verdict (no session,
+``recorded=True``, deterministic id per scenario), so a fresh visitor to the public host can
+open the recorded verdict before pressing Simulate; the id is on ``GET /scenarios``.
 """
 
 from __future__ import annotations
 
 import asyncio
+import hashlib
 import json
 import shutil
 from dataclasses import dataclass, replace
@@ -35,7 +40,15 @@ from ratchet.util import new_id
 if TYPE_CHECKING:
     from ratchet.orchestrator.simulate import SimulateStart
 
-__all__ = ["RecordedEvent", "RecordedStart", "record_fixture", "start_recorded", "recorded_dir"]
+__all__ = [
+    "RecordedEvent",
+    "RecordedStart",
+    "record_fixture",
+    "start_recorded",
+    "recorded_dir",
+    "import_recorded",
+    "recorded_verdict_id",
+]
 
 SPEEDUP = 2.0
 _log = get_logger("simulate")
@@ -53,6 +66,52 @@ def recorded_dir(settings: Settings, scenario_id: str) -> Path:
 
 
 # --- recording --------------------------------------------------------------------------------
+def recorded_edit_id(scenario_id: str) -> str:
+    """Deterministic per scenario so the import is idempotent and the id is linkable."""
+    digest = hashlib.sha256(f"recorded:{scenario_id}".encode()).hexdigest()
+    return f"edit_{digest[:12]}"
+
+
+def recorded_verdict_id(store: Store, scenario_id: str) -> str | None:
+    """The global recorded verdict for ``scenario_id`` if ``import_recorded`` kept one."""
+    verdict_id = verdict_id_for(recorded_edit_id(scenario_id))
+    return verdict_id if store.verdict_path(verdict_id).exists() else None
+
+
+def import_recorded(settings: Settings, store: Store) -> dict[str, str]:
+    """Keep every ``scenarios/recorded/<k>/`` in the store as a global recorded verdict.
+
+    Returns ``{scenario_id: verdict_id}`` for the records found; existing imports are left
+    alone. Nothing is emitted on the event stream and no session is created.
+    """
+    kept: dict[str, str] = {}
+    root = settings.ratchet_scenarios_dir / "recorded"
+    for path in sorted(p for p in root.glob("*/verdict.json") if p.parent.name.isalnum()):
+        scenario_id = path.parent.name
+        edit_id = recorded_edit_id(scenario_id)
+        verdict_id = verdict_id_for(edit_id)
+        kept[scenario_id] = verdict_id
+        if store.verdict_path(verdict_id).exists():
+            continue
+        record = _load(path.parent)
+        _import_traces(store, path.parent)
+        edit = record.edit.model_copy(update={"edit_id": edit_id, "session_hash": None})
+        verdict = record.verdict.model_copy(
+            update={
+                "verdict_id": verdict_id,
+                "edit_id": edit_id,
+                "session_hash": None,
+                "recorded": True,
+            }
+        )
+        store.save_edit(edit, record.diff)
+        save_options(store, edit_id, EditOptions(scenario_id=scenario_id, repo_dir=None))
+        store.save_verdict(verdict)
+        store.set_edit_state(edit_id, "done", verdict_id=verdict_id)
+        _log.info("simulate.recorded_imported", scenario=scenario_id, verdict_id=verdict_id)
+    return kept
+
+
 def _run_ids(verdict: Verdict) -> list[str]:
     ids = [p.golden_run_id for p in verdict.pairs] + [p.replay_run_id for p in verdict.pairs]
     return sorted({i for i in ids if i})

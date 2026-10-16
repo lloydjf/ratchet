@@ -101,6 +101,8 @@ async def _seed(cfg: Settings, *, force: bool) -> None:
         f"Demo seeded: {result.recorded} recorded, {result.skipped} already blessed, "
         f"{len(result.canaries)} canaries, ${result.usd:.4f}."
     )
+    if result.recorded_runs:
+        typer.echo(f"Recorded runs in the store: scenarios {', '.join(result.recorded_runs)}.")
 
 
 @app.command("verify-live")

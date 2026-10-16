@@ -360,3 +360,28 @@ describe('timeline rows read the new event fields', () => {
     expect(describeEvent(ev('pair.reblessed', { golden: 'run_1', replay: 'rep_1', drift_fact_ids: ['eur_usd'] })).summary).toContain('(world changed: eur_usd)')
   })
 })
+
+describe('landing hero: the recorded verdict', () => {
+  it('uses the recorded verdict the scenarios endpoint names, even with no recorded verdict in the list', async () => {
+    setApi({
+      ...fixture,
+      listScenarios: async () => (await fixture.listScenarios()).map((s, i) => (i === 0 ? { ...s, recorded_verdict_id: 'v_rec_gt' } : s)),
+      listVerdicts: async () => ({ items: [], next_cursor: null }),
+    })
+    at('/', '/', <LandingPage />)
+    const hero = await screen.findByTestId('hero')
+    expect(within(hero).getByTestId('decision-word')).toHaveTextContent('Blocked.')
+  })
+
+  it('falls back to a recorded verdict in the verdict list', async () => {
+    at('/', '/', <LandingPage />)
+    expect(await screen.findByTestId('hero')).toBeInTheDocument()
+  })
+
+  it('shows the scenario cards alone when no recorded verdict exists', async () => {
+    setApi({ ...fixture, listVerdicts: async () => ({ items: [], next_cursor: null }) })
+    at('/', '/', <LandingPage />)
+    expect(await screen.findAllByTestId('scenario-card')).toHaveLength(3)
+    expect(screen.queryByTestId('hero')).not.toBeInTheDocument()
+  })
+})

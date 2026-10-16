@@ -97,6 +97,7 @@ class ScenarioView(_View):
     learned: str
     catches: str
     expected_decision: Decision
+    recorded_verdict_id: str | None = None  # + a global recorded run to open before Simulate
 
 
 class SimulateView(_View):

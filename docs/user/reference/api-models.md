@@ -414,6 +414,7 @@ One product-metrics row, as `ratchet metrics` prints it.
 | `catches` | string | yes | — |
 | `expected_decision` | `PASS` \| `WARN` \| `BLOCK` | yes | — |
 | `learned` | string | yes | — |
+| `recorded_verdict_id` | string or null | no | — |
 | `scenario_id` | string | yes | — |
 | `skill` | string | yes | — |
 | `title` | string | yes | — |

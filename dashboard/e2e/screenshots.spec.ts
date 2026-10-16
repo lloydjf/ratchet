@@ -42,6 +42,10 @@ for (const theme of ['dark', 'light'] as const) {
         isMobile: device === 'mobile',
         hasTouch: device === 'mobile',
       })
+      // Dark ships by default; the light set is the toggle's stored choice.
+      test.beforeEach(async ({ page }) => {
+        await page.addInitScript((t) => localStorage.setItem('ratchet.theme', t), theme)
+      })
       for (const [name, path] of PAGES) {
         if (ONLY && !ONLY.includes(name)) continue
         test(`${name}`, async ({ page }) => {

@@ -1,8 +1,11 @@
 import './styles/app.css'
+import { initTheme } from './lib/theme'
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { initApi } from './api/select'
 import { configureAnalytics } from './analytics'
+
+initTheme()
 
 async function boot() {
   const api = await initApi()

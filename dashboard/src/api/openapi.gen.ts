@@ -1292,6 +1292,8 @@ export interface components {
             expected_decision: "PASS" | "WARN" | "BLOCK";
             /** Learned */
             learned: string;
+            /** Recorded Verdict Id */
+            recorded_verdict_id?: string | null;
             /** Scenario Id */
             scenario_id: string;
             /** Skill */

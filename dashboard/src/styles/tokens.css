@@ -1,6 +1,6 @@
 /*
- * Ratchet design tokens: graphite steel. Dark is the default; light applies when the
- * user prefers it (and has not chosen dark), or when they pick light with the toggle.
+ * Ratchet design tokens: graphite steel. Dark ships by default whatever the system
+ * setting; light applies only when the visitor picks it with the theme toggle.
  * Decision hues (pass / warn / block / drift) and tier hues (nano / super / ultra) are
  * the only saturated colours. Every colour the product uses comes from this file.
  */
@@ -58,35 +58,6 @@
   --t-band: 320ms;
 
   color-scheme: dark;
-}
-
-@media (prefers-color-scheme: light) {
-  :root:not([data-theme='dark']) {
-    --bg: #f3f1ec;
-    --surface: #ffffff;
-    --surface-2: #f7f5f1;
-    --border: #e6e3dd;
-    --text: #1d1b18;
-    --text-muted: #5c5852;
-    --text-tertiary: #9a958e;
-    --pass: #1d7a45;
-    --warn: #8a5b00;
-    --block: #b93a22;
-    --drift: #1f62a8;
-    --nano: #0b767c;
-    --super: #6a4bc6;
-    --ultra: #a63a77;
-    --accent: #3d5a77;
-    --pass-ink: #1a6e3e;
-    --warn-ink: #7a5000;
-    --block-ink: #a8331d;
-    --drift-ink: #1b5896;
-    --nano-ink: #096a70;
-    --super-ink: #5f42b5;
-    --ultra-ink: #96336b;
-    --border-strong: color-mix(in srgb, var(--text-muted) 62%, var(--border));
-    color-scheme: light;
-  }
 }
 
 :root[data-theme='light'] {

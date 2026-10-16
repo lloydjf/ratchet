@@ -105,7 +105,15 @@ class SimulateService:
 
     # -- catalog -------------------------------------------------------------------------------
     def scenarios(self) -> list[ScenarioInfo]:
-        return [s.info for s in load_scenarios(self.settings.ratchet_scenarios_dir).values()]
+        """The catalog, each with its global recorded verdict id when one was imported."""
+        from ratchet.orchestrator.recorded import recorded_verdict_id
+
+        return [
+            s.info.model_copy(
+                update={"recorded_verdict_id": recorded_verdict_id(self.store, s.info.scenario_id)}
+            )
+            for s in load_scenarios(self.settings.ratchet_scenarios_dir).values()
+        ]
 
     # -- start ---------------------------------------------------------------------------------
     async def start(

@@ -12,7 +12,8 @@
     <script>
       try {
         var t = localStorage.getItem('ratchet.theme')
-        if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t
+        // Dark unless the visitor chose light with the toggle (the system setting does not apply).
+        document.documentElement.dataset.theme = t === 'light' ? 'light' : 'dark'
       } catch (e) {}
     </script>
   </head>

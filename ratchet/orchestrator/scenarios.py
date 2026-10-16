@@ -30,6 +30,7 @@ class ScenarioInfo(BaseModel):
     learned: str
     catches: str
     expected_decision: Decision
+    recorded_verdict_id: str | None = None  # the global recorded run, when imported
 
 
 @dataclass(frozen=True)

@@ -1949,6 +1949,17 @@
             "title": "Learned",
             "type": "string"
           },
+          "recorded_verdict_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Recorded Verdict Id"
+          },
           "scenario_id": {
             "title": "Scenario Id",
             "type": "string"

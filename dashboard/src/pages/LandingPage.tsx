@@ -47,6 +47,19 @@ function recordedFor(s: Pick<Scenario, 'skill'>, verdicts: VerdictSummary[] | un
   return verdicts?.find((v) => v.recorded && v.affected_skills.includes(s.skill)) ?? null
 }
 
+/**
+ * The verdict the hero shows: scenario 1's recorded verdict, from the scenarios endpoint
+ * (`recorded_verdict_id`) or else from the verdict list (`recorded: true` for its skill);
+ * then any other scenario's. None: the landing shows the cards alone.
+ */
+export function heroVerdictId(scenarios: readonly Scenario[], verdicts: VerdictSummary[] | undefined): { scenario: Scenario; verdictId: string } | null {
+  for (const s of scenarios) {
+    const id = s.recorded_verdict_id || recordedFor(s, verdicts)?.verdict_id
+    if (id) return { scenario: s, verdictId: id }
+  }
+  return null
+}
+
 function ScenarioSlot({ scenario, slot, onSimulate, onSettle, recordedHref }: { scenario: Scenario; slot: Slot; onSimulate: () => void; onSettle: (patch: Partial<Slot>) => void; recordedHref: string | null }) {
   const q = useVerdict(slot.verdictId ?? undefined)
   const view = q.data
@@ -223,8 +236,8 @@ export default function LandingPage() {
 
   const simulateOff = meta ? !meta.simulate_enabled : false
   const list = scenarios.data ?? []
-  const heroScenario = list.find((s) => recordedFor(s, verdicts?.items)?.decision === 'BLOCK') ?? list[0]
-  const hero = heroScenario ? recordedFor(heroScenario, verdicts?.items) : null
+  const hero = heroVerdictId(list, verdicts?.items)
+  const heroScenario = hero?.scenario
   const heroSlot = heroScenario ? slots[heroScenario.scenario_id] : undefined
 
   const runLive = async () => {
@@ -239,7 +252,7 @@ export default function LandingPage() {
         <h1 className="text-h1 font-semibold text-text">{LANDING_HEADLINE}</h1>
       </header>
 
-      {hero ? <RecordedHero verdictId={hero.verdict_id} onRun={() => void runLive()} running={simulateOff || heroSlot?.status === 'running' || heroSlot?.status === 'queued'} /> : null}
+      {hero ? <RecordedHero verdictId={hero.verdictId} onRun={() => void runLive()} running={simulateOff || heroSlot?.status === 'running' || heroSlot?.status === 'queued'} /> : null}
 
       <section aria-labelledby="scenarios-title" className="flex flex-col gap-3">
         <div className="flex flex-wrap items-baseline justify-between gap-2">

@@ -42,6 +42,10 @@ test.describe('mobile 390×844', () => {
 for (const scheme of ['dark', 'light'] as const) {
   test.describe(`axe (${scheme})`, () => {
     test.use({ colorScheme: scheme })
+    // Dark ships by default; light is the visitor's stored choice (the theme toggle).
+    test.beforeEach(async ({ page }) => {
+      await page.addInitScript((t) => localStorage.setItem('ratchet.theme', t), scheme)
+    })
     for (const [name, path] of [
       ['landing', '/'],
       ['verdict (BLOCK)', '/verdicts/v_rec_gt'],

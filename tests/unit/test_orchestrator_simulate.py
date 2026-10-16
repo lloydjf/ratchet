@@ -207,3 +207,29 @@ async def test_the_committed_recordings_replay_with_their_labels(tmp_path: Path)
     assert {"verdict.decided", "simulate.finished"} <= {
         e.kind for e in service.store.events(session_hash=SESSION, include_global=False)
     }
+
+
+async def test_import_recorded_keeps_global_verdicts_with_stable_ids(tmp_path: Path) -> None:
+    """``ratchet seed-demo`` keeps each recording as a session-less recorded verdict that
+    ``GET /scenarios`` points at; a second import changes nothing."""
+    from ratchet.orchestrator.recorded import import_recorded, recorded_verdict_id
+
+    service, _ = _service(tmp_path)
+    assert all(s.recorded_verdict_id is None for s in service.scenarios())
+    kept = import_recorded(service.settings, service.store)
+    assert set(kept) == {"1", "2", "3"}
+    assert import_recorded(service.settings, service.store) == kept
+    for scenario_id, verdict_id in kept.items():
+        assert recorded_verdict_id(service.store, scenario_id) == verdict_id
+        verdict = service.store.load_verdict(verdict_id)
+        assert verdict.recorded and verdict.session_hash is None
+        assert service.store.edit_state(verdict.edit_id).state == "done"
+        assert service.store.edit_state(verdict.edit_id).verdict_id == verdict_id
+        assert service.store.load_edit(verdict.edit_id).session_hash is None
+        for row in verdict.pairs:
+            assert service.store.has_trace(row.golden_run_id)
+    assert {s.scenario_id: s.recorded_verdict_id for s in service.scenarios()} == kept
+    from ratchet.dashboard_api.queries import verdict_rows
+
+    visible = verdict_rows(service.store, "someone-else" * 2, None, 50)
+    assert {row["verdict_id"] for row in visible.rows} >= set(kept.values())  # global: all see it

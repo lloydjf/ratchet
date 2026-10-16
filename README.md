@@ -238,19 +238,21 @@ with the unchanged skill (control replays) and the controls agreed, so the regre
 
 ## Run it yourself
 
-**Install the CLI** (Python 3.11+, git; the wheel ships the built dashboard):
+**Run the container** from a checkout: `docker compose up` pulls
+`ghcr.io/lloydjf/ratchet-control:latest` (and builds it locally if the pull fails), seeds the
+demo and serves the dashboard on http://127.0.0.1:8080 in sim mode. Replay workers use
+`ghcr.io/lloydjf/ratchet-worker:latest`. Both images are multi-arch (amd64, arm64), run as a
+non-root user, and are rebuilt from `main` on every push; the `v0.1.0` release pins them as
+`0.1.0`.
+
+**Install the CLI from PyPI** once the `v0.1.0` release is cut (the wheel ships the built
+dashboard; until then use the container or the source install below):
 
 ```bash
 uv tool install ratchet-ci               # or: pipx install ratchet-ci
 ratchet --version && ratchet doctor      # offline simulator by default, no keys needed
 ratchet serve                            # dashboard at http://127.0.0.1:8080
 ```
-
-**Or run the container** from a checkout: `docker compose up` pulls
-`ghcr.io/lloydjf/ratchet-control:0.1.0` (and builds it locally if the pull fails), seeds the
-demo and serves the dashboard on http://127.0.0.1:8080 in sim mode. Replay workers use
-`ghcr.io/lloydjf/ratchet-worker:0.1.0`. Both images are multi-arch (amd64, arm64) and run as
-a non-root user.
 
 **From source**, for the full demo:
 

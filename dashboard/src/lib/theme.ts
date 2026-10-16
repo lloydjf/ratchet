@@ -4,11 +4,15 @@ export type Theme = 'light' | 'dark'
 const KEY = 'ratchet.theme'
 const listeners = new Set<() => void>()
 
-function systemTheme(): Theme {
+/** Dark by default: only a stored choice (the toggle) switches to light. */
+export const DEFAULT_THEME: Theme = 'dark'
+
+/** Run before the first render (module code, so a `self`-only CSP cannot block it). */
+export function initTheme(): void {
   try {
-    return window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark'
+    document.documentElement.dataset.theme = storedTheme() ?? DEFAULT_THEME
   } catch {
-    return 'dark'
+    /* no DOM */
   }
 }
 
@@ -24,7 +28,7 @@ export function storedTheme(): Theme | null {
 export function currentTheme(): Theme {
   const attr = document.documentElement.dataset.theme
   if (attr === 'light' || attr === 'dark') return attr
-  return systemTheme()
+  return storedTheme() ?? DEFAULT_THEME
 }
 
 export function setTheme(t: Theme): void {
@@ -39,16 +43,8 @@ export function setTheme(t: Theme): void {
 
 function subscribe(cb: () => void) {
   listeners.add(cb)
-  let mq: MediaQueryList | null = null
-  try {
-    mq = window.matchMedia('(prefers-color-scheme: light)')
-    mq.addEventListener('change', cb)
-  } catch {
-    mq = null
-  }
   return () => {
     listeners.delete(cb)
-    mq?.removeEventListener('change', cb)
   }
 }
 

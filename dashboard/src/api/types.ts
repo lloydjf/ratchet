@@ -361,6 +361,8 @@ export interface Scenario {
   learned: string
   catches: string
   expected_decision: Decision
+  /** The global recorded run any visitor may open before pressing Simulate; null when none is seeded. */
+  recorded_verdict_id?: string | null
 }
 
 export type SimulateStatus = 'running' | 'queued' | 'done'

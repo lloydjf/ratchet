@@ -37,6 +37,7 @@ from ratchet.models import Tier
 from ratchet.orchestrator.agent import ControlPlane, control_plane, run_task
 from ratchet.orchestrator.bless import bless
 from ratchet.orchestrator.context import CANARIES_FILE, InProcessProxy
+from ratchet.orchestrator.recorded import import_recorded
 from ratchet.store import Store
 from ratchet.store.base import write_json_atomic
 from ratchet.util import sha256_hex
@@ -75,6 +76,7 @@ class SeedResult(BaseModel):
     golden_run_ids: list[str]
     canaries: list[str]
     usd: float
+    recorded_runs: list[str] = []  # scenario ids whose recorded verdict is in the store
 
 
 def _field(item: dict[str, object], *keys: str) -> str:
@@ -225,6 +227,7 @@ async def seed_demo(
     if canaries or task_ids is None:
         await asyncio.to_thread(write_json_atomic, store.data_dir / CANARIES_FILE, canaries)
     spent = (await asyncio.to_thread(store.spend)).total_usd - spent_before
+    kept = await asyncio.to_thread(import_recorded, settings, store)
     _log.info("demo.seeded", recorded=recorded, skipped=skipped, n_canaries=len(canaries))
     return SeedResult(
         repo=str(repo.main_dir),
@@ -233,6 +236,7 @@ async def seed_demo(
         golden_run_ids=[manifest[t.task_id] for t in tasks if t.task_id in manifest],
         canaries=canaries,
         usd=round(spent, 6),
+        recorded_runs=sorted(kept),
     )
 
 

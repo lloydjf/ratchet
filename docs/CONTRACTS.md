@@ -186,7 +186,8 @@ JSON shapes are the pydantic models in `ratchet/models.py` plus these view model
 - `GET /api/v1/meta` → `{public_mode, simulate_enabled, simulate_mode, simulated_models,
   action_token, repo_url, video_url, bench_report_url, version, harness, runner, sandbox}`
 - `GET /api/v1/scenarios` → `[{scenario_id, skill, title, learned, catches,
-  expected_decision}]`
+  expected_decision, recorded_verdict_id}]`; `recorded_verdict_id` is the global recorded
+  run for the scenario (`ratchet seed-demo` imports `scenarios/recorded/`), `null` when none.
 - `POST /api/v1/simulate/{scenario_id}` → `{session_hash, scenario_id, edit_id, verdict_id,
   status: "running"|"queued"|"done", queue_position, eta_s}`; `verdict_id` is pre-allocated so
   the client can open `/verdicts/:id` while it runs. Session = cookie `ratchet_session`.

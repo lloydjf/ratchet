@@ -26,7 +26,6 @@ function block(css: string, selector: RegExp): Tokens {
 
 const dark = block(tokensCss, /:root \{([\s\S]*?)\n\}/)
 const lightExplicit = block(tokensCss, /:root\[data-theme='light'\] \{([\s\S]*?)\n\}/)
-const lightMedia = block(tokensCss, /:root:not\(\[data-theme='dark'\]\) \{([\s\S]*?)\n {2}\}/)
 const light = { ...dark, ...lightExplicit }
 
 const hexRgb = (h: string): RGB => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16)) as RGB
@@ -120,8 +119,9 @@ describe('contrast test harness', () => {
     expect(color('color-mix(in srgb, var(--a) var(--p), var(--b))', t)).toEqual([191.25, 191.25, 191.25])
     expect(color('color-mix(in srgb, var(--a), var(--b))', t)).toEqual([127.5, 127.5, 127.5])
   })
-  it('keeps the two light-theme blocks identical', () => {
-    expect(lightMedia).toEqual(lightExplicit)
+  it('ships dark by default: light is only the explicit choice, never the system setting', () => {
+    expect(tokensCss).not.toMatch(/prefers-color-scheme/)
+    expect(Object.keys(lightExplicit).length).toBeGreaterThan(10)
   })
 })
 

@@ -58,7 +58,9 @@ def tavily_factory(live: bool) -> TavilyFactory:
     def make(settings: Settings, store: Store, options: EditOptions) -> TavilySource:
         key = settings.tavily_api_key
         if live and key is not None:
-            return LiveTavily(key.get_secret_value(), store)
+            return LiveTavily(
+                key.get_secret_value(), store, daily_cap=settings.ratchet_tavily_daily_searches
+            )
         root = (
             Path(options.tavily_dir) if options.tavily_dir else settings.ratchet_tavily_fixtures_dir
         )

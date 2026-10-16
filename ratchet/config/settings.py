@@ -159,6 +159,12 @@ class Settings(BaseSettings):
     ratchet_tavily_mode: Literal["live", "fixtures"] = Field(
         "fixtures", description="fixtures = recorded responses (bench, offline)."
     )
+    ratchet_tavily_daily_searches: int = Field(
+        300,
+        ge=0,
+        description="Live Tavily searches per UTC day across the host (cache hits are free); "
+        "past the cap drift checks report unavailable instead of spending more credits.",
+    )
     ratchet_tavily_fixtures_dir: Path = Field(
         Path("./tests/fixtures/tavily"), description="Recorded Tavily responses."
     )

@@ -19,7 +19,7 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, Query
 
 from ratchet.copy import ERROR_COPY
-from ratchet.dashboard_api.builders import check_id, edit_view, require_own_edit
+from ratchet.dashboard_api.builders import check_id, edit_view
 from ratchet.dashboard_api.deps import ServicesDep, SessionDep, action_guard
 from ratchet.dashboard_api.errors import NotReady
 from ratchet.dashboard_api.ports import Backend
@@ -113,15 +113,14 @@ async def get_edit_logs(edit_id: str, services: ServicesDep) -> LogsView:
 @router.post(
     "/edits/{edit_id}/replay",
     response_model=EditView,
-    dependencies=[Depends(action_guard())],
+    dependencies=[Depends(action_guard(public_allowed=False))],
 )
-async def replay_edit(edit_id: str, services: ServicesDep, session: SessionDep) -> EditView:
-    """Force a replay: the orchestrator resets the edit to ``selecting``."""
+async def replay_edit(edit_id: str, services: ServicesDep) -> EditView:
+    """Force a replay: the orchestrator resets the edit to ``selecting``. Operator hosts
+    only: on the public host a replay would re-run the whole pipeline outside Simulate's
+    one-run-per-visitor gate and spend the shared daily cap."""
     store = services.store
-    if services.settings.ratchet_public_mode:
-        await asyncio.to_thread(require_own_edit, store, edit_id, session.hash)
-    else:
-        await asyncio.to_thread(edit_view, store, services.backend, edit_id)  # 404 if unknown
+    await asyncio.to_thread(edit_view, store, services.backend, edit_id)  # 404 if unknown
     if services.orchestrator is None:
         raise NotReady("The orchestrator is not running on this host.")
     await services.orchestrator.replay(edit_id)

@@ -228,7 +228,13 @@ Related switches:
 
 - `RATCHET_JOB_RUNNER=local` runs replays on the VM instead of Serverless Jobs.
 - `RATCHET_SIMULATE_ENABLED=false` hides Simulate.
-- `RATCHET_DAILY_USD_CAP=<n>` raises or lowers the daily cap.
+- `RATCHET_DAILY_USD_CAP=<n>` raises or lowers the daily cap on model spend (Token Factory).
+  A Simulate run costs about $0.05–0.12 on real models; the public demo host runs with `1.0`.
+- `RATCHET_TAVILY_DAILY_SEARCHES=<n>` caps live Tavily searches per UTC day (default 300);
+  past it, drift checks report *unavailable* instead of spending more credits.
+- On the public host only Simulate starts pipelines: the replay action on an edit is
+  operator-only, so a visitor cannot re-run a finished edit outside the one-run-per-visitor
+  gate.
 
 ## Serverless Jobs
 

@@ -9,13 +9,6 @@
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <title>Ratchet</title>
-    <script>
-      try {
-        var t = localStorage.getItem('ratchet.theme')
-        // Dark unless the visitor chose light with the toggle (the system setting does not apply).
-        document.documentElement.dataset.theme = t === 'light' ? 'light' : 'dark'
-      } catch (e) {}
-    </script>
   </head>
   <body>
     <div id="root"></div>

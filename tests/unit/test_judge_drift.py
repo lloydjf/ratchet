@@ -335,3 +335,41 @@ def test_replay_value_reads_the_new_value_off_the_replays_own_tool_call() -> Non
     fact = drift.observed_facts(pair.golden, pair.replay)[0]
     assert drift.replay_value(fact, pair.golden, pair.replay) == "0.95"
     assert drift.replay_value(fact, pair.golden, pair.golden) is None  # unchanged
+
+
+@respx.mock
+async def test_live_tavily_stops_at_the_daily_search_cap(tmp_path: Path) -> None:
+    """Past ``daily_cap`` live searches in a UTC day, a cache miss is ``drift_unavailable``
+    instead of another paid call; cache hits still answer."""
+    from ratchet.errors import UpstreamError
+
+    payload = json.loads((TAVILY_DIR / "token_factory_pricing.json").read_text())
+    route = respx.post(SEARCH).mock(return_value=httpx.Response(200, json=payload))
+    with settings(tmp_path):
+        store = Store.open(tmp_path / "data")
+        live = LiveTavily("tvly-test", store, daily_cap=2)
+        await live.search("first")
+        await live.search("second")
+        await live.search("first")  # a hit: free
+        with pytest.raises(UpstreamError) as info:
+            await live.search("third")
+        assert info.value.code == "drift_unavailable"
+        assert await live.search("second")  # still served from the cache
+    assert route.call_count == 2
+
+
+def test_a_drift_check_keeps_only_http_source_links() -> None:
+    from ratchet.models import DriftCheck
+
+    base = {
+        "fact_id": "f1",
+        "query": "EUR to USD",
+        "tavily_results_ref": "tavily/x.json",
+        "changed": True,
+        "old_value": "1.08",
+        "new_value": "1.12",
+        "confidence": 0.9,
+    }
+    assert DriftCheck(**base, source_url="https://example.com/x").source_url is not None
+    assert DriftCheck(**base, source_url="javascript:alert(1)").source_url is None
+    assert DriftCheck(**base, source_url="data:text/html,hi").source_url is None

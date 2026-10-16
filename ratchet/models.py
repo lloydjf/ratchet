@@ -10,7 +10,7 @@ from __future__ import annotations
 from datetime import datetime
 from typing import Annotated, Literal
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 __all__ = [
     "Tier",
@@ -244,6 +244,15 @@ class DriftCheck(_Model):
     source_title: str | None = None  # +
     status: Literal["checked", "unavailable"] = "checked"  # + drift_unavailable
     attributable: bool | None = None  # + attribute_drift ruling
+
+    @field_validator("source_url")
+    @classmethod
+    def _http_only(cls, value: str | None) -> str | None:
+        """A source link is rendered as an anchor; only http(s) URLs are kept."""
+        if value is None:
+            return None
+        return value if value.lower().startswith(("http://", "https://")) else None
+
     ruling: str = ""  # + one-line ruling shown on the card
     replay_value: str | None = None  # + the value the replay's own world tool reported
 

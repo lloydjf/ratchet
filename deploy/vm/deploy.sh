@@ -54,9 +54,10 @@ take_lock
 check_ci() {
   local sha="$1" origin
   origin="$(app_git remote get-url origin 2>/dev/null || true)"
-  python3 - "$origin" "$sha" "${GITHUB_TOKEN:-}" <<'PY'
-import json, re, sys, urllib.request
-origin, sha, token = sys.argv[1:4]
+  GITHUB_TOKEN="${GITHUB_TOKEN:-}" python3 - "$origin" "$sha" <<'PY'
+import json, os, re, sys, urllib.request
+origin, sha = sys.argv[1:3]
+token = os.environ.get("GITHUB_TOKEN", "")  # env, not argv: argv is world-readable in /proc
 m = re.search(r"github\.com[:/]([^/]+)/([^/.]+?)(?:\.git)?$", origin)
 if not m:
     print(f"origin {origin!r} is not on GitHub; CI status not checked", file=sys.stderr)

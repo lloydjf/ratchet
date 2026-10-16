@@ -109,7 +109,11 @@ async def choose(
     key = settings.tavily_api_key
     if spec is None or settings.ratchet_tavily_mode != "live" or (key is None and tavily is None):
         return fixed
-    source = tavily or LiveTavily(key.get_secret_value() if key else "", store)
+    source = tavily or LiveTavily(
+        key.get_secret_value() if key else "",
+        store,
+        daily_cap=settings.ratchet_tavily_daily_searches,
+    )
     rate = await live_rate(spec, source)
     if rate is None:
         return fixed

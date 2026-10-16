@@ -60,6 +60,8 @@ SECRET_VARS: tuple[str, ...] = (
     "NEBIUS_S3_ACCESS_KEY_ID",
     "NEBIUS_S3_SECRET_ACCESS_KEY",
     "RATCHET_ACTION_TOKEN_SECRET",
+    "RATCHET_NOTIFY_WEBHOOK",
+    "CLOUDFLARE_API_TOKEN",
 )
 
 # Values shorter than this, or containing a placeholder marker, are not treated as secrets.
@@ -83,6 +85,10 @@ PATTERNS: tuple[tuple[str, re.Pattern[str]], ...] = (
     ("aws_access_key", re.compile(r"\bAKIA[0-9A-Z]{16}\b")),
     ("slack_token", re.compile(r"\bxox[abprs]-[A-Za-z0-9-]{10,}")),
     ("private_key", re.compile(r"-----BEGIN [A-Z ]*PRIVATE KEY-----")),
+    ("slack_webhook", re.compile(r"hooks\.slack\.com/services/[A-Za-z0-9/_-]{20,}")),
+    ("telegram_bot_token", re.compile(r"api\.telegram\.org/bot\d{6,}:[A-Za-z0-9_-]{30,}")),
+    ("cloudflare_token", re.compile(r"\bcfat_[A-Za-z0-9_-]{20,}")),
+    ("jwt", re.compile(r"\beyJ[A-Za-z0-9_-]{30,}\.eyJ[A-Za-z0-9_-]{30,}\.[A-Za-z0-9_-]{20,}")),
     (
         "bearer_header",
         re.compile(r"(?i)\bauthorization[\"']?\s*[:=]\s*[\"']?bearer\s+[A-Za-z0-9._~+/-]{20,}"),

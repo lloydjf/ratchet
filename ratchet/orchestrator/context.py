@@ -228,7 +228,9 @@ def tavily_source(settings: Settings, store: Store, options: EditOptions) -> Tav
     if options.tavily_fixtures_only and options.tavily_dir:
         return FixtureTavily(Path(options.tavily_dir))
     if settings.ratchet_tavily_mode == "live" and key is not None:
-        return LiveTavily(key.get_secret_value(), store)
+        return LiveTavily(
+            key.get_secret_value(), store, daily_cap=settings.ratchet_tavily_daily_searches
+        )
     if options.tavily_dir:
         return FixtureTavily(Path(options.tavily_dir))
     return FixtureTavily(settings.ratchet_tavily_fixtures_dir)

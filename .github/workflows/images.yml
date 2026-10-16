@@ -179,12 +179,14 @@ jobs:
           TAVILY_API_KEY: ${{ secrets.TAVILY_API_KEY }}
           NEBIUS_API_KEY: ${{ secrets.NEBIUS_API_KEY }}
           NEBIUS_S3_SECRET_ACCESS_KEY: ${{ secrets.NEBIUS_S3_SECRET_ACCESS_KEY }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          RATCHET_NOTIFY_WEBHOOK: ${{ secrets.RATCHET_NOTIFY_WEBHOOK }}
         run: |
           set -euo pipefail
           values="$RUNNER_TEMP/secret-values"
           : > "$values"
           for v in "$NEBIUS_TOKEN_FACTORY_KEY" "$TAVILY_API_KEY" "$NEBIUS_API_KEY" \
-                   "$NEBIUS_S3_SECRET_ACCESS_KEY"; do
+                   "$NEBIUS_S3_SECRET_ACCESS_KEY" "$CLOUDFLARE_API_TOKEN" "$RATCHET_NOTIFY_WEBHOOK"; do
             if [ -n "$v" ]; then printf '%s\n' "$v" >> "$values"; fi
           done
           bad=0
@@ -212,7 +214,7 @@ jobs:
             esac
 
             if docker image inspect "$REF" --format '{{json .Config.Env}}' \
-                | grep -qE 'NEBIUS_TOKEN_FACTORY_KEY|TAVILY_API_KEY|NEBIUS_API_KEY|SECRET_ACCESS_KEY|ACTION_TOKEN_SECRET'; then
+                | grep -qE 'NEBIUS_TOKEN_FACTORY_KEY|TAVILY_API_KEY|NEBIUS_API_KEY|SECRET_ACCESS_KEY|ACTION_TOKEN_SECRET|NOTIFY_WEBHOOK|CLOUDFLARE_API_TOKEN'; then
               echo "::error::$platform image config names a secret variable"; bad=1
             fi
 

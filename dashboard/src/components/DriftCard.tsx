@@ -6,6 +6,11 @@ import { ActionButton } from './ActionButton'
 import { StepMark } from './Marks'
 import { Badge } from './Badge'
 
+/** Only http(s) links are rendered as anchors; anything else from a source is dropped. */
+function safeHttpUrl(url: string | null | undefined): string | null {
+  return url && /^https?:\/\//i.test(url) ? url : null
+}
+
 export type DriftState = 'pending' | 'changed' | 'unchanged' | 'unavailable'
 
 export function driftState(check: DriftCheck | null | undefined): DriftState {
@@ -42,6 +47,7 @@ const HEAD: Record<DriftState, { label: string; tone: string }> = {
 
 /** A Tavily drift check: fact, old → new value, source link, ruling, and Re-bless. */
 export function DriftCard({ check, task, onRebless, reblessed, onSourceClick, onReblessClick, className = '' }: DriftCardProps) {
+  const sourceHref = safeHttpUrl(check?.source_url)
   const state = driftState(check)
   const head = HEAD[state]
   return (
@@ -74,17 +80,17 @@ export function DriftCard({ check, task, onRebless, reblessed, onSourceClick, on
           ) : (
             <p className="mt-2 text-meta text-warn-ink">{errorCopy('drift_unavailable')}</p>
           )}
-          {check!.source_url ? (
+          {sourceHref ? (
             <a
-              href={check!.source_url}
+              href={sourceHref}
               target="_blank"
               rel="noreferrer noopener"
               onClick={onSourceClick}
               className="mt-3 inline-flex min-h-11 max-w-full items-center gap-2 rounded-sm border border-border bg-surface-2 px-3 text-meta text-text hover:border-border-strong"
             >
               <span className="shrink-0 text-muted">Source</span>
-              <span className="min-w-0 truncate font-medium">{check!.source_title ?? host(check!.source_url)}</span>
-              <span className="shrink-0 font-mono text-mono text-muted">{host(check!.source_url)}</span>
+              <span className="min-w-0 truncate font-medium">{check!.source_title ?? host(sourceHref)}</span>
+              <span className="shrink-0 font-mono text-mono text-muted">{host(sourceHref)}</span>
               <ExternalLink size={14} aria-hidden="true" className="shrink-0 text-muted" />
               <span className="sr-only">(opens in a new tab)</span>
             </a>

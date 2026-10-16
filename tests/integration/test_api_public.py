@@ -113,6 +113,8 @@ async def test_bless_unbless_criteria_settings_and_library_are_not_public(tmp_pa
             ),
             await client.get(f"{V1}/traces"),
             await client.get(f"{V1}/settings"),
+            # replay re-runs a whole pipeline outside Simulate's per-visitor gate
+            await client.post(f"{V1}/edits/edit_p1/replay", headers=headers),
         ]
     for res in responses:
         assert res.status_code == 403 and res.json()["error"]["code"] == "not_public", res.text

@@ -251,6 +251,15 @@ class LedgerStore(StoreBase):
         value: object = json.loads(str(row["response_json"]))
         return value
 
+    def cache_count_since(self, table: str, since: datetime) -> int:
+        """Entries written at or after ``since``: live calls made (hits never write)."""
+        if table not in {"response_cache", "tavily_cache"}:
+            raise ValueError("unknown cache table")
+        row = self.query_one(
+            f"SELECT COUNT(*) AS n FROM {table} WHERE created_at >= ?", (clock.iso(since),)
+        )
+        return int(row["n"]) if row is not None else 0
+
     def cache_put(self, table: str, key: str, value: object, *, model: str = "") -> None:
         if table not in {"response_cache", "tavily_cache"}:
             raise ValueError("unknown cache table")

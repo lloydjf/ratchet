@@ -21,7 +21,7 @@ import json
 import re
 from collections.abc import Awaitable, Callable
 from dataclasses import dataclass, field
-from datetime import timedelta
+from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Literal, Protocol
 
@@ -111,6 +111,8 @@ class TavilyCache(Protocol):
 
     def cache_put(self, table: str, key: str, value: object, *, model: str = "") -> None: ...
 
+    def cache_count_since(self, table: str, since: datetime) -> int: ...
+
 
 def parse_results(query: str, payload: object, ref: str) -> TavilyResults:
     results = payload.get("results") if isinstance(payload, dict) else None
@@ -174,10 +176,12 @@ class LiveTavily:
         http: httpx.AsyncClient | None = None,
         base_url: str = TAVILY_API,
         sleep: Callable[[float], Awaitable[None]] = asyncio.sleep,
+        daily_cap: int | None = None,
     ) -> None:
         self._key = api_key
         self._store = store
         self._http = http
+        self._daily_cap = daily_cap  # live searches per UTC day; None = unbounded
         self._base = base_url.rstrip("/")
         self._sleep = sleep
 
@@ -219,6 +223,12 @@ class LiveTavily:
             cached = await asyncio.to_thread(self._store.cache_get, "tavily_cache", key)
             if cached is not None:
                 return parse_results(query, cached, ref)
+            if self._daily_cap is not None:
+                day = clock.now().replace(hour=0, minute=0, second=0, microsecond=0)
+                used = await asyncio.to_thread(self._store.cache_count_since, "tavily_cache", day)
+                if used >= self._daily_cap:
+                    _log.warning("tavily.daily_cap", used=used, cap=self._daily_cap)
+                    raise UpstreamError("tavily daily search cap reached", code="drift_unavailable")
         payload = await self._post("/search", params.body(query))
         if self._store is not None:
             await asyncio.to_thread(self._save, key, ref, payload)

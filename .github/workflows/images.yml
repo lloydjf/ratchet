@@ -126,7 +126,10 @@ jobs:
           provenance: mode=max
           cache-from: type=gha,scope=${{ matrix.image }}-multiarch
           cache-to: type=gha,scope=${{ matrix.image }}-multiarch,mode=max
+      # GitHub stores attestations only for public repositories; the registry-side SBOM and
+      # provenance above are pushed either way.
       - uses: actions/attest-build-provenance@v4
+        if: ${{ !github.event.repository.private }}
         with:
           subject-name: ${{ env.NAMESPACE }}/${{ matrix.image }}
           subject-digest: ${{ steps.push.outputs.digest }}

@@ -236,9 +236,16 @@ With `RATCHET_JOB_RUNNER=nebius`, each replay batch is one Nebius Serverless AI 
 inputs go to `<bucket>/batches/<batch_id>/in/`. The job mounts the bucket root read-write
 at `/bucket`, and the worker reads `/bucket/batches/<batch_id>/in` and writes
 `/bucket/batches/<batch_id>/out`. The platform ignores `sourcePath` on `s3://` volumes, so
-the job cannot mount the batch prefixes directly. The orchestrator downloads `out/` when the
-job ends. Jobs are named `ratchet-<batch_id>`, so a restarted orchestrator finds its jobs again
-instead of creating duplicates.
+the job cannot mount the batch prefixes directly. The mount is object storage, not a file
+system: a rename leaves the content on the temporary name and an empty final object, and
+`chmod` is refused, so the worker writes its output files in place and copies replay trees
+without metadata. The orchestrator downloads `out/` when the job ends; an empty or truncated
+`result.json` counts as a lost worker (one automatic retry, then `replay_infra`). Jobs are
+named `ratchet-<batch_id>`, so a restarted orchestrator finds its jobs again instead of
+creating duplicates. Expect about 3–4 minutes from submission to the worker's first replay
+(provisioning plus the image pull) on `cpu-d3`; with `RATCHET_JOBS_MAX_CONCURRENT=1` a
+14-replay scenario in four batches takes about 17 minutes, so the hosted demo keeps the local
+runner and Jobs are the path for larger, slower candidate sets.
 
 - **Bucket.** Set `NEBIUS_S3_BUCKET` to the bucket name (used for uploads and downloads with
   the S3 key). Also set `NEBIUS_S3_BUCKET_ID=storagebucket-…` to mount the managed bucket by

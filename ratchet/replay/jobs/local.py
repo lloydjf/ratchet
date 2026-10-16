@@ -202,7 +202,9 @@ class LocalJobRunner:
         if not out.is_dir():
             raise NotFoundError(f"no output for job {job_id}", code="not_found")
         if out.resolve() != output_dir.resolve():
-            await asyncio.to_thread(shutil.copytree, out, output_dir, dirs_exist_ok=True)
+            await asyncio.to_thread(
+                shutil.copytree, out, output_dir, dirs_exist_ok=True, copy_function=shutil.copyfile
+            )
         if self.mode == "docker":
             await asyncio.to_thread(self._runner, ["docker", "rm", self._container(job_id)], 30.0)
         return output_dir

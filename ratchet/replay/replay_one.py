@@ -263,8 +263,12 @@ def replay_golden(ctx: BatchContext, golden: Trace) -> GoldenOutcome:
             error_code=error,
         )
         trace = ctx.deps.finalize_trace(ctx.store, args)
+        # copyfile, not copy2: the output may be an S3 (FUSE) mount that refuses chmod/utime.
         shutil.copytree(
-            ctx.store.trace_dir(run_id), ctx.output / "replays" / run_id, dirs_exist_ok=True
+            ctx.store.trace_dir(run_id),
+            ctx.output / "replays" / run_id,
+            dirs_exist_ok=True,
+            copy_function=shutil.copyfile,
         )
         _log.info("replay.golden.done", run_id=run_id, ok=error is None, code=code)
         return GoldenOutcome(golden.run_id, trace, unexpected, error)

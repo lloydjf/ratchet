@@ -19,7 +19,7 @@ COPY dashboard/ ./
 RUN npm run build
 
 # --- 2. uv binary, pinned to the same version as worker/Dockerfile ----------------------------
-FROM ghcr.io/astral-sh/uv:0.8.18 AS uv
+FROM ghcr.io/astral-sh/uv:0.13.1 AS uv
 
 # --- 3. control: python 3.11-slim runtime ----------------------------------------------------
 FROM python:3.11-slim AS control

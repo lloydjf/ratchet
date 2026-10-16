@@ -27,6 +27,16 @@ __all__ = [
 
 DEV_ACTION_TOKEN_SECRET = "dev-only-change-me"  # the shipped default; refused on a public host
 
+# A release wheel carries the built SPA here (scripts/build_wheel.py); a checkout does not.
+PACKAGED_DASHBOARD_DIST = Path(__file__).resolve().parent.parent / "_dashboard_dist"
+
+
+def default_dashboard_dist() -> Path:
+    """The SPA shipped inside the installed package, else ``./dashboard/dist`` (checkout)."""
+    if (PACKAGED_DASHBOARD_DIST / "index.html").is_file():
+        return PACKAGED_DASHBOARD_DIST
+    return Path("./dashboard/dist")
+
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
@@ -183,7 +193,10 @@ class Settings(BaseSettings):
         description="HMAC secret for the daily action token.",
     )
     ratchet_scenarios_dir: Path = Field(Path("./scenarios"), description="Seeded scenarios.")
-    ratchet_dashboard_dist: Path = Field(Path("./dashboard/dist"), description="Built SPA.")
+    ratchet_dashboard_dist: Path = Field(
+        default_factory=default_dashboard_dist,
+        description="Built SPA.",
+    )
     ratchet_repo_url: str = Field("https://github.com/lloydjf/ratchet", description="Repo.")
     ratchet_video_url: str = Field("", description="Demo video URL for the landing footer.")
     ratchet_bench_report_url: str | None = Field(

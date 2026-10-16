@@ -8,6 +8,8 @@
 #      ghcr.io/<org>/ratchet-worker), the CI-built <repo>:<sha> is pulled and pinned;
 #      otherwise a local worker tag is rebuilt from the checkout when the sandbox is docker.
 #   2. git fetch + checkout --detach <sha>; uv sync --frozen --no-dev; npm ci && npm run build.
+#      Rebuild the apex site: MkDocs (/docs/), the benchmark report (/bench/) and
+#      deploy/vm/www (render_site in lib.sh); install the Caddyfile if it validates; reload.
 #   3. ratchet db migrate (forward-only, idempotent).
 #   4. restart ratchet-serve (one process: proxy -> mock tools -> orchestrator -> dashboard
 #      start in that order inside `ratchet serve`), wait for /healthz.
@@ -31,7 +33,7 @@ while (($#)); do
   case "$1" in
     --skip-ci-check) SKIP_CI=1; shift ;;
     --kind) KIND="${2:?--kind needs deploy|rollback}"; shift 2 ;;
-    -h | --help) sed -n '2,20p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
+    -h | --help) sed -n '2,22p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
     -*) die "unknown option $1" ;;
     *) REF="$1"; shift ;;
   esac
@@ -132,8 +134,12 @@ main() {
   log "restarting $RATCHET_UNIT"
   install -m 0644 "$RATCHET_APP_DIR"/deploy/vm/systemd/*.{service,timer} /etc/systemd/system/
   systemctl daemon-reload
+  systemctl enable --quiet --now ratchet-nebius-token.timer
   systemctl restart "$RATCHET_UNIT"
   render_fallback
+  # The apex is static: a failure here is logged and never fails the app deploy.
+  render_site || log "WARNING: site build failed; the previous site stays live"
+  install_caddyfile || true
 
   SMOKE_SECS=0
   if wait_healthy "$RATCHET_LOCAL_URL" 90 && smoke; then

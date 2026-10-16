@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
-# Failover for the public demo URL ("demo down"). Three levels, cheapest first:
+# Failover for the public demo URL ("demo down"). Three levels, cheapest first. The first two
+# act on the demo host only (RATCHET_DEMO_ADDRESS); the apex site is static files on this VM
+# and keeps serving. `dns` moves every name (apex, demo; www is a CNAME of the apex).
 #
 #   sudo failover.sh fallback on|off      app broken, VM and Caddy fine: every request gets
 #                                         the static page (video + note); /healthz stays real
@@ -7,8 +9,9 @@
 #                                         VM's Caddy (which holds the cert and the DNS name)
 #                                         forwards to the standby's ratchet-serve
 #   sudo failover.sh proxy-local          undo proxy-to (back to 127.0.0.1:8080)
-#   failover.sh dns <standby-ip>          this VM is gone: point DNS at the standby; runs
-#                                         RATCHET_DNS_HOOK if set, else prints the steps
+#   failover.sh dns <standby-ip>          this VM is gone: point DNS (apex + demo) at the
+#                                         standby; runs RATCHET_DNS_HOOK per host if set,
+#                                         else prints the steps
 #   failover.sh status
 #
 # Standby VM (prepare before Oct 29; manual):
@@ -18,8 +21,9 @@
 #      tarball from object storage), then sudo /opt/ratchet/deploy/vm/deploy.sh <sha>.
 #   3. For proxy-to, set RATCHET_DASHBOARD_HOST to the standby's *private* IP in its
 #      /etc/ratchet/env and allow 8080 from the primary's private IP only (security group).
-#   4. For dns, the standby's Caddy obtains its own certificate once the A record resolves
-#      to it (HTTP-01 on port 80). Keep the record's TTL at 60 s during the judging window.
+#   4. For dns, the standby's Caddy obtains its own certificates once the A records resolve
+#      to it (HTTP-01 on port 80). Keep the records' TTL at 60 s during the judging window
+#      (deploy/vm/dns.md).
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -27,7 +31,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/lib.sh"
 
 MARKER=/etc/caddy/ratchet-fallback.enabled
-DROPIN=/etc/systemd/system/caddy.service.d/ratchet.conf
+DROPIN="$RATCHET_CADDY_DROPIN"
 
 usage() {
   sed -n '2,26p' "$0" | sed 's/^# \{0,1\}//'
@@ -76,25 +80,34 @@ cmd_proxy_local() {
   log "Caddy forwards to the local ratchet-serve again"
 }
 
-cmd_dns() {
-  local ip="${1:?usage: failover.sh dns <standby-ip>}" public host hook
-  public="$(env_get RATCHET_PUBLIC_URL)"
-  host="${public#*://}"
+url_host() {
+  local host="${1#*://}"
   host="${host%%/*}"
-  host="${host%%:*}"
+  printf '%s' "${host%%:*}"
+}
+
+cmd_dns() {
+  local ip="${1:?usage: failover.sh dns <standby-ip>}" hook host hosts=()
+  for host in "$(url_host "$(env_get RATCHET_SITE_URL)")" "$(url_host "$(env_get RATCHET_PUBLIC_URL)")"; do
+    [[ -n "$host" ]] && hosts+=("$host")
+  done
+  ((${#hosts[@]})) || hosts=("<host>")
   hook="$(env_get RATCHET_DNS_HOOK)"
   if [[ -n "$hook" && -x "$hook" ]]; then
-    log "running RATCHET_DNS_HOOK $hook $host $ip"
-    "$hook" "$host" "$ip"
+    for host in "${hosts[@]}"; do
+      log "running RATCHET_DNS_HOOK $hook $host $ip"
+      "$hook" "$host" "$ip"
+    done
   else
     cat >&2 <<EOF
-Manual DNS failover for ${host:-<host>} -> ${ip}:
-  1. DNS provider: set the A record for ${host:-<host>} to ${ip} (TTL 60). Remove the old AAAA if any.
-  2. Wait for it: dig +short ${host:-<host>} @1.1.1.1   (should print ${ip})
+Manual DNS failover for ${hosts[*]} -> ${ip} (deploy/vm/dns.md has the Cloudflare API calls):
+  1. DNS provider: set the A record of each of ${hosts[*]} to ${ip} (TTL 60), DNS only (no
+     proxy). Remove any old AAAA. www stays a CNAME of the apex.
+  2. Wait for it: dig +short ${hosts[0]} @1.1.1.1   (should print ${ip}; same for each host)
   3. On the standby: sudo systemctl restart caddy; watch journalctl -u caddy for "certificate obtained".
-  4. Verify: curl -fsS https://${host:-<host>}/healthz
+  4. Verify: curl -fsS https://${hosts[-1]}/healthz and curl -fsSI https://${hosts[0]}/
   5. Tell the team; record the switch in docs/DEPLOYS.md.
-Automate with RATCHET_DNS_HOOK=/usr/local/bin/<script> in /etc/ratchet/env (called as: <script> <host> <ip>).
+Automate with RATCHET_DNS_HOOK=/usr/local/bin/<script> in /etc/ratchet/env (called once per host as: <script> <host> <ip>).
 EOF
   fi
 }

@@ -11,7 +11,9 @@
 # Runtime state lives in the /srv/ratchet volume (data/, skills/, tmp/, pii.key).
 
 # --- 1. dashboard: React/Vite build -> /src/dashboard/dist ------------------------------------
-FROM node:24-slim AS dashboard
+# Static output, identical for every target platform: it builds once on the build host's
+# native platform, so a multi-arch publish does not run npm under emulation.
+FROM --platform=$BUILDPLATFORM node:24-slim AS dashboard
 WORKDIR /src/dashboard
 COPY dashboard/package.json dashboard/package-lock.json ./
 RUN --mount=type=cache,target=/root/.npm npm ci --no-audit --no-fund
@@ -49,6 +51,8 @@ COPY --from=uv /uv /usr/local/bin/uv
 COPY pyproject.toml uv.lock README.md LICENSE ./
 RUN --mount=type=cache,target=/root/.cache/uv uv sync --frozen --no-dev --no-install-project
 COPY ratchet ./ratchet
+# pyproject names this build hook; hatch loads it even for the editable install below.
+COPY scripts/build_wheel.py ./scripts/build_wheel.py
 RUN --mount=type=cache,target=/root/.cache/uv uv sync --frozen --no-dev \
  && rm -f /usr/local/bin/uv
 

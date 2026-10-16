@@ -1,0 +1,241 @@
+# Publish the two container images to GitHub Container Registry.
+#
+#   ghcr.io/lloydjf/ratchet-control  (deploy/control.Dockerfile, target `control`)
+#   ghcr.io/lloydjf/ratchet-worker   (worker/Dockerfile)
+#
+# Triggers: every push to main, and every `v*` tag. Both images are multi-arch
+# (linux/amd64 + linux/arm64; arm64 is built under QEMU on the amd64 runner). The control
+# image builds its dashboard stage on the native platform, so only `uv sync` runs emulated.
+#
+# Tags (docker/metadata-action):
+#   sha-<short>   every build
+#   <full sha>    every build (deploy/vm/deploy.sh pins `<repo>:<sha>`)
+#   latest        pushes to main only (a release tag does not move it)
+#   <version>, <major.minor>   on tags vX.Y.Z (no <major.minor> for pre-releases)
+#
+# Every push carries BuildKit SBOM and max-mode provenance attestations in the registry, plus
+# a GitHub build-provenance attestation (`gh attestation verify oci://<image> -R lloydjf/ratchet`).
+#
+# The `verify` job pulls what was just pushed, for each platform, and fails on: an image over
+# 2 GB, a root default user, secret names in the image config, a dotenv / key / PII map /
+# runtime-state path in any layer (including files deleted by a later layer), a configured
+# secret value anywhere in any layer, or a secret pattern in the shipped /app sources.
+#
+# Worker image: the published worker is the default build (WITH_HERMES=0, the MinimalRunner
+# harness). The Hermes variant needs a pinned installer checksum (HERMES_INSTALLER_SHA256)
+# and runs a network installer; build it yourself with `--build-arg WITH_HERMES=1`.
+#
+# One-time setup (repository owner):
+#   1. After the first run, open github.com/users/lloydjf/packages/container/ratchet-control
+#      and .../ratchet-worker -> Package settings: link the package to this repository
+#      (the image source label normally does this) and change visibility to Public.
+#      New GHCR packages are private, and `docker compose up` cannot pull them until then.
+#   2. Nothing else: pushes use the workflow's GITHUB_TOKEN (packages: write).
+name: Images
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: images-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  REGISTRY: ghcr.io
+  NAMESPACE: ghcr.io/lloydjf
+  # A worker build arg; keep in step with worker/Dockerfile's default.
+  HERMES_REF: v0.22.2
+
+jobs:
+  build:
+    name: build + push ${{ matrix.image }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+      attestations: write
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - image: ratchet-control
+            file: deploy/control.Dockerfile
+            target: control
+            description: "Ratchet control plane: dashboard, API, capture proxy, mock tools and orchestrator."
+          - image: ratchet-worker
+            file: worker/Dockerfile
+            target: runtime
+            description: "Ratchet replay worker: runs one replay batch per container."
+    steps:
+      - uses: actions/checkout@v7
+      - uses: docker/setup-qemu-action@v4
+        with:
+          platforms: arm64
+      - uses: docker/setup-buildx-action@v4
+      - uses: docker/login-action@v4
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - id: meta
+        uses: docker/metadata-action@v6
+        env:
+          DOCKER_METADATA_ANNOTATIONS_LEVELS: manifest,index
+        with:
+          images: ${{ env.NAMESPACE }}/${{ matrix.image }}
+          flavor: |
+            latest=false
+          tags: |
+            type=sha,prefix=sha-,format=short
+            type=sha,prefix=,format=long
+            type=raw,value=latest,enable={{is_default_branch}}
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+          labels: |
+            org.opencontainers.image.title=${{ matrix.image }}
+            org.opencontainers.image.description=${{ matrix.description }}
+            org.opencontainers.image.licenses=Apache-2.0
+            org.opencontainers.image.url=https://ratchetci.dev
+            org.opencontainers.image.documentation=https://ratchetci.dev/docs
+          annotations: |
+            org.opencontainers.image.description=${{ matrix.description }}
+            org.opencontainers.image.licenses=Apache-2.0
+      - id: push
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: ${{ matrix.file }}
+          target: ${{ matrix.target }}
+          platforms: linux/amd64,linux/arm64
+          build-args: |
+            WITH_HERMES=0
+            HERMES_REF=${{ env.HERMES_REF }}
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          annotations: ${{ steps.meta.outputs.annotations }}
+          sbom: true
+          provenance: mode=max
+          cache-from: type=gha,scope=${{ matrix.image }}-multiarch
+          cache-to: type=gha,scope=${{ matrix.image }}-multiarch,mode=max
+      - uses: actions/attest-build-provenance@v4
+        with:
+          subject-name: ${{ env.NAMESPACE }}/${{ matrix.image }}
+          subject-digest: ${{ steps.push.outputs.digest }}
+          push-to-registry: true
+      - name: summary
+        env:
+          IMAGE: ${{ env.NAMESPACE }}/${{ matrix.image }}
+          DIGEST: ${{ steps.push.outputs.digest }}
+          TAGS: ${{ steps.meta.outputs.tags }}
+        run: |
+          {
+            echo "### ${IMAGE}"
+            echo "digest \`${DIGEST}\`"
+            echo '```'
+            echo "${TAGS}"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  verify:
+    name: verify ${{ matrix.image }} (size, user, no secrets in layers)
+    needs: build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      packages: read
+    strategy:
+      fail-fast: false
+      matrix:
+        image: [ratchet-control, ratchet-worker]
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v10.3.0
+        with:
+          version: "0.8.18"
+          python-version: "3.11"
+      - uses: docker/login-action@v4
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      # Exact values of the repo's real secrets, where available; never printed.
+      - name: pull and scan each platform
+        env:
+          REF: ${{ env.NAMESPACE }}/${{ matrix.image }}:${{ github.sha }}
+          NEBIUS_TOKEN_FACTORY_KEY: ${{ secrets.NEBIUS_TOKEN_FACTORY_KEY }}
+          TAVILY_API_KEY: ${{ secrets.TAVILY_API_KEY }}
+          NEBIUS_API_KEY: ${{ secrets.NEBIUS_API_KEY }}
+          NEBIUS_S3_SECRET_ACCESS_KEY: ${{ secrets.NEBIUS_S3_SECRET_ACCESS_KEY }}
+        run: |
+          set -euo pipefail
+          values="$RUNNER_TEMP/secret-values"
+          : > "$values"
+          for v in "$NEBIUS_TOKEN_FACTORY_KEY" "$TAVILY_API_KEY" "$NEBIUS_API_KEY" \
+                   "$NEBIUS_S3_SECRET_ACCESS_KEY"; do
+            if [ -n "$v" ]; then printf '%s\n' "$v" >> "$values"; fi
+          done
+          bad=0
+          for platform in linux/amd64 linux/arm64; do
+            echo "::group::${REF} ${platform}"
+            docker pull --quiet --platform "$platform" "$REF"
+
+            # Uncompressed size of the flattened filesystem (the image store may report
+            # compressed sizes); also gives /app for the source scan below.
+            work="$RUNNER_TEMP/scan"
+            rm -rf "$work" && mkdir -p "$work/img"
+            cid=$(docker create --platform "$platform" "$REF")
+            size=$(docker export "$cid" | wc -c)
+            docker cp --quiet "$cid:/app" "$work/app"
+            docker rm "$cid" > /dev/null
+            echo "size: $((size / 1024 / 1024)) MiB"
+            if [ "$size" -ge 2000000000 ]; then echo "::error::$platform image is >= 2 GB"; bad=1; fi
+
+            user=$(docker image inspect --platform "$platform" "$REF" --format '{{.Config.User}}')
+            echo "user: ${user:-<unset>}"
+            case "${user%%:*}" in
+              "" | 0 | root) echo "::error::$platform image runs as root"; bad=1 ;;
+            esac
+
+            if docker image inspect --platform "$platform" "$REF" --format '{{json .Config.Env}}' \
+                | grep -qE 'NEBIUS_TOKEN_FACTORY_KEY|TAVILY_API_KEY|NEBIUS_API_KEY|SECRET_ACCESS_KEY|ACTION_TOKEN_SECRET'; then
+              echo "::error::$platform image config names a secret variable"; bad=1
+            fi
+
+            docker save --platform "$platform" "$REF" -o "$work/image.tar"
+            tar -xf "$work/image.tar" -C "$work/img"
+            for layer in $(jq -r '.[0].Layers[]' "$work/img/manifest.json"); do
+              tar -tf "$work/img/$layer" > "$work/paths"
+              # dotenv files, the PII map and debug log anywhere; keys outside system dirs,
+              # the venv and CA bundles; baked runtime state under /app or the volume.
+              if grep -E '(^|/)\.env(\.[^/]+)?$|(^|/)pii\.map\.enc$|(^|/)debug-content\.log$|^app/(var|data)/|^srv/ratchet/(data|skills|tmp)/.' "$work/paths" \
+                  | grep -vE '(^|/)\.env\.example$'; then
+                echo "::error::$platform layer $layer carries the path(s) above"; bad=1
+              fi
+              if grep -E '\.(key|pem|p12)$' "$work/paths" \
+                  | grep -vE '^(usr|etc|app/\.venv)/|(^|/)cacert\.pem$'; then
+                echo "::error::$platform layer $layer carries key material"; bad=1
+              fi
+              # grep -c, not -q: an early exit would SIGPIPE tar and pipefail would hide the hit.
+              if [ -s "$values" ] && tar -xOf "$work/img/$layer" | grep -caF -f "$values" > /dev/null; then
+                echo "::error::$platform layer $layer contains a configured secret value"; bad=1
+              fi
+            done
+
+            rm -rf "$work/app/.venv"
+            uv run --no-project python scripts/secret_scan.py --root "$work/app" "$work/app" \
+              || { echo "::error::$platform /app sources match a secret pattern"; bad=1; }
+            docker image rm "$REF" > /dev/null
+            echo "::endgroup::"
+          done
+          rm -f "$values"
+          exit "$bad"

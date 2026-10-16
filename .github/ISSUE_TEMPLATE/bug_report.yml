@@ -1,0 +1,116 @@
+name: Bug report
+description: Ratchet did something wrong, crashed, or gave a verdict you think is wrong.
+title: "bug: "
+labels: ["bug", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting. A security problem (a leaked key, a real side effect during a
+        replay, a sandbox escape) does **not** belong here: report it privately as described
+        in [SECURITY.md](https://github.com/lloydjf/ratchet/blob/main/SECURITY.md).
+
+        Redact keys, personal data and private trace content before you paste anything.
+  - type: textarea
+    id: what-you-did
+    attributes:
+      label: What you did
+      description: The commands you ran or the dashboard actions you took, in order.
+      placeholder: |
+        1. uv run ratchet seed-demo
+        2. uv run ratchet simulate 2 --headless
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected
+      description: The verdict, decision or behavior you expected, and why.
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: What happened instead
+      description: The verdict, error message or output you got. Include any error `code`.
+    validations:
+      required: true
+  - type: input
+    id: verdict-id
+    attributes:
+      label: Verdict id or edit id
+      description: From the verdict page URL, `ratchet status`, or the CLI output. Leave empty if there is none.
+      placeholder: "verdict_fa80c0517746 / edit_fa80c0517746"
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs
+      description: The output of `uv run ratchet logs --edit <edit_id>` (redacted). It is rendered as plain text.
+      render: text
+  - type: input
+    id: version
+    attributes:
+      label: Ratchet version or commit
+      description: '`uv run python -c "import ratchet; print(ratchet.__version__)"` and `git rev-parse --short HEAD`.'
+      placeholder: "0.1.0 @ abc1234"
+    validations:
+      required: true
+  - type: input
+    id: os
+    attributes:
+      label: Operating system
+      placeholder: "macOS 15.4 / Ubuntu 24.04 (kernel 6.8)"
+    validations:
+      required: true
+  - type: dropdown
+    id: sandbox
+    attributes:
+      label: Sandbox
+      options:
+        - Docker
+        - OpenShell
+        - process (development only)
+        - not sure
+    validations:
+      required: true
+  - type: input
+    id: docker-version
+    attributes:
+      label: Docker or OpenShell version
+      description: '`docker version --format "{{.Server.Version}}"`, or the OpenShell version.'
+  - type: dropdown
+    id: harness
+    attributes:
+      label: Harness
+      options:
+        - MinimalRunner (RATCHET_HARNESS=minimal)
+        - Hermes Agent (RATCHET_HARNESS=hermes)
+        - other / my own adapter
+    validations:
+      required: true
+  - type: dropdown
+    id: upstream
+    attributes:
+      label: Models
+      description: Which upstream produced the verdict.
+      options:
+        - offline simulator (RATCHET_UPSTREAM=sim)
+        - live models (RATCHET_UPSTREAM=live)
+    validations:
+      required: true
+  - type: dropdown
+    id: install
+    attributes:
+      label: How Ratchet runs
+      options:
+        - local checkout (uv run ratchet serve)
+        - docker compose
+        - VM install (deploy/vm)
+        - the public demo host
+    validations:
+      required: true
+  - type: textarea
+    id: extra
+    attributes:
+      label: Anything else
+      description: Screenshots, `uv run ratchet doctor` output, settings you changed from `.env.example`.

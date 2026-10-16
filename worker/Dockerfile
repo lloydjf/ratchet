@@ -42,6 +42,8 @@ WORKDIR /app
 COPY pyproject.toml uv.lock README.md LICENSE ./
 RUN uv sync --frozen --no-dev --no-install-project
 COPY ratchet ./ratchet
+# pyproject names this build hook; hatch loads it even for the editable install below.
+COPY scripts/build_wheel.py ./scripts/build_wheel.py
 COPY worker ./worker
 RUN uv sync --frozen --no-dev && rm -f /usr/local/bin/uv
 

@@ -1,4 +1,6 @@
-# Convenience entry point so `docker compose up control worker-local` works from the
-# repo root. The real definition (and its comments) is deploy/docker-compose.yml.
+# Convenience entry point so `docker compose up` works from the repo root: it pulls the
+# published ghcr.io/lloydjf/ratchet-control:0.1.0 image (building it from this checkout if the
+# pull fails) and serves the dashboard on http://127.0.0.1:8080 in sim mode, no keys needed.
+# The real definition (and its comments) is deploy/docker-compose.yml.
 include:
   - path: deploy/docker-compose.yml

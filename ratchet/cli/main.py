@@ -34,8 +34,21 @@ for sub, name in (
     app.add_typer(sub, name=name)
 
 
+def _print_version(value: bool) -> None:
+    if value:
+        from ratchet import __version__
+
+        typer.echo(f"ratchet {__version__}")
+        raise typer.Exit()
+
+
 @app.callback()
-def _root(ctx: typer.Context) -> None:
+def _root(
+    ctx: typer.Context,
+    _version: bool = typer.Option(
+        False, "--version", callback=_print_version, is_eager=True, help="Print the version."
+    ),
+) -> None:
     """JSON log lines go to stderr so stdout carries only the command's own output;
     ``serve`` is a long-running service and keeps logging to stdout (journald)."""
     from ratchet.log import set_log_stream

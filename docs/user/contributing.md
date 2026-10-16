@@ -1,5 +1,14 @@
 # Contributing to the docs
 
+!!! note "Contributing code"
+    This page covers the documentation site. For code, start with
+    [CONTRIBUTING.md](https://github.com/lloydjf/ratchet/blob/main/CONTRIBUTING.md): the
+    development setup, the gates CI runs, the engineering rules, adding a harness adapter or a
+    benchmark skill, and pull request conventions. Report security problems privately, as
+    described in [SECURITY.md](https://github.com/lloydjf/ratchet/blob/main/SECURITY.md).
+    Changes by release are in the
+    [changelog](https://github.com/lloydjf/ratchet/blob/main/CHANGELOG.md).
+
 This site is built with [MkDocs](https://www.mkdocs.org/) and
 [Material for MkDocs](https://squidfunk.github.io/mkdocs-material/) from `docs/user/`.
 The configuration is `mkdocs.yml` at the repository root. No Node.js is involved.
@@ -41,14 +50,13 @@ is yours to edit.
 
 ## CI
 
-Add this step to `.github/workflows/ci.yml` (the docs job doesn't need keys or Node):
+The `docs` job in `.github/workflows/ci.yml` runs on every pull request. It needs no keys
+and no Node:
 
-```yaml
-- name: Docs
-  run: |
-    uv sync --group docs
-    uv run python scripts/gen_docs.py --check
-    uv run --group docs mkdocs build --strict
+```bash
+uv sync --group docs
+uv run python scripts/gen_docs.py --check
+NO_MKDOCS_2_WARNING=1 uv run --group docs mkdocs build --strict
 ```
 
 Every generator imports Ratchet modules or reads files only. `scripts/gen_docs.py` also sets

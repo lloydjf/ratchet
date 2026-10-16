@@ -32,7 +32,7 @@ PY
 }
 
 main() {
-  local public host days
+  local public host days url
   public="$(env_get RATCHET_PUBLIC_URL)"
   if ((ALL)); then
     log "restarting docker"
@@ -51,8 +51,10 @@ main() {
     journalctl -u "$RATCHET_UNIT" -n 50 --no-pager >&2 || true
     die "local /healthz still failing. Next: deploy/vm/failover.sh fallback on (static page), then rollback.sh"
   }
-  if [[ "$public" == https://* ]]; then
-    host="${public#https://}"
+  # Both certificates: the demo (RATCHET_PUBLIC_URL) and the apex site (RATCHET_SITE_URL).
+  for url in "$public" "$(env_get RATCHET_SITE_URL)"; do
+    [[ "$url" == https://* ]] || continue
+    host="${url#https://}"
     host="${host%%/*}"
     host="${host%%:*}"
     days="$(cert_days_left "$host")"
@@ -61,7 +63,7 @@ main() {
     else
       log "WARNING: could not read the TLS certificate for $host"
     fi
-  fi
+  done
   if [[ -n "$public" ]] && ! wait_healthy "$public" 30; then
     die "public URL still down ($public) though the app is healthy: check DNS, Caddy (journalctl -u caddy), the VM's security group; else deploy/vm/failover.sh dns <standby-ip>"
   fi

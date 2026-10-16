@@ -1,6 +1,14 @@
 # Runbook: the Ratchet demo host
 
-Operating the public demo host, as commands. Every procedure is a script in `deploy/vm/` (run as root on
+Operating the public host, as commands. One Nebius CPU VM and one Caddy serve three names:
+
+| Name | What | Served from |
+| --- | --- | --- |
+| `ratchetci.dev` | static product page, `/docs/` (MkDocs site), `/bench/` (the benchmark report) | `/var/www/ratchet-site`, rebuilt by every deploy |
+| `www.ratchetci.dev` (and `RATCHET_ALT_ADDRESSES`) | 301 to `https://ratchetci.dev` | Caddy |
+| `demo.ratchetci.dev` (`RATCHET_PUBLIC_URL`) | the dashboard, API and SSE stream, public mode; static fallback when the app is down | `ratchet-serve` on 127.0.0.1:8080 |
+
+DNS records (A for the apex and `demo`, CNAME for `www`, DNS only): `deploy/vm/dns.md`. Every procedure is a script in `deploy/vm/` (run as root on
 the VM) or `deploy/` (local Docker). Scripts log to stderr with UTC timestamps, take a shared
 lock (`/var/lib/ratchet-ops/ops.lock`), are idempotent, and post to `RATCHET_NOTIFY_WEBHOOK`
 when it is set.
@@ -16,13 +24,18 @@ when it is set.
 | `/etc/ratchet/env` | every setting and secret (systemd `EnvironmentFile`) | `root` 0600 |
 | `/var/lib/ratchet-ops/deploys.tsv` | deploy ledger; rollback reads it | `root` |
 | `/var/backups/ratchet` | nightly tarballs, 14 days | `root` 0700 |
-| `/var/www/ratchet-fallback` | static fallback page | `root` |
+| `/var/www/ratchet-fallback` | static fallback page (demo host) | `root` |
+| `/var/www/ratchet-site` | the apex site: symlink to the live release in `/var/www/ratchet-site.d/` (two kept) | `root` |
+| `/etc/caddy/ratchet.d/` | generated Caddy fragments: `site/docs-csp.caddy` (hashes of the docs theme's inline scripts), `redirects/alt-domains.caddy` | `root` |
+| `/etc/ratchet/nebius-sa.json` | Nebius service-account credentials (Serverless Jobs only; you copy it) | `root` 0600 |
+| `/opt/ratchet/nebius/bin/nebius`, `/var/lib/ratchet-ops/nebius` | Nebius CLI (pinned) and its config (profile `ratchet-sa`) | `root`; config 0700 |
 
 Units: `ratchet-serve.service` (one `ratchet serve` process: dashboard + API on
 127.0.0.1:8080, proxy on 8081, mock tools on 8082, orchestrator and watcher; aliases
 `ratchet-proxy`, `ratchet-mocktools`, `ratchet-orchestrator`, `ratchet-dashboard`),
 `caddy.service` (TLS, port 80 and 443), and the timers `ratchet-backup.timer` (03:00 UTC),
-`ratchet-token-rotate.timer` (Mon 04:30 UTC) and `ratchet-alerts.timer` (every 2 min).
+`ratchet-token-rotate.timer` (Mon 04:30 UTC), `ratchet-alerts.timer` (every 2 min) and
+`ratchet-nebius-token.timer` (every 4 h and at boot; skipped without the credentials file).
 
 ## Status at a glance
 
@@ -31,6 +44,8 @@ systemctl status ratchet-serve caddy --no-pager
 systemctl list-timers 'ratchet-*' --no-pager
 curl -fsS http://127.0.0.1:8080/healthz; echo
 sudo deploy/vm/failover.sh status
+sudo deploy/vm/nebius-token.sh status                     # Jobs hosts: CLI, profile, last refresh
+curl -fsSI https://ratchetci.dev/ | head -n 1; curl -fsSI https://ratchetci.dev/docs/ | head -n 1
 journalctl -u ratchet-serve -n 100 --no-pager -o cat      # JSON lines, 7-day retention
 journalctl -u ratchet-serve --since -1h -o cat | grep '"level":"ERROR"'
 tail -n 20 /var/lib/ratchet-ops/deploys.tsv
@@ -47,13 +62,22 @@ sudo bash -c 'source /opt/ratchet/deploy/vm/lib.sh && ratchet_cli logs --edit <e
 ## First install
 
 ```bash
-# on a fresh Ubuntu 24.04 Nebius CPU VM (2 vCPU / 8 GB), DNS A record already pointing at it
+# on a fresh Ubuntu 24.04 Nebius CPU VM (2 vCPU / 8 GB), DNS already pointing at it (deploy/vm/dns.md)
 git clone https://github.com/<org>/ratchet /tmp/ratchet
-sudo /tmp/ratchet/deploy/vm/bootstrap.sh --public-url https://ratchet.<domain> \
-     --repo https://github.com/<org>/ratchet --ref main
+# Serverless Jobs only: the service-account credentials, before bootstrap (or later, see below)
+sudo install -d -m 0700 /etc/ratchet
+sudo install -m 0600 -o root -g root nebius-sa.json /etc/ratchet/nebius-sa.json
+sudo /tmp/ratchet/deploy/vm/bootstrap.sh --public-url https://demo.ratchetci.dev \
+     --site-url https://ratchetci.dev --repo https://github.com/<org>/ratchet --ref main
 sudoedit /etc/ratchet/env        # NEBIUS_TOKEN_FACTORY_KEY, TAVILY_API_KEY, RATCHET_UPSTREAM=live, ...
 sudo systemctl restart ratchet-serve
 ```
+
+`--public-url` is the demo (`RATCHET_PUBLIC_URL`, what the app and the uptime probe use);
+`--site-url` is the apex (`RATCHET_SITE_URL`, ops scripts only). Both are written to
+`/etc/ratchet/env` and to the Caddy drop-in (`RATCHET_DEMO_ADDRESS`, `RATCHET_SITE_ADDRESS`).
+Alt domains that should redirect to the apex: `RATCHET_ALT_ADDRESSES="ratchetci.com
+www.ratchetci.com"` in the env file, then re-run bootstrap.
 
 `bootstrap.sh` is idempotent: re-run it to converge a host (it never overwrites values in
 `/etc/ratchet/env`, only appends keys new in `deploy/vm/env.template`). Opt-ins:
@@ -71,7 +95,11 @@ The script checks the GitHub check runs for `<sha>` (`--skip-ci-check` to bypass
 `RATCHET_REQUIRE_CI=1` makes an unreachable API fatal), checks out, runs `uv sync --frozen
 --no-dev`, `npm ci && npm run build`, `ratchet db migrate`, restarts `ratchet-serve`, waits
 for `/healthz`, then runs `ratchet doctor` and `ratchet simulate 1 --headless` (BLOCK within
-90 s), and appends the result to the ledger and `docs/DEPLOYS.md`. With
+90 s), and appends the result to the ledger and `docs/DEPLOYS.md`. It also rebuilds the
+apex site (MkDocs into `/docs/` from a separate docs venv, `RATCHET_BENCH_REPORT_DIR` rendered
+into `/bench/`, `deploy/vm/www`), switches `/var/www/ratchet-site` to it atomically, and
+installs the Caddyfile when it validates (then `systemctl reload caddy`). A failed docs build
+keeps the previous `/docs/` and never fails the deploy. With
 `RATCHET_WORKER_IMAGE_REPO=ghcr.io/<org>/ratchet-worker` in the env file it pulls and pins the
 CI-built worker for `<sha>`; otherwise a local worker tag is rebuilt when the sandbox is
 Docker. `RATCHET_AUTO_ROLLBACK=1` rolls back automatically on a failed smoke.
@@ -108,8 +136,31 @@ Rehearse once before Oct 26 and record the `restore` row in `docs/DEPLOYS.md`.
 | --- | --- | --- |
 | Demo action token | nothing to do: it is `HMAC(secret, UTC date)[:24]`, so it changes daily with no restart; yesterday's token is accepted for 1 h after midnight | none |
 | `RATCHET_ACTION_TOKEN_SECRET` | weekly by `ratchet-token-rotate.timer`, or `sudo deploy/vm/rotate-action-secret.sh`; kills every token issued so far (open pages re-fetch `/meta`) | ~3 s restart |
-| `NEBIUS_TOKEN_FACTORY_KEY`, `TAVILY_API_KEY`, Nebius IAM / S3 keys | create the new key in the provider console, `sudoedit /etc/ratchet/env`, `sudo systemctl restart ratchet-proxy ratchet-orchestrator` (aliases of `ratchet-serve`), check `ratchet doctor`, then revoke the old key | ~3 s restart |
-| Nebius IAM token from `nebius iam get-access-token` | expires after 12 h: use a service-account key for the demo host | — |
+| `NEBIUS_TOKEN_FACTORY_KEY`, `TAVILY_API_KEY`, Nebius S3 keys | create the new key in the provider console, `sudoedit /etc/ratchet/env`, `sudo systemctl restart ratchet-proxy ratchet-orchestrator` (aliases of `ratchet-serve`), check `ratchet doctor`, then revoke the old key | ~3 s restart |
+| `NEBIUS_API_KEY` (IAM token, 12 h) | automatic: `ratchet-nebius-token.timer` (below) | ~3 s restart every 4 h, only with `RATCHET_JOB_RUNNER=nebius` |
+| Nebius service-account key (`/etc/ratchet/nebius-sa.json`) | `nebius iam auth-public-key generate --service-account-id <sa-id> --output nebius-sa.json` on a workstation, copy it over the old file (root 0600), `sudo systemctl start ratchet-nebius-token` (the profile is recreated when the file changes), then delete the old public key of the service account | as above |
+
+### Nebius IAM token refresh (Serverless Jobs)
+
+The Jobs runner authenticates with `NEBIUS_API_KEY`, an IAM token that expires after 12 h.
+`ratchet-nebius-token.timer` runs `deploy/vm/nebius-token.sh` at boot and every 4 h (00, 04,
+08, ... UTC): it uses the Nebius CLI at `/opt/ratchet/nebius/bin/nebius` (installed by
+bootstrap with the official script, version pinned by `NEBIUS_CLI_VERSION` in the script), a
+CLI profile `ratchet-sa` made from `/etc/ratchet/nebius-sa.json` (endpoint `api.nebius.cloud`,
+parent `NEBIUS_PROJECT_ID`), and `nebius --profile ratchet-sa iam get-access-token`. It
+rewrites only the `NEBIUS_API_KEY=` line of `/etc/ratchet/env` (atomically, mode kept, the
+token never logged) and restarts `ratchet-serve` only if the token changed and
+`RATCHET_JOB_RUNNER=nebius`. Hosts without the credentials file skip it.
+
+```bash
+sudo install -m 0600 -o root -g root nebius-sa.json /etc/ratchet/nebius-sa.json   # once
+sudo systemctl start ratchet-nebius-token        # refresh now
+sudo deploy/vm/nebius-token.sh status            # CLI version, profile, last run, token set
+journalctl -u ratchet-nebius-token -n 20 -o cat
+```
+
+The service account needs the role that creates and reads AI Jobs in the project (and the
+object-storage access the runner uses). Give the standby VM its own copy of the file.
 
 Pause the weekly rotation during the judging window: `sudo systemctl disable --now
 ratchet-token-rotate.timer` (re-enable afterwards).
@@ -148,7 +199,9 @@ deliberately, one step at a time).
 | Simulate failing (alert: ≥ 2 of the last 5 runs failed) | `ratchet_cli logs --edit <edit_id>` (or `GET /api/v1/edits/<id>/logs`); `ratchet_cli simulate <k> --headless --repeat 3` to reproduce | `RATCHET_SIMULATE_MODE=replayed` |
 | Jobs stalled (alert: a batch without a heartbeat for 120 s) | the orchestrator marks it `stalled`, cancels it and retries once on the local runner (`retried`); if it repeats, `env_set RATCHET_JOB_RUNNER local` and restart; `docker ps` for stuck `ratchet-worker-*` | replayed mode |
 | Bad deploy | `sudo deploy/vm/rollback.sh` | `--with-restore <date>` |
-| TLS expired / not issued | `journalctl -u caddy -n 100`: DNS must resolve to the VM, ports 80/443 open in the security group | `failover.sh fallback on` does not help TLS; fix DNS first |
+| TLS expired / not issued | `journalctl -u caddy -n 100`: DNS must resolve to the VM without a proxy, ports 80/443 open in the security group (`deploy/vm/dns.md`) | `failover.sh fallback on` does not help TLS; fix DNS first |
+| `ratchetci.dev` down, demo fine | `ls -l /var/www/ratchet-site` (symlink to a release); `journalctl -u caddy -n 50`; re-run `sudo deploy/vm/deploy.sh <current sha> --skip-ci-check` to rebuild it | point the symlink at the previous release in `/var/www/ratchet-site.d/` (`ln -sfn <dir> /var/www/ratchet-site`) |
+| Jobs fail with 401/403 (`replay.*` events) | `sudo deploy/vm/nebius-token.sh status`; `sudo systemctl start ratchet-nebius-token`; `journalctl -u ratchet-nebius-token` | `env_set RATCHET_JOB_RUNNER local`, restart |
 
 After any incident: a note of what happened, when and the fix and, for deploys or
 restores, the row in `docs/DEPLOYS.md`.
@@ -238,6 +291,7 @@ uv run python scripts/secret_scan.py --pii var/data/cassettes           # no raw
 ## Logs and retention
 
 JSON lines to journald, 7 days (`/etc/systemd/journald.conf.d/ratchet.conf`). Caddy access
-logs at `/var/log/caddy/ratchet-access.log`: no query strings, no request headers or cookies,
+logs at `/var/log/caddy/ratchet-access.log` (demo) and `ratchet-site-access.log` (apex): no
+query strings, no request headers or cookies,
 client IPs masked to /16 (IPv4) and /32 (IPv6), rolled at 50 MiB and kept 7 days. Content
 logging (`RATCHET_DEBUG`) is never enabled on the public host.

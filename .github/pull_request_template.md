@@ -15,10 +15,13 @@
 <!-- The tests you added or changed (unit, integration, e2e, security) and the commands you ran. -->
 
 - [ ] `uv run ruff check . && uv run ruff format --check .`
-- [ ] `uv run mypy`
+- [ ] `uv run mypy ratchet`
 - [ ] `uv run pytest -q` (coverage stays ≥ 80% on `ratchet/judge` and `ratchet/replay`)
 - [ ] `uv run pytest tests/security -q`
-- [ ] Dashboard: `npm run typecheck && npm run lint && npm test` (if UI changed)
+- [ ] `uv run pytest -q -m e2e` (if the loop, replay or judging changed)
+- [ ] Dashboard: `npm run typecheck && npm run lint && npm test && npm run build && npm run e2e` (if UI changed)
+- [ ] Docs: `NO_MKDOCS_2_WARNING=1 uv run --group docs mkdocs build --strict` (if docs, CLI, settings or API changed)
+- [ ] `CHANGELOG.md` has a line under `## [Unreleased]` (if users will notice)
 
 ## VERIFY items touched
 
@@ -37,6 +40,7 @@ The reviewer ticks every group; an item that does not apply is ticked with "n/a"
 - [ ] The change matches the design doc or ADR it cites; if the doc is wrong, this PR edits the doc too
 - [ ] Tiers are named `nano`/`super`/`ultra` everywhere; model ids only in `ratchet/config/models.py`
 - [ ] Every judge call goes through the structured-output helper with validation and retries
+- [ ] Unknown never passes: every new failure in a judge or replay path lands on `uncertain` (held) or stays `regression`, never `pass`, with a test showing it
 - [ ] No code path lets a replay take a hard-class side effect for real (must be impossible)
 - [ ] The replayed agent's model tier is identical to the golden's
 - [ ] Decisions are table-driven (the agreement rules in ADR 0007 and ADR 0020), not scattered conditionals
@@ -60,7 +64,7 @@ The reviewer ticks every group; an item that does not apply is ticked with "n/a"
 
 **Product**
 
-- [ ] A judge could understand the output without reading code: labels, tiers, dollars, one-sentence reasons
+- [ ] A user could understand the output without reading code: labels, tiers, dollars, one-sentence reasons
 - [ ] No CLI-only path for the core loop; the dashboard can do it
 
 **Hygiene and config**

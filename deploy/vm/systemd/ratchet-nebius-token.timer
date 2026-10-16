@@ -1,0 +1,16 @@
+# Nebius IAM tokens live 12 hours. Refresh at boot and every 4 hours, so two missed runs in a
+# row still leave a valid token. Skipped on hosts without /etc/ratchet/nebius-sa.json.
+[Unit]
+Description=Refresh the Nebius IAM token every 4 hours and at boot
+
+[Timer]
+OnBootSec=1min
+# Wall-clock, not OnUnitActiveSec: a run skipped for a missing credentials file must not
+# stop the schedule once the file is copied in.
+OnCalendar=*-*-* 00/4:00:00 UTC
+Persistent=true
+AccuracySec=1min
+RandomizedDelaySec=2min
+
+[Install]
+WantedBy=timers.target

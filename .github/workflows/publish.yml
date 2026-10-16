@@ -1,0 +1,160 @@
+# Publish the `ratchet-ci` distribution (import name `ratchet`, command `ratchet`) on a
+# version tag: build -> TestPyPI -> install from TestPyPI in a clean container and run
+# `ratchet doctor` offline -> PyPI. No API tokens: both uploads use trusted publishing (OIDC)
+# and carry PEP 740 attestations.
+#
+# Releasing: bump `version` in pyproject.toml and `__version__` in ratchet/__init__.py, merge,
+# then `git tag vX.Y.Z && git push origin vX.Y.Z`. The build job refuses a tag that does not
+# match both. The wheel ships the built dashboard (scripts/build_wheel.py), so the build job
+# runs `npm run build` first.
+#
+# One-time setup (repository owner):
+#   1. GitHub -> Settings -> Environments: create `testpypi` and `pypi`. On `pypi`, add a
+#      required reviewer and restrict deployments to tags matching `v*`.
+#   2. test.pypi.org -> Account -> Publishing -> "Add a new pending publisher":
+#        project name `ratchet-ci`, owner `lloydjf`, repository `ratchet`,
+#        workflow `publish.yml`, environment `testpypi`.
+#   3. pypi.org -> Account -> Publishing -> the same pending publisher with environment `pypi`.
+#   The pending publishers turn into normal ones on the first successful upload.
+name: Publish
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: publish-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  UV_VERSION: "0.8.18"
+  PYTHON_VERSION: "3.11"
+  NODE_VERSION: "24"
+
+jobs:
+  build:
+    name: build sdist + wheel
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v10.3.0
+        with:
+          version: ${{ env.UV_VERSION }}
+          python-version: ${{ env.PYTHON_VERSION }}
+      - id: version
+        name: tag matches pyproject and ratchet.__version__
+        run: |
+          tag="${GITHUB_REF_NAME#v}"
+          project=$(python3 -c 'import tomllib; print(tomllib.load(open("pyproject.toml", "rb"))["project"]["version"])')
+          module=$(sed -n 's/^__version__ = "\(.*\)"$/\1/p' ratchet/__init__.py)
+          echo "tag ${tag}, pyproject ${project}, ratchet.__version__ ${module}"
+          test "$tag" = "$project" && test "$tag" = "$module"
+          echo "version=${tag}" >> "$GITHUB_OUTPUT"
+      - uses: actions/setup-node@v7
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: dashboard/package-lock.json
+      - name: build the dashboard (shipped inside the wheel)
+        working-directory: dashboard
+        run: |
+          npm ci --no-audit --no-fund
+          npm run build
+      - run: uv build
+      - run: uvx twine check --strict dist/*
+      - name: the wheel carries the dashboard
+        run: |
+          python3 - <<'PY'
+          import glob, zipfile
+          names = zipfile.ZipFile(glob.glob("dist/*.whl")[0]).namelist()
+          assert "ratchet/_dashboard_dist/index.html" in names, "dashboard missing from wheel"
+          assert not [n for n in names if n.endswith((".env", ".key")) or "/var/" in n], names
+          print(f"{len(names)} files in the wheel, dashboard included")
+          PY
+      - uses: actions/upload-artifact@v7
+        with:
+          name: dist
+          path: dist/
+          retention-days: 30
+          if-no-files-found: error
+
+  testpypi:
+    name: upload to TestPyPI
+    needs: build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    environment:
+      name: testpypi
+      url: https://test.pypi.org/project/ratchet-ci/${{ needs.build.outputs.version }}/
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          name: dist
+          path: dist/
+      - uses: pypa/gh-action-pypi-publish@v1.14.2
+        with:
+          repository-url: https://test.pypi.org/legacy/
+          attestations: true
+
+  verify-testpypi:
+    name: install from TestPyPI + ratchet doctor (sim)
+    needs: [build, testpypi]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    container: python:3.11-slim
+    env:
+      VERSION: ${{ needs.build.outputs.version }}
+      RATCHET_UPSTREAM: sim
+      RATCHET_TAVILY_MODE: fixtures
+      PIP_DISABLE_PIP_VERSION_CHECK: "1"
+    steps:
+      # git: GitPython needs the executable (the skills repo is a git repo).
+      - run: apt-get update && apt-get install -y --no-install-recommends git
+      # Only ratchet-ci itself comes from TestPyPI; its dependencies resolve from PyPI
+      # (pip keeps the installed ratchet-ci and fetches what it requires), so a squatted
+      # name on TestPyPI can never be installed. Retries cover index propagation.
+      - name: pip install ratchet-ci==${{ needs.build.outputs.version }}
+        run: |
+          for attempt in 1 2 3 4 5 6 7 8 9 10; do
+            if pip install --no-deps --index-url https://test.pypi.org/simple/ \
+                "ratchet-ci==${VERSION}"; then
+              break
+            fi
+            if [ "$attempt" = 10 ]; then exit 1; fi
+            echo "not on the TestPyPI index yet; retrying in 30 s"
+            sleep 30
+          done
+          pip install --index-url https://pypi.org/simple/ "ratchet-ci==${VERSION}"
+      - name: ratchet --version, ratchet doctor, packaged dashboard
+        working-directory: /tmp
+        run: |
+          test "$(ratchet --version)" = "ratchet ${VERSION}"
+          ratchet doctor
+          python -c "from ratchet.config.settings import PACKAGED_DASHBOARD_DIST as p, Settings; assert Settings().ratchet_dashboard_dist == p and (p / 'index.html').is_file(), p"
+
+  pypi:
+    name: upload to PyPI
+    needs: [build, verify-testpypi]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    environment:
+      name: pypi
+      url: https://pypi.org/project/ratchet-ci/${{ needs.build.outputs.version }}/
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          name: dist
+          path: dist/
+      - uses: pypa/gh-action-pypi-publish@v1.14.2
+        with:
+          attestations: true

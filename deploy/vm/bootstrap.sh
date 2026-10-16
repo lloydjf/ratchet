@@ -1,19 +1,23 @@
 #!/usr/bin/env bash
-# Bootstrap the Ratchet public demo host on a fresh Nebius CPU VM (Ubuntu 24.04). Idempotent:
-# safe to re-run after a failure or to converge an existing host. Never overwrites a value
-# already in /etc/ratchet/env.
+# Bootstrap the Ratchet host on a fresh Nebius CPU VM (Ubuntu 24.04): the demo app on
+# demo.<domain>, the static product page + docs + benchmark on the apex. Idempotent: safe to
+# re-run after a failure or to converge an existing host. Never overwrites a value already in
+# /etc/ratchet/env (except the two URLs, when passed).
 #
 #   git clone https://github.com/<org>/ratchet /tmp/ratchet
-#   sudo /tmp/ratchet/deploy/vm/bootstrap.sh --public-url https://ratchet.example.com \
-#        [--repo https://github.com/<org>/ratchet] [--ref main]
+#   sudo /tmp/ratchet/deploy/vm/bootstrap.sh --public-url https://demo.ratchetci.dev \
+#        --site-url https://ratchetci.dev [--repo https://github.com/<org>/ratchet] [--ref main]
 #
-# Then: put keys in /etc/ratchet/env (sudoedit), `sudo systemctl restart ratchet-serve`, and
-# point the domain's A/AAAA record at this VM *before* the first run if you want TLS on the
-# first try (Caddy keeps retrying on its own otherwise).
+# Then: put keys in /etc/ratchet/env (sudoedit), `sudo systemctl restart ratchet-serve`. Point
+# DNS at this VM *before* the first run if you want TLS on the first try (deploy/vm/dns.md;
+# Caddy keeps retrying on its own otherwise). Serverless Jobs: copy the service-account
+# credentials to /etc/ratchet/nebius-sa.json (root 0600) first, or later and then
+# `sudo systemctl start ratchet-nebius-token`.
 #
 # Installs: git, curl, python3 (for ops helpers), uv 0.8.18 (pinned sha256) + Python 3.11
 # (uv-managed), Node 24 (NodeSource apt repo), Docker CE (docker.com apt repo), Caddy
-# (Caddy's apt repo). No unpinned `curl | sh`.
+# (Caddy's apt repo); the Nebius CLI (pinned version, official script) when the host uses
+# Serverless Jobs. No unpinned `curl | sh`.
 # Env knobs: RATCHET_ENABLE_UFW=1 (allow 22/80/443 only), RATCHET_SKIP_SEED=1,
 # RATCHET_SKIP_WORKER_IMAGE=1.
 set -euo pipefail
@@ -32,9 +36,10 @@ NODE_MAJOR="24"
 REPO_URL=""
 REF="main"
 PUBLIC_URL=""
+SITE_URL=""
 
 usage() {
-  sed -n '2,20p' "$0" | sed 's/^# \{0,1\}//'
+  sed -n '2,25p' "$0" | sed 's/^# \{0,1\}//'
   exit "${1:-0}"
 }
 
@@ -42,7 +47,8 @@ while (($#)); do
   case "$1" in
     --repo) REPO_URL="${2:?--repo needs a URL}"; shift 2 ;;
     --ref) REF="${2:?--ref needs a branch, tag or sha}"; shift 2 ;;
-    --public-url) PUBLIC_URL="${2:?--public-url needs https://<host>}"; shift 2 ;;
+    --public-url) PUBLIC_URL="${2:?--public-url needs https://demo.<domain>}"; shift 2 ;;
+    --site-url) SITE_URL="${2:?--site-url needs https://<domain>}"; shift 2 ;;
     -h | --help) usage 0 ;;
     *) log "unknown argument: $1"; usage 2 ;;
   esac
@@ -167,11 +173,16 @@ setup_env_file() {
   if [[ -n "$PUBLIC_URL" ]]; then
     env_set RATCHET_PUBLIC_URL "$PUBLIC_URL"
   fi
+  if [[ -n "$SITE_URL" ]]; then
+    env_set RATCHET_SITE_URL "$SITE_URL"
+  fi
   if [[ -z "$(env_get RATCHET_ACTION_TOKEN_SECRET)" ]]; then
     log "generating RATCHET_ACTION_TOKEN_SECRET"
     env_set RATCHET_ACTION_TOKEN_SECRET "$(python3 -c 'import secrets; print(secrets.token_urlsafe(32))')"
   fi
   [[ -n "$(env_get RATCHET_PUBLIC_URL)" ]] || die "set --public-url (or RATCHET_PUBLIC_URL in $RATCHET_ENV_FILE)"
+  [[ "$(env_get RATCHET_SITE_URL)" == https://* ]] \
+    || die "set --site-url https://<domain> (or RATCHET_SITE_URL in $RATCHET_ENV_FILE)"
 }
 
 # --- 5. build ------------------------------------------------------------------------------------
@@ -203,6 +214,14 @@ setup_docker_sandbox() {
   fi
 }
 
+# The Nebius CLI mints the IAM token for Serverless Jobs (nebius-token.sh). Installed when
+# the host is set up for Jobs; otherwise nebius-token.sh installs it once credentials appear.
+install_nebius_cli() {
+  if [[ -e /etc/ratchet/nebius-sa.json || "$(env_get RATCHET_JOB_RUNNER local)" == "nebius" ]]; then
+    "$RATCHET_APP_DIR/deploy/vm/nebius-token.sh" install
+  fi
+}
+
 install_backup_tools() {
   local bucket
   bucket="$(env_get RATCHET_BACKUP_S3_BUCKET "$(env_get NEBIUS_S3_BUCKET)")"
@@ -226,38 +245,31 @@ install_units() {
   systemctl daemon-reload
   # Re-enable so Alias= symlinks (ratchet-proxy, ratchet-orchestrator, ...) are refreshed.
   systemctl reenable ratchet-serve.service >/dev/null 2>&1 || systemctl enable ratchet-serve.service
-  systemctl enable ratchet-backup.timer ratchet-token-rotate.timer ratchet-alerts.timer
-}
-
-site_address() {
-  python3 - "$1" <<'PY'
-import sys
-from urllib.parse import urlsplit
-url = urlsplit(sys.argv[1])
-host = url.hostname or ""
-if url.scheme == "https" and host:
-    print(host if not url.port else f"{host}:{url.port}")
-else:
-    print(f":{url.port or 80}")  # plain HTTP (an IP or http:// URL): no automatic TLS
-PY
+  systemctl enable ratchet-backup.timer ratchet-token-rotate.timer ratchet-alerts.timer \
+    ratchet-nebius-token.timer
 }
 
 setup_caddy() {
-  local address
-  address="$(site_address "$(env_get RATCHET_PUBLIC_URL)")"
-  [[ "$address" == :* ]] && log "WARNING: RATCHET_PUBLIC_URL is not https://<host>; serving plain HTTP on $address"
-  log "caddy: site $address -> 127.0.0.1:8080"
+  local demo apex
+  demo="$(site_address "$(env_get RATCHET_PUBLIC_URL)")"
+  apex="$(site_address "$(env_get RATCHET_SITE_URL)")"
+  [[ "$demo" == :* ]] && log "WARNING: RATCHET_PUBLIC_URL is not https://<host>; serving the demo as plain HTTP on $demo"
+  [[ "$apex" == :* ]] && die "RATCHET_SITE_URL must be https://<domain> (www.<domain> redirects to it)"
+  log "caddy: $apex (static site), www.$apex (301), $demo -> 127.0.0.1:8080"
   install -m 0644 "$RATCHET_APP_DIR/deploy/vm/Caddyfile" /etc/caddy/Caddyfile
-  install -d -m 0755 /etc/systemd/system/caddy.service.d
-  cat >/etc/systemd/system/caddy.service.d/ratchet.conf <<EOF
+  install -d -m 0755 "$(dirname "$RATCHET_CADDY_DROPIN")"
+  cat >"$RATCHET_CADDY_DROPIN" <<EOF
 [Service]
-Environment=RATCHET_SITE_ADDRESS=${address}
+Environment=RATCHET_SITE_ADDRESS=${apex}
+Environment=RATCHET_DEMO_ADDRESS=${demo}
 Environment=RATCHET_UPSTREAM_ADDR=127.0.0.1:8080
 EOF
   render_fallback
+  render_caddy_redirects "$apex"
+  render_site
   install -d -m 0755 -o caddy -g caddy /var/log/caddy
   systemctl daemon-reload
-  RATCHET_SITE_ADDRESS="$address" caddy validate --config /etc/caddy/Caddyfile --adapter caddyfile >/dev/null
+  with_caddy_env caddy validate --config /etc/caddy/Caddyfile --adapter caddyfile >/dev/null
   systemctl enable caddy
   systemctl restart caddy
 }
@@ -280,10 +292,14 @@ init_data_and_start() {
     log "ratchet seed-demo (idempotent; upstream=$(env_get RATCHET_UPSTREAM sim))"
     ratchet_cli seed-demo
   fi
+  # A fresh IAM token before the first start (no-op without /etc/ratchet/nebius-sa.json).
+  "$RATCHET_APP_DIR/deploy/vm/nebius-token.sh" refresh \
+    || log "WARNING: Nebius token refresh failed; see deploy/vm/nebius-token.sh status"
   systemctl daemon-reload
   systemctl enable ratchet-serve.service
   systemctl restart ratchet-serve.service
-  systemctl start ratchet-backup.timer ratchet-token-rotate.timer ratchet-alerts.timer
+  systemctl start ratchet-backup.timer ratchet-token-rotate.timer ratchet-alerts.timer \
+    ratchet-nebius-token.timer
   wait_healthy "$RATCHET_LOCAL_URL" 120 || die "ratchet-serve is not healthy; journalctl -u ratchet-serve -n 200"
 }
 
@@ -296,20 +312,27 @@ main() {
   build_app
   setup_docker_sandbox
   install_backup_tools
+  install_nebius_cli
   install_units
   init_data_and_start
   setup_caddy
   setup_firewall
   ledger_append bootstrap "$(current_sha)" ok "ref=$REF"
   deploys_md_sync
-  local public
+  local public site
   public="$(env_get RATCHET_PUBLIC_URL)"
+  site="$(env_get RATCHET_SITE_URL)"
   if wait_healthy "$public" 30; then
-    log "public URL is live: $public"
+    log "demo URL is live: $public"
   else
-    log "public URL not reachable yet (DNS or certificate pending?): $public — Caddy keeps retrying"
+    log "demo URL not reachable yet (DNS or certificate pending?): $public — Caddy keeps retrying"
   fi
-  log "done. Next: keys in $RATCHET_ENV_FILE, then deploy/vm/deploy.sh <sha>; uptime monitor: deploy/vm/uptime.md"
+  if curl -fsS -o /dev/null --max-time 5 "$site/"; then
+    log "site URL is live: $site"
+  else
+    log "site URL not reachable yet (DNS or certificate pending?): $site"
+  fi
+  log "done. Next: keys in $RATCHET_ENV_FILE, then deploy/vm/deploy.sh <sha>; DNS: deploy/vm/dns.md; uptime monitor: deploy/vm/uptime.md"
 }
 
 main

@@ -1,0 +1,64 @@
+name: Harness adapter request
+description: Ask for Ratchet to record and replay another agent harness.
+title: "harness: "
+labels: ["harness-adapter", "enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Ratchet replays blessed tasks through a harness adapter. The Hermes Agent adapter
+        (`ratchet/replay/harness/hermes.py`) is the reference; CONTRIBUTING.md lists what an
+        adapter must do. The answers below tell us whether your harness can meet that.
+  - type: input
+    id: harness
+    attributes:
+      label: Harness name and version
+      placeholder: "ExampleAgent 1.4"
+    validations:
+      required: true
+  - type: textarea
+    id: oneshot
+    attributes:
+      label: How it runs one task, one shot
+      description: |
+        The exact command (or API) that runs a single task non-interactively and exits.
+        Does it emit a machine-readable event stream (JSON lines, a result file)? Can it take
+        a timeout?
+      placeholder: "exampleagent run --once --json -q \"<task>\""
+    validations:
+      required: true
+  - type: textarea
+    id: skills
+    attributes:
+      label: How skills are loaded
+      description: |
+        Where it reads skills from (directory, format such as SKILL.md), whether that
+        location can be overridden per run, and how to tell which skills a run loaded.
+    validations:
+      required: true
+  - type: textarea
+    id: model-endpoint
+    attributes:
+      label: Model endpoint and tools
+      description: |
+        Can its OpenAI-compatible base URL and API key be set per run? Can it send extra
+        headers? How are tools provided (MCP, plugins, built-ins), and can built-in tools
+        with side effects be turned off?
+  - type: textarea
+    id: state
+    attributes:
+      label: State and isolation
+      description: Where it keeps config, memory and history, and whether a run can use an isolated home directory.
+  - type: textarea
+    id: links
+    attributes:
+      label: Links
+      description: Repository, docs for the CLI and the skills format, an example run.
+    validations:
+      required: true
+  - type: checkboxes
+    id: contribute
+    attributes:
+      label: Contributing
+      options:
+        - label: I could help write or test the adapter.

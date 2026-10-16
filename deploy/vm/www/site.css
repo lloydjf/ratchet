@@ -1,0 +1,204 @@
+/*
+ * ratchetci.dev: the product page and the rendered benchmark report.
+ * Colors are the dashboard's tokens (dashboard/src/styles/tokens.css): dark first, light when
+ * the visitor prefers it. Fonts are self-hosted copies of the dashboard's (render_site.py).
+ */
+@font-face {
+  font-family: 'Inter Variable';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url('/fonts/inter-latin-wght-normal.woff2') format('woff2-variations'),
+       url('/fonts/inter-latin-wght-normal.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'JetBrains Mono Variable';
+  font-style: normal;
+  font-weight: 100 800;
+  font-display: swap;
+  src: url('/fonts/jetbrains-mono-latin-wght-normal.woff2') format('woff2-variations'),
+       url('/fonts/jetbrains-mono-latin-wght-normal.woff2') format('woff2');
+}
+
+:root {
+  --bg: #0e1116;
+  --surface: #161b22;
+  --surface-2: #1f2630;
+  --border: #2d3540;
+  --text: #e6edf3;
+  --text-muted: #9da7b3;
+  --pass: #3fb950;
+  --warn: #d29922;
+  --block: #f85149;
+  --block-ink: #ff7b72;
+  --accent: #79c0ff;
+  --nano-ink: #7ee787;
+  --super-ink: #d2a8ff;
+  --ultra-ink: #ffa657;
+  --border-strong: color-mix(in srgb, var(--text-muted) 65%, var(--border));
+  --glow: color-mix(in srgb, var(--accent) 14%, transparent);
+  --radius: 10px;
+  --radius-sm: 6px;
+  --font-sans: 'Inter Variable', Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+  color-scheme: dark;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --bg: #ffffff;
+    --surface: #f6f8fa;
+    --surface-2: #eaeef2;
+    --border: #d0d7de;
+    --text: #1f2328;
+    --text-muted: #59636e;
+    --pass: #1a7f37;
+    --warn: #9a6700;
+    --block: #cf222e;
+    --block-ink: #b01d27;
+    --accent: #0969da;
+    --nano-ink: #1a6d32;
+    --super-ink: #6a3fc0;
+    --ultra-ink: #953c00;
+    --glow: color-mix(in srgb, var(--accent) 8%, transparent);
+    color-scheme: light;
+  }
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+html, body { margin: 0; background: var(--bg); color: var(--text); }
+body {
+  font: 16px/1.6 var(--font-sans);
+  font-feature-settings: 'cv11', 'ss01';
+  min-height: 100vh;
+  background:
+    radial-gradient(60rem 28rem at 15% -8rem, var(--glow), transparent 70%),
+    var(--bg);
+}
+a { color: var(--accent); text-underline-offset: 3px; }
+a:focus-visible, .btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+code, .mono { font-family: var(--font-mono); }
+
+.page {
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: 24px 24px 32px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.topbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+.brand {
+  display: inline-flex; align-items: center; gap: 10px;
+  color: var(--text); text-decoration: none; font-weight: 650; font-size: 18px; letter-spacing: -0.01em;
+}
+.tag, .step {
+  font: 500 12px/1.4 var(--font-mono);
+  text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted);
+}
+
+.hero { flex: 1; display: flex; flex-direction: column; justify-content: center; padding: 40px 0 28px; }
+.hero h1 {
+  margin: 0;
+  max-width: 24ch;
+  font-size: clamp(30px, 4.8vw, 54px);
+  line-height: 1.06;
+  letter-spacing: -0.03em;
+  font-weight: 680;
+  text-wrap: balance;
+}
+.hero h1 .second { display: block; margin-top: 0.18em; color: var(--text-muted); font-weight: 560; }
+
+.install {
+  display: inline-flex; align-items: center; gap: 12px; align-self: flex-start;
+  margin-top: 30px; padding: 12px 18px;
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  font: 15px/1.4 var(--font-mono); max-width: 100%; overflow-x: auto;
+}
+.install .prompt { color: var(--pass); user-select: none; }
+.install code { color: var(--text); user-select: all; white-space: nowrap; }
+
+.actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
+.btn {
+  display: inline-flex; align-items: center; gap: 8px; height: 40px; padding: 0 16px;
+  border-radius: var(--radius-sm); border: 1px solid var(--border-strong);
+  color: var(--text); background: var(--surface); text-decoration: none; font-weight: 560; font-size: 15px;
+  transition: border-color 160ms ease, background-color 160ms ease;
+}
+.btn:hover { border-color: var(--text-muted); background: var(--surface-2); }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--bg); }
+.btn.primary:hover { background: color-mix(in srgb, var(--accent) 85%, var(--text)); }
+
+.steps {
+  list-style: none; margin: 44px 0 0; padding: 0;
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
+  border-top: 1px solid var(--border);
+}
+.steps li { padding: 18px 24px 0 0; }
+.steps li + li { padding-left: 24px; border-left: 1px solid var(--border); }
+.steps .step { color: var(--accent); }
+.steps p { margin: 8px 0 0; color: var(--text-muted); font-size: 15px; line-height: 1.55; }
+.nano { color: var(--nano-ink); }
+.super { color: var(--super-ink); }
+.ultra { color: var(--ultra-ink); }
+
+.bench { margin: 28px 0 0; max-width: 70ch; color: var(--text-muted); font-size: 15px; }
+.bench a { white-space: nowrap; }
+
+.foot {
+  display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap;
+  padding-top: 20px; border-top: 1px solid var(--border);
+  color: var(--text-muted); font-size: 13px;
+}
+.foot a { color: var(--text-muted); }
+
+@media (max-width: 760px) {
+  .page { padding: 20px 16px 24px; }
+  .hero { padding: 32px 0 28px; }
+  .tag { display: none; }
+  .steps { grid-template-columns: 1fr; }
+  .steps li, .steps li + li { padding: 16px 0 0; border-left: 0; }
+  .steps li + li { margin-top: 16px; border-top: 1px solid var(--border); }
+}
+
+/* --- /bench/: the rendered report ------------------------------------------------------------ */
+.report-page .page, .report-page { min-height: 0; }
+.report-page .topbar { max-width: 1040px; margin: 0 auto; padding: 20px 24px; }
+.report-page .topbar nav { display: flex; gap: 18px; }
+.report-page .topbar nav a { color: var(--text-muted); text-decoration: none; font-weight: 520; }
+.report-page .topbar nav a:hover { color: var(--text); }
+.report { max-width: 1040px; margin: 0 auto; padding: 8px 24px 48px; }
+.report h1 { font-size: clamp(28px, 4vw, 40px); line-height: 1.15; letter-spacing: -0.02em; margin: 16px 0 24px; }
+.report h2 { font-size: 22px; letter-spacing: -0.01em; margin: 48px 0 12px; padding-top: 16px; border-top: 1px solid var(--border); }
+.report h3 { font-size: 17px; margin: 32px 0 8px; }
+.report p, .report li { color: var(--text-muted); max-width: 80ch; }
+.report strong { color: var(--text); }
+.report code { font-size: 0.88em; padding: 1px 5px; border-radius: 4px; background: var(--surface-2); color: var(--text); }
+.report pre {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 14px 16px; overflow-x: auto; font: 13px/1.55 var(--font-mono);
+}
+.report pre code { padding: 0; background: none; font-size: inherit; }
+.report pre .add { color: var(--pass); }
+.report pre .del { color: var(--block-ink); }
+.report pre .hunk { color: var(--accent); }
+.report pre .meta { color: var(--text-muted); }
+.report blockquote {
+  margin: 16px 0; padding: 10px 16px; border-left: 3px solid var(--accent);
+  background: var(--surface); border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+}
+.report blockquote p { margin: 0; }
+.report img { max-width: 100%; height: auto; background: #fff; border-radius: var(--radius); border: 1px solid var(--border); }
+.table-wrap { overflow-x: auto; margin: 12px 0 20px; border: 1px solid var(--border); border-radius: var(--radius); }
+.report table { border-collapse: collapse; width: 100%; font-size: 13px; font-variant-numeric: tabular-nums; }
+.report th, .report td { padding: 7px 10px; text-align: left; vertical-align: top; border-bottom: 1px solid var(--border); }
+.report th { background: var(--surface); color: var(--text); font-weight: 600; white-space: nowrap; }
+.report td { color: var(--text-muted); }
+.report tr:last-child td { border-bottom: 0; }
+.report td a { color: var(--text); text-decoration-color: var(--border-strong); }
+.report-page .foot { max-width: 1040px; margin: 0 auto; padding: 20px 24px 32px; }
+@media (max-width: 760px) {
+  .report-page .topbar, .report, .report-page .foot { padding-left: 16px; padding-right: 16px; }
+}

@@ -238,8 +238,24 @@ with the unchanged skill (control replays) and the controls agreed, so the regre
 
 ## Run it yourself
 
+**Install the CLI** (Python 3.11+, git; the wheel ships the built dashboard):
+
 ```bash
-git clone <this repo> && cd ratchet
+uv tool install ratchet-ci               # or: pipx install ratchet-ci
+ratchet --version && ratchet doctor      # offline simulator by default, no keys needed
+ratchet serve                            # dashboard at http://127.0.0.1:8080
+```
+
+**Or run the container** from a checkout: `docker compose up` pulls
+`ghcr.io/lloydjf/ratchet-control:0.1.0` (and builds it locally if the pull fails), seeds the
+demo and serves the dashboard on http://127.0.0.1:8080 in sim mode. Replay workers use
+`ghcr.io/lloydjf/ratchet-worker:0.1.0`. Both images are multi-arch (amd64, arm64) and run as
+a non-root user.
+
+**From source**, for the full demo:
+
+```bash
+git clone https://github.com/lloydjf/ratchet && cd ratchet
 uv sync && cp .env.example .env          # RATCHET_UPSTREAM=sim runs fully offline
 cd dashboard && npm ci && npm run build && cd ..
 uv run ratchet seed-demo                 # record + bless the 25 demo goldens
@@ -249,7 +265,7 @@ uv run ratchet serve                     # dashboard at http://127.0.0.1:8080
 
 - **Real models:** set `NEBIUS_TOKEN_FACTORY_KEY`, `RATCHET_UPSTREAM=live`, `TAVILY_API_KEY` and
   `RATCHET_TAVILY_MODE=live`, then run `uv run ratchet doctor`.
-- **Docker:** `docker compose up control` runs the same thing.
+- **Docker, from this checkout:** `docker compose up --build` builds both images locally.
 - **The VM demo host:** see [`docs/RUNBOOK.md`](docs/RUNBOOK.md).
 - **Without keys:** everything runs against the offline simulator (`RATCHET_UPSTREAM=sim`).
   That's deterministic test infrastructure, and every verdict it produces carries a

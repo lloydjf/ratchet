@@ -1,0 +1,15 @@
+[Unit]
+Description=Refresh NEBIUS_API_KEY (Nebius IAM token for Serverless Jobs) in /etc/ratchet/env
+Documentation=file:///opt/ratchet/docs/RUNBOOK.md
+Wants=network-online.target
+After=network-online.target
+# Hosts on the local runner have no credentials file: the unit is skipped, not failed.
+ConditionPathExists=/etc/ratchet/nebius-sa.json
+
+[Service]
+Type=oneshot
+# No EnvironmentFile: the script reads /etc/ratchet/env itself, so it never compares the
+# new token against a stale copy in its own environment.
+ExecStart=/opt/ratchet/deploy/vm/nebius-token.sh refresh
+TimeoutStartSec=20min
+UMask=0077

@@ -20,14 +20,35 @@ it is set.
 | `/etc/ratchet/env` | every setting and secret (systemd `EnvironmentFile`) | `root` 0600 |
 | `/var/lib/ratchet-ops/deploys.tsv` | the deploy ledger that rollback reads | `root` |
 | `/var/backups/ratchet` | nightly tarballs, kept 14 days | `root` 0700 |
-| `/var/www/ratchet-fallback` | static fallback page | `root` |
+| `/var/www/ratchet-fallback` | static fallback page (demo host) | `root` |
+| `/var/www/ratchet-site` | the apex site (product page, `/docs/`, `/bench/`): a symlink to the live release | `root` |
+| `/etc/ratchet/nebius-sa.json` | Nebius service-account credentials, Serverless Jobs only | `root` 0600 |
 
 **Units.** `ratchet-serve.service` runs one `ratchet serve` process: dashboard and API on
 127.0.0.1:8080, proxy on 8081, mock tools on 8082, orchestrator and watcher. It has the
 aliases `ratchet-proxy`, `ratchet-mocktools`, `ratchet-orchestrator` and `ratchet-dashboard`.
-`caddy.service` terminates TLS on ports 80 and 443. Three timers run alongside:
-`ratchet-backup.timer` (03:00 UTC), `ratchet-token-rotate.timer` (Mondays 04:30 UTC) and
-`ratchet-alerts.timer` (every 2 minutes).
+`caddy.service` terminates TLS on ports 80 and 443 for every host name. Four timers run
+alongside: `ratchet-backup.timer` (03:00 UTC), `ratchet-token-rotate.timer` (Mondays 04:30
+UTC), `ratchet-alerts.timer` (every 2 minutes) and `ratchet-nebius-token.timer` (every 4 hours
+and at boot; it does nothing without the Nebius credentials file).
+
+## Hosting layout
+
+One VM and one Caddy serve the public names:
+
+| Name | Serves |
+| --- | --- |
+| `ratchetci.dev` | a static product page, the docs at `/docs/` and the benchmark report at `/bench/`, rebuilt from the deployed commit by every deploy |
+| `www.ratchetci.dev` | a 301 redirect to the apex; so do the names in `RATCHET_ALT_ADDRESSES` (for example `ratchetci.com www.ratchetci.com`) |
+| `demo.ratchetci.dev` | the dashboard, API and live event stream in public mode (`RATCHET_PUBLIC_URL`), with a static fallback page when the app is down |
+
+DNS: A records for the apex and `demo` pointing at the VM, a CNAME from `www` to the apex,
+all **DNS only** (no CDN proxy), because Caddy obtains its certificates with the ACME HTTP-01
+challenge on port 80. `deploy/vm/dns.md` has the records and a Cloudflare API example.
+
+The apex is static files, so it stays up while the app restarts or fails over. Its content
+security policy allows no inline scripts except the docs theme's own, which each deploy
+allows by hash.
 
 ## Status at a glance
 
@@ -51,13 +72,12 @@ sudo bash -c 'source /opt/ratchet/deploy/vm/lib.sh && ratchet_cli metrics --sinc
 
 ## VM bootstrap
 
-On a fresh Ubuntu 24.04 Nebius CPU VM (2 vCPU / 8 GB), with the DNS A record already pointing
-at it:
+On a fresh Ubuntu 24.04 Nebius CPU VM (2 vCPU / 8 GB), with DNS already pointing at it:
 
 ```bash
 git clone https://github.com/<org>/ratchet /tmp/ratchet
-sudo /tmp/ratchet/deploy/vm/bootstrap.sh --public-url https://ratchet.<domain> \
-     --repo https://github.com/<org>/ratchet --ref main
+sudo /tmp/ratchet/deploy/vm/bootstrap.sh --public-url https://demo.ratchetci.dev \
+     --site-url https://ratchetci.dev --repo https://github.com/<org>/ratchet --ref main
 sudoedit /etc/ratchet/env        # NEBIUS_TOKEN_FACTORY_KEY, TAVILY_API_KEY, RATCHET_UPSTREAM=live, …
 sudo systemctl restart ratchet-serve
 ```
@@ -69,8 +89,14 @@ sudo systemctl restart ratchet-serve
 - `RATCHET_SKIP_SEED=1` skips seeding the demo.
 - `RATCHET_SKIP_WORKER_IMAGE=1` skips building the worker image.
 
-Then set up an external uptime monitor (`deploy/vm/uptime.md`): `GET https://<host>/healthz`
-every minute, alerting after 2 consecutive failures, plus a daily TLS-expiry check.
+`--public-url` is the demo host; `--site-url` is the apex. For Serverless Jobs, copy the
+service-account credentials to `/etc/ratchet/nebius-sa.json` (root, mode 0600) before
+bootstrap, or afterwards followed by `sudo systemctl start ratchet-nebius-token`; see
+[Rotate secrets](#rotate-secrets).
+
+Then set up an external uptime monitor (`deploy/vm/uptime.md`):
+`GET https://demo.ratchetci.dev/healthz` every minute, alerting after 2 consecutive failures,
+a check on `https://ratchetci.dev/`, and a daily TLS-expiry check for both names.
 
 !!! warning "Public host checklist"
     `RATCHET_PUBLIC_MODE=true`, a long random `RATCHET_ACTION_TOKEN_SECRET` (`ratchet serve`
@@ -138,8 +164,9 @@ sudo /opt/ratchet/deploy/vm/restore.sh 2026-10-25         # local file first, el
 | --- | --- | --- |
 | Demo action token | Nothing to do. It is `HMAC(secret, UTC date)[:24]`, so it changes daily with no restart. Yesterday's token is accepted until 01:00 UTC | none |
 | `RATCHET_ACTION_TOKEN_SECRET` | Weekly by `ratchet-token-rotate.timer`, or `sudo deploy/vm/rotate-action-secret.sh`. This invalidates every token issued so far; open pages re-fetch `/meta` | ~3 s restart |
-| `NEBIUS_TOKEN_FACTORY_KEY`, `TAVILY_API_KEY`, Nebius IAM / S3 keys | Create the new key in the provider console, `sudoedit /etc/ratchet/env`, `sudo systemctl restart ratchet-proxy ratchet-orchestrator` (aliases of `ratchet-serve`), check `ratchet doctor`, then revoke the old key | ~3 s restart |
-| Nebius IAM token from `nebius iam get-access-token` | It expires after 12 hours. Use a service-account key on a long-lived host | — |
+| `NEBIUS_TOKEN_FACTORY_KEY`, `TAVILY_API_KEY`, Nebius S3 keys | Create the new key in the provider console, `sudoedit /etc/ratchet/env`, `sudo systemctl restart ratchet-proxy ratchet-orchestrator` (aliases of `ratchet-serve`), check `ratchet doctor`, then revoke the old key | ~3 s restart |
+| `NEBIUS_API_KEY` (an IAM token; it expires after 12 hours) | Automatic. `ratchet-nebius-token.timer` mints a new token from the service account in `/etc/ratchet/nebius-sa.json` every 4 hours and at boot, rewrites only that line of `/etc/ratchet/env`, and restarts `ratchet-serve` when the token changed and `RATCHET_JOB_RUNNER=nebius`. Check it with `sudo deploy/vm/nebius-token.sh status` | ~3 s restart every 4 hours, Jobs hosts only |
+| Nebius service-account key | Generate a new one with `nebius iam auth-public-key generate --service-account-id <sa-id> --output nebius-sa.json`, copy it over `/etc/ratchet/nebius-sa.json` (root, 0600), run `sudo systemctl start ratchet-nebius-token`, then delete the old public key | as above |
 
 To pause the weekly rotation, for example during a judging window, run
 `sudo systemctl disable --now ratchet-token-rotate.timer`. Re-enable it afterwards.

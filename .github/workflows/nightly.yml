@@ -104,6 +104,7 @@ jobs:
         working-directory: dashboard
         env:
           RATCHET_E2E_URL: http://127.0.0.1:8080
+          RATCHET_CONTROL_IMAGE: ratchet-control:dev
         run: |
           npm ci --no-audit --no-fund
           npx playwright install --with-deps chromium

@@ -1,6 +1,7 @@
 # CI on every PR and push to main (must be green to merge).
 # lint -> typecheck -> test (unit + integration-recorded, coverage gates) -> security ->
-# schemas drift -> dashboard -> build images. No network to Token Factory or Tavily:
+# schemas drift -> dashboard -> build images (built and smoke-tested here; images.yml pushes
+# them to GHCR and publish.yml ships the PyPI package). No network to Token Factory or Tavily:
 # RATCHET_UPSTREAM=sim and Tavily fixtures throughout; live tests are live.yml only.
 name: CI
 
@@ -57,6 +58,7 @@ jobs:
       - name: caddy validate
         run: |
           docker run --rm -e RATCHET_SITE_ADDRESS=ratchet.example.com \
+            -e RATCHET_DEMO_ADDRESS=demo.example.com \
             -v "$PWD/deploy/vm/Caddyfile:/etc/caddy/Caddyfile:ro" caddy:2.11 \
             caddy validate --config /etc/caddy/Caddyfile --adapter caddyfile
 
@@ -221,7 +223,6 @@ jobs:
     timeout-minutes: 30
     permissions:
       contents: read
-      packages: write
     steps:
       - uses: actions/checkout@v7
       - uses: docker/setup-buildx-action@v4
@@ -243,27 +244,6 @@ jobs:
           docker run --rm ratchet-worker:ci --help
           ! docker image inspect ratchet-worker:ci --format '{{json .Config.Env}}' \
             | grep -E 'NEBIUS_TOKEN_FACTORY_KEY|TAVILY_API_KEY|NEBIUS_API_KEY|SECRET_ACCESS_KEY'
-      - name: registry name
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        run: echo "IMAGE=ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/ratchet-worker" >> "$GITHUB_ENV"
-      - uses: docker/login-action@v4
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-      - name: push ratchet-worker:<sha> (deploy.sh step 1)
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        uses: docker/build-push-action@v7
-        with:
-          context: .
-          file: worker/Dockerfile
-          push: true
-          tags: |
-            ${{ env.IMAGE }}:${{ github.sha }}
-            ${{ env.IMAGE }}:main
-          cache-from: type=gha,scope=worker
-
   build-control-image:
     name: build ratchet-control (+ boot smoke)
     needs: [lint, test, dashboard]
@@ -271,7 +251,6 @@ jobs:
     timeout-minutes: 30
     permissions:
       contents: read
-      packages: write
     steps:
       - uses: actions/checkout@v7
       - uses: docker/setup-buildx-action@v4
@@ -301,24 +280,3 @@ jobs:
       - name: container logs
         if: always()
         run: docker logs ratchet-control 2>&1 | tail -n 200 || true
-      - name: registry name
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        run: echo "IMAGE=ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/ratchet-control" >> "$GITHUB_ENV"
-      - uses: docker/login-action@v4
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-      - name: push ratchet-control:<sha>
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        uses: docker/build-push-action@v7
-        with:
-          context: .
-          file: deploy/control.Dockerfile
-          target: control
-          push: true
-          tags: |
-            ${{ env.IMAGE }}:${{ github.sha }}
-            ${{ env.IMAGE }}:main
-          cache-from: type=gha,scope=control

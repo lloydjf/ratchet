@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ratchet · regression CI for self-improving agents</title>
+  <meta name="description" content="Your agent learns new skills every day. Ratchet makes sure it never unlearns the old ones: every skill edit replays the tasks you blessed, a judge cascade compares the runs, and regressions are blocked.">
+  <meta name="color-scheme" content="dark light">
+  <meta property="og:title" content="Ratchet">
+  <meta property="og:description" content="Your agent learns new skills every day. Ratchet makes sure it never unlearns the old ones.">
+  <meta property="og:url" content="https://ratchetci.dev/">
+  <link rel="canonical" href="https://ratchetci.dev/">
+  <link rel="icon" href="/logo.svg" type="image/svg+xml">
+  <link rel="preload" href="/fonts/inter-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/site.css">
+  <!-- Static page: no scripts, no third-party requests. Assembled by deploy/vm/render_site.py. -->
+</head>
+<body>
+  <div class="page">
+    <header class="topbar">
+      <a class="brand" href="/" aria-label="Ratchet home"><img src="/logo.svg" alt="" width="28" height="28"><span>Ratchet</span></a>
+      <span class="tag">regression CI for self-improving agents</span>
+    </header>
+
+    <main class="hero">
+      <h1>Your agent learns new skills every day. <span class="second">Ratchet makes sure it never unlearns the old ones.</span></h1>
+
+      <div class="install" aria-label="Install command">
+        <span class="prompt" aria-hidden="true">$</span>
+        <code>uv tool install ratchet-ci</code>
+      </div>
+
+      <nav class="actions" aria-label="Primary">
+        <a class="btn primary" href="https://demo.ratchetci.dev">Demo <span aria-hidden="true">→</span></a>
+        <a class="btn" href="/docs/">Docs</a>
+        <a class="btn" href="https://github.com/lloydjf/ratchet">GitHub</a>
+      </nav>
+
+      <ol class="steps" aria-label="How it works">
+        <li>
+          <span class="step">01 · replay</span>
+          <p>Every skill edit re-runs the tasks you blessed, in a sandbox, against recorded tool calls.</p>
+        </li>
+        <li>
+          <span class="step">02 · judge</span>
+          <p>A Nemotron cascade, <span class="nano">Nano</span> → <span class="super">Super</span> → <span class="ultra">Ultra</span>, compares each run with the blessed one. A drift check tells a changed world from a broken skill.</p>
+        </li>
+        <li>
+          <span class="step">03 · block</span>
+          <p>Regressions block the edit, uncertain verdicts are held for review, and the rest merge.</p>
+        </li>
+      </ol>
+
+      <p class="bench">Measured on SkillRegress-Bench: 35 labeled skill edits across six regression types and two controls, with recall, false blocks and cost per verdict for each judge setup. <a href="/bench/">Read the results <span aria-hidden="true">→</span></a></p>
+    </main>
+
+    <footer class="foot">
+      <span>Code Apache-2.0 · benchmark data CC BY 4.0</span>
+      <span class="mono">ratchetci.dev</span>
+    </footer>
+  </div>
+</body>
+</html>

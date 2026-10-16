@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Questions and ideas
+    url: https://github.com/lloydjf/ratchet/discussions
+    about: Ask how to use Ratchet, share a dogfood report, or propose a change before writing it.
+  - name: Report a security vulnerability
+    url: https://github.com/lloydjf/ratchet/security/advisories/new
+    about: Report privately. Never open a public issue for a security problem.
+  - name: Documentation
+    url: https://github.com/lloydjf/ratchet/tree/main/docs/user
+    about: Getting started, concepts, CLI and configuration reference, limitations.

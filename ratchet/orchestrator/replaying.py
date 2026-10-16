@@ -8,7 +8,8 @@
   and submitted (idempotent: a batch with a job id is never resubmitted; batch ids are
   deterministic per edit and attempt). A submit that fails after retries → ``failed_infra``.
 - **collecting**: every ``poll_s`` each running batch is polled; ``batch.heartbeat`` when
-  ``k/n`` moves; a batch with no heartbeat for ``stall_s`` (120 s) is persisted as
+  ``k/n`` moves; a batch with no heartbeat for ``stall_s`` (120 s; ``provision_s`` while the
+  platform still reports the job pending) is persisted as
   ``stalled`` (+ a ``batch.stalled`` event), cancelled and retried once on the local
   runner (status ``retried`` until it finishes); a terminal batch is fetched and imported
   (``import_batch_output``). A batch that is lost twice is imported as ``failed``. The
@@ -314,9 +315,16 @@ async def _progress(ctx: EditContext, row: BatchRow, status: JobStatus) -> None:
         await emit(ctx, "batch.heartbeat", {**payload, "status": "running"})
 
 
-def _stalled(ctx: EditContext, row: BatchRow) -> bool:
+def _stalled(ctx: EditContext, row: BatchRow, status: JobStatus | None) -> bool:
+    """No heartbeat for ``stall_s`` once the worker runs. A job the platform still reports
+    as ``pending`` (provisioning a VM, pulling the image) has sent no heartbeat yet and gets
+    ``provision_s`` instead: a Serverless Jobs cold start is minutes, not seconds."""
     last = row.last_heartbeat_at
-    return last is not None and (clock.now() - last).total_seconds() > ctx.services.stall_s
+    if last is None:
+        return False
+    provisioning = status is not None and status.state == "pending" and row.progress_k == 0
+    budget = ctx.services.provision_s if provisioning else ctx.services.stall_s
+    return (clock.now() - last).total_seconds() > budget
 
 
 async def _mark_stalled(ctx: EditContext, row: BatchRow) -> None:
@@ -349,7 +357,7 @@ async def _poll_one(ctx: EditContext, row: BatchRow) -> None:
         if status.terminal:
             await _finish(ctx, row, runner)
             return
-    if _stalled(ctx, row):
+    if _stalled(ctx, row, status):
         _log.warning("orchestrator.batch_stalled", batch_id=row.batch_id, attempts=row.attempts)
         await _mark_stalled(ctx, row)
         await runner.cancel(str(row.job_id))

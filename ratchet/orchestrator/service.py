@@ -89,6 +89,7 @@ class Orchestrator:
             tavily_factory=tavily_factory,
             poll_s=poll_s,
             stall_s=stall_s,
+            provision_s=settings.ratchet_jobs_provision_s,
             submit_backoff_s=submit_backoff_s,
         )
         self._reset_interval_s = reset_interval_s

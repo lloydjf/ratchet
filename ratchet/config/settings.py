@@ -147,6 +147,12 @@ class Settings(BaseSettings):
         ge=0,
         description="How long a job submit waits for a free slot or quota before failing.",
     )
+    ratchet_jobs_provision_s: float = Field(
+        900.0,
+        ge=0,
+        description="How long a submitted job may provision (VM, image pull) with no worker "
+        "heartbeat before it counts as stalled; the 120 s heartbeat rule applies once it runs.",
+    )
 
     # --- Tavily ------------------------------------------------------------------------------
     tavily_api_key: SecretStr | None = Field(None, description="Tavily key; judge only.")

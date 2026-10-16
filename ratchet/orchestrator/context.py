@@ -163,6 +163,7 @@ class Services:
     tavily_factory: TavilyFactory | None = None
     poll_s: float = 2.0
     stall_s: float = 120.0
+    provision_s: float = 900.0  # a job still provisioning (no worker yet) gets this budget
     submit_backoff_s: tuple[float, ...] = (2.0, 4.0, 8.0)
     judge_concurrency: int = 8
 

@@ -243,7 +243,9 @@ without metadata. The orchestrator downloads `out/` when the job ends; an empty 
 `result.json` counts as a lost worker (one automatic retry, then `replay_infra`). Jobs are
 named `ratchet-<batch_id>`, so a restarted orchestrator finds its jobs again instead of
 creating duplicates. Expect about 3–4 minutes from submission to the worker's first replay
-(provisioning plus the image pull) on `cpu-d3`; with `RATCHET_JOBS_MAX_CONCURRENT=1` a
+(provisioning plus the image pull) on `cpu-d3`, which is why a job the platform still
+reports as pending gets `RATCHET_JOBS_PROVISION_S` (900 s) before the 120 s heartbeat stall
+rule applies; with `RATCHET_JOBS_MAX_CONCURRENT=1` a
 14-replay scenario in four batches takes about 17 minutes, so the hosted demo keeps the local
 runner and Jobs are the path for larger, slower candidate sets.
 

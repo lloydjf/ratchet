@@ -112,8 +112,10 @@ main() {
   local sha prev result note
   log "fetching origin"
   app_git fetch --quiet --tags origin
-  sha="$(app_git rev-parse --verify --quiet "${REF}^{commit}" \
-    || app_git rev-parse --verify --quiet "origin/${REF}^{commit}")" \
+  # A branch name means the branch on origin; the clone's own branch refs are never
+  # advanced (checkouts are detached), so trying them first would deploy a stale commit.
+  sha="$(app_git rev-parse --verify --quiet "origin/${REF}^{commit}" \
+    || app_git rev-parse --verify --quiet "${REF}^{commit}")" \
     || die "unknown commit: $REF"
   prev="$(current_sha)"
   log "$KIND $sha (current $prev)"

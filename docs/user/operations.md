@@ -21,34 +21,60 @@ it is set.
 | `/var/lib/ratchet-ops/deploys.tsv` | the deploy ledger that rollback reads | `root` |
 | `/var/backups/ratchet` | nightly tarballs, kept 14 days | `root` 0700 |
 | `/var/www/ratchet-fallback` | static fallback page (demo host) | `root` |
-| `/var/www/ratchet-site` | the apex site (product page, `/docs/`, `/bench/`): a symlink to the live release | `root` |
+| `/var/www/ratchet-site` | caddy edge only: the apex site (product page, `/docs/`, `/bench/`), a symlink to the live release | `root` |
+| `/etc/ratchet/cloudflared-token` | tunnel edge only: the Cloudflare Tunnel token, handed to the connector as a systemd credential and never logged | `root` 0600 |
 | `/etc/ratchet/nebius-sa.json` | Nebius service-account credentials, Serverless Jobs only | `root` 0600 |
 
 **Units.** `ratchet-serve.service` runs one `ratchet serve` process: dashboard and API on
 127.0.0.1:8080, proxy on 8081, mock tools on 8082, orchestrator and watcher. It has the
 aliases `ratchet-proxy`, `ratchet-mocktools`, `ratchet-orchestrator` and `ratchet-dashboard`.
-`caddy.service` terminates TLS on ports 80 and 443 for every host name. Four timers run
+`caddy.service` either terminates TLS on ports 80 and 443 for every host name (caddy edge)
+or serves the demo host as plain HTTP on `127.0.0.1:80` only (tunnel edge), where
+`ratchet-tunnel.service` (`cloudflared`) connects it to Cloudflare. Four timers run
 alongside: `ratchet-backup.timer` (03:00 UTC), `ratchet-token-rotate.timer` (Mondays 04:30
 UTC), `ratchet-alerts.timer` (every 2 minutes) and `ratchet-nebius-token.timer` (every 4 hours
 and at boot; it does nothing without the Nebius credentials file).
 
 ## Hosting layout
 
-One VM and one Caddy serve the public names:
+Three public names:
 
 | Name | Serves |
 | --- | --- |
-| `ratchetci.dev` | a static product page, the docs at `/docs/` and the benchmark report at `/bench/`, rebuilt from the deployed commit by every deploy |
-| `www.ratchetci.dev` | a 301 redirect to the apex; so do the names in `RATCHET_ALT_ADDRESSES` (for example `ratchetci.com www.ratchetci.com`) |
+| `ratchetci.dev` | a static product page, the docs at `/docs/` and the benchmark report at `/bench/` |
+| `www.ratchetci.dev` | a 301 redirect to the apex |
 | `demo.ratchetci.dev` | the dashboard, API and live event stream in public mode (`RATCHET_PUBLIC_URL`), with a static fallback page when the app is down |
 
-DNS: A records for the apex and `demo` pointing at the VM, a CNAME from `www` to the apex,
-all **DNS only** (no CDN proxy), because Caddy obtains its certificates with the ACME HTTP-01
-challenge on port 80. `deploy/vm/dns.md` has the records and a Cloudflare API example.
+`RATCHET_EDGE` in `/etc/ratchet/env` (`bootstrap.sh --edge`) decides who faces the internet:
 
-The apex is static files, so it stays up while the app restarts or fails over. Its content
-security policy allows no inline scripts except the docs theme's own, which each deploy
-allows by hash.
+| | `tunnel`: Cloudflare in front | `caddy` (default): one public VM |
+| --- | --- | --- |
+| Apex, `/docs/`, `/bench/` | Cloudflare static assets (the Worker `ratchetci-site`), deployed by `.github/workflows/site.yml` on every push to `main` that touches them | files on the VM, rebuilt from the deployed commit by every deploy |
+| `www` -> apex | a Cloudflare Redirect Rule | Caddy (also the names in `RATCHET_ALT_ADDRESSES`) |
+| Demo host | a Cloudflare Tunnel to `cloudflared` on the VM, then Caddy on `127.0.0.1:80` | Caddy on ports 80 and 443 |
+| Certificates | Cloudflare's | Caddy's, by ACME HTTP-01 |
+| DNS | created by Cloudflare: the Worker's custom domains and the tunnel's CNAME, all proxied | A records for the apex and `demo` pointing at the VM, a CNAME from `www` to the apex, all **DNS only** |
+| Inbound ports on the VM | SSH only (ufw on by default) | 22, 80, 443 |
+| Standby VM takes over | start the connector there with the same token; no DNS change | move the A records |
+
+The tunnel is configured remotely, in Cloudflare: one public hostname, `demo.ratchetci.dev`
+-> `http://127.0.0.1:80`, and the catch-all `http_status:404`. The VM only runs the
+connector: `deploy/vm/edge-tunnel.sh` installs `cloudflared` from Cloudflare's apt repository
+(signing key fingerprint pinned), reads the token from `/etc/ratchet/cloudflared-token`
+(written with `edge-tunnel.sh set-token`, never echoed), and has `status` and `uninstall`
+subcommands. The live event stream works through Cloudflare unchanged: it is never
+compressed or cached, and its 15-second heartbeat keeps it inside Cloudflare's idle limit.
+
+`deploy/vm/dns.md` has the records for both layouts, the tunnel and Redirect Rule steps,
+and Cloudflare API examples; the header of `.github/workflows/site.yml` has the one-time
+setup of the static site (API token, repository secrets `CLOUDFLARE_API_TOKEN` and
+`CLOUDFLARE_ACCOUNT_ID`).
+
+The apex is static files either way, so it stays up while the app restarts or fails over.
+Its content security policy allows no inline scripts except the docs theme's own, by hash:
+Caddy gets the hashes from each deploy, the static site from its `_headers` file, which
+each build writes (one rule for the whole site, so the two never combine into a stricter
+policy). `'unsafe-inline'` is never allowed for scripts.
 
 ## Status at a glance
 
@@ -72,11 +98,13 @@ sudo bash -c 'source /opt/ratchet/deploy/vm/lib.sh && ratchet_cli metrics --sinc
 
 ## VM bootstrap
 
-On a fresh Ubuntu 24.04 Nebius CPU VM (2 vCPU / 8 GB), with DNS already pointing at it:
+On a fresh Ubuntu 24.04 Nebius CPU VM (2 vCPU / 8 GB). Tunnel edge: write the tunnel token
+first. Caddy edge: point DNS at the VM first and leave out `--edge`.
 
 ```bash
 git clone https://github.com/<org>/ratchet /tmp/ratchet
-sudo /tmp/ratchet/deploy/vm/bootstrap.sh --public-url https://demo.ratchetci.dev \
+sudo /tmp/ratchet/deploy/vm/edge-tunnel.sh set-token < token.txt && shred -u token.txt   # tunnel
+sudo /tmp/ratchet/deploy/vm/bootstrap.sh --edge tunnel --public-url https://demo.ratchetci.dev \
      --site-url https://ratchetci.dev --repo https://github.com/<org>/ratchet --ref main
 sudoedit /etc/ratchet/env        # NEBIUS_TOKEN_FACTORY_KEY, TAVILY_API_KEY, RATCHET_UPSTREAM=live, …
 sudo systemctl restart ratchet-serve
@@ -85,18 +113,23 @@ sudo systemctl restart ratchet-serve
 `bootstrap.sh` is idempotent: re-run it to converge a host. It never overwrites values in
 `/etc/ratchet/env`; it only appends keys that are new in `deploy/vm/env.template`. Opt-ins:
 
-- `RATCHET_ENABLE_UFW=1` turns on the firewall (22, 80, 443).
+- `--ufw on|off` (`RATCHET_ENABLE_UFW` in the env file) controls the firewall. It is on by
+  default with the tunnel edge (22/tcp only) and off with the caddy edge (on: 22, 80, 443).
+  As an environment variable it only works inside `sudo`, because sudo drops variables set
+  before it.
 - `RATCHET_SKIP_SEED=1` skips seeding the demo.
 - `RATCHET_SKIP_WORKER_IMAGE=1` skips building the worker image.
 
-`--public-url` is the demo host; `--site-url` is the apex. For Serverless Jobs, copy the
+`--public-url` is the demo host; `--site-url` is the apex; `--edge` is `tunnel` or `caddy`.
+Switch an existing host with `deploy.sh <sha> --edge tunnel|caddy`. For Serverless Jobs, copy the
 service-account credentials to `/etc/ratchet/nebius-sa.json` (root, mode 0600) before
 bootstrap, or afterwards followed by `sudo systemctl start ratchet-nebius-token`; see
 [Rotate secrets](#rotate-secrets).
 
 Then set up an external uptime monitor (`deploy/vm/uptime.md`):
 `GET https://demo.ratchetci.dev/healthz` every minute, alerting after 2 consecutive failures,
-a check on `https://ratchetci.dev/`, and a daily TLS-expiry check for both names.
+a check on `https://ratchetci.dev/`, and a daily TLS-expiry check for both names (with the
+tunnel edge these are Cloudflare's certificates).
 
 !!! warning "Public host checklist"
     `RATCHET_PUBLIC_MODE=true`, a long random `RATCHET_ACTION_TOKEN_SECRET` (`ratchet serve`
@@ -121,6 +154,11 @@ The script runs these steps in order:
 5. Runs the smoke test: `ratchet doctor`, then `ratchet simulate 1 --headless`, which must
    BLOCK within 90 s.
 6. Appends the result to the ledger and to `docs/DEPLOYS.md`.
+
+With the caddy edge the deploy also rebuilds the apex site from the same commit. With the
+tunnel edge the apex is not on the VM: the Site workflow builds it (docs generation,
+`mkdocs build --strict`, `render_site.py --cloudflare`) and publishes it with
+`wrangler deploy` whenever `main` changes the docs, the benchmark results or the page.
 
 With `RATCHET_WORKER_IMAGE_REPO=ghcr.io/<org>/ratchet-worker` in the env file, the script
 pulls and pins the CI-built worker for `<sha>`. Otherwise it rebuilds a local worker tag when
@@ -196,7 +234,8 @@ Related switches:
 
 | Symptom | First response (≤ 5 min) | Fallback |
 | --- | --- | --- |
-| URL unreachable, or an uptime alert | `sudo deploy/vm/restart.sh` restarts the app, reloads Caddy, and checks `/healthz` and the TLS expiry. `--all` also restarts Caddy and Docker | `sudo deploy/vm/failover.sh fallback on` serves a static page with the video. If the VM is gone: `deploy/vm/failover.sh dns <standby-ip>`. If the app is broken but a standby is up: `sudo deploy/vm/failover.sh proxy-to <standby-private-ip>:8080` |
+| URL unreachable, or an uptime alert | `sudo deploy/vm/restart.sh` restarts the app, reloads Caddy (and, with the tunnel edge, restarts the connector), and checks `/healthz` and the TLS expiry. `--all` also restarts Caddy and Docker | `sudo deploy/vm/failover.sh fallback on` serves a static page with the video. If the VM is gone: `deploy/vm/failover.sh dns <standby-ip>`, which moves the A records with the caddy edge and, with the tunnel edge, prints the takeover (start the connector on the standby with the same token, stop it on the old VM; no DNS change). If the app is broken but a standby is up: `sudo deploy/vm/failover.sh proxy-to <standby-private-ip>:8080` |
+| Demo down but the local `/healthz` is fine (tunnel edge) | `sudo deploy/vm/edge-tunnel.sh status` (ready must be 200), `journalctl -u ratchet-tunnel -n 50`, and the tunnel's public hostname in Cloudflare | take over on the standby VM |
 | Simulate hangs at "replaying" | `env_set RATCHET_JOB_RUNNER local`, then restart `ratchet-serve`. Check `journalctl -u ratchet-serve` for `replay.*` events, and `docker ps` for stuck `ratchet-worker-*` containers | `RATCHET_SIMULATE_MODE=replayed` |
 | Token Factory errors (502s, `upstream_error`) | Check the provider's status page and run `ratchet doctor`. By design, verdicts degrade to `uncertain` / WARN | `RATCHET_SIMULATE_MODE=replayed` |
 | Tavily errors | Nothing. Drift checks return `drift_unavailable`, and the UI shows the badge | same |
@@ -205,7 +244,7 @@ Related switches:
 | Disk above 80 % (alert) | `ratchet_cli purge --before <date>` on non-demo traces; `journalctl --vacuum-time=3d` | Grow the disk in the Nebius console |
 | Spend surge above $5/h (alert) | `ratchet_cli metrics --since 1d` to find the purpose; lower `RATCHET_PURPOSE_USD_CAPS` | replayed mode |
 | Bad deploy | `sudo deploy/vm/rollback.sh` | `--with-restore <date>` |
-| TLS expired or not issued | `journalctl -u caddy -n 100`. DNS must resolve to the VM, and ports 80/443 must be open in the security group | `failover.sh fallback on` does not help with TLS; fix DNS first |
+| TLS expired or not issued (caddy edge) | `journalctl -u caddy -n 100`. DNS must resolve to the VM, and ports 80/443 must be open in the security group | `failover.sh fallback on` does not help with TLS; fix DNS first |
 
 After any incident, write down what happened, when, and the fix. For deploys and
 restores, add the row to `docs/DEPLOYS.md`.

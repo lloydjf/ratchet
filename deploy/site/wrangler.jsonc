@@ -1,0 +1,25 @@
+// The apex site (ratchetci.dev: product page, /docs/, /bench/) as a Cloudflare Worker with
+// static assets only: no Worker code runs, every request is served from the asset store.
+// Built by .github/workflows/site.yml into deploy/site/dist (render_site.py --cloudflare),
+// which also writes dist/_headers (security headers, CSP with the docs theme's script
+// hashes) and dist/_redirects. Deployed with `wrangler deploy --config deploy/site/wrangler.jsonc`.
+//
+// The custom domains below are attached on deploy; wrangler creates their DNS records
+// (proxied) itself, so the zone must have no other A/AAAA/CNAME record for either name
+// (deploy/vm/dns.md). www.ratchetci.dev serves the same assets until the zone's
+// www -> apex Redirect Rule exists (also in dns.md): asset _redirects cannot match on host.
+{
+  "name": "ratchetci-site",
+  "compatibility_date": "2026-10-01",
+  "assets": {
+    "directory": "./dist",
+    "not_found_handling": "404-page",
+    "html_handling": "auto-trailing-slash"
+  },
+  "routes": [
+    { "pattern": "ratchetci.dev", "custom_domain": true },
+    { "pattern": "www.ratchetci.dev", "custom_domain": true }
+  ],
+  "workers_dev": false,
+  "preview_urls": false
+}

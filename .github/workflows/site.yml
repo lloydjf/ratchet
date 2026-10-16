@@ -1,0 +1,116 @@
+# The apex site, ratchetci.dev: the product page (deploy/vm/www), /docs/ (MkDocs) and /bench/
+# (the benchmark report), built into one directory by deploy/vm/render_site.py and deployed
+# as a Cloudflare Worker with static assets only (deploy/site/wrangler.jsonc, Worker name
+# ratchetci-site; no Worker code runs). The demo host is not here: it is the VM, behind a
+# Cloudflare Tunnel (deploy/vm/edge-tunnel.sh, RATCHET_EDGE=tunnel).
+#
+# Runs on pushes to main that touch the site's sources, and by hand (Actions -> Site -> Run
+# workflow). A manual run on another branch builds and uploads the directory as an artifact
+# but never deploys: only main is published.
+#
+# One-time setup (operator):
+#   1. API token (dash.cloudflare.com -> My Profile -> API Tokens): start from the "Edit
+#      Cloudflare Workers" template, limit it to the account and the ratchetci.dev zone, and
+#      add Zone -> DNS: Edit. Needed: Account -> Workers Scripts: Edit, Zone -> Workers
+#      Routes: Edit, Zone -> DNS: Edit (wrangler creates the custom domains' DNS records).
+#   2. Repository secrets (Settings -> Secrets and variables -> Actions): CLOUDFLARE_API_TOKEN
+#      (the token) and CLOUDFLARE_ACCOUNT_ID (dashboard -> Workers & Pages -> Account ID).
+#   3. In the zone, delete any A/AAAA/CNAME record for ratchetci.dev and www.ratchetci.dev
+#      (left over from RATCHET_EDGE=caddy): the first deploy attaches both as custom domains
+#      and creates their records itself; it fails while another record holds the name.
+#   4. The www -> apex 301 is a zone Redirect Rule (asset _redirects cannot match on host):
+#      deploy/vm/dns.md has the dashboard steps and the API call.
+#   5. Run this workflow on main once. There is nothing to create beforehand: the first
+#      `wrangler deploy` creates the Worker. Check: curl -sSI https://ratchetci.dev/docs/
+name: Site
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "docs/**"
+      - "bench/results/**"
+      - "deploy/vm/www/**"
+      - "deploy/vm/render_site.py"
+      - "deploy/site/**"
+      - "mkdocs.yml"
+      - "README.md"
+      - ".github/workflows/site.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: site-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  UV_VERSION: "0.8.18"
+  PYTHON_VERSION: "3.11"
+  NODE_VERSION: "24"
+  WRANGLER_VERSION: "4.146.0"
+  # gen_docs.py imports ratchet modules only; keep every mode offline anyway.
+  RATCHET_UPSTREAM: sim
+  RATCHET_TAVILY_MODE: fixtures
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v10.3.0
+        with:
+          version: ${{ env.UV_VERSION }}
+          python-version: ${{ env.PYTHON_VERSION }}
+          enable-cache: true
+          cache-dependency-glob: uv.lock
+      - run: uv sync --frozen --group docs
+      - name: generated docs (CLI, settings, API, reference copies)
+        run: uv run python scripts/gen_docs.py
+      - name: mkdocs build --strict
+        env:
+          NO_MKDOCS_2_WARNING: "1"
+        run: uv run --group docs mkdocs build --strict
+      # The product page self-hosts Inter and JetBrains Mono from the dashboard's pinned,
+      # lockfile-verified dependencies; no install scripts run.
+      - uses: actions/setup-node@v7
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: dashboard/package-lock.json
+      - name: fonts (dashboard dependencies)
+        working-directory: dashboard
+        run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: assemble the site (render_site.py --cloudflare)
+        run: |
+          python3 -I deploy/vm/render_site.py --out deploy/site/dist --docs site \
+            --ref "$GITHUB_SHA" --cloudflare
+          for f in index.html 404.html _headers _redirects docs/index.html bench/index.html; do
+            test -s "deploy/site/dist/$f" || { echo "::error::missing $f"; exit 1; }
+          done
+      - uses: actions/upload-artifact@v7
+        with:
+          name: site
+          path: deploy/site/dist
+          retention-days: 7
+
+  deploy:
+    needs: build
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/download-artifact@v8
+        with:
+          name: site
+          path: deploy/site/dist
+      - name: wrangler deploy (Worker ratchetci-site, static assets)
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          wranglerVersion: ${{ env.WRANGLER_VERSION }}
+          command: deploy --config deploy/site/wrangler.jsonc

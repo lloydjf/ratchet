@@ -8,6 +8,7 @@
 #   /var/backups/ratchet         nightly tarballs (14-day retention)
 #   /var/www/ratchet-site        the apex site (symlink to a release under ratchet-site.d/)
 #   /etc/caddy/ratchet.d         generated Caddy fragments (alt-domain redirects, docs CSP)
+#   /etc/ratchet/cloudflared-token  Cloudflare Tunnel token, root 0600 (RATCHET_EDGE=tunnel)
 # shellcheck shell=bash
 
 RATCHET_APP_DIR="${RATCHET_APP_DIR:-/opt/ratchet}"
@@ -19,6 +20,8 @@ RATCHET_FALLBACK_DIR="${RATCHET_FALLBACK_DIR:-/var/www/ratchet-fallback}"
 RATCHET_SITE_DIR="${RATCHET_SITE_DIR:-/var/www/ratchet-site}"
 RATCHET_CADDY_EXTRA_DIR="${RATCHET_CADDY_EXTRA_DIR:-/etc/caddy/ratchet.d}"
 RATCHET_CADDY_DROPIN="${RATCHET_CADDY_DROPIN:-/etc/systemd/system/caddy.service.d/ratchet.conf}"
+RATCHET_TUNNEL_UNIT="${RATCHET_TUNNEL_UNIT:-ratchet-tunnel.service}"
+RATCHET_TUNNEL_TOKEN_FILE="${RATCHET_TUNNEL_TOKEN_FILE:-/etc/ratchet/cloudflared-token}"
 RATCHET_USER="${RATCHET_USER:-ratchet}"
 RATCHET_UNIT="${RATCHET_UNIT:-ratchet-serve.service}"
 RATCHET_LEDGER="$RATCHET_OPS_DIR/deploys.tsv"
@@ -256,6 +259,30 @@ with_caddy_env() {
   env "${vars[@]}" "$@"
 }
 
+# /var/log/caddy belongs to the caddy user, and so does every log file in it. The Caddyfile
+# writes its access logs there (snippet access_log), and Caddy refuses to start when it cannot
+# open one ("setting up custom log ... opening log writer"). Run before validating and again
+# before any start or reload.
+caddy_log_dir() {
+  install -d -m 0755 -o caddy -g caddy /var/log/caddy
+  find /var/log/caddy -maxdepth 1 -type f ! -user caddy -exec chown caddy:caddy {} + 2>/dev/null || true
+}
+
+# `caddy validate <file>` with the unit's environment, as the caddy user. Validation opens the
+# log writers: run as root, it would leave root-owned 0600 log files behind that the service
+# (user caddy) then cannot open. Running it as caddy also proves the service can read
+# everything the config imports.
+caddy_validate() {
+  local config="$1"
+  caddy_log_dir
+  if id -u caddy >/dev/null 2>&1; then
+    with_caddy_env runuser -u caddy -- env HOME=/var/lib/caddy \
+      caddy validate --config "$config" --adapter caddyfile
+  else
+    with_caddy_env caddy validate --config "$config" --adapter caddyfile
+  fi
+}
+
 # Install deploy/vm/Caddyfile if it validates against this host's values, then reload
 # Caddy. A Caddyfile that does not validate is left out and the running config is kept.
 install_caddyfile() {
@@ -265,7 +292,7 @@ install_caddyfile() {
     return 0
   fi
   install -m 0644 "$src" "$new"
-  if ! with_caddy_env caddy validate --config "$new" --adapter caddyfile >/dev/null 2>&1; then
+  if ! caddy_validate "$new" >/dev/null 2>&1; then
     rm -f "$new"
     log "WARNING: caddy: the new Caddyfile does not validate; keeping the running one"
     return 1
@@ -280,6 +307,7 @@ install_caddyfile() {
 
 caddy_reload() {
   if systemctl is-active --quiet caddy; then
+    caddy_log_dir
     log "caddy: reload"
     systemctl reload caddy || systemctl restart caddy
   fi
@@ -354,4 +382,125 @@ render_site() {
   after="$(sha256sum "$csp" 2>/dev/null || true)"
   log "site: live at $RATCHET_SITE_DIR -> ${release##*/}"
   [[ "$before" == "$after" ]] || caddy_reload
+}
+
+# --- edge mode (RATCHET_EDGE) --------------------------------------------------------------------
+#   caddy   Caddy is public on 80/443 with ACME for the apex, www and demo; the apex site is
+#           rendered on this VM (render_site). DNS: A records to the VM, DNS only.
+#   tunnel  Cloudflare is public: the apex is Cloudflare static assets (deploy/site/), the demo
+#           reaches this VM through ratchet-tunnel.service; Caddy serves the demo host as plain
+#           HTTP on 127.0.0.1:80 only. No inbound port but SSH.
+
+edge_mode() {
+  local mode
+  mode="$(env_get RATCHET_EDGE caddy)"
+  case "$mode" in
+    caddy | tunnel) printf '%s' "$mode" ;;
+    *) die "RATCHET_EDGE must be caddy or tunnel, not: $mode" ;;
+  esac
+}
+
+# Write the caddy unit's drop-in for the current edge mode, render what that mode serves,
+# install and validate the Caddyfile, restart Caddy, and start (tunnel) or stop (caddy) the
+# tunnel connector. Used by bootstrap.sh and by deploy.sh --edge. Fatal on an invalid config.
+configure_edge() {
+  local edge demo apex upstream
+  edge="$(edge_mode)"
+  demo="$(site_address "$(env_get RATCHET_PUBLIC_URL)")"
+  apex="$(site_address "$(env_get RATCHET_SITE_URL)")"
+  upstream="$(sed -n 's/^Environment=RATCHET_UPSTREAM_ADDR=//p' "$RATCHET_CADDY_DROPIN" 2>/dev/null || true)"
+  if [[ "$edge" == "tunnel" ]]; then
+    [[ "$demo" != :* ]] || die "RATCHET_EDGE=tunnel needs RATCHET_PUBLIC_URL=https://<demo host> (Cloudflare holds the certificate)"
+    demo="${demo%%:*}"
+    log "caddy (edge=tunnel): http://$demo on 127.0.0.1:80 and [::1]:80 only -> ${upstream:-127.0.0.1:8080}; the apex, www, /docs/ and /bench/ are on Cloudflare"
+  else
+    [[ "$demo" == :* ]] && log "WARNING: RATCHET_PUBLIC_URL is not https://<host>; serving the demo as plain HTTP on $demo"
+    [[ "$apex" == :* ]] && die "RATCHET_SITE_URL must be https://<domain> (www.<domain> redirects to it)"
+    log "caddy (edge=caddy): $apex (static site), www.$apex (301), $demo -> ${upstream:-127.0.0.1:8080}"
+  fi
+  install -m 0644 "$RATCHET_APP_DIR/deploy/vm/Caddyfile" /etc/caddy/Caddyfile
+  install -d -m 0755 "$(dirname "$RATCHET_CADDY_DROPIN")"
+  cat >"$RATCHET_CADDY_DROPIN" <<EOF
+[Service]
+Environment=RATCHET_EDGE=${edge}
+Environment=RATCHET_SITE_ADDRESS=${apex}
+Environment=RATCHET_DEMO_ADDRESS=${demo}
+Environment=RATCHET_UPSTREAM_ADDR=${upstream:-127.0.0.1:8080}
+EOF
+  render_fallback
+  if [[ "$edge" == "caddy" ]]; then
+    render_caddy_redirects "$apex"
+    render_site || log "WARNING: site build failed; the previous site (if any) stays live"
+  fi
+  systemctl daemon-reload
+  caddy_validate /etc/caddy/Caddyfile >/dev/null \
+    || die "caddy: /etc/caddy/Caddyfile does not validate for RATCHET_EDGE=$edge"
+  caddy_log_dir
+  systemctl enable --quiet caddy
+  systemctl restart caddy || die "caddy did not start: journalctl -u caddy -n 50 --no-pager"
+  if [[ "$edge" == "tunnel" ]]; then
+    "$RATCHET_APP_DIR/deploy/vm/edge-tunnel.sh" install \
+      || log "WARNING: tunnel connector not running yet: write the token (sudo deploy/vm/edge-tunnel.sh set-token < token.txt), then sudo deploy/vm/edge-tunnel.sh install"
+  elif systemctl is-enabled --quiet "$RATCHET_TUNNEL_UNIT" 2>/dev/null; then
+    log "edge=caddy: stopping and disabling $RATCHET_TUNNEL_UNIT"
+    systemctl disable --now --quiet "$RATCHET_TUNNEL_UNIT"
+  fi
+}
+
+# ufw for the edge mode. RATCHET_ENABLE_UFW (process environment, else /etc/ratchet/env):
+#   1 = on, 0 = off, empty = the mode's default: on in tunnel mode (cloudflared only dials out,
+#   so nothing but SSH needs to be reachable), off in caddy mode (the security group decides).
+# On: default deny incoming; caddy allows 22, 80, 443; tunnel allows 22/tcp only and removes
+# 80/443. SSH on another port: allow it yourself first (ufw allow <port>/tcp).
+ufw_wanted() {
+  local value
+  value="$(env_get RATCHET_ENABLE_UFW)"
+  case "$value" in
+    1 | 0) [[ "$value" == "1" ]] ;;
+    "") [[ "$(edge_mode)" == "tunnel" ]] ;;
+    *) die "RATCHET_ENABLE_UFW must be 1, 0 or empty, not: $value" ;;
+  esac
+}
+
+edge_firewall() {
+  local edge
+  edge="$(edge_mode)"
+  if ! ufw_wanted; then
+    log "ufw: not managed (RATCHET_ENABLE_UFW=$(env_get RATCHET_ENABLE_UFW '<empty>'), edge=$edge)"
+    return 0
+  fi
+  command -v ufw >/dev/null || apt-get install -y -q ufw
+  ufw default deny incoming >/dev/null
+  ufw default allow outgoing >/dev/null
+  ufw allow 22/tcp >/dev/null
+  if [[ "$edge" == "tunnel" ]]; then
+    log "ufw (edge=tunnel): allow 22/tcp only; deny the rest inbound"
+    ufw delete allow 80/tcp >/dev/null 2>&1 || true
+    ufw delete allow 443/tcp >/dev/null 2>&1 || true
+  else
+    log "ufw (edge=caddy): allow 22/tcp, 80/tcp, 443/tcp; deny the rest inbound"
+    ufw allow 80/tcp >/dev/null
+    ufw allow 443/tcp >/dev/null
+  fi
+  # Replay sandboxes live on the internal Docker network and reach the worker's proxy and
+  # mock-tool sidecars on its gateway; ufw's default deny would drop that traffic and every
+  # replay would time out. Allow only sandbox subnet -> gateway on that bridge.
+  local subnet gateway bridge
+  subnet="${RATCHET_SANDBOX_SUBNET:-172.30.0.0/24}"
+  gateway="${RATCHET_SANDBOX_GATEWAY:-172.30.0.1}"
+  bridge="$(docker network inspect "${RATCHET_SANDBOX_NETWORK:-ratchet-sandbox}" \
+    --format '{{index .Options "com.docker.network.bridge.name"}}' 2>/dev/null || true)"
+  if [[ -z "$bridge" ]]; then
+    bridge="$(docker network inspect "${RATCHET_SANDBOX_NETWORK:-ratchet-sandbox}" \
+      --format '{{.Id}}' 2>/dev/null | cut -c1-12 || true)"
+    [[ -n "$bridge" ]] && bridge="br-$bridge"
+  fi
+  if [[ -n "$bridge" ]]; then
+    ufw allow in on "$bridge" from "$subnet" to "$gateway" comment "ratchet sandbox sidecars" >/dev/null
+    log "ufw: sandbox sidecars allowed on $bridge ($subnet -> $gateway)"
+  else
+    log "ufw: sandbox network not found yet; re-run bootstrap after the sandbox network exists"
+  fi
+  ufw --force enable >/dev/null
+  log "ufw: $(ufw status | head -n 1)"
 }

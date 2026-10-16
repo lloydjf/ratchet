@@ -57,10 +57,13 @@ jobs:
             -f deploy/docker-compose.docker-runner.yml config --quiet
       - name: caddy validate
         run: |
-          docker run --rm -e RATCHET_SITE_ADDRESS=ratchet.example.com \
-            -e RATCHET_DEMO_ADDRESS=demo.example.com \
-            -v "$PWD/deploy/vm/Caddyfile:/etc/caddy/Caddyfile:ro" caddy:2.11 \
-            caddy validate --config /etc/caddy/Caddyfile --adapter caddyfile
+          for mode in caddy tunnel; do
+            docker run --rm -e RATCHET_SITE_ADDRESS=ratchet.example.com \
+              -e RATCHET_DEMO_ADDRESS=demo.example.com -e RATCHET_EDGE="$mode" \
+              -v "$PWD/deploy/vm/Caddyfile:/etc/caddy/Caddyfile:ro" \
+              -v "$PWD/deploy/vm:/opt/ratchet/deploy/vm:ro" caddy:2.11 \
+              caddy validate --config /etc/caddy/Caddyfile --adapter caddyfile
+          done
 
   typecheck:
     runs-on: ubuntu-24.04

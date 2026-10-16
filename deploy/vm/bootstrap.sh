@@ -1,25 +1,36 @@
 #!/usr/bin/env bash
 # Bootstrap the Ratchet host on a fresh Nebius CPU VM (Ubuntu 24.04): the demo app on
-# demo.<domain>, the static product page + docs + benchmark on the apex. Idempotent: safe to
-# re-run after a failure or to converge an existing host. Never overwrites a value already in
-# /etc/ratchet/env (except the two URLs, when passed).
+# demo.<domain> and, in caddy mode, the static product page + docs + benchmark on the apex.
+# Idempotent: safe to re-run after a failure or to converge an existing host. Never
+# overwrites a value already in /etc/ratchet/env (except the URLs and the edge, when passed).
 #
 #   git clone https://github.com/<org>/ratchet /tmp/ratchet
 #   sudo /tmp/ratchet/deploy/vm/bootstrap.sh --public-url https://demo.ratchetci.dev \
-#        --site-url https://ratchetci.dev [--repo https://github.com/<org>/ratchet] [--ref main]
+#        --site-url https://ratchetci.dev [--edge caddy|tunnel] [--ufw on|off] \
+#        [--repo https://github.com/<org>/ratchet] [--ref main]
 #
-# Then: put keys in /etc/ratchet/env (sudoedit), `sudo systemctl restart ratchet-serve`. Point
-# DNS at this VM *before* the first run if you want TLS on the first try (deploy/vm/dns.md;
-# Caddy keeps retrying on its own otherwise). Serverless Jobs: copy the service-account
-# credentials to /etc/ratchet/nebius-sa.json (root 0600) first, or later and then
-# `sudo systemctl start ratchet-nebius-token`.
+# --edge (RATCHET_EDGE, kept in /etc/ratchet/env; default caddy):
+#   caddy   Caddy is public on 80/443 (ACME) for the apex, www and demo; the apex site is built
+#           here. Point DNS (A records, DNS only) at this VM *before* the first run if you want
+#           TLS on the first try (deploy/vm/dns.md; Caddy keeps retrying on its own otherwise).
+#   tunnel  Cloudflare is public: the apex is Cloudflare static assets (.github/workflows/
+#           site.yml), demo.<apex> comes in through a Cloudflare Tunnel (edge-tunnel.sh) to
+#           Caddy on 127.0.0.1:80. Write the tunnel token first (sudo deploy/vm/edge-tunnel.sh
+#           set-token < token.txt) or later, then `sudo deploy/vm/edge-tunnel.sh install`.
+#
+# Then: put keys in /etc/ratchet/env (sudoedit), `sudo systemctl restart ratchet-serve`.
+# Serverless Jobs: copy the service-account credentials to /etc/ratchet/nebius-sa.json
+# (root 0600) first, or later and then `sudo systemctl start ratchet-nebius-token`.
 #
 # Installs: git, curl, python3 (for ops helpers), uv 0.8.18 (pinned sha256) + Python 3.11
 # (uv-managed), Node 24 (NodeSource apt repo), Docker CE (docker.com apt repo), Caddy
 # (Caddy's apt repo); the Nebius CLI (pinned version, official script) when the host uses
-# Serverless Jobs. No unpinned `curl | sh`.
-# Env knobs: RATCHET_ENABLE_UFW=1 (allow 22/80/443 only), RATCHET_SKIP_SEED=1,
-# RATCHET_SKIP_WORKER_IMAGE=1.
+# Serverless Jobs; cloudflared (Cloudflare's apt repo, key fingerprint pinned) in tunnel mode.
+# No unpinned `curl | sh`.
+# --ufw on|off sets RATCHET_ENABLE_UFW in /etc/ratchet/env. Empty (the default): on in tunnel
+# mode (22/tcp only), off in caddy mode; on in caddy mode allows 22, 80 and 443. An env var
+# works too, but only inside sudo (`sudo RATCHET_ENABLE_UFW=1 bootstrap.sh`): sudo drops
+# variables set before it. Other knobs: RATCHET_SKIP_SEED=1, RATCHET_SKIP_WORKER_IMAGE=1.
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -37,9 +48,11 @@ REPO_URL=""
 REF="main"
 PUBLIC_URL=""
 SITE_URL=""
+EDGE=""
+UFW=""
 
 usage() {
-  sed -n '2,25p' "$0" | sed 's/^# \{0,1\}//'
+  sed -n '2,33p' "$0" | sed 's/^# \{0,1\}//'
   exit "${1:-0}"
 }
 
@@ -49,11 +62,15 @@ while (($#)); do
     --ref) REF="${2:?--ref needs a branch, tag or sha}"; shift 2 ;;
     --public-url) PUBLIC_URL="${2:?--public-url needs https://demo.<domain>}"; shift 2 ;;
     --site-url) SITE_URL="${2:?--site-url needs https://<domain>}"; shift 2 ;;
+    --edge) EDGE="${2:?--edge needs caddy or tunnel}"; shift 2 ;;
+    --ufw) UFW="${2:?--ufw needs on or off}"; shift 2 ;;
     -h | --help) usage 0 ;;
     *) log "unknown argument: $1"; usage 2 ;;
   esac
 done
 
+[[ -z "$EDGE" || "$EDGE" == "caddy" || "$EDGE" == "tunnel" ]] || die "--edge must be caddy or tunnel"
+[[ -z "$UFW" || "$UFW" == "on" || "$UFW" == "off" ]] || die "--ufw must be on or off"
 require_root
 take_lock 1800
 # shellcheck source=/dev/null
@@ -176,13 +193,23 @@ setup_env_file() {
   if [[ -n "$SITE_URL" ]]; then
     env_set RATCHET_SITE_URL "$SITE_URL"
   fi
+  if [[ -n "$EDGE" ]]; then
+    env_set RATCHET_EDGE "$EDGE"
+  fi
+  if [[ -n "$UFW" ]]; then
+    env_set RATCHET_ENABLE_UFW "$([[ "$UFW" == "on" ]] && echo 1 || echo 0)"
+  fi
+  edge_mode >/dev/null
   if [[ -z "$(env_get RATCHET_ACTION_TOKEN_SECRET)" ]]; then
     log "generating RATCHET_ACTION_TOKEN_SECRET"
     env_set RATCHET_ACTION_TOKEN_SECRET "$(python3 -c 'import secrets; print(secrets.token_urlsafe(32))')"
   fi
   [[ -n "$(env_get RATCHET_PUBLIC_URL)" ]] || die "set --public-url (or RATCHET_PUBLIC_URL in $RATCHET_ENV_FILE)"
-  [[ "$(env_get RATCHET_SITE_URL)" == https://* ]] \
-    || die "set --site-url https://<domain> (or RATCHET_SITE_URL in $RATCHET_ENV_FILE)"
+  # caddy mode serves the apex here; in tunnel mode it is only used for checks and messages.
+  if [[ "$(edge_mode)" == "caddy" ]]; then
+    [[ "$(env_get RATCHET_SITE_URL)" == https://* ]] \
+      || die "set --site-url https://<domain> (or RATCHET_SITE_URL in $RATCHET_ENV_FILE)"
+  fi
 }
 
 # --- 5. build ------------------------------------------------------------------------------------
@@ -249,39 +276,14 @@ install_units() {
     ratchet-nebius-token.timer
 }
 
+# The edge mode's Caddy config, fallback page, apex site (caddy mode) and tunnel connector
+# (tunnel mode): configure_edge in lib.sh, shared with deploy.sh --edge.
 setup_caddy() {
-  local demo apex
-  demo="$(site_address "$(env_get RATCHET_PUBLIC_URL)")"
-  apex="$(site_address "$(env_get RATCHET_SITE_URL)")"
-  [[ "$demo" == :* ]] && log "WARNING: RATCHET_PUBLIC_URL is not https://<host>; serving the demo as plain HTTP on $demo"
-  [[ "$apex" == :* ]] && die "RATCHET_SITE_URL must be https://<domain> (www.<domain> redirects to it)"
-  log "caddy: $apex (static site), www.$apex (301), $demo -> 127.0.0.1:8080"
-  install -m 0644 "$RATCHET_APP_DIR/deploy/vm/Caddyfile" /etc/caddy/Caddyfile
-  install -d -m 0755 "$(dirname "$RATCHET_CADDY_DROPIN")"
-  cat >"$RATCHET_CADDY_DROPIN" <<EOF
-[Service]
-Environment=RATCHET_SITE_ADDRESS=${apex}
-Environment=RATCHET_DEMO_ADDRESS=${demo}
-Environment=RATCHET_UPSTREAM_ADDR=127.0.0.1:8080
-EOF
-  render_fallback
-  render_caddy_redirects "$apex"
-  render_site
-  install -d -m 0755 -o caddy -g caddy /var/log/caddy
-  systemctl daemon-reload
-  with_caddy_env caddy validate --config /etc/caddy/Caddyfile --adapter caddyfile >/dev/null
-  systemctl enable caddy
-  systemctl restart caddy
+  configure_edge
 }
 
 setup_firewall() {
-  [[ "${RATCHET_ENABLE_UFW:-0}" == "1" ]] || return 0
-  log "ufw: allow OpenSSH, 80, 443; deny the rest inbound"
-  apt-get install -y -q ufw
-  ufw allow OpenSSH >/dev/null
-  ufw allow 80/tcp >/dev/null
-  ufw allow 443/tcp >/dev/null
-  ufw --force enable >/dev/null
+  edge_firewall
 }
 
 # --- 7. data + start -------------------------------------------------------------------------------
@@ -309,6 +311,9 @@ main() {
   setup_user_and_dirs
   checkout_code
   setup_env_file
+  # Before anything that can fail late (builds, Caddy): a broken step must not leave the
+  # firewall unconfigured.
+  setup_firewall
   build_app
   setup_docker_sandbox
   install_backup_tools
@@ -316,23 +321,32 @@ main() {
   install_units
   init_data_and_start
   setup_caddy
-  setup_firewall
   ledger_append bootstrap "$(current_sha)" ok "ref=$REF"
   deploys_md_sync
-  local public site
+  local public site edge pending
   public="$(env_get RATCHET_PUBLIC_URL)"
   site="$(env_get RATCHET_SITE_URL)"
+  edge="$(edge_mode)"
+  if [[ "$edge" == "tunnel" ]]; then
+    pending="tunnel token, connector or its public hostname pending? deploy/vm/edge-tunnel.sh status"
+  else
+    pending="DNS or certificate pending? Caddy keeps retrying"
+  fi
   if wait_healthy "$public" 30; then
     log "demo URL is live: $public"
   else
-    log "demo URL not reachable yet (DNS or certificate pending?): $public — Caddy keeps retrying"
+    log "demo URL not reachable yet ($pending): $public"
   fi
-  if curl -fsS -o /dev/null --max-time 5 "$site/"; then
-    log "site URL is live: $site"
-  else
-    log "site URL not reachable yet (DNS or certificate pending?): $site"
+  if [[ -n "$site" ]]; then
+    if curl -fsS -o /dev/null --max-time 5 "$site/"; then
+      log "site URL is live: $site"
+    elif [[ "$edge" == "tunnel" ]]; then
+      log "site URL not reachable yet: $site is Cloudflare static assets (.github/workflows/site.yml), not this VM"
+    else
+      log "site URL not reachable yet (DNS or certificate pending?): $site"
+    fi
   fi
-  log "done. Next: keys in $RATCHET_ENV_FILE, then deploy/vm/deploy.sh <sha>; DNS: deploy/vm/dns.md; uptime monitor: deploy/vm/uptime.md"
+  log "done (edge=$edge). Next: keys in $RATCHET_ENV_FILE, then deploy/vm/deploy.sh <sha>; DNS: deploy/vm/dns.md; uptime monitor: deploy/vm/uptime.md"
 }
 
 main

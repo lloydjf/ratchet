@@ -1,19 +1,28 @@
-# /etc/caddy/Caddyfile — public entry for the Ratchet host (installed by bootstrap.sh and,
-# when it validates, by deploy.sh). One Caddy, three names:
+# /etc/caddy/Caddyfile — the Ratchet host's Caddy (installed by bootstrap.sh and, when it
+# validates, by deploy.sh). Two edge modes, chosen by RATCHET_EDGE (deploy/vm/env.template):
 #
-#   RATCHET_SITE_ADDRESS   apex, e.g. ratchetci.dev: the static product page, /docs/ (MkDocs),
-#                          /bench/ (the benchmark report), from /var/www/ratchet-site
-#   www.<apex>             301 to the apex; RATCHET_ALT_ADDRESSES (e.g. ratchetci.com and
-#                          www.ratchetci.com) too, via /etc/caddy/ratchet.d/redirects/
-#   RATCHET_DEMO_ADDRESS   demo host, e.g. demo.ratchetci.dev (host of RATCHET_PUBLIC_URL):
-#                          the dashboard, API and SSE stream, reverse-proxied
-#   RATCHET_UPSTREAM_ADDR  127.0.0.1:8080, or a standby VM during failover.sh proxy-to
+#   caddy (default)  Caddy is the public entry, ports 80/443, certificates by ACME:
+#     RATCHET_SITE_ADDRESS   apex, e.g. ratchetci.dev: the static product page, /docs/ (MkDocs),
+#                            /bench/ (the benchmark report), from /var/www/ratchet-site
+#     www.<apex>             301 to the apex; RATCHET_ALT_ADDRESSES (e.g. ratchetci.com and
+#                            www.ratchetci.com) too, via /etc/caddy/ratchet.d/redirects/
+#     RATCHET_DEMO_ADDRESS   demo host, e.g. demo.ratchetci.dev (host of RATCHET_PUBLIC_URL)
+#   tunnel           Cloudflare is the public entry: the apex, www, /docs/ and /bench/ are
+#                    Cloudflare static assets (deploy/site/), and demo.<apex> reaches this VM
+#                    through a Cloudflare Tunnel (deploy/vm/edge-tunnel.sh). Caddy serves only
+#                    http://RATCHET_DEMO_ADDRESS on 127.0.0.1:80 / [::1]:80: no ACME, no public
+#                    port; any other Host gets 404.
+#
+# Both modes: the demo host is the dashboard, API and SSE stream, reverse-proxied to
+# RATCHET_UPSTREAM_ADDR (127.0.0.1:8080, or a standby VM during failover.sh proxy-to).
 #
 # Values come from the caddy unit's environment, set by bootstrap.sh in
-# /etc/systemd/system/caddy.service.d/ratchet.conf. A bare host => automatic HTTPS (HTTP-01
-# on port 80, so DNS must point here without a proxy: deploy/vm/dns.md), HTTP->HTTPS
-# redirect, renewals. ACME account email is optional (Caddy renews on its own); to get
-# expiry notices add `email you@example.com` as the first line of the global options block.
+# /etc/systemd/system/caddy.service.d/ratchet.conf. Environment placeholders are substituted
+# before parsing, so `import edge_{$RATCHET_EDGE:caddy}` picks one of the two snippets below;
+# any other value fails validation. caddy mode: a bare host => automatic HTTPS (HTTP-01 on port
+# 80, so DNS must point here without a proxy: deploy/vm/dns.md), HTTP->HTTPS redirect,
+# renewals. ACME account email is optional (Caddy renews on its own); to get expiry notices
+# add `email you@example.com` as the first line of the global options block.
 #
 # Static fallback (demo host only): served automatically when the app answers 502/503/504 or
 # is unreachable, and for every request while /etc/caddy/ratchet-fallback.enabled exists
@@ -27,6 +36,12 @@
 			read_header 10s
 			idle 5m
 		}
+		# tunnel mode: cloudflared connects from loopback. Trust it for the client address
+		# (Cf-Connecting-Ip, set by Cloudflare's edge) and X-Forwarded-Proto, so access logs,
+		# rate limits and the app see the real client. Nothing public connects from loopback
+		# in caddy mode, so the same setting is inert there.
+		trusted_proxies static 127.0.0.1/32 ::1/128
+		client_ip_headers Cf-Connecting-Ip
 	}
 	log default {
 		output stdout
@@ -70,53 +85,18 @@
 	}
 }
 
-# --- apex: static product page, /docs/, /bench/ ------------------------------------------------
-{$RATCHET_SITE_ADDRESS} {
-	import security_headers
-	import access_log ratchet-site-access.log
-	encode zstd gzip
-
-	# No inline scripts anywhere, except the docs theme's own, allowed by hash: deploy writes
-	# `vars /docs/* docs_script_src "'sha256-...' ..."` here (render_site.py). Without it the
-	# docs still read fine; only the theme's toggles stop working. Google Fonts: the docs
-	# theme loads Inter and JetBrains Mono from there (the product page self-hosts them), and
-	# its repository badge reads the star count from api.github.com.
-	import /etc/caddy/ratchet.d/site/*.caddy
-	header Content-Security-Policy "default-src 'self'; script-src 'self' {vars.docs_script_src}; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data:; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https://api.github.com; object-src 'none'; frame-src 'none'; frame-ancestors 'none'; base-uri 'self'; form-action 'none'"
-	header Cache-Control "public, max-age=300"
-
-	request_body {
-		max_size 1KB
-	}
-	@write not method GET HEAD
-	respond @write "Method not allowed" 405
-
-	root * /var/www/ratchet-site
-	file_server {
-		hide .*
-	}
-
-	handle_errors 404 {
-		root * /var/www/ratchet-site
-		rewrite * /404.html
-		file_server
-	}
-}
-
-www.{$RATCHET_SITE_ADDRESS} {
-	import security_headers
-	redir https://{$RATCHET_SITE_ADDRESS}{uri} permanent
-}
-
-# Optional alt-domain redirects (RATCHET_ALT_ADDRESSES), written by bootstrap.sh.
-import /etc/caddy/ratchet.d/redirects/*.caddy
-
-# --- demo: the dashboard, API and SSE (public mode) -------------------------------------------
-{$RATCHET_DEMO_ADDRESS} {
+# --- the demo host's routes (both modes) ---------------------------------------------------------
+(demo_site) {
 	import security_headers
 	import access_log ratchet-access.log
 	header Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:; connect-src 'self'; frame-src https://www.youtube-nocookie.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self'"
-	encode zstd gzip
+
+	# SSE (GET /api/v1/events/stream, /api alias per ADR 0019) is never compressed: a
+	# compressor buffers, and Cloudflare (tunnel mode) passes an uncompressed event stream
+	# through as it is written. Everything else is.
+	@sse path /api/v1/events/stream /api/events/stream
+	@compressible not path /api/v1/events/stream /api/events/stream
+	encode @compressible zstd gzip
 
 	# No API route takes more than a small JSON body (actions, demo events, criteria);
 	# the app enforces the same limit (ratchet_api_max_body_bytes, 413 payload_too_large).
@@ -147,11 +127,13 @@ import /etc/caddy/ratchet.d/redirects/*.caddy
 		respond "Not found" 404
 	}
 
-	# SSE (GET /api/v1/events/stream, /api alias per ADR 0019): unbuffered, no read timeout.
-	@sse path /api/v1/events/stream /api/events/stream
+	# SSE: unbuffered, no read timeout, never cached by a proxy or the browser (the app sends a
+	# heartbeat every 15 s, well inside Cloudflare's 100 s idle limit).
 	handle @sse {
 		reverse_proxy {$RATCHET_UPSTREAM_ADDR:127.0.0.1:8080} {
 			flush_interval -1
+			header_down Cache-Control "no-cache"
+			header_down X-Accel-Buffering "no"
 			transport http {
 				read_timeout 0
 			}
@@ -178,3 +160,66 @@ import /etc/caddy/ratchet.d/redirects/*.caddy
 		}
 	}
 }
+
+# --- caddy mode: Caddy is public (80/443, ACME) for the apex, www and demo ---------------------
+(edge_caddy) {
+	{$RATCHET_SITE_ADDRESS} {
+		import security_headers
+		import access_log ratchet-site-access.log
+		encode zstd gzip
+
+		# No inline scripts anywhere, except the docs theme's own, allowed by hash: deploy writes
+		# `vars /docs/* docs_script_src "'sha256-...' ..."` here (render_site.py). Without it the
+		# docs still read fine; only the theme's toggles stop working. Google Fonts: the docs
+		# theme loads Inter and JetBrains Mono from there (the product page self-hosts them), and
+		# its repository badge reads the star count from api.github.com.
+		import /etc/caddy/ratchet.d/site/*.caddy
+		header Content-Security-Policy "default-src 'self'; script-src 'self' {vars.docs_script_src}; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data:; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https://api.github.com; object-src 'none'; frame-src 'none'; frame-ancestors 'none'; base-uri 'self'; form-action 'none'"
+		header Cache-Control "public, max-age=300"
+
+		request_body {
+			max_size 1KB
+		}
+		@write not method GET HEAD
+		respond @write "Method not allowed" 405
+
+		root * /var/www/ratchet-site
+		file_server {
+			hide .*
+		}
+
+		handle_errors 404 {
+			root * /var/www/ratchet-site
+			rewrite * /404.html
+			file_server
+		}
+	}
+
+	www.{$RATCHET_SITE_ADDRESS} {
+		import security_headers
+		redir https://{$RATCHET_SITE_ADDRESS}{uri} permanent
+	}
+
+	# Optional alt-domain redirects (RATCHET_ALT_ADDRESSES), written by bootstrap.sh.
+	import /etc/caddy/ratchet.d/redirects/*.caddy
+
+	{$RATCHET_DEMO_ADDRESS} {
+		import demo_site
+	}
+}
+
+# --- tunnel mode: plain HTTP on loopback for cloudflared; the apex is on Cloudflare ------------
+(edge_tunnel) {
+	http://{$RATCHET_DEMO_ADDRESS} {
+		bind 127.0.0.1 [::1]
+		import demo_site
+	}
+
+	# Any other Host through the tunnel (its remote config should only send the demo host).
+	http:// {
+		bind 127.0.0.1 [::1]
+		respond "Not found" 404
+	}
+}
+
+import edge_{$RATCHET_EDGE:caddy}

@@ -31,4 +31,5 @@ dashboard/playwright-report/
 *.swp
 *~
 dashboard/screenshots/
-site/
+/site/
+deploy/site/dist/

@@ -1,0 +1,38 @@
+[Unit]
+# The demo host's Cloudflare Tunnel connector (RATCHET_EDGE=tunnel; deploy/vm/edge-tunnel.sh).
+# Remotely managed tunnel: demo.<apex> -> http://127.0.0.1:80 (Caddy) is configured in the
+# Cloudflare dashboard/API, so the connector needs nothing but the token. The token stays in
+# /etc/ratchet/cloudflared-token (root 0600): systemd hands it to the service as a credential,
+# so it is never on a command line, in the environment or in this file.
+Description=Ratchet Cloudflare Tunnel connector (demo host)
+Documentation=file:///opt/ratchet/deploy/vm/dns.md
+After=network-online.target caddy.service
+Wants=network-online.target
+ConditionPathExists=/etc/ratchet/cloudflared-token
+
+[Service]
+Type=notify
+TimeoutStartSec=0
+LoadCredential=tunnel-token:/etc/ratchet/cloudflared-token
+# Updates come from apt (pkg.cloudflare.com), not from cloudflared itself. Readiness and
+# Prometheus metrics on loopback only: curl http://127.0.0.1:20241/ready
+ExecStart=/usr/bin/cloudflared --no-autoupdate tunnel --metrics 127.0.0.1:20241 run --token-file %d/tunnel-token
+Restart=on-failure
+RestartSec=5s
+
+DynamicUser=yes
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+PrivateDevices=yes
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectControlGroups=yes
+CapabilityBoundingSet=
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX AF_NETLINK
+LockPersonality=yes
+MemoryMax=512M
+
+[Install]
+WantedBy=multi-user.target

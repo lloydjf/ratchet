@@ -1,15 +1,18 @@
 #!/usr/bin/env bash
 # Deploy a commit to the demo host (the deploy procedure in docs/RUNBOOK.md, steps 1-6).
 #
-#   sudo /opt/ratchet/deploy/vm/deploy.sh <git-sha|tag|branch> [--skip-ci-check]
+#   sudo /opt/ratchet/deploy/vm/deploy.sh <git-sha|tag|branch> [--skip-ci-check] [--edge caddy|tunnel]
 #
 #   1. CI must be green for the commit (GitHub check runs; --skip-ci-check to bypass, and
 #      rollbacks skip it). If RATCHET_WORKER_IMAGE_REPO is set in /etc/ratchet/env (e.g.
 #      ghcr.io/<org>/ratchet-worker), the CI-built <repo>:<sha> is pulled and pinned;
 #      otherwise a local worker tag is rebuilt from the checkout when the sandbox is docker.
 #   2. git fetch + checkout --detach <sha>; uv sync --frozen --no-dev; npm ci && npm run build.
-#      Rebuild the apex site: MkDocs (/docs/), the benchmark report (/bench/) and
-#      deploy/vm/www (render_site in lib.sh); install the Caddyfile if it validates; reload.
+#      RATCHET_EDGE=caddy: rebuild the apex site, MkDocs (/docs/), the benchmark report
+#      (/bench/) and deploy/vm/www (render_site in lib.sh). tunnel: the apex is Cloudflare
+#      static assets (.github/workflows/site.yml), nothing to build here. Both: install the
+#      Caddyfile if it validates; reload. --edge switches the mode first (the env file, the
+#      Caddy drop-in, the tunnel connector: configure_edge in lib.sh), as bootstrap.sh --edge.
 #   3. ratchet db migrate (forward-only, idempotent).
 #   4. restart ratchet-serve (one process: proxy -> mock tools -> orchestrator -> dashboard
 #      start in that order inside `ratchet serve`), wait for /healthz.
@@ -29,16 +32,19 @@ reexec_from_copy "${BASH_SOURCE[0]}" "$@"
 REF=""
 KIND="deploy"
 SKIP_CI=0
+EDGE=""
 while (($#)); do
   case "$1" in
     --skip-ci-check) SKIP_CI=1; shift ;;
+    --edge) EDGE="${2:?--edge needs caddy or tunnel}"; shift 2 ;;
     --kind) KIND="${2:?--kind needs deploy|rollback}"; shift 2 ;;
-    -h | --help) sed -n '2,22p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
+    -h | --help) sed -n '2,24p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
     -*) die "unknown option $1" ;;
     *) REF="$1"; shift ;;
   esac
 done
-[[ -n "$REF" ]] || die "usage: deploy.sh <git-sha> [--skip-ci-check]"
+[[ -n "$REF" ]] || die "usage: deploy.sh <git-sha> [--skip-ci-check] [--edge caddy|tunnel]"
+[[ -z "$EDGE" || "$EDGE" == "caddy" || "$EDGE" == "tunnel" ]] || die "--edge must be caddy or tunnel"
 
 require_root
 take_lock
@@ -136,10 +142,18 @@ main() {
   systemctl daemon-reload
   systemctl enable --quiet --now ratchet-nebius-token.timer
   systemctl restart "$RATCHET_UNIT"
-  render_fallback
-  # The apex is static: a failure here is logged and never fails the app deploy.
-  render_site || log "WARNING: site build failed; the previous site stays live"
-  install_caddyfile || true
+  if [[ -n "$EDGE" ]]; then
+    log "switching the edge to $EDGE"
+    env_set RATCHET_EDGE "$EDGE"
+    configure_edge
+  else
+    render_fallback
+    # The apex is static: a failure here is logged and never fails the app deploy.
+    if [[ "$(edge_mode)" == "caddy" ]]; then
+      render_site || log "WARNING: site build failed; the previous site stays live"
+    fi
+    install_caddyfile || true
+  fi
 
   SMOKE_SECS=0
   if wait_healthy "$RATCHET_LOCAL_URL" 90 && smoke; then
@@ -147,7 +161,7 @@ main() {
   else
     result="FAIL"
   fi
-  note="prev=${prev:0:12} smoke=${SMOKE_SECS}s"
+  note="prev=${prev:0:12} smoke=${SMOKE_SECS}s edge=$(edge_mode)"
   ledger_append "$KIND" "$sha" "$result" "$note"
   deploys_md_sync
   notify "Ratchet $KIND ${sha:0:12}: $result ($note) on $(hostname)"

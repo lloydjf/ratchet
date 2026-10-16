@@ -65,19 +65,26 @@
   --r-panel: #272522;
   --r-raised: #2f2c29;
   --r-hair: #3a3733;
-  --r-hair-strong: #514d48;
+  --r-hair-strong: color-mix(in srgb, var(--r-ink-2) 58%, var(--r-hair));
   --r-ink: #eceae6;
   --r-ink-2: #a8a49e;
   --r-ink-3: #8a857e;
-  --r-steel: #9bb4c9;
-  --r-pass: #3fb950;
-  --r-warn: #d29922;
-  --r-block: #ff7b72;
-  --r-drift: #58a6ff;
-  --r-nano: #7ee787;
-  --r-super: #d2a8ff;
-  --r-ultra: #ffa657;
-  --r-scroll: #4a4641;
+  --r-steel: #93a9bf;
+  --r-pass: #5cb87f;
+  --r-warn: #d6a23e;
+  --r-block: #ea6d55;
+  --r-drift: #72a9de;
+  --r-nano: #4cbfc4;
+  --r-super: #a68ee8;
+  --r-ultra: #de80b4;
+  --r-pass-ink: var(--r-pass);
+  --r-warn-ink: var(--r-warn);
+  --r-block-ink: #f0806b;
+  --r-drift-ink: var(--r-drift);
+  --r-nano-ink: var(--r-nano);
+  --r-super-ink: #b19deb;
+  --r-ultra-ink: var(--r-ultra);
+  --r-scroll: var(--r-hair-strong);
 
   --md-hue: 30;
   --md-default-bg-color: var(--r-page);
@@ -94,7 +101,7 @@
   --md-primary-bg-color: var(--r-ink);
   --md-primary-bg-color--light: var(--r-ink-2);
   --md-accent-fg-color: var(--r-steel);
-  --md-accent-fg-color--transparent: rgba(155, 180, 201, 0.12);
+  --md-accent-fg-color--transparent: rgba(147, 169, 191, 0.12);
   --md-accent-bg-color: var(--r-page);
   --md-typeset-color: var(--r-ink);
   --md-typeset-a-color: var(--r-steel);
@@ -103,14 +110,14 @@
   --md-typeset-kbd-color: var(--r-raised);
   --md-typeset-kbd-accent-color: var(--r-hair);
   --md-typeset-kbd-border-color: var(--r-hair-strong);
-  --md-typeset-mark-color: rgba(210, 153, 34, 0.24);
-  --md-typeset-del-color: rgba(255, 123, 114, 0.14);
-  --md-typeset-ins-color: rgba(63, 185, 80, 0.14);
+  --md-typeset-mark-color: rgba(214, 162, 62, 0.24);
+  --md-typeset-del-color: rgba(234, 109, 85, 0.14);
+  --md-typeset-ins-color: rgba(92, 184, 127, 0.14);
   --md-code-bg-color: var(--r-raised);
   --md-code-fg-color: #e3dfd8;
-  --md-code-hl-color: rgba(155, 180, 201, 0.16);
-  --md-code-hl-color--light: rgba(155, 180, 201, 0.08);
-  --md-code-hl-keyword-color: #9bb4c9;
+  --md-code-hl-color: rgba(147, 169, 191, 0.16);
+  --md-code-hl-color--light: rgba(147, 169, 191, 0.08);
+  --md-code-hl-keyword-color: #93a9bf;
   --md-code-hl-string-color: #cdc4a5;
   --md-code-hl-number-color: #d6b99c;
   --md-code-hl-special-color: #d0aeaa;
@@ -135,21 +142,28 @@
 [data-md-color-scheme="default"] {
   --r-page: #f3f1ec;
   --r-panel: #ffffff;
-  --r-raised: #e9e6e0;
+  --r-raised: #f7f5f1;
   --r-hair: #e6e3dd;
-  --r-hair-strong: #cfcbc4;
+  --r-hair-strong: color-mix(in srgb, var(--r-ink-2) 62%, var(--r-hair));
   --r-ink: #1d1b18;
-  --r-ink-2: #5e5a54;
+  --r-ink-2: #5c5852;
   --r-ink-3: #6f6b66;
-  --r-steel: #3e5f7a;
-  --r-pass: #166c2f;
-  --r-warn: #7a5200;
-  --r-block: #b01d27;
-  --r-drift: #0859b9;
-  --r-nano: #1a6d32;
-  --r-super: #6a3fc0;
-  --r-ultra: #953c00;
-  --r-scroll: #cfcbc4;
+  --r-steel: #3d5a77;
+  --r-pass: #1d7a45;
+  --r-warn: #8a5b00;
+  --r-block: #b93a22;
+  --r-drift: #1f62a8;
+  --r-nano: #0b767c;
+  --r-super: #6a4bc6;
+  --r-ultra: #a63a77;
+  --r-pass-ink: #1a6e3e;
+  --r-warn-ink: #7a5000;
+  --r-block-ink: #a8331d;
+  --r-drift-ink: #1b5896;
+  --r-nano-ink: #096a70;
+  --r-super-ink: #5f42b5;
+  --r-ultra-ink: #96336b;
+  --r-scroll: var(--r-hair-strong);
 
   --md-hue: 40;
   --md-default-bg-color: var(--r-page);
@@ -166,7 +180,7 @@
   --md-primary-bg-color: var(--r-ink);
   --md-primary-bg-color--light: var(--r-ink-2);
   --md-accent-fg-color: var(--r-steel);
-  --md-accent-fg-color--transparent: rgba(62, 95, 122, 0.1);
+  --md-accent-fg-color--transparent: rgba(61, 90, 119, 0.1);
   --md-accent-bg-color: var(--r-panel);
   --md-typeset-color: var(--r-ink);
   --md-typeset-a-color: var(--r-steel);
@@ -175,14 +189,14 @@
   --md-typeset-kbd-color: var(--r-panel);
   --md-typeset-kbd-accent-color: var(--r-hair);
   --md-typeset-kbd-border-color: var(--r-hair-strong);
-  --md-typeset-mark-color: rgba(154, 103, 0, 0.18);
-  --md-typeset-del-color: rgba(176, 29, 39, 0.1);
-  --md-typeset-ins-color: rgba(22, 108, 47, 0.1);
+  --md-typeset-mark-color: rgba(138, 91, 0, 0.18);
+  --md-typeset-del-color: rgba(185, 58, 34, 0.1);
+  --md-typeset-ins-color: rgba(29, 122, 69, 0.1);
   --md-code-bg-color: var(--r-panel);
   --md-code-fg-color: #2a2723;
-  --md-code-hl-color: rgba(62, 95, 122, 0.12);
-  --md-code-hl-color--light: rgba(62, 95, 122, 0.06);
-  --md-code-hl-keyword-color: #3e5f7a;
+  --md-code-hl-color: rgba(61, 90, 119, 0.12);
+  --md-code-hl-color--light: rgba(61, 90, 119, 0.06);
+  --md-code-hl-keyword-color: #3d5a77;
   --md-code-hl-string-color: #5f5317;
   --md-code-hl-number-color: #84461c;
   --md-code-hl-special-color: #7d3f3a;
@@ -833,19 +847,19 @@ body {
   white-space: nowrap;
   vertical-align: 1px;
 }
-.md-typeset :is(.chip, .tag, .badge, code.r-tag):is(.pass, .r-tag--pass) { color: var(--r-pass); }
-.md-typeset :is(.chip, .tag, .badge, code.r-tag):is(.warn, .r-tag--warn) { color: var(--r-warn); }
-.md-typeset :is(.chip, .tag, .badge, code.r-tag):is(.block, .r-tag--block) { color: var(--r-block); }
-.md-typeset :is(.chip, .tag, .badge, code.r-tag):is(.drift, .r-tag--drift) { color: var(--r-drift); }
+.md-typeset :is(.chip, .tag, .badge, code.r-tag):is(.pass, .r-tag--pass) { color: var(--r-pass-ink); }
+.md-typeset :is(.chip, .tag, .badge, code.r-tag):is(.warn, .r-tag--warn) { color: var(--r-warn-ink); }
+.md-typeset :is(.chip, .tag, .badge, code.r-tag):is(.block, .r-tag--block) { color: var(--r-block-ink); }
+.md-typeset :is(.chip, .tag, .badge, code.r-tag):is(.drift, .r-tag--drift) { color: var(--r-drift-ink); }
 .md-typeset :is(.chip, .tag, .badge, code.r-tag):is(.neutral, .r-tag--neutral) { color: var(--r-ink-2); }
 .md-typeset .tier {
   min-width: 20px;
   padding: 0 4px;
   text-align: center;
 }
-.md-typeset .tier.nano { color: var(--r-nano); }
-.md-typeset .tier.super { color: var(--r-super); }
-.md-typeset .tier.ultra { color: var(--r-ultra); }
+.md-typeset .tier.nano { color: var(--r-nano-ink); }
+.md-typeset .tier.super { color: var(--r-super-ink); }
+.md-typeset .tier.ultra { color: var(--r-ultra-ink); }
 .md-typeset .tier.skipped { color: var(--r-ink-3); border-style: dashed; }
 
 /* ---------------------------------------------------------------- admonitions: 1 px hairline-left rows */

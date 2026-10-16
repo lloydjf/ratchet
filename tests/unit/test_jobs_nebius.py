@@ -21,16 +21,15 @@ S3 = "https://storage.eu-north1.nebius.cloud"
 
 
 def _settings(**extra: object) -> Settings:
-    return Settings(
-        _env_file=None,  # type: ignore[call-arg]
-        nebius_api_key="iam-token-xyz",
-        nebius_project_id="project-e00abc",
-        nebius_s3_bucket="ratchet-io",
-        nebius_s3_access_key_id="AKIDEXAMPLE",
-        nebius_s3_secret_access_key="s3secret0123456789",
-        nebius_token_factory_key="tf-key-0123456789",
-        **extra,
-    )
+    values: dict[str, object] = {
+        "nebius_api_key": "iam-token-xyz",
+        "nebius_project_id": "project-e00abc",
+        "nebius_s3_bucket": "ratchet-io",
+        "nebius_s3_access_key_id": "AKIDEXAMPLE",
+        "nebius_s3_secret_access_key": "s3secret0123456789",
+        "nebius_token_factory_key": "tf-key-0123456789",
+    }
+    return Settings(_env_file=None, **{**values, **extra})  # type: ignore[call-arg, arg-type]
 
 
 def _spec() -> ReplayBatch:
@@ -51,32 +50,122 @@ async def _no_sleep(_: float) -> None:
     return None
 
 
-def test_job_request_has_parent_image_volumes_and_injected_spec():
-    spec = _spec()
-    body = build_job_request(_settings(), spec, prefix="batches/batch_42/", spec_json=b'{"a":1}')
-    assert body["metadata"]["parentId"] == "project-e00abc"
-    assert body["metadata"]["name"] == "ratchet-batch-42"
-    job = body["spec"]
-    assert job["image"] == "ghcr.io/x/ratchet-worker:sha"
-    assert job["args"][-2:] == ["--spec", "/ratchet/spec.json"]
-    (inject,) = job["injectedFiles"]
-    assert base64.b64decode(inject["content"]) == b'{"a":1}'
-    vol_in, vol_out = job["volumes"]
-    assert (vol_in["containerPath"], vol_in["mode"], vol_in["sourcePath"]) == (
-        "/in",
-        "READ_ONLY",
-        "batches/batch_42/in",
+# ``nebius.ai.v1.JobSpec`` properties in the published OpenAPI document.
+JOBSPEC_FIELDS = {
+    "args", "containerCommand", "disk", "environmentVariables", "image", "injectedFiles",
+    "platform", "ports", "preemptible", "preset", "pricingModel", "publicIp",
+    "registryCredentials", "restartAttempts", "shmSizeBytes", "sshAuthorizedKeys",
+    "subnetId", "timeout", "volumes", "workingDir",
+}  # fmt: skip
+SPEC_B64 = base64.b64encode(b'{"a":1}').decode()
+
+
+def _body(settings: Settings, spec: ReplayBatch | None = None) -> dict:
+    return build_job_request(
+        settings, spec or _spec(), prefix="batches/batch_42/", spec_json=b'{"a":1}'
     )
-    assert (vol_out["containerPath"], vol_out["mode"]) == ("/out", "READ_WRITE")
-    assert vol_in["s3Config"]["endpoint"] == S3
-    env = {e["name"]: e["value"] for e in job["environmentVariables"]}
+
+
+def test_job_request_matches_the_accepted_spec_with_an_external_bucket():
+    body = _body(_settings(nebius_job_subnet_id="vpcsubnet-e00xyz"))
+    assert body["metadata"] == {
+        "parentId": "project-e00abc",
+        "name": "ratchet-batch-42",
+        "labels": {"ratchet-batch-id": "batch_42"},
+    }
+    job = dict(body["spec"])
+    env = {e["name"]: e["value"] for e in job.pop("environmentVariables")}
+    s3 = {
+        "endpoint": S3,
+        "region": "eu-north1",
+        "credentials": {"accessKeyId": "AKIDEXAMPLE", "secretAccessKey": "s3secret0123456789"},
+    }
+    assert job == {
+        "image": "ghcr.io/x/ratchet-worker:sha",
+        "args": "--inputs /in --output /out --spec /ratchet/spec.json",
+        "injectedFiles": [{"containerPath": "/ratchet/spec.json", "content": SPEC_B64}],
+        "volumes": [
+            {
+                "source": "s3://ratchet-io",
+                "sourcePath": "batches/batch_42/in",
+                "containerPath": "/in",
+                "mode": "READ_ONLY",
+                "s3Config": s3,
+            },
+            {
+                "source": "s3://ratchet-io",
+                "sourcePath": "batches/batch_42/out",
+                "containerPath": "/out",
+                "mode": "READ_WRITE",
+                "s3Config": s3,
+            },
+        ],
+        "platform": "cpu-d3",
+        "preset": "2vcpu-8gb",
+        "timeout": "3600s",
+        "restartAttempts": "0",
+        "publicIp": False,
+        "disk": {"type": "NETWORK_SSD", "sizeBytes": "21474836480"},
+        "subnetId": "vpcsubnet-e00xyz",
+    }
     assert env["RATCHET_SANDBOX"] == "docker" and env["NEBIUS_TOKEN_FACTORY_KEY"]
-    assert (job["platform"], job["preset"], job["timeout"]) == ("cpu-d3", "2vcpu-8gb", "2400s")
+    assert all(set(e) == {"name", "value"} for e in body["spec"]["environmentVariables"])
+    assert set(body["spec"]) <= JOBSPEC_FIELDS
+    assert isinstance(body["spec"]["args"], str)
+
+
+@pytest.mark.parametrize(
+    "extra",
+    [
+        {"nebius_s3_bucket_id": "storagebucket-e00abc"},
+        {"nebius_s3_bucket": "storagebucket-e00abc"},
+    ],
+)
+def test_managed_bucket_id_is_mounted_without_credentials(extra):
+    body = _body(_settings(**extra))
+    vol_in, vol_out = body["spec"]["volumes"]
+    assert vol_in == {
+        "source": "storagebucket-e00abc",
+        "sourcePath": "batches/batch_42/in",
+        "containerPath": "/in",
+        "mode": "READ_ONLY",
+    }
+    assert vol_out["mode"] == "READ_WRITE" and "s3Config" not in vol_out
+    assert "s3secret0123456789" not in json.dumps(body["spec"]["volumes"])
+
+
+@pytest.mark.parametrize(
+    ("timeout_s", "expected"),
+    [(600, "3600s"), (1800, "3600s"), (3000, "4800s"), (10**6, "604800s")],
+)
+def test_timeout_is_clamped_to_the_platform_range(timeout_s, expected):
+    spec = _spec().model_copy(update={"timeout_s": timeout_s})
+    assert _body(_settings(), spec)["spec"]["timeout"] == expected
+
+
+def test_disk_defaults_to_20_gib_on_cpu_and_is_overridable():
+    gib = 1024**3
+    assert _body(_settings())["spec"]["disk"]["sizeBytes"] == str(20 * gib)
+    big = _body(_settings(nebius_job_disk_gib=50))["spec"]["disk"]
+    assert big == {"type": "NETWORK_SSD", "sizeBytes": str(50 * gib)}
+    gpu = _body(_settings(nebius_job_preset="gpu-h100-sxm:1gpu-16vcpu-200gb"))["spec"]
+    assert (gpu["platform"], gpu["preset"]) == ("gpu-h100-sxm", "1gpu-16vcpu-200gb")
+    assert "disk" not in gpu
+
+
+def test_image_entrypoint_is_kept_unless_a_container_command_is_set():
+    assert "containerCommand" not in _body(_settings())["spec"]
+    job = _body(_settings(nebius_job_container_command="/app/.venv/bin/python"))["spec"]
+    assert job["containerCommand"] == "/app/.venv/bin/python"
+    assert job["args"] == (
+        "/app/worker/entrypoint.py --inputs /in --output /out --spec /ratchet/spec.json"
+    )
 
 
 def test_oversized_spec_is_not_injected():
     body = build_job_request(_settings(), _spec(), prefix="p/", spec_json=b"x" * (64 * 1024 + 1))
-    assert body["spec"]["injectedFiles"] == [] and "--spec" not in body["spec"]["args"]
+    assert body["spec"]["injectedFiles"] == []
+    assert body["spec"]["args"] == "--inputs /in --output /out"
 
 
 @pytest.mark.parametrize(
@@ -85,10 +174,13 @@ def test_oversized_spec_is_not_injected():
         ("PROVISIONING", "pending"),
         ("IMAGE_PULLING", "pending"),
         ("RUNNING", "running"),
+        ("COMPLETING", "running"),
+        ("CANCELLING", "running"),
         ("COMPLETED", "succeeded"),
         ("FAILED", "failed"),
         ("ERROR", "failed"),
         ("CANCELLED", "cancelled"),
+        ("DELETING", "cancelled"),
         (None, "pending"),
         ("NEW_STATE", "pending"),
     ],
@@ -102,7 +194,7 @@ async def test_submit_uploads_inputs_and_creates_job(tmp_path: Path):
     (tmp_path / "goldens").mkdir()
     (tmp_path / "spec.json").write_text("{}")
     (tmp_path / "goldens" / "run_a.json").write_text("{}")
-    respx.get(f"{API}/ai/v1/jobs/by-name").respond(404)
+    respx.get(f"{API}/ai/v1/jobs/get-by-name").respond(404)
     puts = respx.put(url__startswith=f"{S3}/ratchet-io/batches/batch_42/in/").respond(200)
     create = respx.post(f"{API}/ai/v1/jobs").respond(
         200, json={"id": "op-1", "resourceId": "aijob-9"}
@@ -124,16 +216,22 @@ async def test_submit_uploads_inputs_and_creates_job(tmp_path: Path):
 
 @respx.mock
 async def test_submit_is_idempotent_by_job_name(tmp_path: Path):
-    respx.get(f"{API}/ai/v1/jobs/by-name").respond(200, json={"metadata": {"id": "aijob-1"}})
+    found = {"metadata": {"id": "aijob-1"}, "status": {"state": "RUNNING"}}
+    lookup = respx.get(f"{API}/ai/v1/jobs/get-by-name").respond(200, json=found)
     create = respx.post(f"{API}/ai/v1/jobs").respond(200, json={"resourceId": "never"})
     runner = NebiusJobRunner(_settings(), sleep=_no_sleep)
     assert await runner.submit(_spec(), tmp_path) == "aijob-1"
     assert create.call_count == 0
+    assert dict(lookup.calls[0].request.url.params) == {
+        "parentId": "project-e00abc",
+        "name": "ratchet-batch-42",
+    }
+    assert runner.gate.in_flight == {"aijob-1"}
 
 
 @respx.mock
 async def test_calls_retry_three_times_with_backoff_then_fail(tmp_path: Path):
-    route = respx.get(f"{API}/ai/v1/jobs/by-name").respond(503)
+    route = respx.get(f"{API}/ai/v1/jobs/get-by-name").respond(503)
     delays: list[float] = []
 
     async def sleep(delay: float) -> None:

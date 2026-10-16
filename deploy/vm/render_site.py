@@ -417,10 +417,13 @@ BENCH_CSS = """@font-face { font-family: "IBM Plex Sans"; font-weight: 400; font
   font-display: swap; src: url("fonts/IBMPlexMono-500.woff2") format("woff2"); }
 
 :root {
-  --page: #201e1b; --panel: #272522; --raised: #2f2c29; --hair: #3a3733; --hair-strong: #514d48;
-  --ink: #eceae6; --ink-2: #a8a49e; --ink-3: #8a857e; --steel: #9bb4c9;
-  --pass: #3fb950; --warn: #d29922; --block: #ff7b72; --drift: #58a6ff;
-  --nano: #7ee787; --super: #d2a8ff; --ultra: #ffa657; --scroll: #4a4641;
+  --page: #201e1b; --panel: #272522; --raised: #2f2c29; --hair: #3a3733;
+  --hair-strong: color-mix(in srgb, var(--ink-2) 58%, var(--hair));
+  --ink: #eceae6; --ink-2: #a8a49e; --ink-3: #8a857e; --steel: #93a9bf;
+  --pass: #5cb87f; --warn: #d6a23e; --block: #ea6d55; --drift: #72a9de;
+  --nano: #4cbfc4; --super: #a68ee8; --ultra: #de80b4; --scroll: var(--hair-strong);
+  --pass-ink: var(--pass); --warn-ink: var(--warn); --block-ink: #f0806b;
+  --drift-ink: var(--drift);
   --sans: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
   --mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
   --measure: 70ch;
@@ -428,10 +431,12 @@ BENCH_CSS = """@font-face { font-family: "IBM Plex Sans"; font-weight: 400; font
 }
 @media (prefers-color-scheme: light) {
   :root {
-    --page: #f3f1ec; --panel: #ffffff; --raised: #e9e6e0; --hair: #e6e3dd; --hair-strong: #cfcbc4;
-    --ink: #1d1b18; --ink-2: #5e5a54; --ink-3: #6f6b66; --steel: #3e5f7a;
-    --pass: #166c2f; --warn: #7a5200; --block: #b01d27; --drift: #0859b9;
-    --nano: #1a6d32; --super: #6a3fc0; --ultra: #953c00; --scroll: #cfcbc4;
+    --page: #f3f1ec; --panel: #ffffff; --raised: #f7f5f1; --hair: #e6e3dd;
+    --hair-strong: color-mix(in srgb, var(--ink-2) 62%, var(--hair));
+    --ink: #1d1b18; --ink-2: #5c5852; --ink-3: #6f6b66; --steel: #3d5a77;
+    --pass: #1d7a45; --warn: #8a5b00; --block: #b93a22; --drift: #1f62a8;
+    --nano: #0b767c; --super: #6a4bc6; --ultra: #a63a77; --scroll: var(--hair-strong);
+    --pass-ink: #1a6e3e; --warn-ink: #7a5000; --block-ink: #a8331d; --drift-ink: #1b5896;
     color-scheme: light;
   }
 }
@@ -501,8 +506,8 @@ pre { margin: 0 0 16px; overflow-x: auto; background: var(--raised); border: 1px
   scrollbar-color: var(--scroll) transparent; scrollbar-width: thin; }
 pre code { display: block; padding: 14px 16px; background: none; font-size: 13px; line-height: 20px;
   overflow-wrap: normal; white-space: pre; width: max-content; min-width: 100%; }
-pre .add { color: var(--pass); }
-pre .del { color: var(--block); }
+pre .add { color: var(--pass-ink); }
+pre .del { color: var(--block-ink); }
 pre .hunk { color: var(--steel); }
 pre .meta { color: var(--ink-2); }
 blockquote { margin: 0 0 16px; padding: 0 0 0 16px; border-left: 1px solid var(--hair-strong);
@@ -528,18 +533,18 @@ td.num { font-family: var(--mono); font-size: 12.5px; white-space: nowrap;
 thead + tbody td.long { min-width: 44ch; }
 td a { color: inherit; text-decoration: none; }
 td a:hover { color: var(--steel); text-decoration: underline 1px; }
-td.fb-pass { color: var(--pass); }
-td.fb-block { color: var(--block); }
+td.fb-pass { color: var(--pass-ink); }
+td.fb-block { color: var(--block-ink); }
 td.fb-pass a, td.fb-block a { color: inherit; }
 
 .tag { display: inline-block; font-family: var(--mono); font-size: 12px; line-height: 18px;
   font-weight: 500; padding: 0 6px; color: var(--ink-2);
   border: 1px solid color-mix(in srgb, currentColor 42%, transparent); white-space: nowrap; }
 .tag a { color: inherit; text-decoration: none; }
-.tag.pass { color: var(--pass); }
-.tag.warn { color: var(--warn); }
-.tag.block { color: var(--block); }
-.tag.drift { color: var(--drift); }
+.tag.pass { color: var(--pass-ink); }
+.tag.warn { color: var(--warn-ink); }
+.tag.block { color: var(--block-ink); }
+.tag.drift { color: var(--drift-ink); }
 
 figure { margin: 8px 0 32px; max-width: 640px; }
 figure img { display: block; width: 100%; height: auto; border: 1px solid var(--hair); }

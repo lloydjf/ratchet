@@ -29,13 +29,15 @@ TERMINAL_STATES: frozenset[str] = frozenset({"succeeded", "failed", "cancelled"}
 class JobStatus:
     """``exit_code`` is the worker's exit code (0/3/4/5/6) once known; the orchestrator
     switches on it. ``succeeded`` means exit 0; a partial batch (3) is ``failed`` with its
-    result still fetchable."""
+    result still fetchable. ``detail`` is the platform's short failure code when it gives
+    one (Nebius ``status.stateDetails.code``, e.g. ``ContainerFailed``)."""
 
     state: JobState
     k: int
     n: int
     heartbeat_at: datetime | None
     exit_code: int | None
+    detail: str | None = None
 
     @property
     def terminal(self) -> bool:

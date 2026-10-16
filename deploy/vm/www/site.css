@@ -16,22 +16,28 @@
   --panel: #272522;
   --raised: #2F2C29;
   --line: #3A3733;
-  --line-strong: #4A4642;
+  --line-strong: color-mix(in srgb, var(--ink-2) 58%, var(--line));
   --ink: #ECEAE6;
   --ink-2: #A8A49E;
   --ink-3: #6F6B66;            /* graphics only: under 4.5:1 for text */
-  --steel: #9DB2C7;
+  --steel: #93A9BF;
   --steel-hover: #B4C5D6;
   --on-steel: #1A1916;
 
-  --pass: #6DBE84;
-  --warn: #D9AE4E;
-  --block: #EE6F63;
-  --drift: #74A9DE;
+  --pass: #5CB87F;
+  --warn: #D6A23E;
+  --block: #EA6D55;
+  --drift: #72A9DE;
   --level0: #A8A49E;
-  --nano: #5EC2B4;
-  --super: #AE9EE6;
-  --ultra: #DE9460;
+  --nano: #4CBFC4;
+  --super: #A68EE8;
+  --ultra: #DE80B4;
+  /* Ink: the hue as text. Equal to the hue except where a lift reads better. */
+  --pass-ink: var(--pass);
+  --block-ink: #F0806B;
+  --nano-ink: var(--nano);
+  --super-ink: #B19DEB;
+  --ultra-ink: var(--ultra);
 
   --band-block: color-mix(in srgb, var(--block) 6%, var(--panel));
   --selection: color-mix(in srgb, var(--steel) 34%, var(--page));
@@ -49,24 +55,29 @@
   :root {
     --page: #F3F1EC;
     --panel: #FFFFFF;
-    --raised: #ECE9E3;
+    --raised: #F7F5F1;
     --line: #E6E3DD;
-    --line-strong: #D3CFC8;
+    --line-strong: color-mix(in srgb, var(--ink-2) 62%, var(--line));
     --ink: #1D1B18;
     --ink-2: #5C5852;
     --ink-3: #8C877F;
-    --steel: #3D5A78;
+    --steel: #3D5A77;
     --steel-hover: #2F4862;
     --on-steel: #FFFFFF;
 
-    --pass: #2B7643;
-    --warn: #8A6300;
-    --block: #B9382D;
-    --drift: #2F67A6;
+    --pass: #1D7A45;
+    --warn: #8A5B00;
+    --block: #B93A22;
+    --drift: #1F62A8;
     --level0: #5C5852;
-    --nano: #1A766B;
-    --super: #6A55B8;
-    --ultra: #A65424;
+    --nano: #0B767C;
+    --super: #6A4BC6;
+    --ultra: #A63A77;
+    --pass-ink: #1A6E3E;
+    --block-ink: #A8331D;
+    --nano-ink: #096A70;
+    --super-ink: #5F42B5;
+    --ultra-ink: #96336B;
     --selection: color-mix(in srgb, var(--steel) 22%, var(--panel));
     color-scheme: light;
   }
@@ -212,17 +223,17 @@ main > section {
 .sieve-cols dd { color: var(--ink-2); }
 .sieve-cols .num { font-size: 12px; }
 .col-level0 { left: 16%; } .col-level0 dt { color: var(--ink); }
-.col-nano { left: 36%; } .col-nano dt { color: var(--nano); }
-.col-super { left: 56%; } .col-super dt { color: var(--super); }
-.col-ultra { left: 76%; } .col-ultra dt { color: var(--ultra); }
+.col-nano { left: 36%; } .col-nano dt { color: var(--nano-ink); }
+.col-super { left: 56%; } .col-super dt { color: var(--super-ink); }
+.col-ultra { left: 76%; } .col-ultra dt { color: var(--ultra-ink); }
 .col-rail { right: 0; transform: none; text-align: right; }
 .col-rail dt { color: var(--ink); }
-.t-regression { color: var(--block); }
-.t-pass { color: var(--pass); }
+.t-regression { color: var(--block-ink); }
+.t-pass { color: var(--pass-ink); }
 .t-level0 { color: var(--ink-2); }
-.t-nano { color: var(--nano); }
-.t-super { color: var(--super); }
-.t-ultra { color: var(--ultra); }
+.t-nano { color: var(--nano-ink); }
+.t-super { color: var(--super-ink); }
+.t-ultra { color: var(--ultra-ink); }
 .sieve-cols .t-regression, .sieve-cols .t-pass { font-weight: 500; }
 
 .pairs { border-bottom: 1px solid var(--line); }
@@ -349,8 +360,8 @@ main > section {
 .report code { padding: 1px 4px; background: var(--raised); color: var(--ink); font-size: 0.85em; }
 .report pre { margin: 16px 0; background: var(--panel); border: 1px solid var(--line); padding: 12px 16px; overflow-x: auto; font: 400 12px/18px var(--mono); }
 .report pre code { padding: 0; background: none; font-size: inherit; }
-.report pre .add { color: var(--pass); }
-.report pre .del { color: var(--block); }
+.report pre .add { color: var(--pass-ink); }
+.report pre .del { color: var(--block-ink); }
 .report pre .hunk { color: var(--steel); }
 .report pre .meta { color: var(--ink-2); }
 .report blockquote { margin: 16px 0; padding: 8px 16px; border-left: 1px solid var(--line-strong); background: var(--panel); }

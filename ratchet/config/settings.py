@@ -121,6 +121,32 @@ class Settings(BaseSettings):
     nebius_s3_access_key_id: SecretStr | None = Field(None, description="Object storage key.")
     nebius_s3_secret_access_key: SecretStr | None = Field(None, description="Object storage.")
     nebius_job_preset: str | None = Field(None, description="Jobs compute preset/platform.")
+    nebius_s3_bucket_id: str | None = Field(
+        None,
+        description="Managed bucket id (storagebucket-…) mounted into jobs without inline "
+        "credentials; NEBIUS_S3_BUCKET stays the bucket name used for uploads.",
+    )
+    nebius_job_subnet_id: str | None = Field(
+        None, description="Jobs subnet; unset uses the project's default subnet."
+    )
+    nebius_job_disk_gib: int | None = Field(
+        None,
+        description="Job boot disk in GiB; unset sends 20 GiB on cpu-* platforms and the "
+        "platform default (250 GiB, billed) otherwise.",
+    )
+    nebius_job_container_command: str | None = Field(
+        None,
+        description="Override the worker image entrypoint (e.g. /app/.venv/bin/python); "
+        "unset keeps the image's own entrypoint and sends only the worker arguments.",
+    )
+    ratchet_jobs_max_concurrent: int = Field(
+        2, ge=1, description="Serverless Jobs in flight at once (each job is a VM on quota)."
+    )
+    ratchet_jobs_submit_wait_s: float = Field(
+        900.0,
+        ge=0,
+        description="How long a job submit waits for a free slot or quota before failing.",
+    )
 
     # --- Tavily ------------------------------------------------------------------------------
     tavily_api_key: SecretStr | None = Field(None, description="Tavily key; judge only.")

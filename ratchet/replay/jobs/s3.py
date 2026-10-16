@@ -78,9 +78,14 @@ def sigv4_headers(
 
 
 async def send_with_retries(
-    send: Callable[[], Awaitable[httpx.Response]], *, sleep: Sleep, what: str
+    send: Callable[[], Awaitable[httpx.Response]],
+    *,
+    sleep: Sleep,
+    what: str,
+    retry_429: bool = True,
 ) -> httpx.Response:
-    """Retry 5xx, 429 and transport errors 3 times (2, 4, 8 s); 4xx is returned at once."""
+    """Retry 5xx, 429 and transport errors 3 times (2, 4, 8 s); 4xx is returned at once.
+    ``retry_429=False`` returns a 429 too, for callers with their own quota backoff."""
     for attempt in range(len(BACKOFF_S) + 1):
         try:
             response = await send()
@@ -88,7 +93,7 @@ async def send_with_retries(
             if attempt == len(BACKOFF_S):
                 raise UpstreamError(f"{what} unreachable", code="upstream_unavailable") from exc
         else:
-            if response.status_code < 500 and response.status_code != 429:
+            if response.status_code < 500 and (response.status_code != 429 or not retry_429):
                 return response
             if attempt == len(BACKOFF_S):
                 raise UpstreamError(f"{what} returned {response.status_code}")

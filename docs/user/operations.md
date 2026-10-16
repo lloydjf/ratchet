@@ -230,6 +230,40 @@ Related switches:
 - `RATCHET_SIMULATE_ENABLED=false` hides Simulate.
 - `RATCHET_DAILY_USD_CAP=<n>` raises or lowers the daily cap.
 
+## Serverless Jobs
+
+With `RATCHET_JOB_RUNNER=nebius`, each replay batch is one Nebius Serverless AI Job. The
+inputs go to `<bucket>/batches/<batch_id>/in/`, the job mounts that prefix read-only at
+`/in` and `…/out/` read-write at `/out`, and the orchestrator downloads `out/` when the job
+ends. Jobs are named `ratchet-<batch_id>`, so a restarted orchestrator finds its jobs again
+instead of creating duplicates.
+
+- **Bucket.** Set `NEBIUS_S3_BUCKET` to the bucket name (used for uploads and downloads with
+  the S3 key). Also set `NEBIUS_S3_BUCKET_ID=storagebucket-…` to mount the managed bucket by
+  id, with no S3 key in the job spec; otherwise jobs mount `s3://<name>` with the key inline.
+- **Compute.** `NEBIUS_JOB_PRESET=<platform>:<preset>` (default `cpu-d3:2vcpu-8gb`). Jobs get
+  a 20 GiB boot disk on CPU platforms (`NEBIUS_JOB_DISK_GIB` overrides it; the platform
+  default is 250 GiB, and you pay for it). The job timeout is the batch timeout plus 30
+  minutes, and never less than the platform minimum of 3600 s. `NEBIUS_JOB_SUBNET_ID` picks
+  a subnet; when it is unset, the project's default subnet is used.
+- **Entrypoint.** By default the worker image's own entrypoint runs and the job passes only
+  the worker flags. `NEBIUS_JOB_CONTAINER_COMMAND=/app/.venv/bin/python` replaces the
+  entrypoint; the job then passes the script path as the first argument.
+- **Quota.** Every job is a VM and counts against the tenant's `compute.instance.count`
+  quota. At most `RATCHET_JOBS_MAX_CONCURRENT` jobs (default 2) run at once. A further
+  submit waits for a slot. While it waits, it re-counts the project's unfinished ratchet
+  jobs. When the API answers quota exhausted (HTTP 429), the submit retries at 15, 30 and
+  then every 60 s. Each submit gives up after `RATCHET_JOBS_SUBMIT_WAIT_S` (default 900 s)
+  and fails with `upstream_unavailable`. Look for `jobs.submit_waiting` and
+  `jobs.submit_gave_up` with `code=quota_exhausted` or `code=jobs_slots_full` in
+  `journalctl -u ratchet-serve`. Raise the quota in the console, lower the cap to match it,
+  or switch to `RATCHET_JOB_RUNNER=local`.
+- **Failures.** The platform reports no exit code. The worker's own `out/exit.json` is the
+  result when it exists. Otherwise `COMPLETED` counts as exit 0 and `FAILED` with
+  `ContainerFailed` counts as exit 4 (sandbox). Other causes (`StartFailed`,
+  `TimeoutExceeded`, `NotEnoughResources`) appear as `code` on the `jobs.finished` log event.
+  A batch without a result is retried once on the local runner.
+
 ## Incident playbook
 
 | Symptom | First response (≤ 5 min) | Fallback |

@@ -190,6 +190,8 @@ jobs:
           bad=0
           for platform in linux/amd64 linux/arm64; do
             echo "::group::${REF} ${platform}"
+            # After a platform-specific pull the local tag is that platform's image, so the
+            # inspect and save below need no --platform (older daemons reject the flag).
             docker pull --quiet --platform "$platform" "$REF"
 
             # Uncompressed size of the flattened filesystem (the image store may report
@@ -203,18 +205,18 @@ jobs:
             echo "size: $((size / 1024 / 1024)) MiB"
             if [ "$size" -ge 2000000000 ]; then echo "::error::$platform image is >= 2 GB"; bad=1; fi
 
-            user=$(docker image inspect --platform "$platform" "$REF" --format '{{.Config.User}}')
+            user=$(docker image inspect "$REF" --format '{{.Config.User}}')
             echo "user: ${user:-<unset>}"
             case "${user%%:*}" in
               "" | 0 | root) echo "::error::$platform image runs as root"; bad=1 ;;
             esac
 
-            if docker image inspect --platform "$platform" "$REF" --format '{{json .Config.Env}}' \
+            if docker image inspect "$REF" --format '{{json .Config.Env}}' \
                 | grep -qE 'NEBIUS_TOKEN_FACTORY_KEY|TAVILY_API_KEY|NEBIUS_API_KEY|SECRET_ACCESS_KEY|ACTION_TOKEN_SECRET'; then
               echo "::error::$platform image config names a secret variable"; bad=1
             fi
 
-            docker save --platform "$platform" "$REF" -o "$work/image.tar"
+            docker save "$REF" -o "$work/image.tar"
             tar -xf "$work/image.tar" -C "$work/img"
             for layer in $(jq -r '.[0].Layers[]' "$work/img/manifest.json"); do
               tar -tf "$work/img/$layer" > "$work/paths"

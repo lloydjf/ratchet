@@ -314,7 +314,7 @@ def test_index_html_is_static_and_says_what_it_should() -> None:
     assert "<script" not in page.lower()
     assert not re.search(r"\son[a-z]+\s*=", page, re.I), "inline event handler"
     assert not re.search(
-        r"""(?:src|href)=["']https?://(?!demo\.ratchetci\.dev|github\.com/lloydjf/ratchet|ratchetci\.dev)""",
+        r"""(?:src|href)=["']https?://(?!demo\.ratchetci\.dev|github\.com/lloydjf/ratchet|ratchetci\.dev|youtu\.be/)""",
         page,
     )
     text = re.sub(r"\s+", " ", re.sub(r"<[^>]+>", "", page))

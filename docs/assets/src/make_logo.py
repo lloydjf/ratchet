@@ -7,6 +7,7 @@ around the pawl so the two parts read separately at favicon size.
 Run: python3 docs/assets/src/make_logo.py
 Writes docs/assets/logo.svg (currentColor) and dashboard/public/favicon.svg (on #0E1116).
 """
+
 import math
 from pathlib import Path
 
@@ -94,7 +95,8 @@ def body(gap=2.6):
     wheel, arm, boss, _ = build()
     return (
         f'<mask id="rk"><rect width="64" height="64" fill="#fff"/>'
-        f'<path d="{arm}{circle_only(boss)}" stroke="#000" stroke-width="{gap}" stroke-linejoin="round"/></mask>'
+        f'<path d="{arm}{circle_only(boss)}" stroke="#000" stroke-width="{gap}"'
+        ' stroke-linejoin="round"/></mask>'
         f'<path mask="url(#rk)" fill-rule="evenodd" d="{wheel}"/>'
         f'<path d="{arm}"/><path fill-rule="evenodd" d="{boss}"/>'
     )
@@ -105,7 +107,8 @@ def circle_only(boss):
 
 
 def svg() -> str:
-    return f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="currentColor">{body()}</svg>\n'
+    head = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="currentColor">'
+    return f"{head}{body()}</svg>\n"
 
 
 FAVICON = {"N": 8, "LAND": 8.0, "HUB": 7.0}  # fewer, chunkier teeth survive 32 px
@@ -135,4 +138,11 @@ if __name__ == "__main__":
     (ROOT / "dashboard/public/favicon.svg").write_text(favicon())
     print("logo.svg bytes:", len(svg().encode()), "scale:", round(build()[3], 3))
     print("small mark (for the dashboard header, AppShell.tsx):")
-    print(small_body(4.2).replace('fill-rule', 'fillRule').replace('stroke-width', 'strokeWidth').replace('stroke-linejoin', 'strokeLinejoin'))
+    jsx = small_body(4.2)
+    for attr, prop in (
+        ("fill-rule", "fillRule"),
+        ("stroke-width", "strokeWidth"),
+        ("stroke-linejoin", "strokeLinejoin"),
+    ):
+        jsx = jsx.replace(attr, prop)
+    print(jsx)

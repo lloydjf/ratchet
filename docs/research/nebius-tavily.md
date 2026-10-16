@@ -157,19 +157,29 @@ from nebius.sdk import SDK
 from nebius.api.nebius.common.v1 import ResourceMetadata
 from nebius.api.nebius.ai.v1 import JobServiceClient, CreateJobRequest, JobSpec, GetJobRequest
 
+
 async def main():
-    sdk = SDK(parent_id="project-...")            # reads NEBIUS_IAM_TOKEN
+    sdk = SDK(parent_id="project-...")  # reads NEBIUS_IAM_TOKEN
     svc = JobServiceClient(sdk)
-    op = await svc.create(CreateJobRequest(
-        metadata=ResourceMetadata(parent_id="project-...", name="ratchet-run"),
-        spec=JobSpec(image="ghcr.io/...:tag", container_command="python", args=["run.py"],
-                     platform="cpu-d3", preset="2vcpu-8gb",
-                     environment_variables=[JobSpec.EnvironmentVariable(name="K", value="V")]),
-    ))
+    op = await svc.create(
+        CreateJobRequest(
+            metadata=ResourceMetadata(parent_id="project-...", name="ratchet-run"),
+            spec=JobSpec(
+                image="ghcr.io/...:tag",
+                container_command="python",
+                args=["run.py"],
+                platform="cpu-d3",
+                preset="2vcpu-8gb",
+                environment_variables=[JobSpec.EnvironmentVariable(name="K", value="V")],
+            ),
+        )
+    )
     await op.wait()
     job = await svc.get(GetJobRequest(id=op.resource_id))
     print(job.status.state)
     await sdk.close()
+
+
 asyncio.run(main())
 ```
 Official SDK docs: https://docs.nebius.com/sdk/python/install-auth.md , https://docs.nebius.com/sdk/python/send-request.md

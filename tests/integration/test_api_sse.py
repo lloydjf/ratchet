@@ -7,6 +7,8 @@ from __future__ import annotations
 import asyncio
 import json
 import sys
+import time
+from collections.abc import Callable
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
@@ -17,6 +19,15 @@ from ratchet.dashboard_api.sse import StreamConfig, event_frames  # noqa: E402
 
 __all__ = ["api_reset"]
 STREAM = "/api/v1/events/stream"
+
+
+async def _settle(check: Callable[[], bool], timeout_s: float = 3.0) -> None:
+    """Wait until ``check`` holds; stream subscriptions land a few ticks after the request on a
+    slow runner, so a fixed sleep is not enough."""
+    deadline = time.monotonic() + timeout_s
+    while not check() and time.monotonic() < deadline:
+        await asyncio.sleep(0.01)
+    assert check()
 
 
 def frames(text: str) -> list[dict[str, str]]:
@@ -206,12 +217,12 @@ async def test_streams_are_capped_per_client_and_in_total(tmp_path: Path) -> Non
     )
     slots = env.app.state.services.stream_slots
     first = _OpenStream(env, "203.0.113.1")
-    await asyncio.sleep(0.05)
+    await _settle(lambda: slots.open == 1)
     async with env.client("203.0.113.1") as client:
         refused = await client.get(STREAM)
     assert refused.status_code == 429 and refused.json()["error"]["code"] == "rate_limited"
     second = _OpenStream(env, "203.0.113.2")
-    await asyncio.sleep(0.05)
+    await _settle(lambda: slots.open == 2)
     async with env.client("203.0.113.3") as client:
         full = await client.get(STREAM)
     assert full.status_code == 429 and slots.open == 2
@@ -232,9 +243,8 @@ async def test_one_shared_poller_fans_out_to_every_stream(tmp_path: Path) -> Non
 
     env.store.events = counting  # type: ignore[method-assign]
     streams = [_OpenStream(env, f"198.51.100.{i}") for i in range(3)]
-    await asyncio.sleep(0.05)
     hub = env.app.state.services.hub()
-    assert hub.subscribers == 3
+    await _settle(lambda: hub.subscribers == 3)
     await asyncio.to_thread(env.store.emit, "edit.detected", "fan", {})
     await asyncio.sleep(0.1)
     polls = hub.polls

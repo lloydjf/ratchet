@@ -252,18 +252,23 @@ OpenClaw (https://github.com/openclaw/openclaw, TypeScript, MIT, ~392k stars; "T
 
   mcp = MCPServer("ratchet-mock")
 
+
   @mcp.tool()
   def send_email(to: str, subject: str, body: str) -> dict:
       """Mock: records the call and returns a canned result."""
       return {"ok": True, "id": "mock-1"}
 
+
   if __name__ == "__main__":
       import sys
+
       if "--http" in sys.argv:
-          mcp.run(transport="streamable-http", host="127.0.0.1", port=3001)   # endpoint http://127.0.0.1:3001/mcp
+          mcp.run(
+              transport="streamable-http", host="127.0.0.1", port=3001
+          )  # endpoint http://127.0.0.1:3001/mcp
           # also: streamable_http_path="/mcp", json_response=True, stateless_http=True
       else:
-          mcp.run()   # stdio (default transport); blocks for the life of the server
+          mcp.run()  # stdio (default transport); blocks for the life of the server
   ```
   CLI alternatives: `uv run mcp run server.py --transport streamable-http`, `uv run mcp dev server.py` (Inspector).
 - Mount in an existing ASGI app (**CONFIRMED** https://py.sdk.modelcontextprotocol.io/run/asgi/): `app = Starlette(routes=[Mount("/", app=mcp.streamable_http_app())], lifespan=lifespan)` where `lifespan` does `async with mcp.session_manager.run(): yield`; run `uvicorn server:app` → `/mcp`.

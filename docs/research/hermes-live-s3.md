@@ -124,7 +124,7 @@ Tested together as `var/hermes/run_fixed_adapter.py` (runs `fy1`/`fy2`); C6–C9
 
 **C1. `hermes.py:86`: the MCP toolset is the server key.**
 ```python
-ENABLED_TOOLSETS: tuple[str, ...] = (MCP_SERVER, "file", "skills")   # was f"mcp-{MCP_SERVER}"
+ENABLED_TOOLSETS: tuple[str, ...] = (MCP_SERVER, "file", "skills")  # was f"mcp-{MCP_SERVER}"
 ```
 `parse_stream` and anything that maps tool names must expect `mcp__ratchet_mock__<mcp_name>` (prefix `f"mcp__{MCP_SERVER}__"`), not `mcp_ratchet_mock_…`. The module docstring and `mcp_server.py`'s docstring (line 4) say `mcp_<server>_<tool>`; both need updating.
 
@@ -150,15 +150,30 @@ Without the first, the model sees `tool_search`/`tool_describe`/`tool_call` inst
 
 **C4. `hermes.py:283-299` (`argv`): drop `--usage-file`.** It is a top-level flag (`hermes --usage-file X chat …`), and **`chat --oneshot` ignores it** anyway: it is only passed into the `hermes -z` path (`hermes_cli/main.py:3089`), so no usage.json is written. Token counts are in the `result.tokens` stream-json event. Parse them there if needed.
 ```python
-return [self._bin, "chat", "--oneshot", "-Q", "-q", task_input, "--format", "stream-json",
-        "--max-turns", str(self._max_turns), "--toolsets", ",".join(ENABLED_TOOLSETS),
-        "--run-budget", str(int(timeout_s * 0.9))]   # see C9
+return [
+    self._bin,
+    "chat",
+    "--oneshot",
+    "-Q",
+    "-q",
+    task_input,
+    "--format",
+    "stream-json",
+    "--max-turns",
+    str(self._max_turns),
+    "--toolsets",
+    ",".join(ENABLED_TOOLSETS),
+    "--run-budget",
+    str(int(timeout_s * 0.9)),
+]  # see C9
 ```
 (`usage_file` can then come out of the signature, `plan()` and `run_task()`.)
 
 **C5. `hermes.py:301-304` (`env`) and `write_home`: no bundled skills.**
 ```python
-env["HERMES_BUNDLED_SKILLS"] = f"{home}/../no-bundled-skills"   # an EMPTY dir; create it in write_home
+env["HERMES_BUNDLED_SKILLS"] = (
+    f"{home}/../no-bundled-skills"  # an EMPTY dir; create it in write_home
+)
 ```
 In `write_home` (`hermes.py:165`): `(home.parent / "no-bundled-skills").mkdir(exist_ok=True)`, and also write the marker `(home / ".no-bundled-skills").touch()` as a second layer. The marker alone is **not** enough: it still seeds `hermes-agent`.
 

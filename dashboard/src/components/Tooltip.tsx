@@ -39,7 +39,7 @@ export function Tooltip({ content, children, side = 'top', align = 'center', cla
         role="tooltip"
         id={id}
         hidden={!open}
-        className={`absolute ${pos} ${al} z-50 w-max max-w-[min(320px,calc(100vw-32px))] rounded-sm border border-border-strong bg-surface-2 px-3 py-2 text-left text-meta font-normal text-text normal-case tracking-normal whitespace-normal`}
+        className={`absolute ${pos} ${al} z-50 w-max max-w-[min(320px,calc(100vw-32px))] border border-border-strong bg-surface-2 px-3 py-2 text-left text-meta font-normal text-text normal-case tracking-normal whitespace-normal`}
       >
         {content}
       </span>

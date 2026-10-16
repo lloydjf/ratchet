@@ -49,7 +49,7 @@ describe('Verdict header actions follow the action taken', () => {
     const user = userEvent.setup()
     const header = await open('v_rec_gt')
     await user.click(within(header).getByRole('button', { name: 'Approve anyway' }))
-    const dialog = screen.getByRole('dialog', { name: 'Approve this blocked edit?' })
+    const dialog = screen.getByRole('group', { name: 'Approve this blocked edit?' })
     expect(dialog).toHaveTextContent(
       'This re-applies the reverted edit to github-triage and merges it into main, overriding the block. Your agent will use it on its next task. Rollback stays available.',
     )
@@ -58,17 +58,17 @@ describe('Verdict header actions follow the action taken', () => {
     expect(await screen.findByTestId('toast')).toHaveTextContent('Approved anyway. github-triage is re-applied and live on main.')
     await waitFor(() => expect(within(header).getByTestId('acted-status')).toHaveAttribute('data-action', 'merged'))
     expect(within(header).getByTestId('acted-status')).toHaveTextContent(/Merged to main( · commit [0-9a-f]{7})? · approved anyway at/)
-    expect(actionButtons(header)).toEqual(['Rollback'])
+    expect(actionButtons(header)).toEqual(['Roll back'])
   })
 
   it('WARN (held): Approve and Rollback; Rollback shows who rolled it back', async () => {
     const user = userEvent.setup()
     const header = await open('v_7d20e8')
-    expect(actionButtons(header)).toEqual(['Approve', 'Rollback'])
-    await user.click(within(header).getByRole('button', { name: 'Rollback' }))
-    await user.click(within(screen.getByRole('dialog', { name: 'Roll back this edit?' })).getByTestId('confirm-action'))
+    expect(actionButtons(header)).toEqual(['Approve', 'Roll back'])
+    await user.click(within(header).getByRole('button', { name: 'Roll back' }))
+    await user.click(within(screen.getByRole('group', { name: 'Roll back this edit?' })).getByTestId('confirm-action'))
     expect(await screen.findByTestId('toast')).toHaveTextContent('Rolled back. main is unchanged.')
-    expect(await within(header).findByTestId('rolled-back')).toHaveTextContent(/^↺Rolled back by you at \d{2}:\d{2}/)
+    expect(await within(header).findByTestId('rolled-back')).toHaveTextContent(/^Rolled back by you at \d{2}:\d{2}/)
     // Now reverted: Rollback is gone; Approve anyway is the override that re-applies it.
     expect(actionButtons(header)).toEqual(['Approve anyway'])
   })
@@ -76,8 +76,8 @@ describe('Verdict header actions follow the action taken', () => {
   it('PASS (merged): Rollback takes the edit out of main and says so', async () => {
     const user = userEvent.setup()
     const header = await open('v_rec_fx')
-    await user.click(within(header).getByRole('button', { name: 'Rollback' }))
-    await user.click(within(screen.getByRole('dialog', { name: 'Roll back this edit?' })).getByTestId('confirm-action'))
+    await user.click(within(header).getByRole('button', { name: 'Roll back' }))
+    await user.click(within(screen.getByRole('group', { name: 'Roll back this edit?' })).getByTestId('confirm-action'))
     expect(await screen.findByTestId('toast')).toHaveTextContent('Rolled back. main no longer has this edit.')
     expect(await within(header).findByTestId('rolled-back')).toBeInTheDocument()
     expect(actionButtons(header)).toEqual(['Approve anyway'])
@@ -91,8 +91,8 @@ describe('Verdict header actions follow the action taken', () => {
     })
     const user = userEvent.setup()
     const header = await open('v_rec_fx', true)
-    await user.click(within(header).getByRole('button', { name: 'Rollback' }))
-    await user.click(within(screen.getByRole('dialog', { name: 'Roll back this edit?' })).getByTestId('confirm-action'))
+    await user.click(within(header).getByRole('button', { name: 'Roll back' }))
+    await user.click(within(screen.getByRole('group', { name: 'Roll back this edit?' })).getByTestId('confirm-action'))
     expect(await screen.findByTestId('toast')).toHaveTextContent('Rolled back. From the response.')
   })
 
@@ -114,14 +114,14 @@ describe('Verdict header actions follow the action taken', () => {
     const user = userEvent.setup()
     const header = await open('v_rec_fx', true)
     await waitFor(() => expect(live).not.toBeNull())
-    await user.click(within(header).getByRole('button', { name: 'Rollback' }))
-    await user.click(within(screen.getByRole('dialog', { name: 'Roll back this edit?' })).getByTestId('confirm-action'))
+    await user.click(within(header).getByRole('button', { name: 'Roll back' }))
+    await user.click(within(screen.getByRole('group', { name: 'Roll back this edit?' })).getByTestId('confirm-action'))
     expect(await screen.findByTestId('toast')).toHaveTextContent('Rolled back. Server wording.')
   })
 
   it('PASS (merged): Rollback only', async () => {
     const header = await open('v_rec_fx')
-    expect(actionButtons(header)).toEqual(['Rollback'])
+    expect(actionButtons(header)).toEqual(['Roll back'])
   })
 
   it('rolled back: shows actor and time; Approve anyway re-applies it, Rollback is hidden', async () => {
@@ -131,11 +131,11 @@ describe('Verdict header actions follow the action taken', () => {
     expect(within(header).getByRole('link', { name: 're-apply from the edit page' })).toHaveAttribute('href', '/edits/e_9a41c2')
     expect(actionButtons(header)).toEqual(['Approve anyway'])
     await user.click(within(header).getByRole('button', { name: 'Approve anyway' }))
-    await user.click(within(screen.getByRole('dialog', { name: 'Approve this blocked edit?' })).getByTestId('confirm-action'))
+    await user.click(within(screen.getByRole('group', { name: 'Approve this blocked edit?' })).getByTestId('confirm-action'))
     expect(await screen.findByTestId('toast')).toHaveTextContent('Approved anyway. changelog-writer is re-applied and live on main.')
     await waitFor(() => expect(within(header).getByTestId('acted-status')).toHaveAttribute('data-action', 'merged'))
     expect(within(header).getByTestId('acted-status')).toHaveTextContent('approved anyway at')
-    expect(actionButtons(header)).toEqual(['Rollback'])
+    expect(actionButtons(header)).toEqual(['Roll back'])
   })
 
   it('reading order is decision → title → actions → metadata', async () => {

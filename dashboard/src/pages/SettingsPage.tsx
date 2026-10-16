@@ -29,7 +29,7 @@ export default function SettingsPage() {
         <p className="mt-1 text-body text-muted">Read-only. Change these in <code className="font-mono text-mono">.env</code> and restart Ratchet.</p>
       </header>
       <section className="card p-4" aria-labelledby="runtime">
-        <h2 id="runtime" className="eyebrow">Runtime</h2>
+        <h2 id="runtime" className="heading-sm">Runtime</h2>
         <dl className="mt-3 grid grid-cols-[10rem_1fr] gap-y-2 text-meta">
           <dt className="text-muted">Harness</dt><dd className="font-mono text-text">{s.harness}</dd>
           <dt className="text-muted">Job runner</dt><dd className="font-mono text-text">{s.runner}</dd>
@@ -38,7 +38,7 @@ export default function SettingsPage() {
         </dl>
       </section>
       <section className="card p-4" aria-labelledby="models">
-        <h2 id="models" className="eyebrow">Models</h2>
+        <h2 id="models" className="heading-sm">Models</h2>
         <ul className="mt-3 flex flex-col gap-2">
           {(['nano', 'super', 'ultra'] as const).map((t) => (
             <li key={t} className="flex flex-wrap items-center gap-3 text-meta">
@@ -50,7 +50,7 @@ export default function SettingsPage() {
         </ul>
       </section>
       <section className="card p-4" aria-labelledby="caps">
-        <h2 id="caps" className="eyebrow">Daily spending caps</h2>
+        <h2 id="caps" className="heading-sm">Daily spending caps</h2>
         <dl className="mt-3 grid grid-cols-[10rem_1fr] gap-y-2 text-meta">
           {s.caps.map((c) => (
             <div key={c.purpose} className="contents">

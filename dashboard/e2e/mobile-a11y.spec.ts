@@ -18,7 +18,7 @@ test.describe('mobile 390×844', () => {
     expect(titleBox.x).toBeGreaterThanOrEqual(16)
     expect(titleBox.x + titleBox.width).toBeLessThanOrEqual(390 - 16)
     const fontSize = await title.evaluate((el) => parseFloat(getComputedStyle(el).fontSize))
-    expect(fontSize).toBeGreaterThanOrEqual(22)
+    expect(fontSize).toBeGreaterThanOrEqual(20)
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390)
     await expect(page.getByTestId('pair-grid')).toHaveAttribute('data-layout', 'cards')
   })

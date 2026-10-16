@@ -15,40 +15,50 @@ import { TierBadge } from '../components/TierBadge'
 import { UsdTiers } from '../components/UsdTiers'
 import { dateTime, ratioLabel, shortDay, time, sumTiers, tiersWithSpend, tokens, usd } from '../lib/format'
 import { useDocumentTitle } from '../lib/useDocumentTitle'
+import { useMediaQuery } from '../lib/useMediaQuery'
 import { customRange, DEFAULT_PRESET, editRange, fillDays, PRESET_LABEL, presetRange, rangeInputs, type RangePreset } from '../lib/range'
 
+/** One hairline row per window: name, total with its tiers, the three tiers on one scale, cache share. */
 function Tile({ title, tile, footer, subtitle, testId }: { title: string; tile: CostTile; footer?: ReactNode; subtitle?: string; testId?: string }) {
   const total = sumTiers(tile.usd_by_tier)
   const max = Math.max(...TIERS.map((t) => tile.usd_by_tier[t] ?? 0), 0.000001)
   return (
-    <section className="card flex flex-col p-4" aria-label={title} data-testid={testId}>
-      <h2 className="eyebrow">{title}</h2>
-      {subtitle ? <p className="num mt-0.5 text-mono text-muted">{subtitle}</p> : null}
-      <p className="num mt-2 flex flex-wrap items-baseline gap-x-2 text-text" data-testid="tile-total">
-        <span className="font-mono text-h2 font-semibold">{usd(total)}</span>
-        <span className="font-mono text-mono text-muted">({tiersWithSpend(tile.usd_by_tier)})</span>
+    <section className="grid grid-cols-1 gap-x-8 gap-y-3 px-6 py-4 max-md:px-4 lg:grid-cols-[11rem_10rem_minmax(0,1fr)]" aria-label={title} data-testid={testId}>
+      <div>
+        <h2 className="heading-sm">{title}</h2>
+        {subtitle ? <p className="num mt-0.5 text-meta text-muted">{subtitle}</p> : null}
+      </div>
+      <p className="num flex flex-wrap items-baseline gap-x-2 text-text lg:flex-col lg:gap-y-0.5" data-testid="tile-total">
+        <span className="font-mono text-h3 font-medium">{usd(total)}</span>
+        <span className="text-meta text-muted">({tiersWithSpend(tile.usd_by_tier)})</span>
       </p>
-      <ul className="mt-4 flex flex-col gap-2.5">
-        {TIERS.map((t) => {
-          const v = tile.usd_by_tier[t] ?? 0
-          return (
-            <li key={t} className="grid grid-cols-[auto_1fr_auto] items-center gap-x-2.5 gap-y-1 text-meta">
-              <TierBadge tier={t} plain size="sm" />
-              <span className="block h-1.5 overflow-hidden rounded-full bg-surface-2" aria-hidden="true">
-                <span className="block h-full rounded-full" style={{ width: `${v > 0 ? Math.max(2, (v / max) * 100) : 0}%`, background: `var(--${t})` }} />
-              </span>
-              <span className="num w-[7.5rem] text-right font-mono text-mono text-text">
-                {usd(v)} <span className="text-muted">({t})</span>
-              </span>
-              <span className="col-span-3 pl-9 font-mono text-mono text-muted">{tokens(tile.tokens_by_tier[t])} tokens</span>
-            </li>
-          )
-        })}
-      </ul>
-      <p className="num mt-3 font-mono text-mono text-muted" title={CACHE_SHARE.hint} data-testid="cache-share">
-        {cacheShareLine(tile)}
-      </p>
-      {footer ? <div className="mt-auto pt-4">{footer}</div> : null}
+      <div className="flex flex-col gap-2">
+        <ul className="grid grid-cols-1 gap-x-6 gap-y-2 sm:grid-cols-3">
+          {TIERS.map((t) => {
+            const v = tile.usd_by_tier[t] ?? 0
+            return (
+              <li key={t} className="flex flex-col gap-1 text-meta">
+                <span className="flex items-baseline justify-between gap-2">
+                  <span style={{ color: `var(--${t}-ink)` }}>{TIER_SHORT[t]}</span>
+                  <span className="num">
+                    <span className="font-mono text-text">{usd(v)}</span> <span className="text-muted">({t})</span>
+                  </span>
+                </span>
+                <span className="block h-[3px] bg-border" aria-hidden="true">
+                  <span className="block h-full" style={{ width: `${v > 0 ? Math.max(2, (v / max) * 100) : 0}%`, background: `var(--${t})` }} />
+                </span>
+                <span className="num text-muted">
+                  <span className="font-mono">{tokens(tile.tokens_by_tier[t])}</span> tokens
+                </span>
+              </li>
+            )
+          })}
+        </ul>
+        <p className="num text-meta text-muted" title={CACHE_SHARE.hint} data-testid="cache-share">
+          {cacheShareLine(tile)}
+        </p>
+        {footer ? <div>{footer}</div> : null}
+      </div>
     </section>
   )
 }
@@ -56,7 +66,8 @@ function Tile({ title, tile, footer, subtitle, testId }: { title: string; tile: 
 function ByDay({ days }: { days: CostsView['by_day'] }) {
   const [table, setTable] = useState(false)
   // Label every day up to two weeks; beyond that, every k-th day so labels never collide.
-  const every = Math.max(1, Math.ceil(days.length / 14))
+  const narrow = useMediaQuery('(max-width: 479px)')
+  const every = Math.max(narrow ? 3 : 1, Math.ceil(days.length / 14))
   const max = Math.max(...days.map((d) => sumTiers(d.usd_by_tier)), 0.000001)
   const H = 140
   return (
@@ -79,7 +90,7 @@ function ByDay({ days }: { days: CostsView['by_day'] }) {
       </div>
       {table ? (
         <table className="mt-3 w-full text-left text-meta">
-          <thead className="text-mono uppercase tracking-[0.06em] text-muted">
+          <thead className="text-mono text-muted">
             <tr><th scope="col" className="py-2">Day</th>{TIERS.map((t) => <th key={t} scope="col" className="py-2 text-right">{TIER_SHORT[t]}</th>)}<th scope="col" className="py-2 text-right">Total</th></tr>
           </thead>
           <tbody>
@@ -104,11 +115,11 @@ function ByDay({ days }: { days: CostsView['by_day'] }) {
                   {TIERS.map((t) => {
                     const v = d.usd_by_tier[t] ?? 0
                     if (!v) return null
-                    return <span key={t} className="block w-full rounded-[3px]" style={{ height: Math.max(2, (v / max) * (H - 8)), background: `var(--${t})` }} />
+                    return <span key={t} className="block w-full" style={{ height: Math.max(2, (v / max) * (H - 8)), background: `var(--${t})` }} />
                   })}
-                  {!total ? <span className="block h-[2px] w-full rounded-full bg-border" /> : null}
+                  {!total ? <span className="block h-px w-full bg-border" /> : null}
                 </div>
-                <span className={`num truncate text-mono text-muted ${i % every === 0 ? '' : 'invisible'}`}>{shortDay(d.day)}</span>
+                <span className={`num text-mono whitespace-nowrap text-muted ${i % every === 0 ? '' : 'invisible'}`}>{shortDay(d.day)}</span>
               </div>
             )
           })}
@@ -226,6 +237,7 @@ export default function CostsPage() {
         <EmptyState title={EMPTY.costs} action={{ label: 'Simulate a scenario', to: '/' }} />
       ) : (
         <>
+          <div className="stack">
           {win ? (
             <Tile
               title={label}
@@ -234,7 +246,6 @@ export default function CostsPage() {
               testId="window-tile"
             />
           ) : null}
-          <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
             <Tile title="Today" tile={c.today} />
             <Tile title="This week" tile={c.week} />
             {c.last_edit ? (
@@ -242,10 +253,10 @@ export default function CostsPage() {
                 title="This edit"
                 tile={c.last_edit}
                 footer={
-                  <div className="flex flex-col gap-1 border-t border-border pt-3 text-meta">
+                  <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-meta">
                     {savingsLine(lastTotal, c.last_edit.counterfactual_usd) ? <p className="text-pass-ink">{savingsLine(lastTotal, c.last_edit.counterfactual_usd)}</p> : null}
                     {c.last_edit.verdict_id ? (
-                      <Link to={`/verdicts/${encodeURIComponent(c.last_edit.verdict_id)}`} className="link inline-flex min-h-11 items-center gap-1 font-medium">
+                      <Link to={`/verdicts/${encodeURIComponent(c.last_edit.verdict_id)}`} className="link inline-flex min-h-8 items-center gap-1">
                         Open its verdict <ArrowRight size={14} aria-hidden="true" />
                       </Link>
                     ) : null}
@@ -260,18 +271,18 @@ export default function CostsPage() {
               The cascade spent{' '}
               {cfByTier ? <UsdTiers map={cfByTier} className="font-semibold" /> : <span className="font-mono font-semibold">{usd(cf.actual_usd)}</span>}{' '}
               <span data-testid="counterfactual-n">{overVerdicts(cf.n_verdicts)}</span>. Judging everything with {TIER_NAME.ultra} would have cost{' '}
-              <span className="font-mono font-semibold">{usd(cf.all_ultra_usd)} (ultra)</span>, {ratioLabel(cf.saved_ratio)}× more.
+              <span className="font-mono font-semibold">{usd(cf.all_ultra_usd)}</span> (ultra), {ratioLabel(cf.saved_ratio)}× more.
             </p>
-            {saved ? <p className="shrink-0 rounded-sm border tint-pass px-3 py-1.5 text-meta font-medium">{saved}</p> : null}
+            {saved ? <p className="shrink-0 text-meta font-medium text-pass-ink">{saved}</p> : null}
           </section>
 
           <ByDay days={days} />
 
           <section className="flex flex-col gap-3" aria-labelledby="purpose-title">
             <h2 id="purpose-title" className="text-h3 font-semibold text-text">By purpose{win ? `: ${label.charAt(0).toLowerCase()}${label.slice(1)}` : ' this week'}</h2>
-            <div className="overflow-x-auto rounded-card border border-border">
+            <div className="overflow-x-auto border border-border bg-surface">
               <table className="w-full min-w-[560px] border-collapse text-left">
-                <thead className="bg-surface text-mono uppercase tracking-[0.06em] text-muted">
+                <thead className="text-meta text-muted">
                   <tr>
                     <th scope="col" className="px-4 py-2.5 font-medium">Purpose</th>
                     <th scope="col" className="px-2 py-2.5 font-medium">Tier</th>
@@ -292,7 +303,7 @@ export default function CostsPage() {
                       <td className="px-2 py-2.5"><span className="inline-flex items-center gap-2 text-meta text-text"><TierBadge tier={p.tier} plain size="sm" />{TIER_SHORT[p.tier]}</span></td>
                       <td className="num px-2 py-2.5 text-right font-mono text-meta text-text">{p.calls}</td>
                       <td className="num px-2 py-2.5 text-right font-mono text-meta text-muted">{tokens(p.tokens)}</td>
-                      <td className="num px-4 py-2.5 text-right font-mono text-meta text-text">{usd(p.usd)} <span className="text-muted">({p.tier})</span></td>
+                      <td className="num px-4 py-2.5 text-right font-mono text-meta text-text">{usd(p.usd)} <span className="font-sans text-muted">({p.tier})</span></td>
                     </tr>
                   ))}
                 </tbody>

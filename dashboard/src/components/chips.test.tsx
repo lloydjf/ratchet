@@ -6,14 +6,15 @@ import { TierBadge } from './TierBadge'
 
 describe('DecisionChip', () => {
   it.each([
-    ['BLOCK', '✕'],
-    ['WARN', '!'],
-    ['PASS', '✓'],
-  ] as const)('labels %s with the word and shows its glyph', (decision, glyph) => {
+    ['BLOCK', 'Blocked'],
+    ['WARN', 'Held'],
+    ['PASS', 'Passed'],
+  ] as const)('labels %s as "%s" with a drawn mark (no Unicode glyph)', (decision, word) => {
     render(<DecisionChip decision={decision} />)
     const chip = screen.getByRole('img', { name: `Decision: ${decision}` })
-    expect(chip).toHaveTextContent(glyph)
-    expect(chip).toHaveTextContent(decision)
+    expect(chip).toHaveTextContent(new RegExp(`^${word}$`))
+    expect(chip.querySelector('svg')).not.toBeNull()
+    expect(chip).toHaveAttribute('data-decision', decision)
   })
 
   it('says "Expected" when muted so an unrun scenario is not read as a verdict', () => {

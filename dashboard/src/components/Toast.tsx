@@ -1,6 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { Link } from 'react-router-dom'
-import { X } from 'lucide-react'
+import { Check, CircleAlert, Minus, X, type LucideIcon } from 'lucide-react'
 
 export type ToastTone = 'neutral' | 'pass' | 'warn' | 'block'
 export interface ToastInput {
@@ -25,7 +25,7 @@ const TONE: Record<ToastTone, string> = {
   warn: 'border-[color-mix(in_srgb,var(--warn)_60%,var(--surface))]',
   block: 'border-[color-mix(in_srgb,var(--block)_60%,var(--surface))]',
 }
-const GLYPH: Record<ToastTone, string> = { neutral: '•', pass: '✓', warn: '!', block: '✕' }
+const MARK: Record<ToastTone, LucideIcon> = { neutral: Minus, pass: Check, warn: CircleAlert, block: X }
 const INK: Record<ToastTone, string> = { neutral: 'text-muted', pass: 'text-pass-ink', warn: 'text-warn-ink', block: 'text-block-ink' }
 
 export function Toast({ item, onDismiss }: { item: ToastItem; onDismiss: (id: number) => void }) {
@@ -35,10 +35,11 @@ export function Toast({ item, onDismiss }: { item: ToastItem; onDismiss: (id: nu
   }, [item.id, onDismiss])
   const tone = item.tone ?? 'neutral'
   return (
-    <li className={`anim-toast pointer-events-auto flex w-full items-start gap-3 rounded-card border bg-surface-2 py-2 pr-2 pl-4 ${TONE[tone]}`} data-testid="toast" data-tone={tone}>
-      <span aria-hidden="true" className={`mt-2.5 font-mono text-meta font-bold ${INK[tone]}`}>
-        {GLYPH[tone]}
-      </span>
+    <li className={`anim-toast pointer-events-auto flex w-full items-start gap-3 border bg-surface-2 py-2 pr-2 pl-4 ${TONE[tone]}`} data-testid="toast" data-tone={tone}>
+      {(() => {
+        const Mark = MARK[tone]
+        return <Mark size={14} strokeWidth={2.25} aria-hidden="true" className={`mt-[11px] shrink-0 ${INK[tone]}`} />
+      })()}
       <div className="min-w-0 flex-1 py-2">
         <p className="text-body text-text">{item.message}</p>
         {item.link ? (

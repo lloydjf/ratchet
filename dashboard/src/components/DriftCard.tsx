@@ -3,6 +3,7 @@ import type { DriftCheck } from '../api/types'
 import { BADGE, errorCopy } from '../copy'
 import { pct } from '../lib/format'
 import { ActionButton } from './ActionButton'
+import { StepMark } from './Marks'
 import { Badge } from './Badge'
 
 export type DriftState = 'pending' | 'changed' | 'unchanged' | 'unavailable'
@@ -49,10 +50,9 @@ export function DriftCard({ check, task, onRebless, reblessed, onSourceClick, on
       data-testid="drift-card"
       data-state={state}
     >
-      <span aria-hidden="true" className="absolute inset-y-0 left-0 w-[3px]" style={{ background: state === 'changed' ? 'var(--drift)' : state === 'unavailable' ? 'var(--warn)' : 'var(--border)' }} />
       <header className="flex flex-wrap items-center gap-2">
         <Globe size={16} aria-hidden="true" className={head.tone} />
-        <h3 className={`text-meta font-semibold uppercase tracking-[0.06em] ${head.tone}`}>{head.label}</h3>
+        <h3 className={`text-meta font-semibold ${head.tone}`}>{head.label}</h3>
         {state === 'unavailable' ? <Badge text={BADGE.driftUnavailable} tone="warn" /> : null}
         {check && state !== 'unavailable' ? <span className="num ml-auto font-mono text-mono text-muted">Tavily · {pct(check.confidence)} confident</span> : null}
       </header>
@@ -68,9 +68,7 @@ export function DriftCard({ check, task, onRebless, reblessed, onSourceClick, on
           {state !== 'unavailable' ? (
             <p className="num mt-3 flex flex-wrap items-baseline gap-x-3 gap-y-1 font-mono" aria-label={`Old value ${check!.old_value}, new value ${check!.new_value ?? 'unknown'}`}>
               <span className={`text-h2 ${state === 'changed' ? 'text-muted line-through decoration-1' : 'text-text'}`}>{check!.old_value}</span>
-              <span aria-hidden="true" className="text-h3 text-muted">
-                →
-              </span>
+              <StepMark size={16} />
               <span className={`text-h2 font-semibold ${state === 'changed' ? 'text-drift-ink' : 'text-text'}`}>{check!.new_value ?? '—'}</span>
             </p>
           ) : (

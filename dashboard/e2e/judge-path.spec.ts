@@ -36,13 +36,22 @@ test('cold open → Simulate 1 → BLOCK verdict → pair → back → Approve a
   await expect(header.getByRole('img', { name: 'Decision: BLOCK' })).toBeVisible()
   await expect(page.getByTestId('verdict-headline')).toHaveText('Blocked: the new github-triage would close issues in 6 of 14 replays.')
   await expect(page.getByTestId('cost-saved')).toContainText('cascade saved')
+  // The sieve watched the run and froze on the decision: every replay settled where it was decided.
+  const sieve = page.getByTestId('sieve')
+  await expect(sieve).toHaveAttribute('data-frozen', 'true')
+  await expect(sieve).toHaveAttribute('data-dots', '14')
+  await expect(sieve).toHaveAttribute('data-decided', '14')
+  await expect(sieve.locator('[data-stage="0"][data-outcome="regression"]')).toHaveCount(6)
+  await expect(page.getByTestId('decision-word')).toHaveText('Blocked.')
 
   // Evidence: the first row is a regression with the Level 0 copy; open it.
   const firstRow = page.getByTestId('pair-grid').locator('[data-outcome]').first()
   await expect(firstRow).toHaveAttribute('data-outcome', 'regression')
   await expect(firstRow).toContainText('Checked without a model:')
-  await page.evaluate(() => window.scrollTo(0, 900))
+  await page.evaluate(() => window.scrollTo(0, 400))
+  await firstRow.getByRole('link', { name: /^Open / }).scrollIntoViewIfNeeded()
   const scrollBefore = await page.evaluate(() => window.scrollY)
+  expect(scrollBefore).toBeGreaterThan(100)
   await firstRow.getByRole('link', { name: /^Open / }).click()
 
   await expect(page).toHaveURL(/\/pairs\//)
@@ -61,18 +70,19 @@ test('cold open → Simulate 1 → BLOCK verdict → pair → back → Approve a
   // A BLOCK is already reverted on candidate: nothing to roll back, but it can be approved anyway.
   await expect(header).toHaveAttribute('data-action', 'reverted')
   await expect(header.getByTestId('acted-status')).toContainText('Reverted on candidate · main is unchanged')
-  await expect(header.getByRole('button', { name: 'Rollback' })).toHaveCount(0)
+  await expect(header.getByRole('button', { name: 'Roll back' })).toHaveCount(0)
   await header.getByRole('button', { name: 'Approve anyway' }).click()
-  const dialog = page.getByRole('dialog', { name: 'Approve this blocked edit?' })
+  const dialog = page.getByRole('group', { name: 'Approve this blocked edit?' })
   await expect(dialog).toContainText(
     'This re-applies the reverted edit to github-triage and merges it into main, overriding the block. Your agent will use it on its next task. Rollback stays available.',
   )
+  await expect(dialog.getByTestId('git-action')).toContainText('git merge candidate')
   await dialog.getByTestId('confirm-action').click()
   await expect(page.getByTestId('toast')).toContainText('Approved anyway. github-triage is re-applied and live on main.')
   await expect(header).toHaveAttribute('data-action', 'merged')
   await expect(header.getByTestId('acted-status')).toContainText('Merged to main')
   await expect(header.getByTestId('acted-status')).toContainText('approved anyway at')
-  await expect(header.getByTestId('verdict-actions').getByRole('button')).toHaveText(['Rollback'])
+  await expect(header.getByTestId('verdict-actions').getByRole('button')).toHaveText(['Roll back'])
   expect(errors).toEqual([])
 })
 
@@ -114,9 +124,9 @@ test('held (WARN) verdict offers Approve and Rollback; Rollback updates the head
   await page.goto('/verdicts/v_7d20e8')
   const header = page.getByTestId('verdict-header')
   await expect(header).toHaveAttribute('data-action', 'held')
-  await expect(header.getByTestId('verdict-actions').getByRole('button')).toHaveText(['Approve', 'Rollback'])
-  await header.getByRole('button', { name: 'Rollback' }).click()
-  const dialog = page.getByRole('dialog', { name: 'Roll back this edit?' })
+  await expect(header.getByTestId('verdict-actions').getByRole('button')).toHaveText(['Approve', 'Roll back'])
+  await header.getByRole('button', { name: 'Roll back' }).click()
+  const dialog = page.getByRole('group', { name: 'Roll back this edit?' })
   await expect(dialog).toContainText('on candidate and leaves main unchanged. You can re-apply it later from the edit page.')
   await dialog.getByTestId('confirm-action').click()
   await expect(page.getByTestId('toast')).toContainText('Rolled back. main is unchanged.')
@@ -130,8 +140,8 @@ test('Rollback on a merged edit says main no longer has it', async ({ page }) =>
   await page.goto('/verdicts/v_rec_fx')
   const header = page.getByTestId('verdict-header')
   await expect(header).toHaveAttribute('data-action', 'merged')
-  await header.getByRole('button', { name: 'Rollback' }).click()
-  await page.getByRole('dialog', { name: 'Roll back this edit?' }).getByTestId('confirm-action').click()
+  await header.getByRole('button', { name: 'Roll back' }).click()
+  await page.getByRole('group', { name: 'Roll back this edit?' }).getByTestId('confirm-action').click()
   await expect(page.getByTestId('toast')).toContainText('Rolled back. main no longer has this edit.')
   await expect(header.getByTestId('verdict-actions').getByRole('button')).toHaveText(['Approve anyway'])
   // The debug drawer shows the server's worker log on the operator host.
@@ -149,7 +159,7 @@ test('operator: recent runs → Bless with a confirm → the run leaves the list
   expect(r.violations.filter((v) => v.impact === 'serious' || v.impact === 'critical').map((v) => v.id)).toEqual([])
   const runId = await rows.first().getAttribute('data-run-id')
   await rows.first().getByRole('button', { name: 'Bless' }).click()
-  await page.getByRole('dialog', { name: 'Bless this run?' }).getByTestId('confirm-action').click()
+  await page.getByRole('group', { name: 'Bless this run?' }).getByTestId('confirm-action').click()
   await expect(page.getByTestId('toast')).toContainText('Blessed. Future edits to its skills are now checked against this run.')
   await expect(page.locator(`[data-testid="run-row"][data-run-id="${runId}"]`)).toHaveCount(0)
 })
@@ -204,14 +214,14 @@ test('scenario 3 shows a drift card and offers Re-bless', async ({ page }) => {
   await expect(page.getByTestId('verdict-headline')).toHaveText('Passed: 7 tasks checked; 4 changed because the world did, not the skill.')
   // PASS merged: Rollback is the only header action.
   await expect(page.getByTestId('verdict-header')).toHaveAttribute('data-action', 'merged')
-  await expect(page.getByTestId('verdict-actions').getByRole('button')).toHaveText(['Rollback'])
+  await expect(page.getByTestId('verdict-actions').getByRole('button')).toHaveText(['Roll back'])
   const drift = page.getByTestId('drift-card').first()
   await expect(drift).toHaveAttribute('data-state', 'changed')
   await expect(drift).toContainText('1.0800')
   await expect(drift).toContainText('1.1630')
   await expect(drift.getByRole('link', { name: /Source/ })).toHaveAttribute('href', /^https:\/\//)
   await page.getByRole('button', { name: 'Re-bless' }).first().click()
-  await page.getByRole('dialog').getByTestId('confirm-action').click()
+  await page.getByTestId('inline-confirm').getByTestId('confirm-action').click()
   await expect(page.getByTestId('toast')).toContainText("Re-blessed. Future checks compare against today's result.")
 })
 
@@ -231,8 +241,69 @@ test('timeline filters survive back navigation and live toggle pauses', async ({
 
 test('kit renders every component group', async ({ page }) => {
   await page.goto('/__kit?operator=1')
-  for (const id of ['decision', 'outcome', 'tier', 'trail', 'ticker', 'costpanel', 'progress', 'diff', 'pairgrid', 'opinion', 'drift', 'steps', 'timeline', 'scenario', 'actions', 'badge', 'empty', 'toast']) {
+  for (const id of ['sieve', 'band', 'decision', 'outcome', 'tier', 'trail', 'ticker', 'costpanel', 'progress', 'diff', 'pairgrid', 'opinion', 'drift', 'steps', 'timeline', 'scenario', 'actions', 'badge', 'empty', 'toast']) {
     await expect(page.locator(`[data-kit="${id}"]`)).toBeVisible()
   }
   await expect(page.locator('[data-testid="progress-strip"][data-status="stalled"]')).toHaveCount(1)
+})
+
+test('the sieve fills while a run streams, then freezes on the decision', async ({ page }) => {
+  await page.goto('/')
+  const card = page.locator('[data-scenario="github-triage"]')
+  await card.getByTestId('simulate').click()
+  await card.getByRole('link', { name: /Watch it on the verdict page/ }).click()
+  await expect(page.getByTestId('verdict-header')).toHaveAttribute('data-running', 'true')
+  await expect(page.getByTestId('band-stage')).not.toBeEmpty()
+  const sieve = page.getByTestId('sieve')
+  await expect(sieve).not.toHaveAttribute('data-frozen', 'true')
+  await expect.poll(async () => Number(await sieve.getAttribute('data-dots'))).toBeGreaterThan(0)
+  await expect(sieve).toHaveAttribute('data-frozen', 'true', { timeout: 40_000 })
+  await expect(page.getByTestId('decision-word')).toHaveText('Blocked.')
+  await expect(sieve).toHaveAttribute('data-decided', '14')
+  // Hover a settled dot: task, outcome, where it was decided, cost.
+  await sieve.locator('[data-dot][data-stage="0"]').first().hover()
+  await expect(page.getByTestId('sieve-tooltip')).toContainText('Got worse')
+  await expect(page.getByTestId('sieve-tooltip')).toContainText('Decided at Level 0')
+})
+
+test('command palette and keys: ⌘K jumps, j/o open a pair, ? lists shortcuts', async ({ page }) => {
+  await page.goto('/timeline')
+  await expect(page.getByRole('heading', { level: 1, name: 'Timeline' })).toBeVisible()
+  await page.keyboard.press('ControlOrMeta+k')
+  const palette = page.getByTestId('command-palette')
+  await expect(palette).toBeVisible()
+  await palette.getByRole('combobox').fill('expense-report')
+  await expect(palette.getByRole('option').first()).toBeVisible()
+  await page.keyboard.press('Enter')
+  await expect(page).toHaveURL(/\/verdicts\/v_rec_er|\/timeline\?skill=expense-report/)
+  await page.goto('/verdicts/v_rec_gt')
+  await expect(page.getByTestId('verdict-header')).toBeVisible()
+  await page.keyboard.press('j')
+  await expect(page.locator('[data-testid="pair-grid"] [data-selected]')).toHaveCount(1)
+  await page.keyboard.press('o')
+  await expect(page).toHaveURL(/\/pairs\//)
+  await page.keyboard.press('?')
+  await expect(page.getByTestId('shortcut-sheet')).toBeVisible()
+  await page.keyboard.press('Escape')
+  await expect(page.getByTestId('shortcut-sheet')).toHaveCount(0)
+})
+
+test('a diff hunk filters the pair grid to the pairs it affected', async ({ page }) => {
+  await page.goto('/verdicts/v_rec_er')
+  const hunk = page.getByTestId('hunk-pairs').first()
+  const label = (await hunk.textContent()) ?? ''
+  const n = Number(label.match(/\d+/)?.[0])
+  await hunk.click()
+  await expect(page.getByTestId('hunk-filter')).toContainText(`Showing ${n} of 10 pairs`)
+  await expect(page.getByTestId('pair-grid').locator('tr[data-outcome]')).toHaveCount(n)
+  await page.getByTestId('hunk-filter').getByRole('button', { name: 'Show all pairs' }).click()
+  await expect(page.getByTestId('pair-grid').locator('tr[data-outcome]')).toHaveCount(10)
+})
+
+test('a cited step link scrolls to the step and flashes it once', async ({ page }) => {
+  await page.goto('/verdicts/v_rec_er/pairs/run_er_01/rep_v_rec_er_01')
+  const link = page.getByTestId('opinion-card').first().getByRole('link', { name: /^Show step / }).first()
+  const step = ((await link.textContent()) ?? '').trim()
+  await link.click()
+  await expect(page.locator(`[data-testid="steps-replay"] [data-step="${step}"]`)).toHaveAttribute('data-focused', 'true')
 })

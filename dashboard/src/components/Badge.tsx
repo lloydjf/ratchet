@@ -22,7 +22,7 @@ interface BadgeProps {
 
 /** Status badge ("Recorded run", "Truncated", "Drift check unavailable", "Simulated models"). */
 export function Badge({ text, tone = 'neutral', hint, icon, className = '' }: BadgeProps) {
-  const cls = `inline-flex h-6 items-center gap-1.5 whitespace-nowrap rounded-full border px-2.5 text-mono font-medium ${TONE[tone]} ${className}`
+  const cls = `inline-flex h-5 items-center gap-1.5 whitespace-nowrap border px-1.5 text-meta font-medium ${TONE[tone]} ${className}`
   if (!hint)
     return (
       <span className={cls} data-badge={text}>

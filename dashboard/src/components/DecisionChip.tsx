@@ -1,14 +1,15 @@
 import type { Decision } from '../api/types'
-import { DECISION_ARIA, DECISION_GLYPH, DECISION_WORD } from '../copy'
+import { DECISION_ARIA, DECISION_CHIP, DECISION_WORD } from '../copy'
+import { DecisionMark } from './Marks'
 
 export type ChipSize = 'sm' | 'md' | 'lg'
 
 export const DECISION_TONE: Record<Decision, 'pass' | 'warn' | 'block'> = { PASS: 'pass', WARN: 'warn', BLOCK: 'block' }
 
 const SIZE: Record<ChipSize, string> = {
-  sm: 'h-6 px-2 gap-1.5 text-mono font-semibold tracking-[0.06em]',
-  md: 'h-8 px-3 gap-2 text-meta font-semibold tracking-[0.06em]',
-  lg: 'h-11 px-4 gap-2.5 text-h3 font-bold tracking-[0.08em]',
+  sm: 'h-5 px-1.5 gap-1 text-meta font-medium',
+  md: 'h-6 px-2 gap-1.5 text-meta font-medium',
+  lg: 'h-8 px-2.5 gap-2 text-body font-semibold',
 }
 
 interface DecisionChipProps {
@@ -30,13 +31,11 @@ export function DecisionChip({ decision, size = 'md', muted = false, animate = f
       role="img"
       aria-label={label}
       data-decision={decision}
-      className={`inline-flex shrink-0 items-center rounded-sm border select-none num ${SIZE[size]} ${tone} ${animate ? 'anim-chip-fill' : ''} ${className}`}
+      className={`inline-flex shrink-0 items-center border select-none num ${SIZE[size]} ${tone} ${animate ? 'anim-stage' : ''} ${className}`}
     >
-      <span aria-hidden="true" className="font-mono leading-none">
-        {DECISION_GLYPH[decision]}
-      </span>
+      <DecisionMark decision={decision} size={size === 'lg' ? 14 : 12} />
       <span aria-hidden="true" className="leading-none">
-        {DECISION_WORD[decision]}
+        {DECISION_CHIP[decision]}
       </span>
     </span>
   )

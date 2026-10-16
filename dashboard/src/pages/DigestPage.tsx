@@ -4,6 +4,7 @@ import { useDigest, useVerdicts } from '../api/hooks'
 import type { DigestItem, MetricRow, VerdictSummary } from '../api/types'
 import { DIGEST, EMPTY } from '../copy'
 import { EmptyState } from '../components/EmptyState'
+import { DecisionMark } from '../components/Marks'
 import { ErrorState } from '../components/ErrorState'
 import { PageSkeleton } from '../layout/AppShell'
 import { shortDay } from '../lib/format'
@@ -40,13 +41,13 @@ function linkify(text: string, items: DigestItem[]): ReactNode[] {
 
 function List({ title, items, tone }: { title: string; items: DigestItem[]; tone: 'pass' | 'block' }) {
   return (
-    <section className="card p-4" aria-labelledby={`dg-${tone}`}>
-      <h2 id={`dg-${tone}`} className="eyebrow">{title}</h2>
+    <section className="card p-5" aria-labelledby={`dg-${tone}`}>
+      <h2 id={`dg-${tone}`} className="heading-sm">{title}</h2>
       {items.length ? (
         <ul className="mt-3 flex flex-col gap-3">
           {items.map((i) => (
             <li key={i.edit_id} className="flex gap-3">
-              <span aria-hidden="true" className={`font-mono font-bold ${tone === 'pass' ? 'text-pass-ink' : 'text-block-ink'}`}>{tone === 'pass' ? '✓' : '✕'}</span>
+              <DecisionMark decision={tone === 'pass' ? 'PASS' : 'BLOCK'} className={`mt-0.5 ${tone === 'pass' ? 'text-pass-ink' : 'text-block-ink'}`} />
               <div className="min-w-0">
                 {i.verdict_id ? (
                   <Link to={`/verdicts/${encodeURIComponent(i.verdict_id)}`} className="link font-mono text-meta font-medium">{i.skill}</Link>
@@ -70,9 +71,9 @@ function Metrics({ rows }: { rows: MetricRow[] }) {
   return (
     <section className="flex flex-col gap-3" aria-labelledby="dg-metrics" data-testid="digest-metrics">
       <h2 id="dg-metrics" className="text-h3 font-semibold text-text">{DIGEST.metricsTitle}</h2>
-      <div className="overflow-x-auto rounded-card border border-border">
+      <div className="overflow-x-auto border border-border bg-surface">
         <table className="w-full border-collapse text-left">
-          <thead className="bg-surface text-mono uppercase tracking-[0.06em] text-muted">
+          <thead className="text-meta text-muted">
             <tr>
               <th scope="col" className="px-4 py-2.5 font-medium">{DIGEST.metric}</th>
               <th scope="col" className="px-4 py-2.5 text-right font-medium">{DIGEST.value}</th>
@@ -114,10 +115,12 @@ export default function DigestPage() {
   return (
     <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
       <article className="flex flex-col gap-4 lg:col-span-2">
-        <p className="eyebrow num">
-          Week of {shortDay(d.period_start)} – {shortDay(d.period_end)}
-        </p>
-        <h1 className="text-h1 font-semibold text-text">What your agent learned this week</h1>
+        <header className="flex flex-col gap-1">
+          <h1 className="text-h1 font-semibold text-text">What your agent learned this week</h1>
+          <p className="num text-body text-muted">
+            Week of {shortDay(d.period_start)} – {shortDay(d.period_end)}
+          </p>
+        </header>
         {d.narrative.split(/\n{2,}/).map((para, i) => (
           <p key={i} className="max-w-prose text-narrative text-text">
             {linkify(para, items)}

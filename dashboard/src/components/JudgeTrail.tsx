@@ -3,6 +3,7 @@ import type { DecidedBy, DriftCheck, JudgeOpinion, Tier } from '../api/types'
 import { TIERS } from '../api/types'
 import { CONTROL } from '../copy'
 import { TierBadge } from './TierBadge'
+import { StepMark } from './Marks'
 import { Tooltip } from './Tooltip'
 
 interface JudgeTrailProps {
@@ -13,9 +14,7 @@ interface JudgeTrailProps {
 }
 
 const Arrow = () => (
-  <span aria-hidden="true" className="px-0.5 font-mono text-mono text-muted">
-    →
-  </span>
+  <StepMark className="mx-0.5" />
 )
 
 /** Sort opinions into cascade order (nano → super → ultra). */

@@ -1,10 +1,14 @@
 import { memo } from 'react'
+import { useQuery } from '@tanstack/react-query'
+import { qk } from '../api/hooks'
+import { api } from '../api/select'
 import { Link } from 'react-router-dom'
 import { BadgeCheck, BookOpen, GitCommitHorizontal, GitMerge, Gavel, RefreshCw, RotateCcw, CircleDot, PauseCircle, Repeat2, type LucideIcon } from 'lucide-react'
 import type { Decision, Event, TierMap } from '../api/types'
 import { ACTED_COPY, CONTROL } from '../copy'
 import { sumTiers, time, truncate, usd } from '../lib/format'
 import { DecisionChip } from './DecisionChip'
+import { SieveThumb } from './Sieve'
 
 export interface TimelineView {
   icon: LucideIcon
@@ -83,14 +87,23 @@ function outcomeSummary(n: unknown): string {
   return parts.join(' · ')
 }
 
-/** One timeline row: icon by kind, title, one-line summary, time, cost, link. */
-export const TimelineItem = memo(function TimelineItem({ event, linkTraces = true }: { event: Event; linkTraces?: boolean }) {
+/** The frozen sieve of a decided verdict, drawn small (fetched once, cached with the verdict). */
+function VerdictThumb({ verdictId }: { verdictId: string }) {
+  const q = useQuery({ queryKey: qk.verdict(verdictId), queryFn: () => api().getVerdict(verdictId), staleTime: 5 * 60_000, retry: false })
+  const pairs = q.data?.verdict?.pairs
+  if (!pairs) return <span aria-hidden="true" className="block h-9 w-28 shrink-0" />
+  return <SieveThumb pairs={pairs} className="mt-0.5 max-sm:hidden" />
+}
+
+/** One timeline row: icon by kind (or the frozen sieve for a verdict), title, one-line summary, time, cost, link. */
+export const TimelineItem = memo(function TimelineItem({ event, linkTraces = true, thumbs = false }: { event: Event; linkTraces?: boolean; thumbs?: boolean }) {
   const v = describeEvent(event, { linkTraces })
   const Icon = v.icon
+  const vid = typeof event.payload.verdict_id === 'string' ? event.payload.verdict_id : event.ref
   const body = (
     <div className="flex items-start gap-3">
-      <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-sm border border-border bg-surface-2 text-muted" aria-hidden="true">
-        <Icon size={16} />
+      <span className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center text-muted" aria-hidden="true">
+        <Icon size={15} />
       </span>
       <div className="min-w-0 flex-1">
         <div className="flex flex-wrap items-center gap-2">
@@ -98,12 +111,18 @@ export const TimelineItem = memo(function TimelineItem({ event, linkTraces = tru
           <p className="min-w-0 text-body font-medium text-text">{v.title}</p>
         </div>
         {v.summary ? <p className="mt-0.5 truncate text-meta text-muted">{v.summary}</p> : null}
+        {v.usd != null && v.usd > 0 ? (
+          <p className="num mt-0.5 text-meta text-muted sm:hidden">
+            <span className="font-mono">{usd(v.usd)}</span> ({v.tiers || 'judges'})
+          </p>
+        ) : null}
       </div>
+      {thumbs && event.kind === 'verdict.decided' ? <VerdictThumb verdictId={vid} /> : null}
       <div className="flex shrink-0 flex-col items-end gap-0.5 text-right">
-        <time dateTime={event.ts} className="num font-mono text-mono text-muted">
+        <time dateTime={event.ts} className="num text-meta text-muted">
           {time(event.ts)}
         </time>
-        {v.usd != null && v.usd > 0 ? <span className="num font-mono text-mono text-muted">{usd(v.usd)} ({v.tiers || 'judges'})</span> : null}
+        {v.usd != null && v.usd > 0 ? <span className="num text-meta text-muted max-sm:hidden"><span className="font-mono">{usd(v.usd)}</span> ({v.tiers || 'judges'})</span> : null}
         <span className="sr-only">{v.kindLabel}</span>
       </div>
     </div>
@@ -111,11 +130,11 @@ export const TimelineItem = memo(function TimelineItem({ event, linkTraces = tru
   return (
     <li data-kind={event.kind} data-testid="timeline-item">
       {v.href ? (
-        <Link to={v.href} className="block rounded-sm px-3 py-3 hover:bg-surface">
+        <Link to={v.href} className="block px-4 py-3 hover:bg-surface-2 focus-visible:outline-offset-[-2px]">
           {body}
         </Link>
       ) : (
-        <div className="px-3 py-3">{body}</div>
+        <div className="px-4 py-3">{body}</div>
       )}
     </li>
   )

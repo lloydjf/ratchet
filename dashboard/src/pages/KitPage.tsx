@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react'
+import { useEffect, useState, type ReactNode } from 'react'
 import type { Decision, PairOutcome } from '../api/types'
 import { BADGE, EMPTY, TRUNCATED_MARKER } from '../copy'
 import { ActionButton } from '../components/ActionButton'
@@ -25,13 +25,17 @@ import { ApiError } from '../api/client'
 import { alignSteps } from '../lib/align'
 import { useDocumentTitle } from '../lib/useDocumentTitle'
 import { useTheme } from '../lib/theme'
-import { DIFF, DRIFT_CHANGED, DRIFT_UNAVAILABLE, DRIFT_UNCHANGED, EVENTS, PAIRS, SCENARIO, STEPS_GOLDEN, STEPS_REPLAY, op, progress } from '../kit/samples'
+import { DIFF, DRIFT_CHANGED, DRIFT_UNAVAILABLE, DRIFT_UNCHANGED, EVENTS, PAIRS, SCENARIO, SIEVE_STATES, STEPS_GOLDEN, STEPS_REPLAY, op, progress, sampleStream, sampleView } from '../kit/samples'
+import { Sieve, SieveThumb } from '../components/Sieve'
+import { TrailGlyph } from '../components/TrailGlyph'
+import { VerdictBand } from './verdict/VerdictHeader'
+import { gitAction } from '../copy'
 
 function Group({ id, title, children, note }: { id: string; title: string; children: ReactNode; note?: string }) {
   return (
     <section aria-labelledby={`kit-${id}`} className="flex flex-col gap-3 border-t border-border pt-6" data-kit={id}>
       <div className="flex flex-wrap items-baseline justify-between gap-2">
-        <h2 id={`kit-${id}`} className="font-mono text-h3 font-semibold text-text">
+        <h2 id={`kit-${id}`} className="text-h3 font-semibold text-text">
           {title}
         </h2>
         {note ? <p className="text-meta text-muted">{note}</p> : null}
@@ -47,6 +51,7 @@ const noop = async () => new Promise((r) => setTimeout(r, 400))
 export default function KitPage() {
   useDocumentTitle(['Kit'])
   const [theme, toggle] = useTheme()
+  const [grid, setGrid] = useState(false)
   const toast = useToast()
   const rows = alignSteps(STEPS_GOLDEN, STEPS_REPLAY)
   const decisions: Decision[] = ['BLOCK', 'WARN', 'PASS']
@@ -55,12 +60,42 @@ export default function KitPage() {
     <div className="flex flex-col gap-8" data-testid="kit">
       <header className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <p className="eyebrow">/__kit</p>
           <h1 className="text-h1 font-semibold text-text">Component kit</h1>
           <p className="mt-1 text-body text-muted">Every design-system component in every state, for rehearsal screenshots and visual checks.</p>
+          <p className="mt-1 font-mono text-meta text-muted">/__kit</p>
         </div>
-        <Button onClick={toggle}>Switch to {theme === 'dark' ? 'light' : 'dark'} theme</Button>
+        <div className="flex flex-wrap gap-2">
+          <Button onClick={() => setGrid((g) => !g)} aria-pressed={grid} data-testid="toggle-grid">
+            {grid ? 'Hide the 8-px grid' : 'Show the 8-px grid'}
+          </Button>
+          <Button onClick={toggle}>Switch to {theme === 'dark' ? 'light' : 'dark'} theme</Button>
+        </div>
       </header>
+      {grid ? <ConstructionGrid /> : null}
+
+      <Group id="sieve" title="Cascade sieve" note="every outcome state, settled · and the live stream">
+        <div className="stack">
+          <LiveSieve />
+          {SIEVE_STATES.map((s) => (
+            <Sieve key={s.outcome} title={s.title} events={[]} pairs={s.pairs} verdictId="v_kit" frozen />
+          ))}
+        </div>
+        <Row>
+          {SIEVE_STATES.map((s) => (
+            <span key={s.outcome} className="border border-border bg-surface p-2">
+              <SieveThumb pairs={s.pairs} />
+            </span>
+          ))}
+        </Row>
+      </Group>
+
+      <Group id="band" title="Decision band" note="Blocked · Held · Passed">
+        <div className="stack">
+          {(['BLOCK', 'WARN', 'PASS'] as const).map((d) => (
+            <VerdictBand key={d} view={sampleView(d, SIEVE_STATES[0]!.pairs)} animate={false} simulatedMeta={false} publicMode readOnly testId={`kit-band-${d}`} />
+          ))}
+        </div>
+      </Group>
 
       <Group id="decision" title="DecisionChip" note="sm · md · lg · muted (expected)">
         {(['sm', 'md', 'lg'] as const).map((s) => (
@@ -107,6 +142,7 @@ export default function KitPage() {
           {PAIRS.slice(0, 5).map((p) => (
             <Row key={p.golden_run_id}>
               <span className="w-56 text-meta text-muted">{p.task_label}</span>
+              <TrailGlyph p={p} />
               <JudgeTrail opinions={p.opinions} decidedBy={p.decided_by} drift={p.drift} />
             </Row>
           ))}
@@ -144,11 +180,15 @@ export default function KitPage() {
       </Group>
 
       <Group id="pairgrid" title="PairGrid" note="loaded (table) · cards (mobile) · loading · empty">
-        <PairGrid pairs={PAIRS} verdictId="v_kit" forceLayout="table" />
-        <div className="max-w-md">
+        <div className="border border-border bg-surface">
+          <PairGrid pairs={PAIRS} verdictId="v_kit" forceLayout="table" />
+        </div>
+        <div className="max-w-md border border-border bg-surface">
           <PairGrid pairs={PAIRS.slice(1, 4)} verdictId="v_kit" forceLayout="cards" />
         </div>
-        <PairGrid pairs={[]} verdictId="v_kit" loading />
+        <div className="border border-border bg-surface">
+          <PairGrid pairs={[]} verdictId="v_kit" loading />
+        </div>
         <PairGrid pairs={[]} verdictId="v_kit" />
       </Group>
 
@@ -181,7 +221,7 @@ export default function KitPage() {
       </Group>
 
       <Group id="timeline" title="TimelineItem" note="one per kind">
-        <ol className="divide-y divide-border rounded-card border border-border">
+        <ol className="divide-y divide-border border border-border">
           {EVENTS.map((e) => (
             <TimelineItem key={e.id} event={e} />
           ))}
@@ -206,6 +246,10 @@ export default function KitPage() {
           <ActionButton kind="unbless" subject="Triage the acme/widgets backlog" onConfirm={noop} />
           <ActionButton kind="rebless" subject="Berlin trip to USD" onConfirm={noop} />
           <ActionButton kind="rebless" subject="Berlin trip to USD" onConfirm={noop} done doneLabel="Re-blessed" />
+        </Row>
+        <Row>
+          <ActionButton kind="rollback" subject="8b41e07" git={gitAction.rollback('8b41e07', false)} onConfirm={noop} defaultOpen />
+          <ActionButton kind="approveAnyway" subject="github-triage" git={gitAction.approveAnyway('c0ffee1')} onConfirm={noop} defaultOpen />
         </Row>
       </Group>
 
@@ -245,4 +289,45 @@ export default function KitPage() {
 function stripProps(stage: string, k: number | null = null) {
   const p = progress(stage, k)
   return { stage: p.stage, stageLabel: p.stage_label, k: p.k, n: p.n, elapsedS: p.elapsed_s, usdByTier: p.usd_by_tier, stages: p.stages, tickLocally: false }
+}
+
+/** The 8-px construction grid as a real overlay state. */
+function ConstructionGrid() {
+  return (
+    <svg className="pointer-events-none fixed inset-0 z-[90] h-full w-full" aria-hidden="true" data-testid="construction-grid">
+      <defs>
+        <pattern id="kit-grid-8" width="8" height="8" patternUnits="userSpaceOnUse">
+          <path d="M8 0H0V8" fill="none" stroke="var(--accent)" strokeOpacity="0.18" strokeWidth="1" />
+        </pattern>
+        <pattern id="kit-grid-64" width="64" height="64" patternUnits="userSpaceOnUse">
+          <path d="M64 0H0V64" fill="none" stroke="var(--accent)" strokeOpacity="0.35" strokeWidth="1" />
+        </pattern>
+      </defs>
+      <rect width="100%" height="100%" fill="url(#kit-grid-8)" />
+      <rect width="100%" height="100%" fill="url(#kit-grid-64)" />
+    </svg>
+  )
+}
+
+const LIVE_STREAM = sampleStream(SIEVE_STATES[0]!.pairs)
+
+/** The sieve fed one event every 140 ms, as a run streams in. */
+function LiveSieve() {
+  const [n, setN] = useState(LIVE_STREAM.length)
+  const playing = n < LIVE_STREAM.length
+  useEffect(() => {
+    if (!playing) return
+    const t = setTimeout(() => setN((x) => x + 1), 140)
+    return () => clearTimeout(t)
+  }, [n, playing])
+  return (
+    <div className="flex flex-col">
+      <Sieve title="Live stream (sample)" events={LIVE_STREAM.slice(0, n)} pairs={[]} verdictId="v_kit_live" />
+      <div className="px-6 pb-4">
+        <Button size="sm" onClick={() => setN(0)} disabled={playing} data-testid="replay-stream">
+          Replay the stream
+        </Button>
+      </div>
+    </div>
+  )
 }

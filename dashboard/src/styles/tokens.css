@@ -1,108 +1,117 @@
 /*
- * Ratchet design tokens. Dark is the default; light applies when the user
- * prefers it (and has not chosen dark), or when they pick light with the toggle.
- * Every color used by the product comes from this file; no ad-hoc hex values elsewhere.
+ * Ratchet design tokens: graphite steel. Dark is the default; light applies when the
+ * user prefers it (and has not chosen dark), or when they pick light with the toggle.
+ * Decision hues (pass / warn / block / drift) and tier hues (nano / super / ultra) are
+ * the only saturated colours. Every colour the product uses comes from this file.
  */
 :root {
-  --bg: #0e1116;
-  --surface: #161b22;
-  --surface-2: #1f2630;
-  --border: #2d3540;
-  --text: #e6edf3;
-  --text-muted: #9da7b3;
-  --pass: #3fb950;
-  --warn: #d29922;
-  --block: #f85149;
-  --drift: #58a6ff;
-  --nano: #7ee787;
-  --super: #d2a8ff;
-  --ultra: #ffa657;
-  --accent: #79c0ff;
+  --bg: #201e1b;
+  --surface: #272522;
+  --surface-2: #2f2c29;
+  --border: #3a3733;
+  --text: #eceae6;
+  --text-muted: #a8a49e;
+  --text-tertiary: #6f6b66;
+  --pass: #5cb87f;
+  --warn: #d6a23e;
+  --block: #ea6d55;
+  --drift: #72a9de;
+  --nano: #4cbfc4;
+  --super: #a68ee8;
+  --ultra: #de80b4;
+  --accent: #93a9bf;
 
-  /* Ink: the text color used on a 15% tint of the same hue. Equal to the token
-   * wherever that already clears 4.5:1; nudged darker/lighter where it does not
-   * (checked by src/styles/contrast.test.ts). */
+  /* Ink: the text colour used on a tint of the same hue. Equal to the hue wherever that
+   * already clears 4.5:1 (checked by src/styles/contrast.test.ts). */
   --pass-ink: var(--pass);
   --warn-ink: var(--warn);
-  --block-ink: #ff7b72;
+  --block-ink: #f0806b;
   --drift-ink: var(--drift);
   --nano-ink: var(--nano);
-  --super-ink: var(--super);
+  --super-ink: #b19deb;
   --ultra-ink: var(--ultra);
 
-  /* Derived: chip tint = color at 15% over --surface (the tint rule). */
-  --tint: 15%;
-  /* Mix shares (not hues) are tuned so rendered chip borders clear 3:1 on --surface in both
-     themes (checked by src/styles/contrast.test.ts on the mixed color). */
-  --chip-border-mix: 80%;
-  --border-strong: color-mix(in srgb, var(--text-muted) 65%, var(--border));
-  --diff-add: color-mix(in srgb, var(--pass) 12%, var(--bg));
-  --diff-del: color-mix(in srgb, var(--block) 12%, var(--bg));
-  --highlight: color-mix(in srgb, var(--warn) 10%, var(--surface));
+  /* Derived. Chip tint = hue at 12% over --surface; the decision band carries 6%. */
+  --tint: 12%;
+  --band-tint: 6%;
+  --chip-border-mix: 70%;
+  --border-strong: color-mix(in srgb, var(--text-muted) 58%, var(--border));
+  --grid-line: color-mix(in srgb, var(--text) 5%, transparent);
+  --diff-add: color-mix(in srgb, var(--pass) 11%, var(--surface));
+  --diff-del: color-mix(in srgb, var(--block) 11%, var(--surface));
+  --highlight: color-mix(in srgb, var(--warn) 9%, var(--surface));
+  --flash: color-mix(in srgb, var(--accent) 22%, var(--surface));
 
-  --radius: 10px;
+  --radius: 0px;
   --radius-sm: 6px;
   --focus: 2px solid var(--accent);
 
-  --font-sans: 'Inter Variable', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --font-mono: 'JetBrains Mono Variable', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+  --font-sans: 'IBM Plex Sans', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
 
-  --ease-out: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --t-flash: 160ms;
   --t-stage: 160ms;
+  --t-hop: 240ms;
   --t-chip: 240ms;
   --t-ticker: 300ms;
+  --t-band: 320ms;
 
   color-scheme: dark;
 }
 
 @media (prefers-color-scheme: light) {
   :root:not([data-theme='dark']) {
-    --bg: #ffffff;
-    --surface: #f6f8fa;
-    --surface-2: #eaeef2;
-    --border: #d0d7de;
-    --text: #1f2328;
-    --text-muted: #59636e;
-    --pass: #1a7f37;
-    --warn: #9a6700;
-    --block: #cf222e;
-    --drift: #0969da;
-    --nano: #2da44e;
-    --super: #8250df;
-    --ultra: #bc4c00;
-    --accent: #0969da;
-    --pass-ink: #166c2f;
-    --warn-ink: #7a5200;
-    --block-ink: #b01d27;
-    --drift-ink: #0859b9;
-    --nano-ink: #1a6d32;
-    --super-ink: #6a3fc0;
-    --ultra-ink: #953c00;
+    --bg: #f3f1ec;
+    --surface: #ffffff;
+    --surface-2: #f7f5f1;
+    --border: #e6e3dd;
+    --text: #1d1b18;
+    --text-muted: #5c5852;
+    --text-tertiary: #9a958e;
+    --pass: #1d7a45;
+    --warn: #8a5b00;
+    --block: #b93a22;
+    --drift: #1f62a8;
+    --nano: #0b767c;
+    --super: #6a4bc6;
+    --ultra: #a63a77;
+    --accent: #3d5a77;
+    --pass-ink: #1a6e3e;
+    --warn-ink: #7a5000;
+    --block-ink: #a8331d;
+    --drift-ink: #1b5896;
+    --nano-ink: #096a70;
+    --super-ink: #5f42b5;
+    --ultra-ink: #96336b;
+    --border-strong: color-mix(in srgb, var(--text-muted) 62%, var(--border));
     color-scheme: light;
   }
 }
 
 :root[data-theme='light'] {
-  --bg: #ffffff;
-  --surface: #f6f8fa;
-  --surface-2: #eaeef2;
-  --border: #d0d7de;
-  --text: #1f2328;
-  --text-muted: #59636e;
-  --pass: #1a7f37;
-  --warn: #9a6700;
-  --block: #cf222e;
-  --drift: #0969da;
-  --nano: #2da44e;
-  --super: #8250df;
-  --ultra: #bc4c00;
-  --accent: #0969da;
-  --pass-ink: #166c2f;
-  --warn-ink: #7a5200;
-  --block-ink: #b01d27;
-  --drift-ink: #0859b9;
-  --nano-ink: #1a6d32;
-  --super-ink: #6a3fc0;
-  --ultra-ink: #953c00;
+  --bg: #f3f1ec;
+  --surface: #ffffff;
+  --surface-2: #f7f5f1;
+  --border: #e6e3dd;
+  --text: #1d1b18;
+  --text-muted: #5c5852;
+  --text-tertiary: #9a958e;
+  --pass: #1d7a45;
+  --warn: #8a5b00;
+  --block: #b93a22;
+  --drift: #1f62a8;
+  --nano: #0b767c;
+  --super: #6a4bc6;
+  --ultra: #a63a77;
+  --accent: #3d5a77;
+  --pass-ink: #1a6e3e;
+  --warn-ink: #7a5000;
+  --block-ink: #a8331d;
+  --drift-ink: #1b5896;
+  --nano-ink: #096a70;
+  --super-ink: #5f42b5;
+  --ultra-ink: #96336b;
+  --border-strong: color-mix(in srgb, var(--text-muted) 62%, var(--border));
   color-scheme: light;
 }

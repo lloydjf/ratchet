@@ -397,6 +397,9 @@ export const VERDICT = {
   checking: 'Checking the edit to',
   checkingBody: 'Ratchet is replaying blessed tasks against the new skill. The decision appears here when the judges finish.',
   writtenBy: (tier: string) => `Written by ${tier} from the evidence below.`,
+  writtenFromAbove: (tier: string) => `Written by ${tier} from the evidence above.`,
+  summary: 'Summary',
+  details: 'Cost and run details',
   whatChanged: 'What changed: ',
   editPage: 'Edit page',
   runningCost: 'Running cost',
@@ -635,3 +638,105 @@ function ensurePeriod(s: string): string {
 function ensureNoPeriod(s: string): string {
   return s.trim().replace(/[.]$/, '')
 }
+
+// ---------------------------------------------------------------- decision band
+/** The display word: one per decision, the only text set at display size. */
+export const DECISION_DISPLAY: Record<Decision, string> = { BLOCK: 'Blocked.', WARN: 'Held.', PASS: 'Passed.' }
+/** The headline's decision prefix ("Blocked: …"), which the band shows as the display word instead. */
+/** Decision chips (timeline, verdict list, scenario cards): the headline words, sentence case. */
+export const DECISION_CHIP: Record<Decision, string> = { BLOCK: 'Blocked', WARN: 'Held', PASS: 'Passed' }
+export const HEADLINE_PREFIX: Record<Decision, string> = { BLOCK: 'Blocked:', WARN: 'Held:', PASS: 'Passed:' }
+
+// ---------------------------------------------------------------- inline confirm
+/** Button words. The button, its confirm and its toast share one verb ("Roll back" → "Rolled back."). */
+export const ACTION_VERB: Record<ActionKind, string> = {
+  rollback: 'Roll back',
+  approve: 'Approve',
+  approveAnyway: 'Approve anyway',
+  rebless: 'Re-bless',
+  unbless: 'Unbless',
+  bless: 'Bless',
+}
+/** The exact git operation each verdict action runs. */
+export const gitAction = {
+  rollback: (sha: string, merged: boolean) => (merged ? [`git revert ${sha}`, 'on candidate, then main'] : [`git revert ${sha}`, 'on candidate']),
+  approve: () => ['git merge candidate', 'into main'],
+  approveAnyway: (revertSha: string) => [`git revert ${revertSha} && git merge candidate`, 'into main'],
+}
+export const CONFIRM_STEP = 'Confirm'
+
+// ---------------------------------------------------------------- cascade sieve
+export const SIEVE = {
+  title: 'Where each task was decided',
+  entry: 'Replayed',
+  columns: { level0: 'Level 0', nano: 'Nano', super: 'Super', ultra: 'Ultra' } as Record<string, string>,
+  rail: 'Decided',
+  reached: (n: number) => `${n} reached`,
+  noModel: 'no model',
+  judging: 'Being judged',
+  waiting: 'Waiting for Level 0',
+  decidedAt: {
+    level0: 'Level 0, without a model',
+    nano: 'Nemotron Nano',
+    super: 'Nemotron Super',
+    ultra: 'Nemotron Ultra',
+    drift: 'Tavily drift check',
+    control: 'Control replay',
+    infra: 'Never replayed',
+  } as Record<string, string>,
+  summary: (n: number, decided: number) => `${decided} of ${n} task${n === 1 ? '' : 's'} decided.`,
+  keyboardHint: 'Arrow keys move between tasks; Enter opens one.',
+  open: 'Open the pair',
+}
+
+// ---------------------------------------------------------------- landing hero
+export const HERO = {
+  /** One sentence above the recorded verdict; every number comes from that verdict. */
+  sentence: (n: number, skill: string, decision: Decision) =>
+    `A recorded run: Ratchet replayed ${n} blessed task${n === 1 ? '' : 's'} against an edit to ${skill} and ${decision === 'BLOCK' ? 'blocked it' : decision === 'WARN' ? 'held it for review' : 'let it through'}.`,
+  fallback: 'Ratchet replays the tasks you blessed whenever your agent edits a skill, and blocks the edit if anything got worse.',
+  run: 'Run this live',
+  openFull: 'Open the full verdict',
+  scenariosTitle: 'Three skill edits to try',
+  scenariosNote: 'Each run takes under a minute and is yours alone.',
+}
+
+// ---------------------------------------------------------------- evidence linking
+export const EVIDENCE = {
+  citedBy: 'Cited by',
+  hunkPairs: (n: number) => (n === 0 ? 'No pair traces to this hunk' : `${n} pair${n === 1 ? '' : 's'}`),
+  hunkFilter: (n: number) => `Show the ${n} pair${n === 1 ? '' : 's'} this hunk affected`,
+  filtered: (n: number, m: number) => `Showing ${n} of ${m} pairs affected by one hunk.`,
+  clearFilter: 'Show all pairs',
+}
+
+// ---------------------------------------------------------------- shell
+export const SHELL = {
+  menu: 'Menu',
+  closeMenu: 'Close menu',
+  search: 'Jump to…',
+  collapse: 'Collapse',
+}
+export const TICKER = {
+  label: 'Spend today',
+  allUltra: 'If Ultra judged everything',
+  estimate: 'estimate',
+  live: 'live',
+}
+export const PALETTE = {
+  title: 'Command palette',
+  placeholder: 'Jump to a verdict, trace or skill, or run a scenario…',
+  empty: 'Nothing matches. Try a skill name or a decision.',
+  groups: { go: 'Go to', verdicts: 'Verdicts', scenarios: 'Run a scenario', timeline: 'Filter the timeline', traces: 'Traces', skills: 'Skills', actions: 'Actions' } as Record<string, string>,
+}
+export const SHORTCUTS: [string[], string][] = [
+  [['⌘', 'K'], 'Open the command palette (Ctrl K elsewhere)'],
+  [['j'], 'Next pair'],
+  [['k'], 'Previous pair'],
+  [['o'], 'Open the selected pair'],
+  [['r'], 'Roll back this edit'],
+  [['a'], 'Approve this edit'],
+  [['?'], 'Show these shortcuts'],
+  [['Esc'], 'Close or cancel'],
+]
+export const SHORTCUTS_TITLE = 'Keyboard shortcuts'

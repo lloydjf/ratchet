@@ -2,8 +2,8 @@
  * Small hand-written samples for the /__kit route. Deliberately separate from the
  * dev-only fixtures so the kit works on the production host.
  */
-import type { DriftCheck, Event, JudgeOpinion, LLMCall, PairOutcome, PairVerdict, Progress, Scenario, ToolCall } from '../api/types'
-import { stageLabel, STAGE_KEYS } from '../copy'
+import type { Decision, DecidedBy, DriftCheck, Event, JudgeOpinion, LLMCall, PairOutcome, PairVerdict, Progress, Scenario, ToolCall, VerdictView } from '../api/types'
+import { headline, stageLabel, STAGE_KEYS } from '../copy'
 
 const T0 = '2026-10-15T12:00:00+00:00'
 
@@ -113,3 +113,93 @@ export const EVENTS: Event[] = [
   ev('pair.reblessed', 'run_fx_01/rep_fx_01', { golden: 'run_fx_01', replay: 'rep_fx_01', actor: 'you' }),
   ev('digest.written', 'dg_w42', { period: 'week 42' }),
 ]
+
+// ---------------------------------------------------------------- sieve and band samples
+type Spec = [PairOutcome, DecidedBy, number]
+const OPS: Record<string, JudgeOpinion[]> = {
+  level0: [],
+  nano: [op('nano', 'equivalent', 0.94, 'Same result, wording aside.')],
+  super: [op('nano', 'uncertain', 0.68, 'Wording differs.'), op('super', 'equivalent', 0.9, 'Same actions and output.')],
+  ultra: [op('nano', 'regressed', 0.8, 'A line is missing.'), op('super', 'regressed', 0.84, 'The total omits a line.'), op('ultra', 'regressed', 0.95, 'The edit drops the line.')],
+  ultraUnsure: [op('nano', 'regressed', 0.7, 'Heading changed.'), op('super', 'equivalent', 0.66, 'Content intact.'), op('ultra', 'uncertain', 0.55, 'Intent unclear.')],
+  drift: [op('nano', 'regressed', 0.62, 'The total differs.'), op('super', 'uncertain', 0.6, 'Different rate.')],
+  infra: [],
+}
+
+/** A sieve's worth of pairs: [outcome, decided_by, count] per group. */
+export function samplePairs(name: string, specs: Spec[]): PairVerdict[] {
+  let i = 0
+  return specs.flatMap(([outcome, by, n]) =>
+    Array.from({ length: n }, () => {
+      i++
+      const key = outcome === 'uncertain' ? 'ultraUnsure' : by
+      return pair(outcome, `${name} task ${i}`, `${name}_${String(i).padStart(2, '0')}`, OPS[key] ?? [], {
+        decided_by: by,
+        replay_run_id: by === 'infra' ? '' : `rep_${name}_${i}`,
+        golden_run_id: `run_${name}_${i}`,
+        drift: by === 'drift' ? [DRIFT_CHANGED] : [],
+        task_label: `${name} task ${i}`,
+      })
+    }),
+  )
+}
+
+/** One sieve per outcome state: where each kind of decision settles. */
+export const SIEVE_STATES: { outcome: PairOutcome; title: string; pairs: PairVerdict[] }[] = [
+  { outcome: 'regression', title: 'Got worse: caught at Level 0 and by Ultra', pairs: samplePairs('worse', [['regression', 'level0', 4], ['regression', 'ultra', 2], ['pass', 'nano', 6]]) },
+  { outcome: 'uncertain', title: 'Not sure: Ultra could not decide', pairs: samplePairs('unsure', [['uncertain', 'ultra', 2], ['pass', 'super', 2], ['pass', 'nano', 7]]) },
+  { outcome: 'drift', title: 'World changed: Tavily explains the difference', pairs: samplePairs('drift', [['drift', 'drift', 4], ['pass', 'nano', 3]]) },
+  { outcome: 'pass', title: 'Same result: Nano clears everything', pairs: samplePairs('same', [['pass', 'nano', 9], ['pass', 'super', 1]]) },
+  { outcome: 'failed', title: 'Could not replay: the replay never ran', pairs: samplePairs('failed', [['failed', 'infra', 3], ['pass', 'nano', 6]]) },
+]
+
+/** The cascade as a live stream, for the kit's replay: batch results, then each pair's hops. */
+export function sampleStream(pairs: PairVerdict[], verdictId = 'v_kit_live'): Event[] {
+  let id = 1
+  const out: Event[] = []
+  const e = (kind: string, payload: Record<string, unknown>) => out.push({ id: id++, ts: T0, kind, ref: 'e_kit_live', payload: { verdict_id: verdictId, edit_id: 'e_kit_live', ...payload }, session_hash: null })
+  pairs.forEach((_, i) => e('batch.heartbeat', { batch_id: 'batch_kit', k: i + 1, n: pairs.length }))
+  const ids = (p: PairVerdict) => ({ golden: p.golden_run_id, replay: p.replay_run_id })
+  for (const p of pairs) {
+    if (p.decided_by === 'infra') {
+      e('pair.decided', { ...ids(p), outcome: p.outcome })
+      continue
+    }
+    e('pair.level0', ids(p))
+    if (p.decided_by === 'level0') e('pair.decided', { ...ids(p), outcome: p.outcome })
+  }
+  for (const tier of ['nano', 'super', 'ultra'] as const)
+    for (const p of pairs) {
+      const o = p.opinions.find((x) => x.tier === tier)
+      if (!o) continue
+      e('pair.opinion', { ...ids(p), tier, verdict: o.verdict, confidence: o.confidence, usd: o.usd })
+      if (p.decided_by === tier) e('pair.decided', { ...ids(p), outcome: p.outcome })
+    }
+  for (const p of pairs) if (p.decided_by === 'drift' || p.decided_by === 'control') e('pair.decided', { ...ids(p), outcome: p.outcome })
+  return out
+}
+
+const HEADLINES: Record<Decision, string> = {
+  BLOCK: headline.blockLevel0('github-triage', 'close issues', 6, 14),
+  WARN: headline.warn('judges disagreed on the section heading', 1, 12),
+  PASS: headline.passDrift(7, 4),
+}
+
+/** A decided verdict view for the band samples. */
+export function sampleView(decision: Decision, pairs: PairVerdict[]): VerdictView {
+  const skill = decision === 'BLOCK' ? 'github-triage' : decision === 'WARN' ? 'release-notes' : 'fx-expense-converter'
+  const action = decision === 'BLOCK' ? 'reverted' : decision === 'WARN' ? 'held' : 'merged'
+  return {
+    verdict_id: `v_kit_${decision.toLowerCase()}`,
+    state: 'done',
+    diff: DIFF,
+    progress: null,
+    edit: { edit_id: `e_kit_${decision.toLowerCase()}`, commit: '8b41e07aa31c', parent: '3f2a9c1', files: [], diff_ref: '', affected_skills: [skill], author: 'agent', detected_at: T0, summary: '', session_hash: null },
+    verdict: {
+      verdict_id: `v_kit_${decision.toLowerCase()}`, edit_id: `e_kit_${decision.toLowerCase()}`, pairs, decision, action, narrative: HEADLINES[decision],
+      cost: { nano: 0.0049, super: 0.0012, ultra: 0.0063 }, duration_s: 47, created_at: T0, reasons: [], headline: HEADLINES[decision], tokens: {}, counterfactual_usd: 0.14,
+      action_commit: action === 'reverted' ? 'c0ffee1234' : null, stages: [], recorded: true, simulated_models: false, rolled_back_by: null, rolled_back_at: null, approved_at: null,
+      session_hash: null, affected_skills: [skill], author: 'agent', runner: 'nebius-serverless', batch_ids: [],
+    },
+  }
+}

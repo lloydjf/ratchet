@@ -51,7 +51,7 @@ export default function VerdictsPage() {
       ) : !q.data?.items.length ? (
         <EmptyState title={EMPTY.verdicts} action={{ label: 'Simulate a scenario', to: '/' }} />
       ) : (
-        <ul className="divide-y divide-border overflow-hidden rounded-card border border-border">
+        <ul className="divide-y divide-border overflow-hidden border border-border">
           {q.data.items.map((v) => (
             <Row key={v.verdict_id} v={v} />
           ))}

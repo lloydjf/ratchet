@@ -2,6 +2,7 @@ import type { DecidedBy, Level0Finding, PairOutcome, ToolCall } from '../api/typ
 import { HARD_SIDE_EFFECTS } from '../api/types'
 import { BADGE, LEVEL0, outputSimilarityCopy } from '../copy'
 import { diffPaths } from '../lib/align'
+import { StepMark } from './Marks'
 import { hasStructuralFinding, nanoGatedByLevel0 } from '../lib/pairs'
 
 const show = (v: unknown) => (v === undefined ? 'missing' : typeof v === 'string' ? v : JSON.stringify(v))
@@ -18,13 +19,13 @@ function Call({ c, onStep }: { c: ToolCall; onStep?: (id: string) => void }) {
     <li className="flex flex-col gap-1 py-2.5 sm:flex-row sm:items-center sm:gap-3">
       <span className="flex shrink-0 items-center gap-2">
         {onStep ? (
-          <button type="button" onClick={() => onStep(c.step_id)} className="inline-flex min-h-8 items-center rounded-sm border border-border-strong bg-bg px-2 font-mono text-mono text-accent hover:bg-surface-2" aria-label={`Show step ${c.step_id}`}>
+          <button type="button" onClick={() => onStep(c.step_id)} className="link inline-flex min-h-7 items-center rounded-sm px-1 font-mono text-mono underline" aria-label={`Show step ${c.step_id}`}>
             {c.step_id}
           </button>
         ) : null}
         <span className="font-mono text-meta font-semibold text-text">{c.tool}</span>
-        <span className={`inline-flex h-6 items-center rounded-sm border px-2 font-mono text-mono ${hard ? 'tint-block' : 'tint-warn'}`}>{c.side_effect}</span>
-        {c.blocked ? <span className="inline-flex h-6 items-center rounded-sm border px-2 text-mono font-semibold tint-block">{BADGE.blocked}</span> : null}
+        <span className={`inline-flex h-5 items-center border px-1.5 font-mono text-mono ${hard ? 'tint-block' : 'tint-warn'}`}>{c.side_effect}</span>
+        {c.blocked ? <span className="inline-flex h-5 items-center border px-1.5 text-mono font-semibold tint-block">{BADGE.blocked}</span> : null}
       </span>
       <span className="min-w-0 truncate font-mono text-mono text-muted" title={argsSummary(c.args_norm)}>
         {argsSummary(c.args_norm)}
@@ -76,7 +77,7 @@ export function Level0Card({ finding, decidedBy, outcome, onStep }: Level0CardPr
               <li key={r.step_id} className="py-2.5">
                 <div className="flex flex-wrap items-center gap-2">
                   {onStep ? (
-                    <button type="button" onClick={() => onStep(r.step_id)} className="inline-flex min-h-8 items-center rounded-sm border border-border-strong bg-bg px-2 font-mono text-mono text-accent hover:bg-surface-2" aria-label={`Show step ${r.step_id}`}>
+                    <button type="button" onClick={() => onStep(r.step_id)} className="link inline-flex min-h-7 items-center rounded-sm px-1 font-mono text-mono underline" aria-label={`Show step ${r.step_id}`}>
                       {r.step_id}
                     </button>
                   ) : null}
@@ -87,14 +88,12 @@ export function Level0Card({ finding, decidedBy, outcome, onStep }: Level0CardPr
                   {diffPaths(g.args_norm, r.args_norm).map((d) => (
                     <li key={d.path} className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5 rounded-sm bg-surface-2 px-2 py-1">
                       <span className="text-muted">{d.path}</span>
-                      <span className="rounded-[3px] bg-[var(--diff-del)] px-1 text-text">
+                      <span className="bg-[var(--diff-del)] px-1 text-text">
                         <span className="sr-only">was </span>
                         {show(d.before)}
                       </span>
-                      <span aria-hidden="true" className="text-muted">
-                        →
-                      </span>
-                      <span className={`rounded-[3px] px-1 ${d.after === undefined ? 'border border-dashed border-border-strong text-block-ink' : 'bg-[var(--diff-add)] text-text'}`}>
+                      <StepMark />
+                      <span className={`px-1 ${d.after === undefined ? 'border border-dashed border-border-strong text-block-ink' : 'bg-[var(--diff-add)] text-text'}`}>
                         <span className="sr-only">now </span>
                         {show(d.after)}
                       </span>

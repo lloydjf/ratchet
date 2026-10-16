@@ -19,9 +19,9 @@ const TH = 'px-2 py-2.5 font-medium'
 
 function Table({ minWidth, head, children }: { minWidth: string; head: ReactNode; children: ReactNode }) {
   return (
-    <div className="overflow-x-auto rounded-card border border-border">
+    <div className="overflow-x-auto border border-border bg-surface">
       <table className={`w-full ${minWidth} border-collapse text-left`}>
-        <thead className="bg-surface text-mono uppercase tracking-[0.06em] text-muted">
+        <thead className="text-meta text-muted">
           <tr>{head}</tr>
         </thead>
         <tbody>{children}</tbody>

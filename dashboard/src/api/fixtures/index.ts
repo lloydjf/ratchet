@@ -365,9 +365,62 @@ export function createFixtureApi(): RatchetApi {
         const batch = run.built.verdict.batch_ids[0] ?? 'batch'
         emit('batch.heartbeat', batch, { edit_id: run.editId, verdict_id: run.verdictId, batch_id: batch, runner: 'nebius-serverless', k, n: run.built.verdict.pairs.length, status: 'running' }, t, SESSION)
       }
+      advancePairs(run, t)
       advanceControls(run, current, ck, t)
       if (current === 'done') finish(run, t)
     }
+  }
+
+  /**
+   * The cascade, pair by pair, as the backend journals it:
+   * `pair.level0` for every replay, `pair.opinion` as each tier answers, and `pair.decided`
+   * where the cascade settled it. Each stage releases its pairs in step with its share of
+   * the stage's time, and catches up in one tick when a fast fixture speed skips a stage.
+   */
+  const pairSent = new Map<string, Set<string>>()
+  function advancePairs(run: Run, t: number) {
+    const v = run.built.verdict
+    const sent = pairSent.get(run.verdictId) ?? new Set<string>()
+    pairSent.set(run.verdictId, sent)
+    const el = run.startAt == null ? 0 : (t - run.startAt) / 1000
+    const share: Partial<Record<StageKey, number>> = {}
+    let acc = 0
+    for (const [k, d] of planFor(run.scenarioId)) {
+      share[k] = d <= 0 ? (el >= acc ? 1 : 0) : Math.max(0, Math.min(1, (el - acc) / d))
+      acc += Math.max(0, d)
+    }
+    const ids = (p: Verdict['pairs'][number]) => ({ edit_id: run.editId, verdict_id: run.verdictId, golden: p.golden_run_id, replay: p.replay_run_id })
+    const once = (key: string, fn: () => void) => {
+      if (sent.has(key)) return
+      sent.add(key)
+      fn()
+    }
+    const release = <T,>(stage: StageKey, items: T[], fn: (item: T) => void) => {
+      const n = Math.ceil((share[stage] ?? 0) * items.length - 1e-9)
+      items.slice(0, n).forEach(fn)
+    }
+    const decided = (p: Verdict['pairs'][number]) =>
+      once(`${p.golden_run_id}:decided`, () => emit('pair.decided', run.editId, { ...ids(p), outcome: p.outcome }, t, SESSION))
+    release('level0', v.pairs, (p) => {
+      if (p.decided_by === 'infra') return decided(p)
+      once(`${p.golden_run_id}:level0`, () =>
+        emit('pair.level0', run.editId, { ...ids(p), hard_fail: p.level0.hard_fail, n_new: p.level0.new_calls.length, n_missing: p.level0.missing_calls.length }, t, SESSION),
+      )
+      if (p.decided_by === 'level0') decided(p)
+    })
+    for (const tier of ['nano', 'super', 'ultra'] as Tier[]) {
+      const asked = v.pairs.filter((p) => p.opinions.some((o) => o.tier === tier))
+      release(tier, asked, (p) => {
+        const o = p.opinions.find((x) => x.tier === tier)!
+        once(`${p.golden_run_id}:${tier}`, () => emit('pair.opinion', run.editId, { ...ids(p), tier, verdict: o.verdict, confidence: o.confidence, usd: o.usd }, t, SESSION))
+        if (p.decided_by === tier) decided(p)
+      })
+    }
+    release('drift', v.pairs.filter((p) => p.drift.length > 0), (p) => {
+      for (const d of p.drift)
+        once(`${p.golden_run_id}:drift:${d.fact_id}`, () => emit('pair.drift', run.editId, { ...ids(p), fact_id: d.fact_id, changed: d.changed, status: d.status, confidence: d.confidence }, t, SESSION))
+      if (p.decided_by === 'drift') decided(p)
+    })
   }
 
   /**

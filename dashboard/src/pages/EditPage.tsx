@@ -21,7 +21,6 @@ export default function EditPage() {
   return (
     <div className="flex flex-col gap-8">
       <header className="flex flex-col gap-3">
-        <p className="eyebrow">Skill edit</p>
         <h1 className="text-h1 font-semibold text-text">
           Edit to <span className="font-mono">{e.affected_skills.join(', ')}</span>
         </h1>

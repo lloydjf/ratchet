@@ -2,7 +2,7 @@ import { useCallback, useMemo, useRef, useState, type MouseEvent } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { ArrowDownToLine, ArrowLeft, ArrowRight, ChevronDown } from 'lucide-react'
 import { responseToast, useMeta, usePair, useRebless } from '../api/hooks'
-import type { PairVerdict, Trace } from '../api/types'
+import type { PairVerdict, Tier, Trace } from '../api/types'
 import { track } from '../analytics'
 import { BADGE, CONTROL, DIFFERENCES_ONLY, JUMP_TO_DIFF, OUTCOME_LABEL, successToast } from '../copy'
 import { Badge } from '../components/Badge'
@@ -120,6 +120,7 @@ export default function PairPage() {
   const [tab, setTab] = useState<'golden' | 'replay'>('replay')
   const [diffOnly, setDiffOnly] = useState(false)
   const [focusStep, setFocusStep] = useState<string | null>(null)
+  const [flash, setFlash] = useState(0)
   const gRef = useRef<HTMLDivElement>(null)
   const rRef = useRef<HTMLDivElement>(null)
   const colsRef = useRef<HTMLDivElement>(null)
@@ -129,6 +130,11 @@ export default function PairPage() {
   const rows = useMemo(() => (data ? alignSteps(data.golden.steps, data.replay.steps) : []), [data])
   const gRows: StepRow[] = useMemo(() => rows.map((r) => ({ step: r.golden, differs: r.differs })), [rows])
   const rRows: StepRow[] = useMemo(() => rows.map((r) => ({ step: r.replay, differs: r.differs })), [rows])
+  const citedBy = useMemo(() => {
+    const m = new Map<string, Tier[]>()
+    for (const o of data?.pair.opinions ?? []) for (const s of o.evidence_steps) m.set(s, [...(m.get(s) ?? []), o.tier])
+    return m
+  }, [data])
 
   useDocumentTitle(data ? [OUTCOME_LABEL[data.pair.outcome], data.pair.task_label || data.golden.task_label, data.decision] : ['Pair'])
 
@@ -181,6 +187,7 @@ export default function PairPage() {
     const idx = rows.findIndex((r) => r.replay?.step_id === stepId || r.golden?.step_id === stepId)
     if (idx < 0) return
     setFocusStep(stepId)
+    setFlash((f) => f + 1)
     if (mobile) setTab(rows[idx]!.replay?.step_id === stepId ? 'replay' : 'golden')
     requestAnimationFrame(() => scrollToRow(idx))
   }
@@ -308,13 +315,13 @@ export default function PairPage() {
                 ))}
               </div>
               <div role="tabpanel" id={`panel-${tab}`} aria-labelledby={`tab-${tab}`} className="mt-2">
-                <StepList rows={tab === 'golden' ? gRows : rRows} side={tab} focusStep={focusStep} differencesOnly={diffOnly} ref={tab === 'golden' ? gRef : rRef} className="relative" />
+                <StepList rows={tab === 'golden' ? gRows : rRows} side={tab} focusStep={focusStep} flash={flash} citedBy={citedBy} differencesOnly={diffOnly} ref={tab === 'golden' ? gRef : rRef} className="relative" />
               </div>
             </div>
           ) : (
             <div className="grid grid-cols-2 gap-3">
               {(['golden', 'replay'] as const).map((side) => (
-                <div key={side} className="min-w-0 rounded-card border border-border bg-bg">
+                <div key={side} className="min-w-0 border border-border bg-bg">
                   <div className="flex items-center justify-between gap-2 border-b border-border px-4 py-2.5">
                     <p className="text-meta font-semibold text-text">{side === 'golden' ? 'Golden (original run)' : 'Replay (with the new skill)'}</p>
                     <p className="truncate font-mono text-mono text-muted">{side === 'golden' ? g.run_id : r.run_id}</p>
@@ -324,6 +331,8 @@ export default function PairPage() {
                     rows={side === 'golden' ? gRows : rRows}
                     side={side}
                     focusStep={focusStep}
+                    flash={flash}
+                    citedBy={citedBy}
                     maxHeight="min(70vh, 720px)"
                     className="relative"
                     onScroll={() => (side === 'golden' ? sync(gRef.current, rRef.current) : sync(rRef.current, gRef.current))}

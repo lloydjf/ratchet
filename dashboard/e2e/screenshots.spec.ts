@@ -47,6 +47,7 @@ for (const theme of ['dark', 'light'] as const) {
         test(`${name}`, async ({ page }) => {
           await page.goto(path)
           await settle(page)
+          await page.evaluate(() => window.scrollTo(0, 0))
           await page.screenshot({ path: `screenshots/${name}-${theme}-${device}.png`, fullPage: true })
           if (device === 'mobile' && ['landing', 'verdict-1-triage', 'verdict-3-fx', 'pair-expense'].includes(name))
             await page.screenshot({ path: `screenshots/${name}-${theme}-${device}-fold.png`, fullPage: false })
@@ -61,7 +62,7 @@ test.describe('kit groups', () => {
   test('kit groups close up', async ({ page }) => {
     await page.goto('/__kit?operator=1')
     await settle(page)
-    for (const id of ['decision', 'tier', 'progress', 'scenario', 'drift', 'opinion', 'steps']) {
+    for (const id of ['sieve', 'band', 'trail', 'actions', 'decision', 'tier', 'progress', 'scenario', 'drift', 'opinion', 'steps']) {
       await page.locator(`[data-kit="${id}"]`).screenshot({ path: `screenshots/kit-${id}-dark-desktop.png` })
     }
   })
@@ -84,6 +85,8 @@ test.describe('running states', () => {
     await settle(page)
     await page.locator('[data-scenario="github-triage"] [data-testid="simulate"]').click()
     await page.waitForTimeout(6000)
+    await page.evaluate(() => window.scrollTo(0, 0))
+    await page.waitForTimeout(200)
     await page.screenshot({ path: 'screenshots/landing-running-dark-desktop.png', fullPage: true })
     await page.locator('[data-scenario="github-triage"] a', { hasText: 'Watch it' }).click()
     await page.waitForTimeout(1500)
@@ -93,14 +96,14 @@ test.describe('running states', () => {
 
 test.describe('verdict actions', () => {
   test.use({ colorScheme: 'dark', viewport: { width: 1440, height: 900 } })
-  test('BLOCK header and the Approve anyway dialog', async ({ page }) => {
+  test('BLOCK header and the Approve anyway inline confirm', async ({ page }) => {
     await page.goto('/?operator=1')
     await page.goto('/verdicts/v_rec_gt')
     await settle(page)
     await page.getByTestId('verdict-header').screenshot({ path: 'screenshots/verdict-block-header-dark-desktop.png' })
     await page.getByRole('button', { name: 'Approve anyway' }).click()
-    await page.getByRole('dialog').waitFor()
+    await page.getByTestId('inline-confirm').waitFor()
     await page.waitForTimeout(300)
-    await page.screenshot({ path: 'screenshots/verdict-approve-anyway-dialog-dark-desktop.png', fullPage: false })
+    await page.screenshot({ path: 'screenshots/verdict-approve-anyway-confirm-dark-desktop.png', fullPage: false })
   })
 })

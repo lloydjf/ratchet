@@ -7,7 +7,7 @@ describe('CostPanel', () => {
     render(<CostPanel usdByTier={{ nano: 0.005, super: 0.01, ultra: 0.025 }} tokensByTier={{ nano: 80_000, super: 12_000, ultra: 16_000 }} counterfactualUsd={0.4} />)
     expect(screen.getByTestId('cost-saved')).toHaveTextContent('cascade saved $0.360 (10×)')
     expect(screen.getByText('Nemotron Nano')).toBeInTheDocument()
-    expect(screen.getByText('80k tok')).toBeInTheDocument()
+    expect(screen.getByText((_, el) => el?.tagName === 'SPAN' && el.textContent === '80k tok')).toBeInTheDocument()
   })
 
   it('omits the line when nothing was saved', () => {

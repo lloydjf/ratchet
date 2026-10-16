@@ -57,7 +57,7 @@ export function useStalled(label: string, active: boolean, thresholdS = STALL_AF
   return state.label === label && state.stalled
 }
 
-function useLocalClock(baseS: number, enabled: boolean): number {
+export function useLocalClock(baseS: number, enabled: boolean): number {
   // Seconds elapsed locally since the server last reported `baseS`.
   const [extra, setExtra] = useState({ baseS, s: 0 })
   if (extra.baseS !== baseS) setExtra({ baseS, s: 0 })
@@ -112,13 +112,13 @@ export function ProgressStrip({
 
   return (
     <div
-      className={`rounded-card border border-border bg-surface ${compact ? 'p-3' : 'p-4'} ${className}`}
+      className={`flex flex-col ${className}`}
       data-testid="progress-strip"
       data-status={visual}
       data-stage={stage}
     >
       <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
-        <p className="min-w-0 text-body font-semibold text-text" aria-live="polite" aria-atomic="true">
+        <p className={`min-w-0 font-medium text-text ${compact ? 'text-body' : 'text-h3'}`} aria-live="polite" aria-atomic="true">
           <span className="sr-only">Progress: </span>
           <span key={text} className={`anim-stage ${compact ? 'hidden sm:inline' : ''}`}>
             {status === 'failed' ? (failedMessage ?? 'The run failed.') : status === 'done' ? 'Done' : text}
@@ -142,7 +142,7 @@ export function ProgressStrip({
           </span>
         </p>
       </div>
-      <ol className="mt-3 flex gap-1" aria-label="Stages">
+      <ol className="mt-2 flex gap-[3px]" aria-label="Stages">
         {segs.map((s) => {
           const t = tierForStage(s.key)
           const color =
@@ -151,17 +151,17 @@ export function ProgressStrip({
               : s.status === 'skipped'
                 ? 'transparent'
                 : s.status === 'pending'
-                  ? 'var(--surface-2)'
+                  ? 'var(--border)'
                   : t
                     ? `var(--${t})`
                     : s.key === 'drift'
                       ? 'var(--drift)'
-                      : 'var(--accent)'
+                      : 'var(--text-muted)'
           return (
             <li key={s.key} className="min-w-0 flex-1" aria-label={`${s.label}: ${s.status}`} data-stage-status={s.status}>
               <span
-                className={`block h-1.5 rounded-full transition-[background-color,opacity] duration-[160ms] ease-out ${s.status === 'skipped' ? 'border border-dashed border-border-strong' : ''} ${s.status === 'active' && visual === 'stalled' ? 'anim-stalled' : ''}`}
-                style={{ background: color, opacity: s.status === 'active' && visual === 'running' ? 0.75 : 1 }}
+                className={`block h-[2px] transition-[background-color,opacity] duration-[160ms] ease-out ${s.status === 'active' && visual === 'stalled' ? 'anim-stalled' : ''}`}
+                style={{ background: s.status === 'skipped' ? 'var(--border)' : color, opacity: s.status === 'active' && visual === 'running' ? 0.6 : 1 }}
               />
             </li>
           )

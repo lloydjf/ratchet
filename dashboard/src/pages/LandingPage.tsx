@@ -1,17 +1,21 @@
-import { useCallback, useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
-import { ArrowRight } from 'lucide-react'
+import { useCallback, useEffect, useRef, useState } from 'react'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
+import { ArrowRight, Play } from 'lucide-react'
 import { isApiError } from '../api/client'
 import { useMeta, useScenarios, useSimulate, useVerdict, useVerdicts } from '../api/hooks'
 import { useLiveEvent } from '../api/live'
 import type { Event, Scenario, VerdictSummary } from '../api/types'
 import { markSimulateClick, track } from '../analytics'
-import { apiErrorCopy, errorCopy, LANDING_COPY, LANDING_HEADLINE, replayStep } from '../copy'
-import { ScenarioCard, type ScenarioStatus } from '../components/ScenarioCard'
+import { apiErrorCopy, errorCopy, HERO, LANDING_COPY, LANDING_HEADLINE, replayStep } from '../copy'
+import { Button } from '../components/Button'
 import { ErrorState } from '../components/ErrorState'
-import { HeaderTicker } from '../layout/AppShell'
+import { StepMark } from '../components/Marks'
+import { ScenarioCard, type ScenarioStatus } from '../components/ScenarioCard'
+import { Sieve } from '../components/Sieve'
 import { useDocumentTitle } from '../lib/useDocumentTitle'
 import { rememberSession } from '../lib/session'
+import { VerdictBand } from './verdict/VerdictHeader'
+import { PairsPanel } from './verdict/VerdictEvidence'
 
 interface Slot {
   verdictId: string | null
@@ -39,26 +43,11 @@ function saveSlots(s: Record<string, Slot>) {
 
 const EMPTY_SLOT: Slot = { verdictId: null, status: 'idle', queue: null, error: null }
 
-function recordedFor(s: Scenario, verdicts: VerdictSummary[] | undefined): string | null {
-  const hit = verdicts?.find((v) => v.recorded && v.affected_skills.includes(s.skill))
-  return hit ? `/verdicts/${encodeURIComponent(hit.verdict_id)}` : null
+function recordedFor(s: Pick<Scenario, 'skill'>, verdicts: VerdictSummary[] | undefined): VerdictSummary | null {
+  return verdicts?.find((v) => v.recorded && v.affected_skills.includes(s.skill)) ?? null
 }
 
-function ScenarioSlot({
-  scenario,
-  index,
-  slot,
-  onSimulate,
-  onSettle,
-  recordedHref,
-}: {
-  scenario: Scenario
-  index: number
-  slot: Slot
-  onSimulate: () => void
-  onSettle: (patch: Partial<Slot>) => void
-  recordedHref: string | null
-}) {
+function ScenarioSlot({ scenario, slot, onSimulate, onSettle, recordedHref }: { scenario: Scenario; slot: Slot; onSimulate: () => void; onSettle: (patch: Partial<Slot>) => void; recordedHref: string | null }) {
   const q = useVerdict(slot.verdictId ?? undefined)
   const view = q.data
   const decided = view?.verdict ?? null
@@ -79,7 +68,6 @@ function ScenarioSlot({
   return (
     <ScenarioCard
       scenario={scenario}
-      index={index}
       status={status}
       verdictId={slot.verdictId}
       decision={decided?.decision ?? null}
@@ -92,39 +80,65 @@ function ScenarioSlot({
   )
 }
 
-/** Honesty: the replay step names this host's runner, like the progress strip does. */
-function loop(runner: string | null | undefined): { label: string; tone?: string }[] {
-  return [
-    { label: 'Bless a task' },
-    { label: 'Agent edits a skill' },
-    { label: replayStep(runner) },
-    { label: 'Level 0 · Nano → Super → Ultra', tone: 'tiers' },
-    { label: 'Tavily drift check', tone: 'drift' },
-    { label: 'Block, hold or merge' },
-  ]
-}
-
+/** Honesty: the replay step names this host's runner. */
 function HowItWorks({ runner }: { runner: string | null | undefined }) {
-  const LOOP = loop(runner)
+  const steps = ['Bless a task', 'Agent edits a skill', replayStep(runner), 'Level 0 · Nano → Super → Ultra', 'Tavily drift check', 'Block, hold or merge']
   return (
-    <ol className="flex flex-wrap items-center gap-2 font-mono text-mono text-muted" aria-label="How a check runs">
-      {LOOP.map((s, i) => (
-        <li key={s.label} className="flex items-center gap-1.5">
-          <span className="inline-flex h-7 items-center gap-1.5 rounded-sm border border-border bg-surface px-2 text-text">
-            <span className="num text-muted">{i + 1}</span>
-            {s.tone === 'tiers' ? (
-              <span>
-                Level 0 · <span className="text-nano-ink">Nano</span> → <span className="text-super-ink">Super</span> → <span className="text-ultra-ink">Ultra</span>
-              </span>
-            ) : s.tone === 'drift' ? (
-              <span className="text-drift-ink">{s.label}</span>
-            ) : (
-              s.label
-            )}
-          </span>
+    <ol className="flex flex-wrap items-center gap-x-2 gap-y-1 text-meta text-muted" aria-label="How a check runs">
+      {steps.map((s, i) => (
+        <li key={s} className="flex items-center gap-2">
+          {i > 0 ? <StepMark /> : null}
+          {s === 'Level 0 · Nano → Super → Ultra' ? (
+            <span>
+              Level 0 · <span className="text-nano-ink">Nano</span> <StepMark /> <span className="text-super-ink">Super</span> <StepMark /> <span className="text-ultra-ink">Ultra</span>
+            </span>
+          ) : s === 'Tavily drift check' ? (
+            <span className="text-drift-ink">{s}</span>
+          ) : (
+            <span className="text-text">{s}</span>
+          )}
         </li>
       ))}
     </ol>
+  )
+}
+
+/** The hero: a real recorded verdict, read-only, sieve settled. */
+function RecordedHero({ verdictId, onRun, running }: { verdictId: string; onRun: () => void; running: boolean }) {
+  const q = useVerdict(verdictId)
+  const view = q.data
+  const v = view?.verdict
+  if (q.isLoading)
+    return (
+      <div className="stack" aria-busy="true" role="status" aria-label="Loading the recorded verdict">
+        <div className="flex flex-col gap-3 panel-pad">
+          <span className="skeleton block h-14 w-56" />
+          <span className="skeleton block h-6 w-3/4" />
+        </div>
+        <div className="h-[260px] panel-pad">
+          <span className="skeleton block h-full w-full" />
+        </div>
+      </div>
+    )
+  if (!view || !v) return null
+  return (
+    <section aria-label="A recorded verdict" className="stack" data-testid="hero">
+      <div className="flex flex-col gap-3 px-6 py-3 sm:flex-row sm:items-center sm:justify-between max-md:px-4">
+        <p className="text-body text-muted">{HERO.sentence(v.pairs.length, v.affected_skills.join(', '), v.decision)}</p>
+        <Button variant="primary" onClick={onRun} disabled={running} data-testid="run-live" className="shrink-0 self-start sm:self-auto">
+          <Play size={14} aria-hidden="true" />
+          {HERO.run}
+        </Button>
+      </div>
+      <VerdictBand view={view} animate={false} simulatedMeta={false} publicMode readOnly testId="hero-band" />
+      <Sieve events={[]} pairs={v.pairs} verdictId={v.verdict_id} frozen />
+      <PairsPanel view={view} verdictId={v.verdict_id} only={null} onClearFilter={() => {}} selected={null} limit={4} />
+      <div className="px-6 py-3 max-md:px-4">
+        <Link to={`/verdicts/${encodeURIComponent(v.verdict_id)}`} className="link inline-flex min-h-8 items-center gap-1 text-body">
+          {HERO.openFull} <ArrowRight size={14} aria-hidden="true" />
+        </Link>
+      </div>
+    </section>
   )
 }
 
@@ -134,6 +148,8 @@ export default function LandingPage() {
   const { data: meta } = useMeta()
   const { data: verdicts } = useVerdicts()
   const simulate = useSimulate()
+  const navigate = useNavigate()
+  const [params, setParams] = useSearchParams()
   const [slots, setSlots] = useState<Record<string, Slot>>(loadSlots)
 
   useEffect(() => {
@@ -167,69 +183,88 @@ export default function LandingPage() {
     if (e.kind === 'simulate.finished' && e.payload.status === 'failed') update(scenario, { status: 'failed' })
   })
 
-  const run = async (s: Scenario) => {
-    track('demo.simulate_click', { scenario: s.scenario_id })
-    update(s.scenario_id, { status: 'running', verdictId: null, queue: null, error: null })
-    try {
-      const res = await simulate.mutateAsync(s.scenario_id)
-      rememberSession(res.session_hash)
-      if (res.verdict_id) markSimulateClick(s.scenario_id, res.verdict_id)
-      update(s.scenario_id, {
-        verdictId: res.verdict_id,
-        status: res.status === 'queued' ? 'queued' : res.status === 'done' ? 'done' : 'running',
-        queue: res.status === 'queued' ? { position: res.queue_position ?? 1, etaS: res.eta_s ?? 20 } : null,
-      })
-    } catch (e) {
-      update(s.scenario_id, { status: 'failed', error: apiErrorCopy(isApiError(e) ? e : null) })
-    }
-  }
+  const run = useCallback(
+    async (s: Scenario): Promise<string | null> => {
+      track('demo.simulate_click', { scenario: s.scenario_id })
+      update(s.scenario_id, { status: 'running', verdictId: null, queue: null, error: null })
+      try {
+        const res = await simulate.mutateAsync(s.scenario_id)
+        rememberSession(res.session_hash)
+        if (res.verdict_id) markSimulateClick(s.scenario_id, res.verdict_id)
+        update(s.scenario_id, {
+          verdictId: res.verdict_id,
+          status: res.status === 'queued' ? 'queued' : res.status === 'done' ? 'done' : 'running',
+          queue: res.status === 'queued' ? { position: res.queue_position ?? 1, etaS: res.eta_s ?? 20 } : null,
+        })
+        return res.status === 'queued' ? null : res.verdict_id
+      } catch (e) {
+        update(s.scenario_id, { status: 'failed', error: apiErrorCopy(isApiError(e) ? e : null) })
+        return null
+      }
+    },
+    [simulate, update],
+  )
+
+  // The command palette's "Simulate <skill>" lands here with ?run=<scenario>.
+  const ran = useRef<string | null>(null)
+  const wanted = params.get('run')
+  useEffect(() => {
+    if (!wanted || ran.current === wanted || !scenarios.data) return
+    const s = scenarios.data.find((x) => x.scenario_id === wanted)
+    const t = setTimeout(() => {
+      ran.current = wanted
+      const next = new URLSearchParams(params)
+      next.delete('run')
+      setParams(next, { replace: true })
+      if (s) void run(s)
+    }, 0)
+    return () => clearTimeout(t)
+  }, [wanted, scenarios.data, params, setParams, run])
 
   const simulateOff = meta ? !meta.simulate_enabled : false
+  const list = scenarios.data ?? []
+  const heroScenario = list.find((s) => recordedFor(s, verdicts?.items)?.decision === 'BLOCK') ?? list[0]
+  const hero = heroScenario ? recordedFor(heroScenario, verdicts?.items) : null
+  const heroSlot = heroScenario ? slots[heroScenario.scenario_id] : undefined
+
+  const runLive = async () => {
+    if (!heroScenario) return
+    const id = await run(heroScenario)
+    if (id) navigate(`/verdicts/${encodeURIComponent(id)}`)
+  }
 
   return (
-    <div className="mx-auto flex max-w-landing flex-col gap-10 sm:gap-12">
-      <section className="flex flex-col gap-5 pt-2 sm:pt-8">
-        <p className="eyebrow">Live demo · no login, nothing to install</p>
+    <div className="flex flex-col gap-10">
+      <header className="flex max-w-[60ch] flex-col gap-2 pt-2">
         <h1 className="text-h1 font-semibold text-text">{LANDING_HEADLINE}</h1>
-        <div className="sm:hidden">
-          <HeaderTicker />
-        </div>
-        <p className="max-w-prose text-narrative text-muted" data-testid="landing-copy">
-          {LANDING_COPY}
-        </p>
-        <HowItWorks runner={meta?.runner} />
-      </section>
+      </header>
 
-      <section aria-labelledby="scenarios-title" className="flex flex-col gap-4">
+      {hero ? <RecordedHero verdictId={hero.verdict_id} onRun={() => void runLive()} running={simulateOff || heroSlot?.status === 'running' || heroSlot?.status === 'queued'} /> : null}
+
+      <section aria-labelledby="scenarios-title" className="flex flex-col gap-3">
         <div className="flex flex-wrap items-baseline justify-between gap-2">
           <h2 id="scenarios-title" className="text-h3 font-semibold text-text">
-            Three skill edits to try
+            {HERO.scenariosTitle}
           </h2>
-          <p className="text-meta text-muted">Each run takes under a minute and is yours alone.</p>
+          <p className="text-meta text-muted">{HERO.scenariosNote}</p>
         </div>
         {scenarios.isError ? (
           <ErrorState error={scenarios.error} onRetry={() => void scenarios.refetch()} />
         ) : (
-          <ol className="grid grid-cols-1 gap-3 md:grid-cols-3">
-            {(scenarios.data ?? []).map((s, i) => (
-              <li key={s.scenario_id} className="min-w-0">
-                <ScenarioSlot
-                  scenario={s}
-                  index={i + 1}
-                  slot={slots[s.scenario_id] ?? EMPTY_SLOT}
-                  onSimulate={() => void run(s)}
-                  onSettle={(p) => update(s.scenario_id, p)}
-                  recordedHref={recordedFor(s, verdicts?.items)}
-                />
+          <ol className="grid grid-cols-1 gap-px border border-border bg-border md:grid-cols-3">
+            {list.map((s) => (
+              <li key={s.scenario_id} className="min-w-0 bg-surface">
+                <ScenarioSlot scenario={s} slot={slots[s.scenario_id] ?? EMPTY_SLOT} onSimulate={() => void run(s)} onSettle={(p) => update(s.scenario_id, p)} recordedHref={recordedFor(s, verdicts?.items) ? `/verdicts/${encodeURIComponent(recordedFor(s, verdicts?.items)!.verdict_id)}` : null} />
               </li>
             ))}
             {scenarios.isLoading
               ? Array.from({ length: 3 }, (_, i) => (
-                  <li key={i} className="h-72 rounded-card border border-border bg-surface p-4" aria-hidden="true">
-                    <span className="skeleton block h-4 w-20" />
-                    <span className="skeleton mt-2 block h-6 w-40" />
-                    <span className="skeleton mt-6 block h-4 w-full" />
-                    <span className="skeleton mt-2 block h-4 w-4/5" />
+                  <li key={i} className="flex h-64 flex-col gap-2 bg-surface p-5" aria-hidden="true">
+                    <span className="skeleton block h-5 w-40" />
+                    <span className="skeleton mt-4 block h-3.5 w-full" />
+                    <span className="skeleton block h-3.5 w-4/5" />
+                    <span className="skeleton mt-4 block h-3.5 w-full" />
+                    <span className="skeleton block h-3.5 w-3/5" />
                   </li>
                 ))
               : null}
@@ -238,14 +273,17 @@ export default function LandingPage() {
         {simulateOff ? <p className="text-meta text-warn-ink">{errorCopy('simulate_disabled')}</p> : null}
       </section>
 
-      <section className="flex flex-col gap-3 border-t border-border pt-6 sm:flex-row sm:items-center sm:justify-between">
-        <p className="text-meta text-muted">Every verdict, edit and blessing for the demo agent is on the timeline.</p>
+      <section className="flex flex-col gap-3 border-t border-border pt-6" aria-label="How Ratchet works">
+        <HowItWorks runner={meta?.runner} />
+        <p className="max-w-prose text-body text-muted" data-testid="landing-copy">
+          {LANDING_COPY}
+        </p>
         <div className="flex flex-wrap gap-x-5">
-          <Link to="/timeline" className="link inline-flex min-h-11 items-center gap-1 text-meta font-medium">
+          <Link to="/timeline" className="link inline-flex min-h-8 items-center gap-1 text-body">
             Open the timeline <ArrowRight size={14} aria-hidden="true" />
           </Link>
           {meta && !meta.public_mode ? (
-            <Link to="/traces" className="link inline-flex min-h-11 items-center gap-1 text-meta font-medium">
+            <Link to="/traces" className="link inline-flex min-h-8 items-center gap-1 text-body">
               Golden library <ArrowRight size={14} aria-hidden="true" />
             </Link>
           ) : null}

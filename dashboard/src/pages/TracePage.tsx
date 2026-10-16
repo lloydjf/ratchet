@@ -130,7 +130,7 @@ export default function TracePage() {
       {t.world_facts.length ? (
         <section aria-labelledby="facts-title" className="flex flex-col gap-3">
           <h2 id="facts-title" className="text-h3 font-semibold text-text">World facts</h2>
-          <ul className="divide-y divide-border rounded-card border border-border">
+          <ul className="divide-y divide-border border border-border">
             {t.world_facts.map((f) => (
               <li key={f.fact_id} className="flex flex-col gap-1 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
                 <span className="text-body text-text">{f.statement}</span>

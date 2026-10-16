@@ -1,5 +1,6 @@
 import { useState, type ReactNode } from 'react'
-import { ChevronRight, FileText } from 'lucide-react'
+import { ChevronRight, FileText, Filter } from 'lucide-react'
+import { EVIDENCE } from '../copy'
 
 export interface DiffLine {
   type: 'add' | 'del' | 'ctx' | 'hunk' | 'meta'
@@ -120,7 +121,7 @@ function inline(text: string): ReactNode {
   return parts.map((p, i) => {
     if (p.startsWith('`') && p.endsWith('`') && p.length > 1)
       return (
-        <span key={i} className="rounded-[3px] bg-bg/60 px-0.5 text-drift-ink">
+        <span key={i} className="text-drift-ink">
           {p}
         </span>
       )
@@ -139,20 +140,27 @@ interface DiffViewerProps {
   collapsedByDefault?: boolean
   className?: string
   onExpand?: () => void
+  /** Pairs each hunk affected, by hunk id (`lib/hunks`); shows a count that filters the grid. */
+  hunkCounts?: Map<string, number>
+  activeHunk?: string | null
+  onHunk?: (id: string | null) => void
 }
 
-/** Unified diff with line numbers, markdown highlighting, and per-file collapse. */
-export function DiffViewer({ patch, collapsedByDefault = false, className = '', onExpand }: DiffViewerProps) {
+/** Unified diff with line numbers, markdown highlighting, per-file collapse and per-hunk pair counts. */
+export function DiffViewer({ patch, collapsedByDefault = false, className = '', onExpand, hunkCounts, activeHunk, onHunk }: DiffViewerProps) {
   const files = parseUnifiedDiff(patch)
   const [open, setOpen] = useState<Record<string, boolean>>({})
   if (!files.length) return <p className="text-meta text-muted">No file changes.</p>
+  const starts = files.map((_, i) => files.slice(0, i).reduce((a, f) => a + f.lines.filter((l) => l.type === 'hunk').length, 0))
   return (
-    <div className={`flex flex-col gap-3 ${className}`} data-testid="diff-viewer">
-      {files.map((f) => {
+    <div className={`flex flex-col gap-4 ${className}`} data-testid="diff-viewer">
+      {files.map((f, fi) => {
         const isOpen = open[f.path] ?? !collapsedByDefault
         const id = `diff-${f.path.replace(/\W+/g, '-')}`
+        const first = starts[fi]!
+        const hunkIndex = f.lines.map((l, i) => (l.type === 'hunk' ? f.lines.slice(0, i).filter((x) => x.type === 'hunk').length : -1))
         return (
-          <section key={f.path} className="overflow-hidden rounded-card border border-border bg-bg">
+          <section key={f.path} className="border border-border bg-bg">
             <h3 className="m-0">
               <button
                 type="button"
@@ -162,12 +170,12 @@ export function DiffViewer({ patch, collapsedByDefault = false, className = '', 
                   setOpen((o) => ({ ...o, [f.path]: !isOpen }))
                   if (!isOpen) onExpand?.()
                 }}
-                className="flex min-h-11 w-full items-center gap-2 bg-surface px-3 text-left hover:bg-surface-2"
+                className="flex min-h-10 w-full items-center gap-2 bg-surface-2 px-3 text-left hover:bg-[color-mix(in_srgb,var(--text)_4%,var(--surface-2))]"
               >
-                <ChevronRight size={16} aria-hidden="true" className={`shrink-0 text-muted transition-transform duration-[160ms] ${isOpen ? 'rotate-90' : ''}`} />
-                <FileText size={16} aria-hidden="true" className="shrink-0 text-muted" />
+                <ChevronRight size={14} aria-hidden="true" className={`shrink-0 text-muted transition-transform duration-[160ms] ${isOpen ? 'rotate-90' : ''}`} />
+                <FileText size={14} aria-hidden="true" className="shrink-0 text-muted" />
                 <span className="min-w-0 flex-1 truncate font-mono text-mono text-text">{f.path}</span>
-                {f.status === 'added' ? <span className="text-mono text-muted">new file</span> : null}
+                {f.status === 'added' ? <span className="text-meta text-muted">new file</span> : null}
                 <span className="num shrink-0 font-mono text-mono">
                   <span className="text-pass-ink">+{f.additions}</span> <span className="text-block-ink">−{f.deletions}</span>
                 </span>
@@ -176,14 +184,39 @@ export function DiffViewer({ patch, collapsedByDefault = false, className = '', 
             </h3>
             {isOpen ? (
               <div id={id} className="border-t border-border font-mono text-mono" role="table" aria-label={`Changes in ${f.path}`}>
-                {f.lines.map((l, i) =>
-                  l.type === 'hunk' ? (
-                    <div key={i} role="row" className="flex bg-surface px-3 py-1 text-muted">
-                      <span role="cell" className="truncate">
-                        {l.text}
-                      </span>
-                    </div>
-                  ) : (
+                {f.lines.map((l, i) => {
+                  if (l.type === 'hunk') {
+                    const hid = `${f.path}#${first + hunkIndex[i]!}`
+                    const n = hunkCounts?.get(hid)
+                    const active = activeHunk === hid
+                    return (
+                      <div key={i} role="row" className="flex items-center gap-3 border-b border-border/60 bg-surface px-3 py-1 text-muted" data-hunk={hid}>
+                        <span role="cell" className="min-w-0 flex-1 truncate">
+                          {l.text}
+                        </span>
+                        {n != null ? (
+                          <span role="cell" className="shrink-0 font-sans">
+                            {n > 0 && onHunk ? (
+                              <button
+                                type="button"
+                                aria-pressed={active}
+                                onClick={() => onHunk(active ? null : hid)}
+                                aria-label={EVIDENCE.hunkFilter(n)}
+                                className={`num inline-flex min-h-7 items-center gap-1.5 rounded-sm border px-2 text-meta ${active ? 'border-accent bg-surface-2 text-text' : 'border-border-strong text-text hover:bg-surface-2'}`}
+                                data-testid="hunk-pairs"
+                              >
+                                <Filter size={12} aria-hidden="true" />
+                                {EVIDENCE.hunkPairs(n)}
+                              </button>
+                            ) : (
+                              <span className="text-meta text-muted">{EVIDENCE.hunkPairs(n)}</span>
+                            )}
+                          </span>
+                        ) : null}
+                      </div>
+                    )
+                  }
+                  return (
                     <div
                       key={i}
                       role="row"
@@ -200,11 +233,11 @@ export function DiffViewer({ patch, collapsedByDefault = false, className = '', 
                         {l.type === 'add' ? '+' : l.type === 'del' ? '−' : ''}
                       </span>
                       <span role="cell" className="min-w-0 whitespace-pre-wrap break-words py-px pr-3 text-text">
-                        {highlightMarkdown(l.text) || ' '}
+                        {highlightMarkdown(l.text) || ' '}
                       </span>
                     </div>
-                  ),
-                )}
+                  )
+                })}
               </div>
             ) : null}
           </section>

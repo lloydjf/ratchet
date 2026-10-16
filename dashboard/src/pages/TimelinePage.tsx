@@ -93,8 +93,8 @@ export default function TimelinePage() {
         <p className="text-body text-muted">Every edit, verdict, blessing and action for this agent, newest first.</p>
       </header>
 
-      <div className="sticky top-[101px] z-20 -mx-4 flex flex-col gap-3 border-b border-border bg-bg/95 px-4 py-3 backdrop-blur-[6px] sm:-mx-6 sm:px-6 md:top-14 lg:flex-row lg:items-center lg:justify-between">
-        <div role="radiogroup" aria-label="Kind" className="flex flex-wrap gap-1">
+      <div className="sticky top-12 z-20 -mx-4 flex flex-col gap-3 border-b border-border bg-bg px-4 py-3 md:top-0 md:-mx-8 md:px-8 lg:flex-row lg:items-center lg:justify-between">
+        <div role="radiogroup" aria-label="Kind" className="inline-flex flex-wrap gap-px self-start border border-border bg-border">
           {(Object.keys(KIND_FILTERS) as KindFilter[]).map((k) => (
             <button
               key={k}
@@ -102,7 +102,7 @@ export default function TimelinePage() {
               role="radio"
               aria-checked={kind === k}
               onClick={() => setParam('kind', k === 'all' ? '' : k)}
-              className={`min-h-11 rounded-sm border px-3 text-meta font-medium ${kind === k ? 'border-border-strong bg-surface-2 text-text' : 'border-transparent text-muted hover:text-text'}`}
+              className={`min-h-8 px-3 text-body max-md:min-h-11 ${kind === k ? 'bg-surface-2 text-text' : 'bg-surface text-muted hover:text-text'}`}
             >
               {KIND_FILTERS[k].label}
             </button>
@@ -111,7 +111,7 @@ export default function TimelinePage() {
         <div className="flex flex-wrap items-center gap-2">
           <label className="flex items-center gap-2 text-meta text-muted">
             Skill
-            <select value={skill} onChange={(e) => setParam('skill', e.target.value)} className="min-h-11 rounded-sm border border-border-strong bg-surface px-2 text-meta text-text">
+            <select value={skill} onChange={(e) => setParam('skill', e.target.value)} className="min-h-8 rounded-sm border border-border-strong bg-surface px-2 text-body text-text max-md:min-h-11">
               <option value="">All skills</option>
               {skills.map((s) => (
                 <option key={s} value={s}>
@@ -122,7 +122,7 @@ export default function TimelinePage() {
           </label>
           <label className="flex items-center gap-2 text-meta text-muted">
             Decision
-            <select value={decision} onChange={(e) => setParam('decision', e.target.value)} className="min-h-11 rounded-sm border border-border-strong bg-surface px-2 text-meta text-text">
+            <select value={decision} onChange={(e) => setParam('decision', e.target.value)} className="min-h-8 rounded-sm border border-border-strong bg-surface px-2 text-body text-text max-md:min-h-11">
               <option value="">Any</option>
               <option value="BLOCK">BLOCK</option>
               <option value="WARN">WARN</option>
@@ -134,12 +134,10 @@ export default function TimelinePage() {
             role="switch"
             aria-checked={live}
             onClick={() => setLive((l) => !l)}
-            className={`inline-flex min-h-11 items-center gap-2 rounded-sm border px-3 text-meta font-medium ${live ? 'tint-pass' : 'border-border-strong bg-surface text-muted'}`}
+            className={`inline-flex min-h-8 items-center gap-2 rounded-sm border border-border-strong bg-surface px-3 text-body max-md:min-h-11 ${live ? 'text-text' : 'text-muted'}`}
             data-testid="live-toggle"
           >
-            <span aria-hidden="true" className="font-mono">
-              {live ? '●' : '○'}
-            </span>
+            <span aria-hidden="true" className={`block h-1.5 w-1.5 rounded-full ${live ? 'bg-pass' : 'border border-border-strong'}`} />
             {liveLabel}
           </button>
         </div>
@@ -157,12 +155,12 @@ export default function TimelinePage() {
         <div className="flex flex-col gap-6">
           {groups.map(([key, events]) => (
             <section key={key} aria-labelledby={`day-${key}`}>
-              <h2 id={`day-${key}`} className="eyebrow mb-1 px-3">
+              <h2 id={`day-${key}`} className="mb-2 text-body font-semibold text-text">
                 {dayHeading(events[0]!.ts)}
               </h2>
-              <ol className="divide-y divide-border rounded-card border border-border">
+              <ol className="divide-y divide-border border border-border bg-surface">
                 {events.map((e) => (
-                  <TimelineItem key={e.id} event={e} linkTraces={meta ? !meta.public_mode : false} />
+                  <TimelineItem key={e.id} event={e} linkTraces={meta ? !meta.public_mode : false} thumbs />
                 ))}
               </ol>
             </section>

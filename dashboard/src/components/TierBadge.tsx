@@ -1,5 +1,6 @@
 import type { OpinionVerdict, Tier } from '../api/types'
-import { OPINION_GLYPH, SKIPPED_TIER, TIER_LETTER, TIER_NAME, tierTooltip } from '../copy'
+import { SKIPPED_TIER, TIER_LETTER, TIER_NAME, tierTooltip } from '../copy'
+import { OpinionMark } from './Marks'
 import { Tooltip } from './Tooltip'
 
 interface TierBadgeProps {
@@ -16,7 +17,7 @@ interface TierBadgeProps {
 
 /** N / S / U letter badge; with a verdict it shows the glyph and a keyboard-reachable tooltip. */
 export function TierBadge({ tier, verdict, confidence, reasons, skipped = false, size = 'md', plain = false }: TierBadgeProps) {
-  const dim = size === 'sm' ? 'h-6 min-w-6 text-mono' : 'h-7 min-w-7 text-meta'
+  const dim = size === 'sm' ? 'h-5 min-w-5 text-meta' : 'h-6 min-w-6 text-meta'
   const tone = skipped ? 'border-dashed border-border-strong text-muted bg-transparent' : `tint-${tier}`
   const label = skipped
     ? `${TIER_NAME[tier]}: not needed`
@@ -25,17 +26,15 @@ export function TierBadge({ tier, verdict, confidence, reasons, skipped = false,
       : TIER_NAME[tier]
   const inner = (
     <>
-      <span aria-hidden="true" className="font-mono font-bold leading-none">
+      <span aria-hidden="true" className="font-mono font-medium leading-none">
         {TIER_LETTER[tier]}
       </span>
       {verdict && !skipped ? (
-        <span aria-hidden="true" className="font-mono leading-none">
-          {OPINION_GLYPH[verdict]}
-        </span>
+        <OpinionMark verdict={verdict} size={11} />
       ) : null}
     </>
   )
-  const base = `inline-flex items-center justify-center gap-1 rounded-sm border px-1.5 ${dim} ${tone}`
+  const base = `inline-flex items-center justify-center gap-1 border px-1 ${dim} ${tone}`
   if (plain)
     return (
       <span role="img" aria-label={label} data-tier={tier} className={base}>

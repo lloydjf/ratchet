@@ -24,7 +24,7 @@ RUN npm run build
 FROM ghcr.io/astral-sh/uv:0.8.18 AS uv
 
 # --- 3. control: python 3.11-slim runtime ----------------------------------------------------
-FROM python:3.11-slim AS control
+FROM python:3.14-slim AS control
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \

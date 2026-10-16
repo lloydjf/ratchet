@@ -18,7 +18,7 @@ run. We ran them cold, with the response cache off: two BLOCKs and one PASS-with
 
 | | |
 | --- | --- |
-| ![Landing page with three Simulate scenarios](docs/img/landing.png) | **Press Simulate.** Each card seeds a skill edit "the agent learned". Ratchet replays the blessed tasks and shows every stage, with its tier and running cost. |
+| ![Landing page: a recorded BLOCK verdict above three Simulate scenarios](docs/img/landing.png) | **Open with a verdict, then press Simulate.** The landing shows a recorded run (real Nemotron, real Tavily) with the cascade sieve: where each of the 14 replays was decided and what each tier cost. Each scenario card seeds a skill edit "the agent learned" and replays the blessed tasks live. |
 | ![BLOCK verdict for github-triage](docs/img/verdict-block.png) | **Caught, with no model involved.** The "improved" github-triage now closes stale issues. Level 0 sees new `github.close_issue` calls in replays that never made them. The sandbox refuses them (`409 ratchet_blocked`), and the edit is reverted on `candidate`, so `main` never changes. |
 | ![PASS verdict with a Tavily drift card](docs/img/verdict-drift.png) | **The world moved, not the agent.** The FX converter's outputs changed because EUR/USD moved from 1.0800 to about 1.12. Tavily confirms it, Super rules that the difference follows from the new rate, and the edit passes with Re-bless offered. |
 

@@ -13,7 +13,7 @@
 # --- 1. dashboard: React/Vite build -> /src/dashboard/dist ------------------------------------
 # Static output, identical for every target platform: it builds once on the build host's
 # native platform, so a multi-arch publish does not run npm under emulation.
-FROM --platform=$BUILDPLATFORM node:24-slim AS dashboard
+FROM --platform=$BUILDPLATFORM node:25-slim AS dashboard
 WORKDIR /src/dashboard
 COPY dashboard/package.json dashboard/package-lock.json ./
 RUN --mount=type=cache,target=/root/.npm npm ci --no-audit --no-fund

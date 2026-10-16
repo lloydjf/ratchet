@@ -107,3 +107,30 @@ test.describe('verdict actions', () => {
     await page.screenshot({ path: 'screenshots/verdict-approve-anyway-confirm-dark-desktop.png', fullPage: false })
   })
 })
+
+test.describe('gallery', () => {
+  test.use({ colorScheme: 'dark', viewport: { width: 1440, height: 900 } })
+  for (const [name, path] of [
+    ['landing', '/'],
+    ['verdict-1-triage', '/verdicts/v_rec_gt'],
+    ['verdict-3-fx', '/verdicts/v_rec_fx'],
+    ['costs', '/costs'],
+  ] as const) {
+    test(`gallery fold ${name}`, async ({ page }) => {
+      await page.goto(path)
+      await settle(page)
+      await page.evaluate(() => window.scrollTo(0, 0))
+      await page.screenshot({ path: `screenshots/${name}-dark-desktop-fold.png`, fullPage: false })
+    })
+  }
+})
+
+test.describe('video thumbnail', () => {
+  test.use({ colorScheme: 'dark', viewport: { width: 1280, height: 720 } })
+  test('gallery thumbnail 1280x720', async ({ page }) => {
+    await page.goto('/verdicts/v_rec_gt')
+    await settle(page)
+    await page.evaluate(() => window.scrollTo(0, 0))
+    await page.screenshot({ path: 'screenshots/thumbnail-1280x720.png', fullPage: false })
+  })
+})

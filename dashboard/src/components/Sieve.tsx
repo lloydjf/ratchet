@@ -348,7 +348,7 @@ export function SieveThumb({ pairs, events = [], width = 112, height = 36, class
       {dots
         .filter((d) => d.settled && d.stage >= 0)
         .map((d) => (
-          <polyline key={`r${d.key}`} points={pointsAttr(routePoints(g, d, dots.length, counts, { fromRail: width < 160 }))} fill="none" style={{ stroke: ROUTE }} strokeWidth={0.75} />
+          <polyline key={`r${d.key}`} points={pointsAttr(routePoints(g, d, dots.length, counts, { fromRail: width < 160 }))} fill="none" style={{ stroke: ROUTE }} strokeWidth={0.75} strokeOpacity={width < 160 ? 0.5 : 1} />
         ))}
       {g.colX.map((x, i) => (
         <line key={i} x1={x} x2={x} y1={g.fieldTop} y2={g.fieldBottom} stroke={COLUMN_INK[i]} strokeWidth="1" />

@@ -170,11 +170,10 @@
 
 		# No inline scripts anywhere, except the docs theme's own, allowed by hash: deploy writes
 		# `vars /docs/* docs_script_src "'sha256-...' ..."` here (render_site.py). Without it the
-		# docs still read fine; only the theme's toggles stop working. Google Fonts: the docs
-		# theme loads Inter and JetBrains Mono from there (the product page self-hosts them), and
-		# its repository badge reads the star count from api.github.com.
+		# docs still read fine; only the theme's toggles stop working. Every font is self-hosted;
+		# the docs' repository badge reads the star count from api.github.com.
 		import /etc/caddy/ratchet.d/site/*.caddy
-		header Content-Security-Policy "default-src 'self'; script-src 'self' {vars.docs_script_src}; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data:; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https://api.github.com; object-src 'none'; frame-src 'none'; frame-ancestors 'none'; base-uri 'self'; form-action 'none'"
+		header Content-Security-Policy "default-src 'self'; script-src 'self' {vars.docs_script_src}; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:; connect-src 'self' https://api.github.com; object-src 'none'; frame-src 'none'; frame-ancestors 'none'; base-uri 'self'; form-action 'none'"
 		header Cache-Control "public, max-age=300"
 
 		request_body {

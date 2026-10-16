@@ -20,17 +20,20 @@ copyright: Code Apache-2.0 · SkillRegress-Bench data CC BY 4.0
 docs_dir: docs/user
 site_dir: site
 strict: true
+# The theme overrides live beside the pages but are templates, not pages.
+exclude_docs: |
+  /overrides/
 
 theme:
   name: material
+  custom_dir: docs/user/overrides
   language: en
-  logo: assets/logo.svg
-  favicon: assets/favicon.svg
-  font:
-    text: Inter
-    code: JetBrains Mono
+  logo: assets/brand/ratchet-mark.svg
+  favicon: assets/brand/ratchet-mark.svg
+  # IBM Plex is self-hosted from docs/user/assets/fonts (stylesheets/ratchet.css): no font CDN.
+  font: false
   palette:
-    # Dark first (ADR 0015), matching the dashboard tokens.
+    # Dark first (ADR 0015): the graphite scheme, then the same system on off-white.
     - scheme: slate
       primary: custom
       accent: custom
@@ -46,7 +49,6 @@ theme:
   icon:
     repo: material/source-repository
   features:
-    - navigation.tabs
     - navigation.sections
     - navigation.indexes
     - navigation.top

@@ -4,60 +4,234 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Ratchet · regression CI for self-improving agents</title>
-  <meta name="description" content="Your agent learns new skills every day. Ratchet makes sure it never unlearns the old ones: every skill edit replays the tasks you blessed, a judge cascade compares the runs, and regressions are blocked.">
+  <meta name="description" content="Your agent learns new skills every day. Ratchet makes sure it never unlearns the old ones: every skill edit replays the tasks you blessed, a Nemotron judge cascade compares the runs, and regressions are blocked.">
   <meta name="color-scheme" content="dark light">
+  <meta name="theme-color" content="#201E1B" media="(prefers-color-scheme: dark)">
+  <meta name="theme-color" content="#F3F1EC" media="(prefers-color-scheme: light)">
   <meta property="og:title" content="Ratchet">
   <meta property="og:description" content="Your agent learns new skills every day. Ratchet makes sure it never unlearns the old ones.">
   <meta property="og:url" content="https://ratchetci.dev/">
   <link rel="canonical" href="https://ratchetci.dev/">
   <link rel="icon" href="/logo.svg" type="image/svg+xml">
-  <link rel="preload" href="/fonts/inter-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/IBMPlexSans-400.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/IBMPlexSans-500.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="/site.css">
   <!-- Static page: no scripts, no third-party requests. Assembled by deploy/vm/render_site.py. -->
 </head>
-<body>
-  <div class="page">
-    <header class="topbar">
-      <a class="brand" href="/" aria-label="Ratchet home"><img src="/logo.svg" alt="" width="28" height="28"><span>Ratchet</span></a>
-      <span class="tag">regression CI for self-improving agents</span>
-    </header>
+<body class="landing">
+  <a class="skip" href="#main">Skip to content</a>
 
-    <main class="hero">
-      <h1>Your agent learns new skills every day. <span class="second">Ratchet makes sure it never unlearns the old ones.</span></h1>
+  <header class="topbar">
+    <a class="brand" href="/" aria-label="Ratchet home">
+      <picture>
+        <source srcset="/mark-inverse.svg" media="(prefers-color-scheme: light)">
+        <img class="brand-mark" src="/logo.svg" alt="" width="24" height="24">
+      </picture>
+      <picture>
+        <source srcset="/wordmark-dark.svg" media="(prefers-color-scheme: light)">
+        <img class="brand-word" src="/wordmark-light.svg" alt="Ratchet" width="75" height="16">
+      </picture>
+    </a>
+    <nav aria-label="Primary">
+      <a href="https://demo.ratchetci.dev">Demo</a>
+      <a href="/docs/">Docs</a>
+      <a href="https://github.com/lloydjf/ratchet">GitHub</a>
+    </nav>
+  </header>
 
-      <div class="install" aria-label="Install command">
-        <span class="prompt" aria-hidden="true">$</span>
-        <code>uv tool install ratchet-ci</code>
+  <main id="main">
+    <section class="hero" aria-labelledby="lede">
+      <div class="hero-copy">
+        <h1 id="lede">Your agent learns new skills every day. <span>Ratchet makes sure it never unlearns the old ones.</span></h1>
+        <p class="explain">When the agent edits one of its skills, Ratchet replays the tasks you already blessed in a sandbox, judges every replay with a Nemotron cascade, and blocks the edit if anything got worse.</p>
+
+        <div class="actions">
+          <a class="btn-primary" href="https://demo.ratchetci.dev">Open the demo</a>
+          <a class="link" href="/docs/">Read the docs</a>
+        </div>
+
+        <div class="install">
+          <p class="install-label" id="install-label">Install the CLI</p>
+          <div class="cmd" aria-labelledby="install-label">
+            <span class="cmd-prompt" aria-hidden="true">$</span>
+            <code class="cmd-text">uv tool install ratchet-ci</code>
+          </div>
+          <p class="install-note">One click selects the line. Python 3.11+; starts on the offline simulator, no keys needed. <a href="https://github.com/lloydjf/ratchet">Source on GitHub</a></p>
+        </div>
       </div>
 
-      <nav class="actions" aria-label="Primary">
-        <a class="btn primary" href="https://demo.ratchetci.dev">Demo <span aria-hidden="true">→</span></a>
-        <a class="btn" href="/docs/">Docs</a>
-        <a class="btn" href="https://github.com/lloydjf/ratchet">GitHub</a>
+      <figure class="verdict" aria-labelledby="verdict-cap">
+        <figcaption class="verdict-meta" id="verdict-cap">
+          <span class="badge">Recorded run</span>
+          <span>github-triage: <code>SKILL.md</code> changed (+2 −1)</span>
+          <span class="verdict-meta-end">live Nemotron · 06:24 UTC run · 48 s</span>
+        </figcaption>
+
+        <div class="band band-block">
+          <div class="band-main">
+            <p class="decision">Blocked.</p>
+            <p class="reason">The new github-triage would close issues in 7 of 14 replays.</p>
+          </div>
+          <p class="band-action">
+            <span>Reverted on <code>candidate</code></span>
+            <code class="sha">2d63d10</code>
+          </p>
+        </div>
+
+        <div class="sieve">
+          <svg class="sieve-svg" viewBox="0 0 600 196.5" role="img" aria-labelledby="sieve-t sieve-d">
+            <title id="sieve-t">Cascade sieve, settled</title>
+            <desc id="sieve-d">14 replays enter from the left. Level 0 decided 7, all regressions, with no model. Nano decided 4, all passes. Super decided 2, both passes. Ultra decided 1, a regression. 8 regressions and 6 passes in all.</desc>
+            <g class="cols"><line class="c-level0" x1="96" y1="6" x2="96" y2="190.5"/><line class="c-nano" x1="216" y1="6" x2="216" y2="190.5"/><line class="c-super" x1="336" y1="6" x2="336" y2="190.5"/><line class="c-ultra" x1="456" y1="6" x2="456" y2="190.5"/><line class="c-rail" x1="540" y1="6" x2="540" y2="190.5"/></g>
+            <g class="tracks"><path d="M12 18H96"/><path d="M12 30.5H96"/><path d="M12 43H96"/><path d="M12 55.5H96"/><path d="M12 68H96"/><path d="M12 80.5H96"/><path d="M12 93H96"/><path d="M12 105.5H128.5L216 18"/><path d="M12 118H128.5L216 30.5"/><path d="M12 130.5H128.5L216 43"/><path d="M12 143H128.5L216 55.5"/><path d="M12 155.5H198.5L336 18"/><path d="M12 168H198.5L336 30.5"/><path d="M12 180.5H293.5L456 18"/></g>
+            <g class="entries"><rect x="8" y="16.5" width="4" height="3"/><rect x="8" y="29" width="4" height="3"/><rect x="8" y="41.5" width="4" height="3"/><rect x="8" y="54" width="4" height="3"/><rect x="8" y="66.5" width="4" height="3"/><rect x="8" y="79" width="4" height="3"/><rect x="8" y="91.5" width="4" height="3"/><rect x="8" y="104" width="4" height="3"/><rect x="8" y="116.5" width="4" height="3"/><rect x="8" y="129" width="4" height="3"/><rect x="8" y="141.5" width="4" height="3"/><rect x="8" y="154" width="4" height="3"/><rect x="8" y="166.5" width="4" height="3"/><rect x="8" y="179" width="4" height="3"/></g>
+            <g class="dots"><circle class="o-regression" cx="96" cy="18" r="5"><title>Triage acme/infra-terraform · regression · decided at Level 0</title></circle><circle class="o-regression" cx="96" cy="30.5" r="5"><title>Triage acme/cli-tools · regression · decided at Level 0</title></circle><circle class="o-regression" cx="96" cy="43" r="5"><title>Triage acme/data-pipeline · regression · decided at Level 0</title></circle><circle class="o-regression" cx="96" cy="55.5" r="5"><title>Triage acme/docs-site · regression · decided at Level 0</title></circle><circle class="o-regression" cx="96" cy="68" r="5"><title>Triage acme/mobile-app · regression · decided at Level 0</title></circle><circle class="o-regression" cx="96" cy="80.5" r="5"><title>Triage acme/billing-api · regression · decided at Level 0</title></circle><circle class="o-regression" cx="96" cy="93" r="5"><title>Triage acme/widgets · regression · decided at Level 0</title></circle><circle class="o-pass" cx="216" cy="18" r="5"><title>Triage acme/auth-service · pass · decided at Nano</title></circle><circle class="o-pass" cx="216" cy="30.5" r="5"><title>Rewrite a sentence formally · pass · decided at Nano</title></circle><circle class="o-pass" cx="216" cy="43" r="5"><title>Compute 17% of 240 · pass · decided at Nano</title></circle><circle class="o-pass" cx="216" cy="55.5" r="5"><title>Summarize a short note · pass · decided at Nano</title></circle><circle class="o-pass" cx="336" cy="18" r="5"><title>Triage acme/search-indexer · pass · decided at Super</title></circle><circle class="o-pass" cx="336" cy="30.5" r="5"><title>Triage acme/design-system · pass · decided at Super</title></circle><circle class="o-regression" cx="456" cy="18" r="5"><title>Triage acme/web-dashboard · regression · decided at Ultra</title></circle></g>
+            <g class="rail"><rect class="o-regression" x="548" y="16.5" width="40" height="3"/><rect class="o-regression" x="548" y="29" width="40" height="3"/><rect class="o-regression" x="548" y="41.5" width="40" height="3"/><rect class="o-regression" x="548" y="54" width="40" height="3"/><rect class="o-regression" x="548" y="66.5" width="40" height="3"/><rect class="o-regression" x="548" y="79" width="40" height="3"/><rect class="o-regression" x="548" y="91.5" width="40" height="3"/><rect class="o-regression" x="548" y="104" width="40" height="3"/><rect class="o-pass" x="548" y="116.5" width="40" height="3"/><rect class="o-pass" x="548" y="129" width="40" height="3"/><rect class="o-pass" x="548" y="141.5" width="40" height="3"/><rect class="o-pass" x="548" y="154" width="40" height="3"/><rect class="o-pass" x="548" y="166.5" width="40" height="3"/><rect class="o-pass" x="548" y="179" width="40" height="3"/></g>
+          </svg>
+          <dl class="sieve-cols">
+            <div class="col col-level0"><dt>Level 0</dt><dd>7 decided</dd><dd>no model</dd></div>
+            <div class="col col-nano"><dt>Nano</dt><dd>4 decided</dd><dd class="num">$0.0006</dd></div>
+            <div class="col col-super"><dt>Super</dt><dd>2 decided</dd><dd class="num">$0.0038</dd></div>
+            <div class="col col-ultra"><dt>Ultra</dt><dd>1 decided</dd><dd class="num">$0.0097</dd></div>
+            <div class="col col-rail"><dt>Outcome</dt><dd class="t-regression">8 regression</dd><dd class="t-pass">6 pass</dd></div>
+          </dl>
+        </div>
+
+        <ul class="pairs" aria-label="Three of the 14 pairs">
+          <li class="pair">
+            <svg class="trail" viewBox="0 0 52 8" role="img" aria-label="Decided at Level 0"><rect class="seg o-regression" x="0.5" y="0.5" width="11" height="7"><title>Level 0 · regression · decided here</title></rect><rect class="seg hollow" x="13.5" y="0.5" width="11" height="7"><title>Nano · not run</title></rect><rect class="seg hollow" x="26.5" y="0.5" width="11" height="7"><title>Super · not run</title></rect><rect class="seg hollow" x="39.5" y="0.5" width="11" height="7"><title>Ultra · not run</title></rect></svg>
+            <div class="pair-body">
+              <p class="pair-task">Triage acme/infra-terraform</p>
+              <p class="pair-why"><span class="t-regression"><svg class="glyph" viewBox="0 0 12 12" aria-hidden="true"><path d="M3 3l6 6M9 3l-6 6"/></svg>Regression</span> Checked without a model: 2 new <code>github.close_issue</code> calls, both refused.</p>
+            </div>
+            <p class="pair-at t-level0">Level 0</p>
+            <p class="pair-usd num">$0.0000</p>
+          </li>
+          <li class="pair">
+            <svg class="trail" viewBox="0 0 52 8" role="img" aria-label="Decided at Ultra"><rect class="seg o-regression" x="0.5" y="0.5" width="11" height="7"><title>Level 0 · no hard fail</title></rect><rect class="seg o-regression" x="13.5" y="0.5" width="11" height="7"><title>Nano · regressed</title></rect><rect class="seg o-regression" x="26.5" y="0.5" width="11" height="7"><title>Super · regressed</title></rect><rect class="seg o-regression" x="39.5" y="0.5" width="11" height="7"><title>Ultra · regression · decided here</title></rect></svg>
+            <div class="pair-body">
+              <p class="pair-task">Triage acme/web-dashboard</p>
+              <p class="pair-why"><span class="t-regression"><svg class="glyph" viewBox="0 0 12 12" aria-hidden="true"><path d="M3 3l6 6M9 3l-6 6"/></svg>Regression</span> Reports 4 open issues instead of the required 3; Nano, Super and Ultra agree.</p>
+            </div>
+            <p class="pair-at t-ultra">Ultra</p>
+            <p class="pair-usd num">$0.0102</p>
+          </li>
+          <li class="pair">
+            <svg class="trail" viewBox="0 0 52 8" role="img" aria-label="Decided at Super"><rect class="seg o-pass" x="0.5" y="0.5" width="11" height="7"><title>Level 0 · no hard fail</title></rect><rect class="seg o-pass" x="13.5" y="0.5" width="11" height="7"><title>Nano · flagged an extra read</title></rect><rect class="seg o-pass" x="26.5" y="0.5" width="11" height="7"><title>Super · pass · decided here</title></rect><rect class="seg hollow" x="39.5" y="0.5" width="11" height="7"><title>Ultra · not run</title></rect></svg>
+            <div class="pair-body">
+              <p class="pair-task">Triage acme/search-indexer</p>
+              <p class="pair-why"><span class="t-pass"><svg class="glyph" viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 6.5l2.5 2.5 4.5-6"/></svg>Pass</span> Output meets the criteria; differences are cosmetic.</p>
+            </div>
+            <p class="pair-at t-super">Super</p>
+            <p class="pair-usd num">$0.0014</p>
+          </li>
+        </ul>
+
+        <p class="verdict-foot">
+          <span>Judging <span class="num">$0.0141</span> · all-Ultra <span class="num">$0.0319</span></span>
+          <a href="https://demo.ratchetci.dev">Run this edit in the demo</a>
+        </p>
+      </figure>
+    </section>
+
+    <section class="how" aria-labelledby="how-h">
+      <h2 id="how-h">How it works</h2>
+      <div class="rows">
+        <div class="row">
+          <h3>Replay</h3>
+          <p class="row-text">Every skill edit re-runs the tasks you blessed, plus three canaries, in fresh sandboxes on the same model tier, with side effects served from recorded cassettes.</p>
+          <div class="proof">
+            <pre class="proof-code"><code><span class="c-dim">t007</span> github.close_issue
+<span class="c-dim">  {"issue": 71, "reason": "not_planned"}</span>
+<span class="c-dim">  →</span> <span class="t-regression">409 ratchet_blocked</span></code></pre>
+            <p class="proof-note">From the recording above: the sandbox refuses a write the blessed run never made, so nothing real is closed.</p>
+          </div>
+        </div>
+        <div class="row">
+          <h3>Judge</h3>
+          <p class="row-text">Level 0 diffs side effects with no model. Nano screens what is left, Super checks with cited steps, Ultra adjudicates only the contested pairs, and Tavily tells a moved world from a broken skill.</p>
+          <div class="proof">
+            <dl class="tiers">
+              <div><dt class="t-level0">Level 0</dt><dd class="bar"><span class="bar-fill b-level0 w0"></span></dd><dd class="num">$0.0000</dd></div>
+              <div><dt class="t-nano">Nano</dt><dd class="bar"><span class="bar-fill b-nano w-nano"></span></dd><dd class="num">$0.0006</dd></div>
+              <div><dt class="t-super">Super</dt><dd class="bar"><span class="bar-fill b-super w-super"></span></dd><dd class="num">$0.0038</dd></div>
+              <div><dt class="t-ultra">Ultra</dt><dd class="bar"><span class="bar-fill b-ultra w-ultra"></span></dd><dd class="num">$0.0097</dd></div>
+            </dl>
+            <p class="proof-note">Scenario 1 by tier: <span class="num">$0.0141</span> against <span class="num">$0.0319</span> had Ultra judged every pair (2.3×).</p>
+          </div>
+        </div>
+        <div class="row">
+          <h3>Block</h3>
+          <p class="row-text">A block needs a Level 0 hard fail, or Super and Ultra agreeing. A verdict that stays unsure is held for a person and never passed.</p>
+          <div class="proof">
+            <dl class="actions-map">
+              <div><dt>Passed</dt><dd>merged into <code>main</code></dd></div>
+              <div><dt>Held</dt><dd>kept on <code>candidate</code> for review</dd></div>
+              <div><dt>Blocked</dt><dd>reverted on <code>candidate</code>; <code>main</code> never changes</dd></div>
+            </dl>
+            <p class="proof-note">Every action is a git commit with an undo path.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="measured" aria-labelledby="measured-h">
+      <div class="measured-head">
+        <h2 id="measured-h">Measured on real models</h2>
+        <p>Live Nemotron Nano, Super and Ultra through Token Factory and live Tavily, with the response cache off. Measured 2026-10-16.</p>
+      </div>
+
+      <div class="measured-grid">
+        <div class="block">
+          <h3>Seeded scenarios, two cold runs each</h3>
+          <table class="data">
+            <thead>
+              <tr><th scope="col">Scenario</th><th scope="col">Expected</th><th scope="col">Run 1</th><th scope="col">Run 2</th></tr>
+            </thead>
+            <tbody>
+              <tr><th scope="row">github-triage closes stale issues</th><td class="exp">Block</td><td class="run">Block, 7 of 14, 41 s</td><td class="run">Block, 7 of 14, 55 s</td></tr>
+              <tr><th scope="row">expense-report drops the VAT line</th><td class="exp">Block</td><td class="run">Block, 2 of 10, 53 s</td><td class="run">Block, 1 of 10, 48 s</td></tr>
+              <tr><th scope="row">FX rate moved</th><td class="exp">Pass with drift</td><td class="run">Pass, 4 drifted, 67 s</td><td class="run">Pass, 4 drifted, 72 s</td></tr>
+            </tbody>
+          </table>
+          <p class="block-sum">6 of 6 correct, 41–72 s from skill edit to verdict. The recording at the top is a separate run of scenario 1 the same day: 7 of 14, 48 s.</p>
+        </div>
+
+        <div class="block">
+          <h3>SkillRegress-Bench pilot, 35 labeled edits, cascade</h3>
+          <dl class="figures">
+            <div><dt>Detection recall, block or warn</dt><dd class="num">0.80 <span>(20/25)</span></dd></div>
+            <div><dt>Block recall</dt><dd class="num">0.36 <span>(9/25)</span></dd></div>
+            <div><dt>False blocks, cosmetic edits</dt><dd class="num">0.00 <span>(0/8)</span></dd></div>
+            <div><dt>False blocks, world-drift edits</dt><dd class="num">0.00 <span>(0/2)</span></dd></div>
+            <div><dt>Drift accuracy</dt><dd class="num">1.00 <span>(2/2)</span></dd></div>
+            <div><dt>Cost per verdict, mean · p95</dt><dd class="num">$0.0384 · $0.0948</dd></div>
+            <div><dt>All-Ultra, same verdicts</dt><dd class="num">$0.0766 <span>(2.0×)</span></dd></div>
+            <div><dt>Cosmetic edits held for review</dt><dd class="num">7 of 8</dd></div>
+          </dl>
+          <p class="block-sum">The held cosmetic edits are the open cost: a hold asks a person to look. <a href="/bench/">Read the benchmark report</a></p>
+        </div>
+      </div>
+    </section>
+
+    <section class="closing" aria-labelledby="closing-h">
+      <h2 id="closing-h" class="closing-h">Try it on your own agent</h2>
+      <div class="cmd cmd-close" aria-label="Install command">
+        <span class="cmd-prompt" aria-hidden="true">$</span>
+        <code class="cmd-text">uv tool install ratchet-ci</code>
+      </div>
+      <nav class="closing-links" aria-label="Project">
+        <a href="https://github.com/lloydjf/ratchet">GitHub</a>
+        <a href="/docs/">Docs</a>
+        <a href="/bench/">Benchmark</a>
+        <a href="https://demo.ratchetci.dev">Demo</a>
       </nav>
+    </section>
+  </main>
 
-      <ol class="steps" aria-label="How it works">
-        <li>
-          <span class="step">01 · replay</span>
-          <p>Every skill edit re-runs the tasks you blessed, in a sandbox, against recorded tool calls.</p>
-        </li>
-        <li>
-          <span class="step">02 · judge</span>
-          <p>A Nemotron cascade, <span class="nano">Nano</span> → <span class="super">Super</span> → <span class="ultra">Ultra</span>, compares each run with the blessed one. A drift check tells a changed world from a broken skill.</p>
-        </li>
-        <li>
-          <span class="step">03 · block</span>
-          <p>Regressions block the edit, uncertain verdicts are held for review, and the rest merge.</p>
-        </li>
-      </ol>
-
-      <p class="bench">Measured on SkillRegress-Bench: 35 labeled skill edits across six regression types and two controls, with recall, false blocks and cost per verdict for each judge setup. <a href="/bench/">Read the results <span aria-hidden="true">→</span></a></p>
-    </main>
-
-    <footer class="foot">
-      <span>Code Apache-2.0 · benchmark data CC BY 4.0</span>
-      <span class="mono">ratchetci.dev</span>
-    </footer>
-  </div>
+  <footer class="foot">
+    <span>Code Apache-2.0 · benchmark data CC BY 4.0</span>
+    <span class="foot-host">ratchetci.dev</span>
+  </footer>
 </body>
 </html>

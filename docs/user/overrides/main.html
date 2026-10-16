@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block extrahead %}
+  <link rel="preload" href="{{ 'assets/fonts/IBMPlexSans-400.woff2' | url }}" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="{{ 'assets/fonts/IBMPlexSans-600.woff2' | url }}" as="font" type="font/woff2" crossorigin>
+{% endblock %}
+
+{% block scripts %}
+  {{ super() }}
+  <script src="{{ 'assets/javascripts/tags.js' | url }}" defer></script>
+{% endblock %}

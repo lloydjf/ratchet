@@ -5,6 +5,15 @@ behavior described here is the product's contract: the design notes (`docs/desig
 decision records ([ADRs](reference/adr/index.md)), and the code in `ratchet/judge/` and
 `ratchet/orchestrator/` agree on it.
 
+<figure class="r-sieve" markdown>
+![The settled cascade sieve for the github-triage edit: 14 replays; Level 0 decides 7 regressions with no model, Nano passes 4, Super passes 2, Ultra decides 1 regression; 8 regressions and 6 passes, so the edit is blocked and reverted](assets/figures/sieve-dark.svg#only-dark)
+![The settled cascade sieve for the github-triage edit: 14 replays; Level 0 decides 7 regressions with no model, Nano passes 4, Super passes 2, Ultra decides 1 regression; 8 regressions and 6 passes, so the edit is blocked and reverted](assets/figures/sieve-light.svg#only-light)
+<figcaption>One recorded verdict on real models, settled: the github-triage edit that closes
+stale issues. Each line is a replay; it stops in the column that decided it. Level 0 caught 7
+new <code>github.close_issue</code> calls with no model, Nano and Super cleared 6, and Super and
+Ultra agreed on one more regression. Judging cost is shown per tier.</figcaption>
+</figure>
+
 ## Skills and skill edits
 
 A **skill** is a directory holding a `SKILL.md`: YAML frontmatter between `---` lines, then

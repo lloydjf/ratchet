@@ -1,0 +1,82 @@
+{#-
+  Material 9.7 header with the Ratchet masthead: mark, wordmark, the settled-sieve glyph and
+  "Docs" in place of the site name. Everything else is Material's own markup.
+-#}
+{% set class = "md-header" %}
+{% if "navigation.tabs.sticky" in features %}
+  {% set class = class ~ " md-header--shadow md-header--lifted" %}
+{% elif "navigation.tabs" not in features %}
+  {% set class = class ~ " md-header--shadow" %}
+{% endif %}
+<header class="{{ class }}" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="{{ lang.t('header') }}">
+    <a href="{{ config.extra.homepage | d(nav.homepage.url, true) | url }}" title="{{ config.site_name | e }}" class="md-header__button md-logo" aria-label="{{ config.site_name }}" data-md-component="logo">
+      {% include "partials/logo.html" %}
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      {% set icon = config.theme.icon.menu or "material/menu" %}
+      {% include ".icons/" ~ icon ~ ".svg" %}
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <a class="r-masthead" href="{{ config.extra.homepage | d(nav.homepage.url, true) | url }}">
+            <img class="r-wordmark r-wordmark--on-dark" src="{{ 'assets/brand/ratchet-wordmark-light.svg' | url }}" alt="{{ config.site_name }}" width="80" height="17">
+            <img class="r-wordmark r-wordmark--on-light" src="{{ 'assets/brand/ratchet-wordmark-dark.svg' | url }}" alt="{{ config.site_name }}" width="80" height="17">
+            <svg class="r-sieve-glyph" viewBox="0 0 28 14" aria-hidden="true" focusable="false">
+              <path class="lane" d="M1 3.5H7M1 7.5H13M1 11.5H25" fill="none" stroke-width="1"/>
+              <path class="col-0" d="M7 1V13" stroke-width="1.25"/>
+              <path class="col-n" d="M13 1V13" stroke-width="1.25"/>
+              <path class="col-s" d="M19 1V13" stroke-width="1.25"/>
+              <path class="col-u" d="M25 1V13" stroke-width="1.25"/>
+              <circle class="dot-block" cx="7" cy="3.5" r="2"/>
+              <circle class="dot-pass" cx="13" cy="7.5" r="2"/>
+              <circle class="dot-block" cx="25" cy="11.5" r="2"/>
+            </svg>
+            <span class="r-masthead__docs">Docs</span>
+          </a>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            {% if page.meta and page.meta.title %}
+              {{ page.meta.title }}
+            {% else %}
+              {{ page.title }}
+            {% endif %}
+          </span>
+        </div>
+      </div>
+    </div>
+    {% if config.theme.palette %}
+      {% if not config.theme.palette is mapping %}
+        {% include "partials/palette.html" %}
+      {% endif %}
+    {% endif %}
+    {% if not config.theme.palette is mapping %}
+      {% include "partials/javascripts/palette.html" %}
+    {% endif %}
+    {% if config.extra.alternate %}
+      {% include "partials/alternate.html" %}
+    {% endif %}
+    {% if "material/search" in config.plugins %}
+      {% set search = config.plugins["material/search"] | attr("config") %}
+      {% if search.enabled %}
+        <label class="md-header__button md-icon" for="__search">
+          {% set icon = config.theme.icon.search or "material/magnify" %}
+          {% include ".icons/" ~ icon ~ ".svg" %}
+        </label>
+        {% include "partials/search.html" %}
+      {% endif %}
+    {% endif %}
+    {% if config.repo_url %}
+      <div class="md-header__source">
+        {% include "partials/source.html" %}
+      </div>
+    {% endif %}
+  </nav>
+  {% if "navigation.tabs.sticky" in features %}
+    {% if "navigation.tabs" in features %}
+      {% include "partials/tabs.html" %}
+    {% endif %}
+  {% endif %}
+</header>

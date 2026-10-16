@@ -1,8 +1,6 @@
 ---
 title: Ratchet
 description: Regression CI for self-improving agents.
-hide:
-  - navigation
 ---
 
 # Ratchet
@@ -16,24 +14,44 @@ in a sandbox. A Nemotron cascade judges each replay: Nano screens, Super checks,
 adjudicates. Tavily tells "the world changed" apart from "the agent regressed". Then
 Ratchet merges, holds or reverts the edit, and every action is a git commit you can undo.
 
-<div class="grid cards" markdown>
+## Start here
 
-- **Operator**
+<div class="r-start" markdown>
 
-    You run an agent and want its self-edits checked before they ship.
-    Start with [Get started](getting-started.md), then [Concepts](concepts.md).
-
-- **Skill author**
-
-    You write skills and want replay evidence for a change.
-    Read [Concepts](concepts.md#golden-traces-and-blessing) and the [CLI](cli.md).
-
-- **Evaluator**
-
-    You have a minute and want to see it catch something.
-    Read the [tour](#60-second-tour), then the [Dashboard](dashboard.md) guide.
+- [Get started](getting-started.md) <span>Install, seed the demo, run a scenario, bless your own task.</span>
+- [Concepts](concepts.md) <span>Goldens, Level 0, the cascade, drift, decisions and stacked edits.</span>
+- [Operations](operations.md) <span>Run Ratchet as a long-lived service on a VM, next to your own agent.</span>
 
 </div>
+
+## Status: what is real today
+
+Ratchet was built in October 2026 for the Nebius × NVIDIA Global AI Hackathon. This table is
+the honest state of each part. The evidence for every "verified live" row is in
+[Verified against live APIs](reference/verified.md).
+
+<div class="r-status" markdown>
+
+| Part | State |
+| --- | --- |
+| The three seeded scenarios on real Nemotron + live Tavily | <span class="tag pass">Verified live</span> 6 of 6 correct (two BLOCKs, one PASS with drift), cold cache, 41–72 s from edit to verdict |
+| Token Factory: model ids, structured outputs, thinking toggle, streaming usage | <span class="tag pass">Verified live</span> on all three tiers |
+| Token Factory `seed` | <span class="tag warn">Verified not honored</span> Replays of an unchanged skill still vary; the benchmark's E6 run measures that noise floor |
+| MinimalRunner harness | <span class="tag pass">In use</span> Every number in these docs was produced with it |
+| Hermes Agent adapter | <span class="tag neutral">Built</span> Passes its acceptance checks against a real Hermes v0.22.2 install on the offline simulator; no live-model run yet. Off by default |
+| Docker sandbox | <span class="tag pass">In use</span> for replays in containers |
+| OpenShell sandbox | <span class="tag neutral">Built, not verified live</span> (needs Linux ≥ 6.2 with Landlock) |
+| Nebius Serverless Jobs runner | <span class="tag neutral">Built</span> Some API field names and the cold start are not verified live. The demo uses the local runner |
+| SkillRegress-Bench live results | <span class="tag pass">Published</span> Live pilot sweep of 2026-10-16 in `bench/results/2026-10-16/report.md` (quoted in the README). `bench/results/smoke-sim/` is a simulator smoke test, **not results** |
+| Offline simulator (`RATCHET_UPSTREAM=sim`) | <span class="tag neutral">Test infrastructure</span> Deterministic and free. Every verdict it produces carries a <span class="badge warn">Simulated models</span> badge, and no published number comes from it |
+
+</div>
+
+!!! note "Simulated is always labeled"
+    Without a Token Factory key, everything runs against the offline simulator (ADR 0018).
+    That is how CI, the test suite and a first local run work. The dashboard header, the
+    verdict header and the CLI output all say **Simulated models** when that is what
+    produced a verdict. See [Concepts: simulated models](concepts.md#simulated-models).
 
 ## The loop in five steps
 
@@ -102,31 +120,6 @@ the skill."</figcaption>
 ![Drift card: the EUR/USD rate 1.0800 changed to 1.1206, with the Tavily source and the ruling](img/drift-card.png)
 <figcaption>A drift card: the fact, its old and new value, the Tavily source and the ruling.</figcaption>
 </figure>
-
-## Status: what is real today
-
-Ratchet was built in October 2026 for the Nebius × NVIDIA Global AI Hackathon. This table is
-the honest state of each part. The evidence for every "verified live" row is in
-[Verified against live APIs](reference/verified.md).
-
-| Part | State |
-| --- | --- |
-| The three seeded scenarios on real Nemotron + live Tavily | **Verified live.** 6 of 6 correct (two BLOCKs, one PASS with drift), cold cache, 41–72 s from edit to verdict |
-| Token Factory: model ids, structured outputs, thinking toggle, streaming usage | **Verified live** on all three tiers |
-| Token Factory `seed` | **Verified not honored.** Replays of an unchanged skill still vary; the benchmark's E6 run measures that noise floor |
-| MinimalRunner harness | **In use.** Every number in these docs was produced with it |
-| Hermes Agent adapter | **Built.** Passes its acceptance checks against a real Hermes v0.22.2 install on the offline simulator; no live-model run yet. Off by default |
-| Docker sandbox | **In use** for replays in containers |
-| OpenShell sandbox | **Built, not verified live** (needs Linux ≥ 6.2 with Landlock) |
-| Nebius Serverless Jobs runner | **Built.** Some API field names and the cold start are not verified live. The demo uses the local runner |
-| SkillRegress-Bench live results | **Published.** Live pilot sweep of 2026-10-16 in `bench/results/2026-10-16/report.md` (quoted in the README). `bench/results/smoke-sim/` is a simulator smoke test, **not results** |
-| Offline simulator (`RATCHET_UPSTREAM=sim`) | **Test infrastructure.** Deterministic and free. Every verdict it produces carries a <span class="badge warn">Simulated models</span> badge, and no published number comes from it |
-
-!!! note "Simulated is always labeled"
-    Without a Token Factory key, everything runs against the offline simulator (ADR 0018).
-    That is how CI, the test suite and a first local run work. The dashboard header, the
-    verdict header and the CLI output all say **Simulated models** when that is what
-    produced a verdict. See [Concepts: simulated models](concepts.md#simulated-models).
 
 ## Where to go next
 

@@ -4,24 +4,36 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex">
+  <meta name="color-scheme" content="dark light">
   <title>Not found · Ratchet</title>
   <link rel="icon" href="/logo.svg" type="image/svg+xml">
   <link rel="stylesheet" href="/site.css">
 </head>
 <body>
-  <div class="page">
-    <header class="topbar">
-      <a class="brand" href="/" aria-label="Ratchet home"><img src="/logo.svg" alt="" width="28" height="28"><span>Ratchet</span></a>
-    </header>
-    <main class="hero">
-      <p class="step">404</p>
-      <h1>Nothing here. <span class="second">The page may have moved.</span></h1>
-      <nav class="actions" aria-label="Primary">
-        <a class="btn primary" href="/">Home</a>
-        <a class="btn" href="/docs/">Docs</a>
-        <a class="btn" href="https://demo.ratchetci.dev">Demo</a>
-      </nav>
-    </main>
-  </div>
+  <header class="topbar">
+    <a class="brand" href="/" aria-label="Ratchet home">
+      <picture>
+        <source srcset="/mark-inverse.svg" media="(prefers-color-scheme: light)">
+        <img class="brand-mark" src="/logo.svg" alt="" width="24" height="24">
+      </picture>
+      <picture>
+        <source srcset="/wordmark-dark.svg" media="(prefers-color-scheme: light)">
+        <img class="brand-word" src="/wordmark-light.svg" alt="Ratchet" width="75" height="16">
+      </picture>
+    </a>
+    <nav aria-label="Primary">
+      <a href="https://demo.ratchetci.dev">Demo</a>
+      <a href="/docs/">Docs</a>
+      <a href="https://github.com/lloydjf/ratchet">GitHub</a>
+    </nav>
+  </header>
+  <main class="missing">
+    <h1 class="decision">Not found.</h1>
+    <p class="reason">Nothing is published at this address. The page may have moved.</p>
+    <div class="actions">
+      <a class="btn-primary" href="/">Go to the home page</a>
+      <a class="link" href="/docs/">Read the docs</a>
+    </div>
+  </main>
 </body>
 </html>

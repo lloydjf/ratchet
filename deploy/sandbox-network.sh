@@ -34,7 +34,11 @@ log "done"
 # the host itself, so host services other than the sidecars are dropped on this bridge.
 if [[ "$(uname -s)" == "Linux" ]]; then
   if command -v modprobe >/dev/null 2>&1; then
-    modprobe br_netfilter 2>/dev/null && log "br_netfilter loaded" || log "WARN: could not load br_netfilter (inter-container isolation unverified)"
+    if modprobe br_netfilter 2>/dev/null; then
+      log "br_netfilter loaded"
+    else
+      log "WARN: could not load br_netfilter (inter-container isolation unverified)"
+    fi
     sysctl -q -w net.bridge.bridge-nf-call-iptables=1 2>/dev/null || true
     printf 'br_netfilter\n' > /etc/modules-load.d/ratchet-sandbox.conf 2>/dev/null || true
   fi

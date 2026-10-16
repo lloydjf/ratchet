@@ -33,6 +33,8 @@ require_root() { [[ $EUID -eq 0 ]] || die "run as root: sudo $0"; }
 
 # Serialize every mutating ops script (deploy, rollback, restore, failover, rotate).
 # A child ops script (rollback -> deploy) inherits the parent's lock instead of waiting on it.
+# Called with or without a wait (seconds); the default is 10 minutes.
+# shellcheck disable=SC2120
 take_lock() {
   [[ "${RATCHET_OPS_LOCKED:-}" == "1" ]] && return 0
   mkdir -p "$RATCHET_OPS_DIR"

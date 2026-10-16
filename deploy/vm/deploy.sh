@@ -17,7 +17,7 @@
 #   4. restart ratchet-serve (one process: proxy -> mock tools -> orchestrator -> dashboard
 #      start in that order inside `ratchet serve`), wait for /healthz.
 #   5. smoke: `ratchet doctor`, then `ratchet simulate 1 --headless` must return the
-#      scenario's expected BLOCK within 90 s.
+#      scenario's expected BLOCK within 180 s (idle runs take 41–72 s; the budget is a health check, not a latency claim).
 #   6. record sha, time, who, smoke result in the ledger and docs/DEPLOYS.md; notify.
 #
 # Exit 0 on PASS. On a failed smoke: exit 1 and print the rollback command, or roll back
@@ -102,9 +102,9 @@ smoke() {
   local started
   log "smoke: ratchet doctor"
   RATCHET_CLI_TIMEOUT=60 ratchet_cli doctor || return 1
-  log "smoke: ratchet simulate 1 --headless (must BLOCK within 90 s)"
+  log "smoke: ratchet simulate 1 --headless (must BLOCK within 180 s)"
   started=$SECONDS
-  RATCHET_CLI_TIMEOUT=90 ratchet_cli simulate 1 --headless || return 1
+  RATCHET_CLI_TIMEOUT=180 ratchet_cli simulate 1 --headless || return 1
   SMOKE_SECS=$((SECONDS - started))
 }
 

@@ -271,7 +271,8 @@ export default function CostsPage() {
               The cascade spent{' '}
               {cfByTier ? <UsdTiers map={cfByTier} className="font-semibold" /> : <span className="font-mono font-semibold">{usd(cf.actual_usd)}</span>}{' '}
               <span data-testid="counterfactual-n">{overVerdicts(cf.n_verdicts)}</span>. Judging everything with {TIER_NAME.ultra} would have cost{' '}
-              <span className="font-mono font-semibold">{usd(cf.all_ultra_usd)}</span> (ultra), {ratioLabel(cf.saved_ratio)}× more.
+              <span className="font-mono font-semibold">{usd(cf.all_ultra_usd)}</span> (ultra),{' '}
+              {cf.saved_ratio < 0.05 ? 'about the same' : `${ratioLabel(cf.saved_ratio)}× more`}.
             </p>
             {saved ? <p className="shrink-0 text-meta font-medium text-pass-ink">{saved}</p> : null}
           </section>

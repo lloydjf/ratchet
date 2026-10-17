@@ -100,10 +100,17 @@ from the critical path.
 read them. Our worker writes `worker.log` to the output bucket, so the dashboard can show
 it. A logs endpoint, even a tail, would make job debugging possible from inside a product.
 
-**Cold start.** The docs say "a few minutes". Our measured cold start is **not measured
-yet**. We planned around it: the demo path uses a warm local runner, and
-Jobs carry the bench sweep. A job template or image pre-pull would make Jobs viable for
-interactive paths.
+**Cold start.** The docs say "a few minutes". Measured on `cpu-d3 / 2vcpu-8gb`: 3–4 minutes
+from submission to the worker's first replay (provisioning plus the image pull), about 6 minutes
+per batch end to end, and a 14-replay scenario across five jobs took 1,481 s at a concurrency of
+one. We planned around it: the demo path uses a warm local runner, and Jobs carry the bench
+sweep and larger candidate sets. A job template, image pre-pull or a warm pool would make Jobs
+viable for interactive paths.
+
+**The bucket mount.** Three things the docs do not say, each found by reading a failed job's
+logs: `sourcePath` on an `s3://` volume is ignored (mount the bucket root once), the mount refuses
+`chmod` (copy files without metadata), and a rename leaves the content on the temporary name with
+an empty final object (write output files in place).
 
 ## 3. Serverless Endpoints vs a VM
 

@@ -44,7 +44,7 @@ jobs:
           test -n "$NEBIUS_TOKEN_FACTORY_KEY" || { echo "::error::NEBIUS_TOKEN_FACTORY_KEY secret missing"; exit 1; }
           test -n "$TAVILY_API_KEY" || { echo "::error::TAVILY_API_KEY secret missing"; exit 1; }
       - uses: actions/checkout@v7
-      - uses: astral-sh/setup-uv@v10.3.0
+      - uses: astral-sh/setup-uv@v10.3.2
         with:
           version: ${{ env.UV_VERSION }}
           python-version: ${{ env.PYTHON_VERSION }}

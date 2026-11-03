@@ -8,7 +8,7 @@
 
 FROM ghcr.io/astral-sh/uv:0.8.18 AS uv
 
-FROM python:3.11-slim AS runtime
+FROM python:3.14-slim AS runtime
 
 ARG WITH_HERMES=0
 ARG HERMES_REF=v0.22.2

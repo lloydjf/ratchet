@@ -6,7 +6,7 @@
 # is only read by the in-process proxy sidecar, never by the sandboxed harness.
 # Target size < 2 GB; the slim base + venv is ~250 MB, Hermes adds ~600 MB.
 
-FROM ghcr.io/astral-sh/uv:0.8.18 AS uv
+FROM ghcr.io/astral-sh/uv:0.13.1 AS uv
 
 FROM python:3.11-slim AS runtime
 
